@@ -174,10 +174,14 @@ tailwind.config = {
 
 </nav>
 
-<!-- PARTNERSHIP BAR -->
-<div style="background:#dcb05e;padding:8px 16px;text-align:center;color:#262116;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;">
-  <p style="font-family:'DM Serif Text',serif;font-size:20px;line-height:1.1;margin:0;">Chicago Remembers September 11</p>
-  <p style="font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.25;font-weight:400;margin:0;">9 lives from your community are remembered here. This memorial honors all 2,977 lost on 9/11.</p>
+<!-- PARTNERSHIP BAR — default (no partner) -->
+<div id="partnership-default" style="background:#dcb05e;padding:8px 16px;text-align:center;font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.25;color:#262116;">
+  Brought to you in partnership with The New York Times
+</div>
+<!-- PARTNERSHIP BAR — partner-specific (hidden by default, shown via JS when partner param present) -->
+<div id="partnership-partner" style="background:#dcb05e;padding:8px 16px;text-align:center;color:#262116;display:none;flex-direction:column;gap:8px;align-items:center;justify-content:center;">
+  <p style="font-family:'DM Serif Text',serif;font-size:20px;line-height:1.1;margin:0;" id="partner-bar-title">Chicago Remembers September 11</p>
+  <p style="font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.25;font-weight:400;margin:0;" id="partner-bar-subtitle">9 lives from your community are remembered here. This memorial honors all 2,977 lost on 9/11.</p>
 </div>
 
 <!-- HERO -->
@@ -1636,13 +1640,17 @@ function parseURLFilters(){
       if(cb.value === stateParam) cb.checked = true;
     });
   }
-  // Swap to partner header when navigating from a newspaper page
+  // Swap to partner header + partnership bar when navigating from a newspaper page
   const partner = params.get('partner');
   if(partner === 'cst'){
     const legacy = document.getElementById('legacy-header');
     const partnerH = document.getElementById('partner-header');
+    const barDefault = document.getElementById('partnership-default');
+    const barPartner = document.getElementById('partnership-partner');
     if(legacy) legacy.style.display = 'none';
     if(partnerH) partnerH.style.display = 'block';
+    if(barDefault) barDefault.style.display = 'none';
+    if(barPartner) barPartner.style.display = 'flex';
   }
 }
 
