@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chicago Sun-Times Obituaries — Legacy.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=DM+Serif+Text&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        navy: { 50:'#f0f4fa', 100:'#e6ecf5', 200:'#d3ddeb', 300:'#b0c0d6', 400:'#728ab0', 500:'#42608f', 600:'#3c4d69', 700:'#293548', 800:'#212a3a', 900:'#151b24' },
+        gold: { 50:'#fbf7ef', 100:'#f6e5b8', 200:'#f0d78d', 300:'#e9c86f', 400:'#e2ba60', 500:'#dcb05e', 600:'#c49e54', 700:'#a48849', 800:'#85713e', 900:'#655b34' },
+        wb: { 50:'#fbfbfb', 100:'#f6f6f6', 200:'#ebe9e9', 300:'#dbdad7', 400:'#afadaa', 500:'#807e7a', 600:'#63605b', 700:'#514d45', 800:'#373329', 900:'#262116' },
+        seaFoam: { 400:'#81b8ae', 500:'#5c9d94' },
+        coral: { 400:'#e77d91', 600:'#c24c62' }
+      },
+      fontFamily: {
+        sans: ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        serif: ['"DM Serif Text"', 'serif']
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; color: #262116; margin: 0; background: #ffffff; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  input[type=radio] { accent-color: #dcb05e; }
+  input[type=checkbox] { accent-color: #dcb05e; }
+
+  /* Carousel */
+  .carousel-track { display: flex; transition: transform 0.4s ease; }
+
+  /* Mobile sidebar overlay */
+  .sidebar-overlay { display: none; }
+  @media (max-width: 767px) {
+    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 40; }
+    .sidebar-overlay.open { display: block; }
+    .mobile-sidebar { position: fixed; left: -100%; top: 0; bottom: 0; width: 300px; background: #fff; z-index: 50; overflow-y: auto; transition: left 0.3s; padding: 24px; }
+    .mobile-sidebar.open { left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== 1. AD BANNER ==================== -->
+<div class="w-full h-[90px] bg-wb-100 flex items-center justify-center border-b border-wb-300">
+  <span class="text-wb-400 text-sm font-semibold tracking-widest">AD</span>
+</div>
+
+<!-- ==================== 2. NEWSPAPER HEADER ==================== -->
+<header class="w-full bg-white border-b border-wb-200">
+  <div class="max-w-[1440px] mx-auto flex items-center justify-between px-4 md:px-8 lg:px-16 py-4">
+    <!-- Logo -->
+    <a href="#" class="shrink-0">
+      <img src="https://cst.brightspotcdn.com/a7/da/9a739da544a698cdb98e1b1c5f27/ctimes-logo.svg" alt="Chicago Sun-Times" class="h-[13px] w-auto">
+    </a>
+    <!-- Search -->
+    <div class="hidden sm:flex items-center flex-1 max-w-[420px] mx-6">
+      <div class="relative w-full">
+        <input type="text" placeholder="Find a loved one..." class="w-full pl-4 pr-10 py-2 border border-wb-500 rounded-full text-base bg-wb-50 placeholder:text-wb-600 focus:outline-none focus:border-navy-500">
+        <i class="ph ph-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-wb-600 text-xl"></i>
+      </div>
+    </div>
+    <!-- Actions -->
+    <div class="flex items-center gap-4">
+      <button class="flex items-center gap-1 text-wb-900 text-sm font-semibold px-1 py-2">
+        <i class="ph ph-user-circle text-2xl"></i>
+        <span class="hidden sm:inline">Sign In</span>
+      </button>
+      <button class="text-wb-900 px-1 py-2" onclick="document.getElementById('mobileMenu').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('open');">
+        <i class="ph ph-list text-2xl"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== 3. TIME-SENSITIVE MESSAGING ==================== -->
+<div class="w-full bg-white border-b border-wb-300">
+  <div class="max-w-[1440px] mx-auto flex items-center justify-center gap-3 px-4 py-4 text-sm">
+    <span class="font-semibold text-wb-900">Breaking News: Flood in Texas kills 120</span>
+    <a href="#" class="flex items-center gap-1 text-navy-500 font-semibold hover:underline">
+      Visit our Memorial <i class="ph ph-arrow-right text-base"></i>
+    </a>
+  </div>
+</div>
+
+<!-- ==================== 4. HERO HEADER ==================== -->
+<section class="w-full bg-white relative overflow-hidden">
+  <!-- Subtle gradient overlay -->
+  <div class="absolute inset-0 opacity-[0.08]" style="background: radial-gradient(ellipse 80% 60% at 50% 20%, #b4b4b4, transparent);"></div>
+  <div class="relative max-w-[1440px] mx-auto px-4 md:px-8 lg:px-16 pt-6 pb-8">
+    <!-- Breadcrumb + Actions row -->
+    <div class="flex items-center justify-between mb-6">
+      <nav class="flex items-center gap-2.5 text-sm">
+        <i class="ph ph-arrow-left text-navy-500"></i>
+        <a href="#" class="text-navy-500 hover:underline">Home</a>
+        <i class="ph ph-caret-right text-wb-400 text-xs"></i>
+        <a href="#" class="text-navy-500 hover:underline">Illinois</a>
+        <i class="ph ph-caret-right text-wb-400 text-xs"></i>
+        <span class="text-wb-700">Chicago Sun-Times</span>
+      </nav>
+      <div class="hidden sm:flex items-center gap-2">
+        <button class="flex items-center gap-2 px-5 py-2.5 border border-wb-300 rounded-full bg-white text-sm font-semibold text-wb-900 hover:bg-wb-50">
+          <i class="ph ph-bookmark-simple text-lg"></i> Follow
+        </button>
+        <button class="flex items-center gap-2 px-5 py-2.5 border border-wb-300 rounded-full bg-white text-sm font-semibold text-wb-900 hover:bg-wb-50">
+          <i class="ph ph-share-fat text-lg"></i> Share
+        </button>
+      </div>
+    </div>
+    <!-- Title -->
+    <div class="flex flex-col items-center gap-4 max-w-[800px] mx-auto text-center">
+      <h1 class="font-serif text-3xl md:text-5xl text-wb-900 leading-[1.2]">Chicago Sun-Times Obituaries</h1>
+      <a href="#" class="inline-flex items-center gap-2 bg-black text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-wb-800">
+        <i class="ph ph-pen-nib text-lg"></i> Submit an Obituary
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 5. DISCOVER TODAY ==================== -->
+<section class="w-full bg-white border-t border-wb-200">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-8 py-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Featured Obituaries -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-serif text-2xl text-wb-900 italic">Today's Featured Obituaries</h2>
+          <div class="flex gap-2">
+            <button onclick="scrollCarousel(-1)" class="w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center hover:bg-wb-50"><i class="ph ph-caret-left text-wb-600"></i></button>
+            <button onclick="scrollCarousel(1)" class="w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center hover:bg-wb-50"><i class="ph ph-caret-right text-wb-600"></i></button>
+          </div>
+        </div>
+        <!-- Tabs -->
+        <div class="flex gap-2 mb-5">
+          <button class="px-4 py-2 rounded-full text-sm font-semibold bg-black text-white">Featured</button>
+          <button class="px-4 py-2 rounded-full text-sm font-semibold border border-wb-300 text-wb-900 hover:bg-wb-50">Local Spotlight</button>
+          <button class="px-4 py-2 rounded-full text-sm font-semibold border border-wb-300 text-wb-900 hover:bg-wb-50">In Memoriam</button>
+        </div>
+        <!-- Carousel -->
+        <div class="overflow-hidden" id="featuredCarouselWrap">
+          <div class="carousel-track gap-4" id="featuredCarousel">
+            <!-- Card 1 -->
+            <div class="min-w-[230px] max-w-[230px] rounded-xl overflow-hidden border border-wb-200 bg-white cursor-pointer hover:shadow-md transition-shadow flex-shrink-0">
+              <div class="h-[200px] bg-navy-300 overflow-hidden"><img src="https://picsum.photos/seed/obit1/300/300" alt="" class="w-full h-full object-cover"></div>
+              <div class="p-4 text-center">
+                <p class="font-semibold text-wb-900">Danny Seagren</p>
+                <p class="text-gold-700 text-sm">1948–2025</p>
+                <p class="text-wb-600 text-xs mt-1">Accomplished nature photographer and conservationist.</p>
+              </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="min-w-[230px] max-w-[230px] rounded-xl overflow-hidden border border-wb-200 bg-white cursor-pointer hover:shadow-md transition-shadow flex-shrink-0">
+              <div class="h-[200px] bg-gold-100 overflow-hidden"><img src="https://picsum.photos/seed/obit2/300/300" alt="" class="w-full h-full object-cover"></div>
+              <div class="p-4 text-center">
+                <p class="font-semibold text-wb-900">Eleanor Vance</p>
+                <p class="text-gold-700 text-sm">1972–2025</p>
+                <p class="text-wb-600 text-xs mt-1">Award-winning mystery novelist.</p>
+              </div>
+            </div>
+            <!-- Card 3 -->
+            <div class="min-w-[230px] max-w-[230px] rounded-xl overflow-hidden border border-wb-200 bg-white cursor-pointer hover:shadow-md transition-shadow flex-shrink-0">
+              <div class="h-[200px] bg-seaFoam-400 overflow-hidden"><img src="https://picsum.photos/seed/obit3/300/300" alt="" class="w-full h-full object-cover"></div>
+              <div class="p-4 text-center">
+                <p class="font-semibold text-wb-900">Dr. Steven Hayes</p>
+                <p class="text-gold-700 text-sm">1933–2025</p>
+                <p class="text-wb-600 text-xs mt-1">Pioneering astrophysicist and educator.</p>
+              </div>
+            </div>
+            <!-- Card 4 -->
+            <div class="min-w-[230px] max-w-[230px] rounded-xl overflow-hidden border border-wb-200 bg-white cursor-pointer hover:shadow-md transition-shadow flex-shrink-0">
+              <div class="h-[200px] bg-navy-200 overflow-hidden"><img src="https://picsum.photos/seed/obit4/300/300" alt="" class="w-full h-full object-cover"></div>
+              <div class="p-4 text-center">
+                <p class="font-semibold text-wb-900">Ralph Thomas</p>
+                <p class="text-gold-700 text-sm">1975–2025</p>
+                <p class="text-wb-600 text-xs mt-1">A man loved by his community and all those who got to know him.</p>
+              </div>
+            </div>
+            <!-- Card 5 -->
+            <div class="min-w-[230px] max-w-[230px] rounded-xl overflow-hidden border border-wb-200 bg-white cursor-pointer hover:shadow-md transition-shadow flex-shrink-0">
+              <div class="h-[200px] bg-gold-200 overflow-hidden"><img src="https://picsum.photos/seed/obit5/300/300" alt="" class="w-full h-full object-cover"></div>
+              <div class="p-4 text-center">
+                <p class="font-semibold text-wb-900">Margaret Liu</p>
+                <p class="text-gold-700 text-sm">1940–2025</p>
+                <p class="text-wb-600 text-xs mt-1">Beloved teacher and community organizer.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Featured Groups -->
+      <div class="w-full lg:w-[300px] flex-shrink-0">
+        <h2 class="font-serif text-2xl text-wb-900 italic mb-5">Featured Groups</h2>
+        <div class="flex flex-col">
+          <!-- Group 1 -->
+          <a href="http://localhost:5179/?state=IL&partner=cst" class="flex items-start justify-between py-3 border-b border-wb-200 hover:bg-gold-50 transition-colors rounded-lg px-1 -mx-1">
+            <div>
+              <span class="inline-block px-2 py-0.5 rounded-full bg-gold-100 text-gold-900 text-[11px] font-bold mb-1">New</span>
+              <p class="font-semibold text-navy-500">9/11 Memorial</p>
+              <p class="text-wb-500 text-sm">United States</p>
+            </div>
+            <span class="text-wb-900 mt-1"><i class="ph-fill ph-bookmark-simple text-xl"></i></span>
+          </a>
+          <!-- Group 2 -->
+          <div class="flex items-start justify-between py-3 border-b border-wb-200">
+            <div>
+              <span class="inline-block px-2 py-0.5 rounded-full bg-gold-100 text-gold-900 text-[11px] font-bold mb-1">Featured Charity</span>
+              <p class="font-semibold text-navy-500">Heart Disease Awareness</p>
+              <p class="text-wb-500 text-sm">United States</p>
+            </div>
+            <button class="text-wb-400 mt-1"><i class="ph ph-bookmark-simple text-xl"></i></button>
+          </div>
+          <!-- Group 3 -->
+          <div class="flex items-start justify-between py-3 border-b border-wb-200">
+            <div>
+              <p class="font-semibold text-navy-500">Northwestern University</p>
+              <p class="text-wb-500 text-sm">Chicago, IL</p>
+            </div>
+            <button class="text-wb-400 mt-1"><i class="ph ph-bookmark-simple text-xl"></i></button>
+          </div>
+          <!-- Group 4 -->
+          <div class="flex items-start justify-between py-3 border-b border-wb-200">
+            <div>
+              <p class="font-semibold text-navy-500">Astoria High School</p>
+              <p class="text-wb-500 text-sm">Astoria, IL</p>
+            </div>
+            <button class="text-wb-400 mt-1"><i class="ph ph-bookmark-simple text-xl"></i></button>
+          </div>
+          <a href="#" class="text-navy-500 text-sm font-semibold mt-4 text-center hover:underline">View All Groups</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 6. MAIN CONTENT ==================== -->
+<section class="w-full bg-white">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-8 py-8">
+    <!-- Section Title -->
+    <h2 class="font-serif text-2xl md:text-3xl text-wb-900 mb-6">View All Obituaries</h2>
+
+    <!-- Mobile filter button -->
+    <button class="md:hidden flex items-center gap-2 mb-4 px-4 py-2 border border-wb-300 rounded-lg bg-white text-sm font-semibold" onclick="document.getElementById('mobileMenu').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('open');">
+      <i class="ph ph-funnel text-lg"></i> Filters
+    </button>
+
+    <div class="flex gap-6 items-start">
+
+      <!-- ===== LEFT SIDEBAR ===== -->
+      <div class="sidebar-overlay" id="sidebarOverlay" onclick="this.classList.remove('open'); document.getElementById('mobileMenu').classList.remove('open');"></div>
+      <aside class="hidden md:block w-[280px] flex-shrink-0 sticky top-4 self-start mobile-sidebar" id="mobileMenu">
+        <!-- Close button (mobile only) -->
+        <button class="md:hidden mb-4 text-wb-600" onclick="document.getElementById('mobileMenu').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('open');">
+          <i class="ph ph-x text-2xl"></i>
+        </button>
+
+        <h3 class="font-serif text-xl text-wb-900 mb-5">Filter By</h3>
+
+        <!-- Keyword Search -->
+        <div class="mb-5">
+          <p class="font-semibold text-base text-wb-900 mb-2">Search in Your Results</p>
+          <textarea class="w-full h-[100px] p-3 border border-wb-400 rounded-lg bg-wb-50 text-sm placeholder:text-wb-500 focus:outline-none focus:border-navy-500 resize-none" placeholder="Type a name or keyword to refine your search results ...&#10;(eg; &quot;funeral home&quot; Location .01)"></textarea>
+        </div>
+
+        <div class="border-b border-wb-300 mb-5"></div>
+
+        <!-- Filter: Location -->
+        <div class="bg-white rounded-xl overflow-hidden mb-4 border border-wb-200">
+          <button class="w-full flex items-center justify-between px-3 py-2 text-base font-semibold text-wb-900" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('ph-caret-up'); this.querySelector('i').classList.toggle('ph-caret-down');">
+            Location <i class="ph ph-caret-up text-wb-600"></i>
+          </button>
+          <div class="px-3 pb-3 flex flex-col gap-2">
+            <select class="w-full px-4 py-3 border border-wb-400 rounded-lg bg-wb-50 text-sm text-wb-900 focus:outline-none focus:border-navy-500">
+              <option>All Countries</option><option>United States</option><option>Canada</option>
+            </select>
+            <select class="w-full px-4 py-3 border border-wb-300 rounded-lg bg-wb-50 text-sm text-wb-400 focus:outline-none focus:border-navy-500">
+              <option>State or Province</option>
+            </select>
+            <select class="w-full px-4 py-3 border border-wb-300 rounded-lg bg-wb-50 text-sm text-wb-400 focus:outline-none focus:border-navy-500">
+              <option>City</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Filter: Publish Date -->
+        <div class="bg-white rounded-xl overflow-hidden mb-4 border border-wb-200">
+          <button class="w-full flex items-center justify-between px-3 py-2 text-base font-semibold text-wb-900" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('ph-caret-up'); this.querySelector('i').classList.toggle('ph-caret-down');">
+            Publish Date <i class="ph ph-caret-up text-wb-600"></i>
+          </button>
+          <div class="px-3 pb-3 flex flex-col">
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="date" checked class="w-[18px] h-[18px]"> All Time</label>
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="date" class="w-[18px] h-[18px]"> Today</label>
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="date" class="w-[18px] h-[18px]"> Last Month</label>
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="date" class="w-[18px] h-[18px]"> Last Year</label>
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="date" class="w-[18px] h-[18px]"> Custom Range</label>
+          </div>
+        </div>
+
+        <!-- Filter: Result Type -->
+        <div class="bg-white rounded-xl overflow-hidden mb-4 border border-wb-200">
+          <button class="w-full flex items-center justify-between px-3 py-2 text-base font-semibold text-wb-900" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('ph-caret-up'); this.querySelector('i').classList.toggle('ph-caret-down');">
+            Result Type <i class="ph ph-caret-up text-wb-600"></i>
+          </button>
+          <div class="px-3 pb-3 flex flex-col">
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="type" checked class="w-[18px] h-[18px]"> All Results</label>
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="type" class="w-[18px] h-[18px]"> Obituaries</label>
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="type" class="w-[18px] h-[18px]"> Memoriams</label>
+          </div>
+        </div>
+
+        <!-- Filter: Age Range -->
+        <div class="bg-white rounded-xl overflow-hidden mb-4 border border-wb-200">
+          <button class="w-full flex items-center justify-between px-3 py-2 text-base font-semibold text-wb-900" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('ph-caret-up'); this.querySelector('i').classList.toggle('ph-caret-down');">
+            Age Range <i class="ph ph-caret-up text-wb-600"></i>
+          </button>
+          <div class="px-3 pb-3 flex flex-col">
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="age" checked class="w-[18px] h-[18px]"> All ages</label>
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="age" class="w-[18px] h-[18px]"> 50-60 years old</label>
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="age" class="w-[18px] h-[18px]"> 71-80 years old</label>
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="age" class="w-[18px] h-[18px]"> 81-90 years old</label>
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="age" class="w-[18px] h-[18px]"> Above 90 years old</label>
+          </div>
+        </div>
+
+        <!-- Filter: Schools -->
+        <div class="bg-white rounded-xl overflow-hidden mb-4 border border-wb-200">
+          <button class="w-full flex items-center justify-between px-3 py-2 text-base font-semibold text-wb-900" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('ph-caret-up'); this.querySelector('i').classList.toggle('ph-caret-down');">
+            Schools <i class="ph ph-caret-up text-wb-600"></i>
+          </button>
+          <div class="px-3 pb-3">
+            <div class="relative mb-3">
+              <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-wb-400"></i>
+              <input type="text" placeholder="Search for a High School or College" class="w-full pl-9 pr-3 py-3 border border-wb-400 rounded-lg bg-wb-50 text-sm placeholder:text-wb-500 focus:outline-none focus:border-navy-500">
+            </div>
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="school" checked class="w-[18px] h-[18px]"> All Schools</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> School .01</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> School .02</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> School .03</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> School .04</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> School .05</label>
+            <a href="#" class="text-navy-500 text-sm underline px-3 py-2 inline-block">View more</a>
+          </div>
+        </div>
+
+        <!-- Filter: Newspapers -->
+        <div class="bg-white rounded-xl overflow-hidden mb-4 border border-wb-200">
+          <button class="w-full flex items-center justify-between px-3 py-2 text-base font-semibold text-wb-900" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('ph-caret-up'); this.querySelector('i').classList.toggle('ph-caret-down');">
+            Newspapers <i class="ph ph-caret-up text-wb-600"></i>
+          </button>
+          <div class="px-3 pb-3">
+            <div class="relative mb-3">
+              <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-wb-400"></i>
+              <input type="text" placeholder="Search for a Newspaper" class="w-full pl-9 pr-3 py-3 border border-wb-400 rounded-lg bg-wb-50 text-sm placeholder:text-wb-500 focus:outline-none focus:border-navy-500">
+            </div>
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="newspaper" checked class="w-[18px] h-[18px]"> All Newspapers</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> Newspapers .01</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> Newspapers .02</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> Newspapers .03</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> Newspapers .04</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> Newspapers .05</label>
+            <a href="#" class="text-navy-500 text-sm underline px-3 py-2 inline-block">View more</a>
+          </div>
+        </div>
+
+        <!-- Filter: Funeral Homes -->
+        <div class="bg-white rounded-xl overflow-hidden mb-4 border border-wb-200">
+          <button class="w-full flex items-center justify-between px-3 py-2 text-base font-semibold text-wb-900" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('ph-caret-up'); this.querySelector('i').classList.toggle('ph-caret-down');">
+            Funeral Homes <i class="ph ph-caret-up text-wb-600"></i>
+          </button>
+          <div class="px-3 pb-3">
+            <div class="relative mb-3">
+              <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-wb-400"></i>
+              <input type="text" placeholder="Search for a Funeral Home" class="w-full pl-9 pr-3 py-3 border border-wb-400 rounded-lg bg-wb-50 text-sm placeholder:text-wb-500 focus:outline-none focus:border-navy-500">
+            </div>
+            <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-wb-50"><input type="radio" name="funeralhome" checked class="w-[18px] h-[18px]"> All Funeral Homes</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> Funeral Homes .01</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> Funeral Homes .02</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> Funeral Homes .03</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> Funeral Homes .04</label>
+            <label class="flex items-center gap-2 px-3 py-2 rounded text-sm cursor-pointer hover:bg-wb-50"><input type="checkbox" class="w-[18px] h-[18px] rounded"> Funeral Homes .05</label>
+            <a href="#" class="text-navy-500 text-sm underline px-3 py-2 inline-block">View more</a>
+          </div>
+        </div>
+
+        <!-- Layout Toggle -->
+        <div class="border-b border-wb-300 pb-5 mb-4">
+          <p class="font-semibold text-base text-wb-900 mb-3">Layout</p>
+          <div class="flex rounded-md overflow-hidden border border-wb-400 w-fit">
+            <button class="w-[67px] py-2 flex items-center justify-center bg-black text-white"><i class="ph ph-list-bullets text-xl"></i></button>
+            <button class="w-[67px] py-2 flex items-center justify-center bg-white text-wb-600 border-l border-wb-400"><i class="ph ph-identification-card text-xl"></i></button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ===== CENTER STAGE ===== -->
+      <main class="flex-1 min-w-0">
+        <!-- Results header -->
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <p class="text-lg font-semibold text-wb-900">33,954 Results</p>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-wb-600">Sort By</span>
+            <select class="px-4 py-2 border border-wb-300 rounded-lg bg-white text-sm font-semibold text-wb-900 focus:outline-none focus:border-navy-500">
+              <option>Date Published</option><option>Relevance</option><option>Name A-Z</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Date section break -->
+        <div class="flex items-center justify-center gap-3 mb-6">
+          <div class="flex-1 h-px bg-wb-300"></div>
+          <span class="text-sm text-wb-500 whitespace-nowrap flex items-center gap-1.5"><i class="ph ph-calendar-blank"></i> Published today, March 19, 2025</span>
+          <div class="flex-1 h-px bg-wb-300"></div>
+        </div>
+
+        <!-- Result Card 1 -->
+        <article class="bg-white rounded-2xl border border-wb-200 overflow-hidden mb-4 flex flex-col sm:flex-row cursor-pointer hover:border-navy-600 transition-colors">
+          <div class="flex-1 p-5 sm:p-6">
+            <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-1">Harold Whitacker</h3>
+            <p class="text-gold-700 text-sm mb-3">April 27, 1932 – March 29, 2025</p>
+            <p class="text-wb-700 text-sm leading-relaxed mb-4">Harold Eugene Whitaker, 87, of Springfield, Illinois, passed away peacefully on April 27, 2025, surrounded by his loving family. Born on August 12, 1937, in Qui...</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
+            <img src="https://picsum.photos/seed/harold/400/400" alt="Harold Whitacker" class="w-full h-full object-cover">
+          </div>
+        </article>
+
+        <!-- Result Card 2 -->
+        <article class="bg-white rounded-2xl border border-wb-200 overflow-hidden mb-4 flex flex-col sm:flex-row cursor-pointer hover:border-navy-600 transition-colors">
+          <div class="flex-1 p-5 sm:p-6">
+            <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-1">Karen Elaine Stavros</h3>
+            <p class="text-gold-700 text-sm mb-3">January 5, 1943 – March 12, 2025</p>
+            <p class="text-wb-700 text-sm leading-relaxed mb-4">Karen Elaine Stavros, 82, of Chicago, Illinois, passed away on March 12, 2025. She was born to George and Helen Williams on January 5, 1943, in Evanst...</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
+            <img src="https://picsum.photos/seed/karen/400/400" alt="Karen Elaine Stavros" class="w-full h-full object-cover">
+          </div>
+        </article>
+
+        <!-- Result Card 3 (with Send Flowers badge) -->
+        <article class="bg-white rounded-2xl border border-wb-200 overflow-hidden mb-4 flex flex-col sm:flex-row cursor-pointer hover:border-navy-600 transition-colors">
+          <div class="flex-1 p-5 sm:p-6">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gold-100 text-gold-900 text-[11px] font-bold"><i class="ph ph-flower-tulip text-sm"></i> Send Flowers</span>
+            </div>
+            <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-1">Reynaldo "Nard" Meadows</h3>
+            <p class="text-gold-700 text-sm mb-3">December 10, 1960 – March 18, 2025</p>
+            <p class="text-wb-700 text-sm leading-relaxed mb-4">Reynaldo "Nard" Meadows, peace to you my brother. Reynaldo leaves behind his wife Patricia, three sons, and a legacy of community service that touched...</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
+            <img src="https://picsum.photos/seed/reynaldo/400/400" alt="Reynaldo Meadows" class="w-full h-full object-cover">
+          </div>
+        </article>
+
+        <!-- Marketing Banner -->
+        <div class="bg-white rounded-2xl border border-wb-200 p-6 mb-4 flex items-center justify-center h-[96px]">
+          <span class="text-wb-400 text-sm font-semibold tracking-widest">MARKETING BANNER</span>
+        </div>
+
+        <!-- Result Card 4 -->
+        <article class="bg-white rounded-2xl border border-wb-200 overflow-hidden mb-4 flex flex-col sm:flex-row cursor-pointer hover:border-navy-600 transition-colors">
+          <div class="flex-1 p-5 sm:p-6">
+            <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-1">Walter Eugene Simmons</h3>
+            <p class="text-gold-700 text-sm mb-3">February 14, 1945 – March 15, 2025</p>
+            <p class="text-wb-700 text-sm leading-relaxed mb-4">Walt Simmons served this community for over forty years as a dedicated public school teacher. His patience and kindness inspired generations of studen...</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
+            <img src="https://picsum.photos/seed/walter/400/400" alt="Walter Eugene Simmons" class="w-full h-full object-cover">
+          </div>
+        </article>
+
+        <!-- Result Card 5 -->
+        <article class="bg-white rounded-2xl border border-wb-200 overflow-hidden mb-4 flex flex-col sm:flex-row cursor-pointer hover:border-navy-600 transition-colors">
+          <div class="flex-1 p-5 sm:p-6">
+            <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-1">Harriet Lydia Bennett</h3>
+            <p class="text-gold-700 text-sm mb-3">June 21, 1938 – March 17, 2025</p>
+            <p class="text-wb-700 text-sm leading-relaxed mb-4">Harriet Lydia Bennett, 86, of Oak Park, Illinois, went home to be with the Lord on March 17, 2025. A vibrant woman of faith, Harriet served her chur...</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
+            <img src="https://picsum.photos/seed/harriet/400/400" alt="Harriet Lydia Bennett" class="w-full h-full object-cover">
+          </div>
+        </article>
+
+        <!-- Result Card 6 (with Send Flowers) -->
+        <article class="bg-white rounded-2xl border border-wb-200 overflow-hidden mb-4 flex flex-col sm:flex-row cursor-pointer hover:border-navy-600 transition-colors">
+          <div class="flex-1 p-5 sm:p-6">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gold-100 text-gold-900 text-[11px] font-bold"><i class="ph ph-flower-tulip text-sm"></i> Send Flowers</span>
+            </div>
+            <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-1">Major. Alice Lykes</h3>
+            <p class="text-gold-700 text-sm mb-3">March 3, 1950 – March 16, 2025</p>
+            <p class="text-wb-700 text-sm leading-relaxed mb-4">Major Alice Lykes (Ret.) served her country with distinction for 28 years in the United States Army. After retiring, she devoted herself to veteran ou...</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
+            <img src="https://picsum.photos/seed/alice/400/400" alt="Major Alice Lykes" class="w-full h-full object-cover">
+          </div>
+        </article>
+
+        <!-- Result Card 7 -->
+        <article class="bg-white rounded-2xl border border-wb-200 overflow-hidden mb-4 flex flex-col sm:flex-row cursor-pointer hover:border-navy-600 transition-colors">
+          <div class="flex-1 p-5 sm:p-6">
+            <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-1">John Marcus Bryant</h3>
+            <p class="text-gold-700 text-sm mb-3">October 18, 1955 – March 14, 2025</p>
+            <p class="text-wb-700 text-sm leading-relaxed mb-4">John Marcus Bryant, beloved father, grandfather, and retired firefighter, passed away March 14, 2025. John served the Chicago Fire Department for 32...</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
+            <img src="https://picsum.photos/seed/john/400/400" alt="John Marcus Bryant" class="w-full h-full object-cover">
+          </div>
+        </article>
+
+        <!-- Result Card 8 -->
+        <article class="bg-white rounded-2xl border border-wb-200 overflow-hidden mb-4 flex flex-col sm:flex-row cursor-pointer hover:border-navy-600 transition-colors">
+          <div class="flex-1 p-5 sm:p-6">
+            <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-1">Ellen "Nana" McIntosh</h3>
+            <p class="text-gold-700 text-sm mb-3">July 9, 1929 – March 13, 2025</p>
+            <p class="text-wb-700 text-sm leading-relaxed mb-4">Ellen Ruth McIntosh, affectionately known as "Nana," passed away at 95 years old. She was the heart of her family and known for her legendary cooking...</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
+            <img src="https://picsum.photos/seed/ellen/400/400" alt="Ellen McIntosh" class="w-full h-full object-cover">
+          </div>
+        </article>
+
+        <!-- AD -->
+        <div class="bg-wb-100 rounded-xl flex items-center justify-center h-[90px] mb-4">
+          <span class="text-wb-400 text-sm font-semibold tracking-widest">AD</span>
+        </div>
+
+        <!-- ===== FUNERAL HOME FINDER ===== -->
+        <div class="bg-white rounded-2xl border border-wb-200 p-6 md:p-8 mb-4 text-center">
+          <p class="text-gold-700 text-sm font-bold tracking-widest uppercase mb-2">Funeral Homes</p>
+          <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-2">Find a funeral home to help you today</h3>
+          <p class="text-wb-600 text-sm mb-5">Find compassionate support for your end-of-life planning needs.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+            <div class="border border-gold-400 rounded-xl p-4 text-left flex items-start justify-between hover:bg-gold-50 cursor-pointer">
+              <div>
+                <p class="font-semibold text-wb-900 text-sm">Eternal Springs Funeral Home</p>
+                <p class="text-wb-500 text-xs">Chicago, IL</p>
+              </div>
+              <i class="ph ph-arrow-square-out text-wb-500 text-lg flex-shrink-0 ml-2"></i>
+            </div>
+            <div class="border border-gold-400 rounded-xl p-4 text-left flex items-start justify-between hover:bg-gold-50 cursor-pointer">
+              <div>
+                <p class="font-semibold text-wb-900 text-sm">Eaton Funeral Homes</p>
+                <p class="text-wb-500 text-xs">Naperville, IL</p>
+              </div>
+              <i class="ph ph-arrow-square-out text-wb-500 text-lg flex-shrink-0 ml-2"></i>
+            </div>
+            <div class="border border-gold-400 rounded-xl p-4 text-left flex items-start justify-between hover:bg-gold-50 cursor-pointer">
+              <div>
+                <p class="font-semibold text-wb-900 text-sm">Dignity Memorial</p>
+                <p class="text-wb-500 text-xs">Evanston, IL</p>
+              </div>
+              <i class="ph ph-arrow-square-out text-wb-500 text-lg flex-shrink-0 ml-2"></i>
+            </div>
+          </div>
+          <a href="#" class="text-navy-500 text-sm font-semibold underline">View All Local Funeral Homes</a>
+        </div>
+
+        <!-- More result cards -->
+        <article class="bg-white rounded-2xl border border-wb-200 overflow-hidden mb-4 flex flex-col sm:flex-row cursor-pointer hover:border-navy-600 transition-colors">
+          <div class="flex-1 p-5 sm:p-6">
+            <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-1">Thomas "Tommy" Grijalva</h3>
+            <p class="text-gold-700 text-sm mb-3">September 1, 1968 – March 10, 2025</p>
+            <p class="text-wb-700 text-sm leading-relaxed mb-4">Thomas, or "Tommy" as his friends called him, was the kind of person who lit up every room. A devoted father and passionate Little League coach, he sp...</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
+            <img src="https://picsum.photos/seed/tommy/400/400" alt="Thomas Grijalva" class="w-full h-full object-cover">
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl border border-wb-200 overflow-hidden mb-4 flex flex-col sm:flex-row cursor-pointer hover:border-navy-600 transition-colors">
+          <div class="flex-1 p-5 sm:p-6">
+            <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-1">Judith Mae Bellmann</h3>
+            <p class="text-gold-700 text-sm mb-3">May 12, 1941 – March 8, 2025</p>
+            <p class="text-wb-700 text-sm leading-relaxed mb-4">Judith Mae Bellmann, 83, of Naperville, Illinois, passed away peacefully at home. A devoted wife of 58 years, she is survived by her husband Richard,...</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
+            <img src="https://picsum.photos/seed/judith/400/400" alt="Judith Mae Bellmann" class="w-full h-full object-cover">
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl border border-wb-200 overflow-hidden mb-4 flex flex-col sm:flex-row cursor-pointer hover:border-navy-600 transition-colors">
+          <div class="flex-1 p-5 sm:p-6">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gold-100 text-gold-900 text-[11px] font-bold"><i class="ph ph-flower-tulip text-sm"></i> Send Flowers</span>
+            </div>
+            <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-1">John Monroe</h3>
+            <p class="text-gold-700 text-sm mb-3">November 22, 1952 – March 6, 2025</p>
+            <p class="text-wb-700 text-sm leading-relaxed mb-4">John Monroe, 72, beloved husband and father, passed away March 6, 2025. Known for his warm smile and generous spirit, John touched the lives of all w...</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
+            <img src="https://picsum.photos/seed/monroe/400/400" alt="John Monroe" class="w-full h-full object-cover">
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl border border-wb-200 overflow-hidden mb-4 flex flex-col sm:flex-row cursor-pointer hover:border-navy-600 transition-colors">
+          <div class="flex-1 p-5 sm:p-6">
+            <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-1">Beatrice "Bea" Ackerman</h3>
+            <p class="text-gold-700 text-sm mb-3">August 30, 1935 – March 5, 2025</p>
+            <p class="text-wb-700 text-sm leading-relaxed mb-4">Bea Ackerman, 89, was a pillar of her community, a dedicated volunteer, and a loving grandmother of 12. She will be dearly missed by all who knew her...</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
+            <img src="https://picsum.photos/seed/bea/400/400" alt="Beatrice Ackerman" class="w-full h-full object-cover">
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl border border-wb-200 overflow-hidden mb-4 flex flex-col sm:flex-row cursor-pointer hover:border-navy-600 transition-colors">
+          <div class="flex-1 p-5 sm:p-6">
+            <h3 class="font-serif text-xl md:text-2xl text-wb-900 mb-1">Dennis Woodrow Vance</h3>
+            <p class="text-gold-700 text-sm mb-3">April 4, 1947 – March 3, 2025</p>
+            <p class="text-wb-700 text-sm leading-relaxed mb-4">Dennis Woodrow Vance, 77, of Joliet, Illinois, passed away on March 3, 2025. A proud Korean War veteran and lifelong Cubs fan, Dennis was known for h...</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
+            <img src="https://picsum.photos/seed/dennis/400/400" alt="Dennis Woodrow Vance" class="w-full h-full object-cover">
+          </div>
+        </article>
+
+        <!-- ===== GRIEF SUPPORT ===== -->
+        <div class="mb-6 mt-2">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-serif text-xl text-wb-900 italic">Grief Support</h3>
+            <div class="flex gap-2">
+              <button class="w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center hover:bg-wb-50"><i class="ph ph-caret-left text-wb-600"></i></button>
+              <button class="w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center hover:bg-wb-50"><i class="ph ph-caret-right text-wb-600"></i></button>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white rounded-xl border border-wb-200 overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
+              <div class="h-[180px] overflow-hidden"><img src="https://picsum.photos/seed/grief1/400/300" alt="" class="w-full h-full object-cover"></div>
+              <div class="p-4">
+                <p class="text-xs text-wb-500 mb-1">Legacy Staff</p>
+                <p class="font-semibold text-wb-900 text-sm leading-snug mb-2">Coping with Grief During the Holidays</p>
+                <p class="text-wb-600 text-xs leading-relaxed">The holidays can amplify feelings of loss. Here are practical strategies for navigating this difficult time...</p>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl border border-wb-200 overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
+              <div class="h-[180px] overflow-hidden"><img src="https://picsum.photos/seed/grief2/400/300" alt="" class="w-full h-full object-cover"></div>
+              <div class="p-4">
+                <p class="text-xs text-wb-500 mb-1">Dr. Maria Chen</p>
+                <p class="font-semibold text-wb-900 text-sm leading-snug mb-2">What to Write in a Sympathy Card</p>
+                <p class="text-wb-600 text-xs leading-relaxed">Finding the right words to express condolences can be challenging. A grief counselor shares tips for meaningful messages...</p>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl border border-wb-200 overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
+              <div class="h-[180px] overflow-hidden"><img src="https://picsum.photos/seed/grief3/400/300" alt="" class="w-full h-full object-cover"></div>
+              <div class="p-4">
+                <p class="text-xs text-wb-500 mb-1">Legacy Staff</p>
+                <p class="font-semibold text-wb-900 text-sm leading-snug mb-2">How to Plan a Celebration of Life</p>
+                <p class="text-wb-600 text-xs leading-relaxed">More families are choosing celebrations of life over traditional funerals. Learn how to plan a meaningful event...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PAGINATION ===== -->
+        <nav class="flex items-center justify-center gap-1 mt-8">
+          <button class="w-10 h-10 rounded-lg border border-wb-300 flex items-center justify-center text-wb-400"><i class="ph ph-caret-left"></i></button>
+          <button class="w-10 h-10 rounded-lg bg-navy-700 text-white font-semibold text-sm">1</button>
+          <button class="w-10 h-10 rounded-lg border border-wb-300 text-wb-700 font-semibold text-sm hover:bg-wb-50">2</button>
+          <button class="w-10 h-10 rounded-lg border border-wb-300 text-wb-700 font-semibold text-sm hover:bg-wb-50">3</button>
+          <button class="w-10 h-10 rounded-lg border border-wb-300 text-wb-700 font-semibold text-sm hover:bg-wb-50">4</button>
+          <button class="w-10 h-10 rounded-lg border border-wb-300 text-wb-700 font-semibold text-sm hover:bg-wb-50">5</button>
+          <span class="text-wb-400 px-1">...</span>
+          <button class="w-10 h-10 rounded-lg border border-wb-300 text-wb-700 font-semibold text-sm hover:bg-wb-50">42</button>
+          <button class="w-10 h-10 rounded-lg border border-wb-300 flex items-center justify-center text-wb-700 hover:bg-wb-50"><i class="ph ph-caret-right"></i></button>
+        </nav>
+      </main>
+
+      <!-- ===== RIGHT SIDEBAR ===== -->
+      <aside class="hidden lg:block w-[300px] flex-shrink-0">
+        <!-- Featured card -->
+        <div class="bg-white rounded-xl border border-wb-200 overflow-hidden mb-6 cursor-pointer hover:shadow-md transition-shadow">
+          <div class="h-[160px] overflow-hidden"><img src="https://picsum.photos/seed/featured1/400/300" alt="" class="w-full h-full object-cover"></div>
+          <div class="p-4">
+            <span class="inline-block px-2 py-0.5 rounded-full bg-gold-100 text-gold-900 text-[11px] font-bold mb-2">Sponsored</span>
+            <h4 class="font-serif text-lg text-wb-900 mb-1">Remember Your Loved Ones</h4>
+            <p class="text-wb-600 text-sm">Create a lasting tribute with Legacy.com's memorial pages.</p>
+          </div>
+        </div>
+
+        <!-- AD 300x600 -->
+        <div class="bg-wb-100 rounded-xl flex items-center justify-center h-[600px] mb-6">
+          <span class="text-wb-400 text-sm font-semibold tracking-widest">AD</span>
+        </div>
+
+        <!-- AD 300x250 -->
+        <div class="bg-wb-100 rounded-xl flex items-center justify-center h-[250px] mb-6">
+          <span class="text-wb-400 text-sm font-semibold tracking-widest">AD</span>
+        </div>
+
+        <!-- Latest News -->
+        <div class="bg-white rounded-xl border border-wb-200 p-4">
+          <h4 class="font-serif text-lg text-wb-900 mb-4">Latest News</h4>
+          <div class="flex flex-col gap-3">
+            <a href="#" class="group">
+              <p class="text-sm font-semibold text-wb-900 group-hover:text-navy-500 leading-snug mb-0.5">Understanding Funeral Costs in 2025</p>
+              <p class="text-xs text-wb-500">March 18, 2025</p>
+            </a>
+            <div class="border-b border-wb-200"></div>
+            <a href="#" class="group">
+              <p class="text-sm font-semibold text-wb-900 group-hover:text-navy-500 leading-snug mb-0.5">New Illinois Law Expands Bereavement Leave</p>
+              <p class="text-xs text-wb-500">March 16, 2025</p>
+            </a>
+            <div class="border-b border-wb-200"></div>
+            <a href="#" class="group">
+              <p class="text-sm font-semibold text-wb-900 group-hover:text-navy-500 leading-snug mb-0.5">How Digital Memorials Are Changing Remembrance</p>
+              <p class="text-xs text-wb-500">March 14, 2025</p>
+            </a>
+            <div class="border-b border-wb-200"></div>
+            <a href="#" class="group">
+              <p class="text-sm font-semibold text-wb-900 group-hover:text-navy-500 leading-snug mb-0.5">Supporting Children Through Grief: A Guide</p>
+              <p class="text-xs text-wb-500">March 12, 2025</p>
+            </a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 7. FOOTER ==================== -->
+<footer class="w-full bg-navy-700">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-16 py-12">
+    <div class="flex flex-col lg:flex-row gap-10 lg:gap-16">
+      <!-- Logo + Social -->
+      <div class="flex flex-col gap-4">
+        <img src="https://www.legacy.com/media/legacy-icon-white-stacked.svg" alt="Legacy.com" class="w-[120px]">
+        <div class="flex gap-3 mt-2">
+          <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20"><i class="ph ph-facebook-logo text-lg"></i></a>
+          <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20"><i class="ph ph-twitter-logo text-lg"></i></a>
+          <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20"><i class="ph ph-instagram-logo text-lg"></i></a>
+        </div>
+      </div>
+      <!-- Link Columns -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 flex-1">
+        <div>
+          <h5 class="text-white font-semibold text-sm mb-3">Resources</h5>
+          <ul class="flex flex-col gap-2">
+            <li><a href="#" class="text-white/70 text-sm hover:text-white">Browse Obituaries</a></li>
+            <li><a href="#" class="text-white/70 text-sm hover:text-white">Grief Resources</a></li>
+            <li><a href="#" class="text-white/70 text-sm hover:text-white">Funeral Homes</a></li>
+            <li><a href="#" class="text-white/70 text-sm hover:text-white">Send Flowers</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold text-sm mb-3">For Partners</h5>
+          <ul class="flex flex-col gap-2">
+            <li><a href="#" class="text-white/70 text-sm hover:text-white">Funeral Home Partners</a></li>
+            <li><a href="#" class="text-white/70 text-sm hover:text-white">Newspaper Partners</a></li>
+            <li><a href="#" class="text-white/70 text-sm hover:text-white">Advertise with Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold text-sm mb-3">Company</h5>
+          <ul class="flex flex-col gap-2">
+            <li><a href="#" class="text-white/70 text-sm hover:text-white">About Legacy</a></li>
+            <li><a href="#" class="text-white/70 text-sm hover:text-white">Careers</a></li>
+            <li><a href="#" class="text-white/70 text-sm hover:text-white">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold text-sm mb-3">Support</h5>
+          <ul class="flex flex-col gap-2">
+            <li><a href="#" class="text-white/70 text-sm hover:text-white">FAQ / Help</a></li>
+            <li><a href="#" class="text-white/70 text-sm hover:text-white">Create an Obituary</a></li>
+            <li><a href="#" class="text-white/70 text-sm hover:text-white">Your Newspaper</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Copyright Bar -->
+  <div class="border-t border-white/10">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-16 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p class="text-white/50 text-xs">2025 Legacy.com. All rights reserved.</p>
+      <div class="flex gap-4">
+        <a href="#" class="text-white/50 text-xs hover:text-white/70">Privacy Policy</a>
+        <a href="#" class="text-white/50 text-xs hover:text-white/70">Terms of Use</a>
+        <a href="#" class="text-white/50 text-xs hover:text-white/70">Cookie Policy</a>
+        <a href="#" class="text-white/50 text-xs hover:text-white/70">Do Not Sell</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Sticky bottom ad -->
+<div class="fixed bottom-0 left-0 right-0 bg-wb-100 border-t border-wb-300 h-[90px] flex items-center justify-center z-30" id="stickyAd">
+  <span class="text-wb-400 text-sm font-semibold tracking-widest">STICKY BOTTOM AD</span>
+  <button class="absolute right-4 top-2 text-wb-500 hover:text-wb-700" onclick="document.getElementById('stickyAd').style.display='none'"><i class="ph ph-x text-xl"></i></button>
+</div>
+
+<script>
+// Featured obituaries carousel
+function scrollCarousel(dir) {
+  const track = document.getElementById('featuredCarousel');
+  const cardWidth = 246; // 230 + 16 gap
+  track.scrollLeft += dir * cardWidth;
+}
+// Make carousel scrollable
+document.addEventListener('DOMContentLoaded', () => {
+  const track = document.getElementById('featuredCarousel');
+  track.style.overflowX = 'auto';
+  track.classList.add('scrollbar-hide');
+  track.style.scrollBehavior = 'smooth';
+});
+</script>
+</body>
+</html>

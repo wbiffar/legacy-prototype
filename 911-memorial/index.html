@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lives of 9/11 — 25th Anniversary Memorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=DM+Serif+Text&family=PT+Serif&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        navy: { 600:'#3c4d69', 700:'#293548', 800:'#212a3a' },
+        gold: { 100:'#f6e5b8', 400:'#e2ba60', 500:'#dcb05e', 600:'#c49e54', 900:'#655b34' },
+        wb: { 50:'#fbfbfb', 200:'#ebe9e9', 300:'#dbdad7', 400:'#afadaa', 500:'#807e7a', 600:'#63605b', 700:'#514d45', 800:'#373329', 900:'#262116' }
+      },
+      fontFamily: {
+        sans: ['"DM Sans"', 'sans-serif'],
+        serif: ['"DM Serif Text"', 'serif'],
+        ptserif: ['"PT Serif"', 'serif']
+      }
+    }
+  }
+}
+</script>
+<style>
+  *{box-sizing:border-box;}
+  body{background:#151b24;font-family:'DM Sans',sans-serif;color:#fff;margin:0;}
+  .scrollbar-hide::-webkit-scrollbar{display:none;}
+  .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none;}
+  input[type=checkbox]{accent-color:#dcb05e;}
+  input[type=radio]{accent-color:#dcb05e;}
+
+  /* Orbs animation */
+  @keyframes float{0%,100%{transform:translateY(0px)}50%{transform:translateY(-8px)}}
+  .orb{position:absolute;border-radius:50%;overflow:hidden;animation:float 6s ease-in-out infinite;}
+  .orb img{width:100%;height:100%;object-fit:cover;}
+
+  /* Tag pill */
+  .tag{display:inline-flex;align-items:center;padding:2px 10px;border-radius:9999px;font-size:12px;font-weight:600;white-space:nowrap;}
+
+  /* Segmented control */
+  .seg-item{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9999px;cursor:pointer;transition:all 0.2s;font-weight:600;font-size:15px;}
+  .seg-item.active{background:#fff;color:#262116;}
+  .seg-item.inactive{color:#fff;}
+  .seg-badge{background:#f6e5b8;color:#655b34;font-size:11px;font-weight:700;padding:1px 6px;border-radius:40px;}
+
+  /* Filter checkbox label */
+  .filter-label{display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;color:#fff;padding:8px 12px;transition:background 0.15s;border-radius:4px;}
+  .filter-label:hover{background:rgba(255,255,255,0.05);}
+  .filter-label input[type="checkbox"],.filter-label input[type="radio"]{width:16px;height:16px;flex-shrink:0;accent-color:#dcb05e;cursor:pointer;}
+  .filter-card{background:#212a3a;border:1px solid #293548;border-radius:12px;overflow:hidden;}
+  .filter-card-title{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;}
+  .filter-card-title span{font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#fff;line-height:1;}
+
+  /* Result card list view */
+  .result-card{background:#212a3a;border:1px solid #373329;border-radius:16px;padding:0;display:flex;overflow:hidden;cursor:pointer;transition:border-color 0.2s;}
+  .result-card:hover{border-color:#3c4d69;}
+
+  /* Result card grid view */
+  .grid-card{background:#293548;border:1px solid #373329;border-radius:12px;padding:20px;cursor:pointer;transition:border-color 0.2s;}
+  .grid-card:hover{border-color:#3c4d69;}
+
+  /* Post card */
+  .post-card{background:#212a3a;border:1px solid #373329;border-radius:16px;overflow:hidden;margin-bottom:16px;}
+
+  /* Reply box */
+  .reply-box{background:#293548;border-radius:8px;padding:16px;}
+
+  /* Carousel */
+  .carousel-track{display:flex;transition:transform 0.4s ease;}
+
+  /* Voice cards responsive */
+  @media (max-width: 767px) {
+    .voice-cards-grid {
+      grid-template-columns: 1fr !important;
+      padding: 0 20px !important;
+    }
+  }
+
+  /* Toast */
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#293548;border:1px solid #3c4d69;color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;transition:transform 0.3s;z-index:999;}
+  #toast.show{transform:translateX(-50%) translateY(0);}
+
+  /* Mobile sidebar overlay */
+  .sidebar-overlay{display:none;}
+  @media(max-width:767px){
+    .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:40;}
+    .sidebar-overlay.open{display:block;}
+    .left-sidebar{position:fixed;left:-100%;top:0;bottom:0;width:280px;background:#151b24;z-index:50;overflow-y:auto;transition:left 0.3s;padding:24px;}
+    .left-sidebar.open{left:0;}
+  }
+  @media(min-width:768px){
+    .left-sidebar{max-height:calc(100vh - 32px);overflow-y:auto;}
+  }
+
+  /* Read more truncation */
+  .truncated{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  .truncated.expanded{display:block;}
+
+  /* Heart liked state */
+  .heart-btn.liked .ph-heart{color:#e55;}
+  .heart-btn.liked .ph-heart::before{content:"\e157";} /* filled heart */
+
+  /* Candle lit */
+  @keyframes flicker{0%,100%{opacity:1}50%{opacity:0.7;transform:scale(1.1)}}
+  .candle-lit{animation:flicker 1.5s ease-in-out infinite;display:inline-block;}
+
+  /* Layout grid */
+  #results-grid{display:none;}
+  #results-list{display:flex;flex-direction:column;gap:16px;}
+  body.grid-view #results-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  body.grid-view #results-list{display:none;}
+</style>
+</head>
+<body>
+
+<!-- NEWSPAPER PARTNER HEADER (hidden by default, shown when ?partner=cst) -->
+<header id="partner-header" style="display:none;background:#fff;border-bottom:1px solid #ebe9e9;">
+  <div style="max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:16px 64px;">
+    <a href="http://localhost:5181/" style="flex-shrink:0;">
+      <img src="https://cst.brightspotcdn.com/a7/da/9a739da544a698cdb98e1b1c5f27/ctimes-logo.svg" alt="Chicago Sun-Times" style="height:13px;width:auto;display:block;">
+    </a>
+    <div style="flex:1;max-width:420px;margin:0 24px;position:relative;">
+      <input type="text" placeholder="Find a loved one..." style="width:100%;background:#fbfbfb;border:1px solid #807e7a;color:#262116;padding:8px 40px 8px 16px;border-radius:999px;font-size:16px;outline:none;font-family:'DM Sans',sans-serif;">
+      <i class="ph ph-magnifying-glass" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:20px;color:#63605b;pointer-events:none;"></i>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <button style="display:flex;align-items:center;gap:4px;background:none;border:none;color:#262116;cursor:pointer;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;padding:8px 4px;">
+        <i class="ph ph-user-circle" style="font-size:24px;"></i> Sign In
+      </button>
+      <button style="background:none;border:none;color:#262116;cursor:pointer;padding:8px 4px;">
+        <i class="ph ph-list" style="font-size:24px;"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- NAV (Legacy header — hidden when partner header is active) -->
+<nav id="legacy-header" style="background:#fff;">
+
+  <!-- Top row: Logo · Search · Sign In -->
+  <div style="background:#fff;border-bottom:1px solid #ebe9e9;padding:16px 64px;display:flex;align-items:center;justify-content:space-between;">
+    <!-- Logo -->
+    <div style="flex-shrink:0;display:flex;align-items:center;">
+      <svg height="36" style="display:block;width:auto;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 345.4 87.37"><defs><style>.cls-1{fill:#dcb05e;fill-rule:evenodd;}.cls-2{fill:#293548;}</style></defs><g><path class="cls-2" d="M108.36,70.28v-2.15c6.3-1,6.3-3.69,6.3-9.38v-30.76c0-5.69,0-8.38-6.15-9.38v-2.15h20.99v2.15c-7.46,1-7.46,3.69-7.46,9.38v31.22c0,6.07,0,7.46,5.84,7.46h5.46c10.38,0,12.3-3.15,13.38-16.69h2.23l-.38,20.3h-40.21Z"/><path class="cls-2" d="M187.47,60.29c-2,5.07-6.77,11.07-15.76,11.07-10.38,0-17.53-8-17.53-19.91,0-13.07,8.07-20.68,18.22-20.68,7.07,0,14.53,3.69,14.53,12.84,0,1.61-.15,3.46-.62,5.46h-25.14v1.15c0,10.07,4.61,16.15,13.07,16.15,4.54,0,8.38-1.77,11.76-6.92l1.46.85ZM161.41,46.14h18.84c.23-1.31.31-2.61.31-3.77,0-6.15-4.08-8.38-8.23-8.38-5.54,0-9.84,4.23-10.92,12.15Z"/><path class="cls-2" d="M227.66,74.28c0,6.69-5.84,12-19.84,12-12.61,0-17.76-4.31-17.76-8.61,0-3.46,3.08-5.77,6.77-5.07-2.15,6.69.92,10.46,11.69,10.46,8.38,0,12.84-3.23,12.84-7,0-9.46-26.83-.31-26.83-12.46,0-3.15,2.38-6.07,7.3-7.23v-.23c-5.69-1.38-9.38-5.54-9.38-11.61,0-8.23,6-13.76,14.99-13.76,4.92,0,7.77,1.77,11.53,1.77,3.23,0,5.07-1.23,5.84-4,1.69.38,2.77,2,2.77,4.15,0,2.92-1.61,4.38-4.15,4.38-2,0-3.38-1.08-5.61-2.15,2.69,2.31,4.61,5.54,4.61,9.61,0,8.23-6,13.84-15.07,13.84-5.38,0-7.23,1.46-7.23,3.08,0,6.38,27.53-1.92,27.53,12.84ZM207.74,55.14c5,0,7.84-3.54,7.84-8.77,0-6.92-2.84-12.61-8.46-12.61-4.92,0-7.84,3.38-7.84,8.77,0,6.84,2.84,12.61,8.46,12.61Z"/><path class="cls-2" d="M261.33,57.6c0,7.15,0,9.69,4.92,9.15-.23,2.31-2.31,4.46-5.69,4.46s-4.84-1.77-5.23-4.61c-.31-1.23-.38-3.92-.23-7-2.08,5.84-6.07,11.76-14.61,11.76-6.61,0-10.23-3.61-10.23-8.77,0-6.46,5.54-9.46,12.07-11.46,4.77-1.46,8.84-2.84,12.3-5.46v-3c0-2.92-.31-8.69-7.61-8.69-6.92,0-8.46,4.84-9,9.84-3,.54-5.23-.92-5.23-3.92,0-5.31,6.15-9.15,14.53-9.15,13.92,0,13.99,9.92,13.99,12.61v14.22ZM254.8,49.06c-3.23,2.31-6.77,3.46-10.61,5-4.46,1.85-6.92,3.77-6.92,7.84,0,3.84,2.54,5.31,5.38,5.31,7.23,0,11.84-9,12.15-18.15Z"/><path class="cls-2" d="M268.63,51.44c0-12.53,8.23-20.68,18.99-20.68,7,0,13.53,3.61,13.53,9.46,0,3.31-2.69,4.84-5.23,4.46-.38-4.92-1.54-10.69-8.53-10.69s-11.76,5.69-11.76,15.69,4.69,16.69,13.69,16.69c4.54,0,8.23-1.77,11.53-6.92l1.46.85c-2.08,5.38-6.84,11.07-15.84,11.07-11.23,0-17.84-8.77-17.84-19.91Z"/><path class="cls-2" d="M331.02,31.84h14.38v2c-4.69.62-5.38,2.84-8.15,9.61l-10.69,26.3c-2.15,5.23-6.46,16.99-15.99,16.99-4.38,0-6.84-2.38-6.84-5.77,0-2.46,1.61-4,2.69-4.15,1.54,3.92,3.77,4.92,5.92,4.92,3.69,0,7.15-4.23,10.46-12.07l-11-26.14c-3-7.15-3.23-9-8-9.69v-2h17.99v2c-5.46.77-5.69,2.69-2.77,9.76l4.31,10.46,3,8.15,7.46-18.92c2.61-6.61,2.38-8.77-2.77-9.46v-2Z"/><path class="cls-1" d="M87.37,43.69c0,14.05-6.71,27.14-18.06,35.38-.43.31-.94.42-1.46.31-.52-.11-.94-.41-1.2-.87l-.04-.07c-.47-.81-.25-1.85.51-2.4,10.38-7.53,16.51-19.5,16.51-32.35,0-9.2-3.13-18.04-8.93-25.18-.59-.73-.54-1.78.13-2.45l.05-.05c.38-.37.86-.56,1.39-.53.53.03.99.26,1.33.67,6.35,7.81,9.78,17.48,9.78,27.54h0ZM61.52,83.58c-5.62,2.52-11.68,3.8-17.83,3.8-18.13,0-34.36-11.2-40.82-28.09-.19-.5-.16-1.01.08-1.48.24-.47.64-.79,1.15-.93l.08-.02c.91-.25,1.85.24,2.18,1.11,5.91,15.44,20.74,25.68,37.32,25.68,5.62,0,11.16-1.17,16.3-3.47.86-.38,1.86-.06,2.33.75l.04.07c.27.46.32.97.16,1.48-.16.51-.51.89-.99,1.11h0ZM.54,50.58c-.36-2.28-.54-4.59-.54-6.9C0,19.56,19.56,0,43.69,0c10.06,0,19.73,3.43,27.54,9.78.41.34.64.79.67,1.33.03.53-.16,1.01-.53,1.39l-.05.05c-.66.66-1.72.72-2.45.13-7.14-5.8-15.98-8.93-25.18-8.93C21.62,3.74,3.73,21.62,3.73,43.69c0,2.11.17,4.22.5,6.3.15.93-.43,1.82-1.34,2.05l-.08.02c-.51.13-1.02.06-1.47-.23-.45-.29-.73-.72-.81-1.25h0ZM79.63,43.69c0,19.85-16.09,35.94-35.94,35.94S7.74,63.54,7.74,43.69,23.84,7.74,43.69,7.74s35.94,16.09,35.94,35.94h0ZM11.48,43.12c1.42.13,2.55,1.27,2.65,2.71,1.11,15.48,14.03,27.48,29.55,27.48s28.44-12,29.55-27.48c.1-1.45,1.24-2.58,2.65-2.71-.3-17.54-14.61-31.64-32.2-31.64S11.78,25.58,11.48,43.12h0ZM69.3,43.69c0,14.15-11.47,25.62-25.62,25.62s-25.62-11.47-25.62-25.62,11.47-25.62,25.62-25.62,25.62,11.47,25.62,25.62h0ZM21.81,43.12c1.4.11,2.53,1.2,2.68,2.62,1.03,9.8,9.33,17.25,19.19,17.25s18.16-7.45,19.19-17.25c.15-1.42,1.28-2.51,2.68-2.62-.3-11.83-9.99-21.31-21.87-21.31s-21.57,9.48-21.87,21.31h0ZM28.39,43.69c0-8.45,6.85-15.29,15.29-15.29s15.29,6.85,15.29,15.29-6.85,15.29-15.29,15.29-15.29-6.85-15.29-15.29h0ZM55.23,43.11c-.3-6.13-5.36-10.98-11.54-10.98s-11.24,4.86-11.54,10.98c1.35.06,2.47,1.01,2.74,2.35.84,4.18,4.53,7.2,8.8,7.2s7.96-3.02,8.8-7.2c.27-1.34,1.39-2.29,2.74-2.35h0Z"/></g></svg>
+    </div>
+    <!-- Search -->
+    <div style="flex:1;max-width:420px;margin:0 48px;position:relative;">
+      <input type="text" placeholder="Find a loved one..."
+        style="width:100%;background:#fbfbfb;border:1px solid #807e7a;color:#262116;padding:8px 40px 8px 16px;border-radius:999px;font-size:16px;outline:none;font-family:'DM Sans',sans-serif;"
+        onfocus="this.style.borderColor='#262116'" onblur="this.style.borderColor='#807e7a'" />
+      <i class="ph-light ph-magnifying-glass" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px;color:#807e7a;pointer-events:none;"></i>
+    </div>
+    <!-- Sign In -->
+    <button style="display:flex;align-items:center;gap:6px;background:none;border:none;color:#262116;cursor:pointer;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;flex-shrink:0;">
+      <i class="ph-light ph-user-circle" style="font-size:22px;"></i>
+      Sign In
+    </button>
+  </div>
+
+  <!-- Bottom row: Nav links -->
+  <div style="background:#fbfbfb;border-bottom:1px solid #ebe9e9;padding:12px 64px;display:flex;align-items:center;justify-content:center;gap:64px;">
+    <a href="#" style="font-size:14px;color:#262116;text-decoration:none;white-space:nowrap;font-family:'DM Sans',sans-serif;">Create &amp; Publish</a>
+    <a href="#" style="font-size:14px;color:#262116;text-decoration:none;white-space:nowrap;font-family:'DM Sans',sans-serif;">Browse Obituaries</a>
+    <a href="#" style="font-size:14px;color:#262116;text-decoration:none;white-space:nowrap;font-family:'DM Sans',sans-serif;">Plan Ahead</a>
+    <a href="#" style="font-size:14px;color:#262116;text-decoration:none;white-space:nowrap;font-family:'DM Sans',sans-serif;">Grief Resources</a>
+    <a href="#" style="font-size:14px;color:#262116;text-decoration:none;white-space:nowrap;font-family:'DM Sans',sans-serif;">Send a Gift</a>
+  </div>
+
+</nav>
+
+<!-- PARTNERSHIP BAR -->
+<div style="background:#dcb05e;padding:8px 16px;text-align:center;font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.25;color:#262116;">
+  Brought to you in partnership with The New York Times
+</div>
+
+<!-- HERO -->
+<div id="hero" style="background:#151b24;position:relative;overflow:hidden;" class="flex flex-col items-center">
+  <!-- Embedded immersive experience -->
+  <iframe
+    src="https://9-11-immersive-memor-rtb7.bolt.host/"
+    style="width:100%;height:80vh;border:none;display:block;flex-shrink:0;"
+    allowfullscreen
+    loading="eager"
+  ></iframe>
+</div>
+
+<!-- Voices of remembrance (always visible) -->
+<div style="background:linear-gradient(to top, #212a3a 0%, #151b24 50%);padding:64px 0 64px;text-align:center;">
+  <p style="color:#dcb05e;font-size:13px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:12px;">Voices of Remembrance</p>
+  <h2 style="font-family:'DM Serif Text',serif;font-size:32px;color:#fff;margin-bottom:40px;">Their stories live on through those who loved them</h2>
+  <div style="max-width:1100px;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;" id="voice-cards" class="voice-cards-grid">
+    <!-- populated by JS -->
+  </div>
+  <div style="margin-top:48px;display:flex;flex-direction:column;align-items:center;gap:16px;">
+    <p style="font-family:'DM Sans',sans-serif;font-size:18px;font-weight:400;color:#b0c0d6;line-height:1.5;margin:0;text-align:center;">Have a memory to share? Their stories live on through yours.</p>
+    <div style="display:flex;gap:16px;align-items:center;">
+      <button onclick="switchTab('memories')" style="background:#e2ba60;color:#262116;height:40px;padding:0 20px;border-radius:9999px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;">Add a Memory</button>
+      <button onclick="switchTab('memories')" style="background:transparent;color:#c49e54;height:40px;padding:0 20px;border-radius:9999px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:1px solid #c49e54;white-space:nowrap;">See all 14,382 Memories</button>
+    </div>
+  </div>
+</div>
+
+<!-- Segmented control (always visible) -->
+<div style="background:#151b24;display:flex;align-items:center;justify-content:center;padding:32px 64px 40px;gap:24px;">
+  <div style="flex:1;height:1px;background:#dcb05e;opacity:0.35;"></div>
+  <div style="background:#c49e54;border-radius:9999px;padding:4px;flex-shrink:0;" id="seg-control">
+    <div style="background:rgba(255,255,255,0.08);border-radius:9999px;display:flex;gap:0;padding:0;">
+      <button class="seg-item active" onclick="switchTab('memorials')" id="tab-memorials">
+        <i class="ph-light ph-users-three" style="font-size:20px;"></i>
+        <span>Memorials</span>
+        <span class="seg-badge">2.9k</span>
+      </button>
+      <button class="seg-item inactive" onclick="switchTab('memories')" id="tab-memories">
+        <i class="ph-light ph-chat-text" style="font-size:20px;"></i>
+        <span>Memories</span>
+        <span class="seg-badge">+14k</span>
+      </button>
+    </div>
+  </div>
+  <div style="flex:1;height:1px;background:#dcb05e;opacity:0.35;"></div>
+</div>
+
+<!-- MEMORIALS TAB -->
+<div id="tab-content-memorials">
+
+  <!-- Three-column content -->
+  <div id="memorials-grid" class="max-w-[1440px] mx-auto px-4 md:pl-4 md:pr-6 lg:pl-6 lg:pr-2 pb-8 flex gap-8">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <aside class="left-sidebar w-60 flex-shrink-0" id="left-sidebar-memorials">
+
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <h3 style="font-family:'DM Serif Text',serif;font-size:20px;font-weight:400;color:#fff;line-height:1.3;">Filter By</h3>
+        <button onclick="clearFilters()" style="font-family:'DM Sans',sans-serif;font-size:12px;color:#dcb05e;background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;" id="clear-all-btn">
+          <span>Clear All</span><i class="ph-light ph-arrows-clockwise" style="font-size:14px;"></i>
+        </button>
+      </div>
+
+      <!-- Filter chips -->
+      <div id="filter-chips" style="display:none;flex-wrap:wrap;gap:8px;margin-bottom:16px;"></div>
+
+      <!-- Filter sections -->
+      <div style="display:flex;flex-direction:column;gap:12px;">
+
+        <!-- 9/11 Locations -->
+        <div class="filter-card">
+          <div class="filter-card-title">
+            <span>9/11 Locations</span>
+            <i class="ph-light ph-caret-up" style="font-size:18px;color:#afadaa;"></i>
+          </div>
+          <div style="padding-bottom:8px;" id="filter-locations">
+            <label class="filter-label"><input type="checkbox" value="WTC Tower 1" onchange="applyFilters()"> World Trade Center Tower 1</label>
+            <label class="filter-label"><input type="checkbox" value="WTC Tower 2" onchange="applyFilters()"> World Trade Center Tower 2</label>
+            <label class="filter-label"><input type="checkbox" value="Pentagon" onchange="applyFilters()"> The Pentagon</label>
+            <label class="filter-label"><input type="checkbox" value="Flight 11" onchange="applyFilters()"> American Flight 11</label>
+            <label class="filter-label"><input type="checkbox" value="Flight 93" onchange="applyFilters()"> United Flight 93</label>
+            <label class="filter-label"><input type="checkbox" value="Flight 175" onchange="applyFilters()"> United Flight 175</label>
+            <label class="filter-label"><input type="checkbox" value="Flight 77" onchange="applyFilters()"> American Flight 77</label>
+          </div>
+        </div>
+
+        <!-- Home State -->
+        <div class="filter-card">
+          <div class="filter-card-title">
+            <span>Home State</span>
+            <i class="ph-light ph-caret-up" style="font-size:18px;color:#afadaa;"></i>
+          </div>
+          <div style="padding-bottom:8px;" id="filter-states">
+            <label class="filter-label"><input type="checkbox" value="NY" onchange="applyFilters()"> New York</label>
+            <label class="filter-label"><input type="checkbox" value="NJ" onchange="applyFilters()"> New Jersey</label>
+            <label class="filter-label"><input type="checkbox" value="TX" onchange="applyFilters()"> Texas</label>
+            <label class="filter-label"><input type="checkbox" value="CA" onchange="applyFilters()"> California</label>
+            <label class="filter-label"><input type="checkbox" value="IL" onchange="applyFilters()"> Illinois</label>
+            <label class="filter-label"><input type="checkbox" value="VA" onchange="applyFilters()"> Virginia</label>
+            <label class="filter-label"><input type="checkbox" value="PA" onchange="applyFilters()"> Pennsylvania</label>
+            <label class="filter-label"><input type="checkbox" value="CT" onchange="applyFilters()"> Connecticut</label>
+          </div>
+        </div>
+
+        <!-- Newspapers -->
+        <div class="filter-card">
+          <div class="filter-card-title">
+            <span>Newspapers</span>
+            <i class="ph-light ph-caret-up" style="font-size:18px;color:#afadaa;"></i>
+          </div>
+          <div style="padding-bottom:8px;" id="filter-papers">
+            <label class="filter-label"><input type="checkbox" value="NYT" onchange="applyFilters()"> New York Times</label>
+            <label class="filter-label"><input type="checkbox" value="WP" onchange="applyFilters()"> Washington Post</label>
+            <label class="filter-label"><input type="checkbox" value="HC" onchange="applyFilters()"> Houston Chronicle</label>
+            <label class="filter-label"><input type="checkbox" value="DMN" onchange="applyFilters()"> Dallas Morning News</label>
+          </div>
+        </div>
+
+        <!-- Layout -->
+        <div class="filter-card">
+          <div class="filter-card-title">
+            <span>Layout</span>
+            <i class="ph-light ph-caret-up" style="font-size:18px;color:#afadaa;"></i>
+          </div>
+          <div style="padding:0 12px 12px;display:flex;">
+            <button onclick="setLayout('list')" id="layout-list" style="flex:1;height:36px;border-radius:6px 0 0 6px;font-size:13px;font-weight:600;cursor:pointer;background:#e2ba60;color:#262116;border:1px solid #e2ba60;display:flex;align-items:center;justify-content:center;gap:4px;">
+              <i class="ph-light ph-list" style="font-size:16px;"></i> List
+            </button>
+            <button onclick="setLayout('grid')" id="layout-grid" style="flex:1;height:36px;border-radius:0 6px 6px 0;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:#afadaa;border:1px solid #514d45;margin-left:-1px;display:flex;align-items:center;justify-content:center;gap:4px;">
+              <i class="ph-light ph-grid-four" style="font-size:16px;"></i> Grid
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- CENTER -->
+    <main class="flex-1 min-w-0">
+      <!-- Mobile filter button -->
+      <button onclick="openSidebar()" class="md:hidden flex items-center gap-2 border border-wb-600 text-wb-400 text-sm font-semibold px-4 py-2 rounded-full mb-4 hover:border-wb-400">
+        <i class="ph-light ph-funnel"></i> Filters
+      </button>
+
+      <!-- Search -->
+      <div style="margin-bottom:20px;position:relative;">
+        <input type="text" id="memorial-search" placeholder="Search by name, location, or role..." oninput="applyFilters()"
+          style="width:100%;background:#1a2233;border:1px solid #514d45;color:#fff;padding:12px 44px 12px 20px;border-radius:9999px;font-size:15px;outline:none;"
+          onfocus="this.style.borderColor='#dcb05e'" onblur="this.style.borderColor='#514d45'">
+        <i class="ph-light ph-magnifying-glass" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:18px;color:#807e7a;pointer-events:none;"></i>
+      </div>
+
+      <!-- Sort header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:0 4px;">
+        <p style="font-weight:700;font-size:17px;color:#fff;" id="results-count">2,977 Lives Remembered</p>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:13px;color:#afadaa;">Sort By</span>
+          <select id="sort-select" onchange="applyFilters()" style="background:#293548;border:1px solid #514d45;color:#fff;padding:8px 12px;border-radius:8px;font-size:13px;cursor:pointer;outline:none;">
+            <option value="alpha">Alphabetical (A–Z)</option>
+            <option value="alpha-desc">Alphabetical (Z–A)</option>
+            <option value="age">Age (Youngest)</option>
+            <option value="location">Location</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- LIST VIEW -->
+      <div id="results-list"></div>
+
+      <!-- GRID VIEW -->
+      <div id="results-grid"></div>
+
+      <!-- No results -->
+      <div id="no-results" style="display:none;text-align:center;padding:60px 20px;color:#afadaa;">
+        <i class="ph-light ph-magnifying-glass" style="font-size:48px;opacity:0.4;display:block;margin-bottom:12px;"></i>
+        <p style="font-size:16px;">No results match your filters.</p>
+        <button onclick="clearFilters()" style="margin-top:12px;color:#dcb05e;background:none;border:none;cursor:pointer;font-size:14px;">Clear all filters</button>
+      </div>
+
+      <!-- Inline memories callout (inserted after card 4 by JS) -->
+      <div id="memories-callout" style="background:linear-gradient(162.99deg,#212a3a 0%,#151b24 100%);border:1px solid #293548;border-radius:16px;display:none;overflow:hidden;">
+        <!-- Content row: prev | quote | next -->
+        <div style="display:flex;gap:16px;align-items:center;justify-content:center;padding:24px 16px 16px;">
+          <button onclick="prevCarousel()" style="width:40px;height:40px;flex-shrink:0;border-radius:9999px;border:1px solid #fff;background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+            <i class="ph-light ph-caret-left" style="font-size:14px;"></i>
+          </button>
+          <div style="flex:1;display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center;min-width:0;">
+            <span style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:#dcb05e;text-transform:uppercase;letter-spacing:0.84px;">Recently Shared Memory</span>
+            <div style="overflow:hidden;width:100%;">
+              <div class="carousel-track" id="carousel-track"></div>
+            </div>
+          </div>
+          <button onclick="nextCarousel()" style="width:40px;height:40px;flex-shrink:0;border-radius:9999px;border:1px solid #fff;background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+            <i class="ph-light ph-caret-right" style="font-size:14px;"></i>
+          </button>
+        </div>
+        <!-- Bottom bar: dots | view all -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 32px;">
+          <div style="display:flex;gap:8px;align-items:center;" id="carousel-dots"></div>
+          <button onclick="switchTab('memories')" style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;letter-spacing:-0.02em;background:none;border:none;cursor:pointer;white-space:nowrap;">View all 14,382 memories →</button>
+        </div>
+      </div>
+
+      <!-- Grief support carousel (inserted after card 8 by JS) -->
+      <div id="grief-support" style="margin:20px 0;display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <h3 style="font-size:20px;font-weight:700;color:#fff;">Grief Support</h3>
+          <div style="display:flex;gap:8px;">
+            <button onclick="prevGrief()" style="width:36px;height:36px;border-radius:50%;border:1px solid #3c4d69;background:transparent;color:#afadaa;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+              <i class="ph-light ph-caret-left" style="font-size:16px;"></i>
+            </button>
+            <button onclick="nextGrief()" style="width:36px;height:36px;border-radius:50%;border:1px solid #3c4d69;background:transparent;color:#afadaa;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+              <i class="ph-light ph-caret-right" style="font-size:16px;"></i>
+            </button>
+          </div>
+        </div>
+        <div style="overflow:hidden;">
+          <div id="grief-track" style="display:flex;gap:16px;transition:transform 0.4s ease;"></div>
+        </div>
+      </div>
+
+      <!-- Not seeing someone -->
+      <div style="background:#212a3a;border:1px solid #373329;border-radius:8px;padding:16px;margin-top:20px;display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center;">
+        <div style="display:flex;flex-direction:column;gap:4px;width:100%;">
+          <p style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;margin:0;">Not seeing someone?</p>
+          <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#afadaa;margin:0;line-height:1.5;">Is there a Legacy obituary you'd like to see featured here?</p>
+        </div>
+        <button style="display:inline-flex;align-items:center;gap:8px;background:#e2ba60;color:#262116;padding:0 12px;height:32px;border-radius:9999px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;">
+          <i class="ph-light ph-user-circle-plus" style="font-size:16px;"></i>
+          Add Someone
+        </button>
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="hidden lg:block w-72 flex-shrink-0" style="position:sticky;top:24px;align-self:flex-start;">
+      <h3 style="font-family:'DM Serif Text',serif;font-size:20px;font-weight:400;color:#fff;line-height:1.3;margin-bottom:16px;">Honor Their Memory</h3>
+
+      <!-- Charity -->
+      <div style="background:#212a3a;border:1px solid #373329;border-radius:8px;padding:24px 16px;margin-bottom:16px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
+        <div style="display:flex;flex-direction:column;gap:8px;width:100%;">
+          <p style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#dcb05e;letter-spacing:0.84px;text-transform:uppercase;margin:0;">Consider a Donation to</p>
+          <p style="font-family:'DM Sans',sans-serif;font-size:16px;color:#fff;margin:0;">The American Red Cross</p>
+        </div>
+        <div style="background:#fff;border-radius:8px;width:148px;height:64px;display:flex;align-items:center;justify-content:center;padding:5px 4px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 48" style="max-width:108px;max-height:48px;" role="img" aria-label="American Red Cross">
+            <rect x="18" y="6" width="12" height="36" fill="#ED1B2E"/>
+            <rect x="6" y="18" width="36" height="12" fill="#ED1B2E"/>
+            <text x="52" y="20" font-family="Arial,sans-serif" font-size="8.5" font-weight="700" fill="#ED1B2E" letter-spacing="0.3">AMERICAN</text>
+            <text x="52" y="31" font-family="Arial,sans-serif" font-size="8.5" font-weight="700" fill="#ED1B2E" letter-spacing="0.3">RED CROSS</text>
+          </svg>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;">
+          <button style="background:#e2ba60;color:#262116;padding:0 12px;height:32px;border-radius:9999px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;">Make a Donation</button>
+          <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#fff;margin:0;line-height:1.25;"><strong>$8,400</strong> raised by 300 people</p>
+        </div>
+      </div>
+
+      <!-- Memorial Tree -->
+      <div style="background:#212a3a;border:1px solid #373329;border-radius:8px;padding:16px;margin-bottom:16px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
+        <div style="display:flex;flex-direction:column;gap:8px;width:100%;">
+          <p style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;margin:0;">Over 3,255 Trees Planted</p>
+          <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#afadaa;margin:0;line-height:1.5;">Join us in planting trees for the lives lost—We'll match every one.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;">
+          <button style="display:inline-flex;align-items:center;gap:6px;background:#e2ba60;color:#262116;padding:0 16px;height:32px;border-radius:9999px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;">
+            <i class="ph-light ph-tree" style="font-size:16px;"></i>
+            Plant a Tree
+          </button>
+          <a href="#" style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:#dcb05e;text-decoration:underline;">Learn More</a>
+        </div>
+      </div>
+
+      <!-- Not seeing someone -->
+      <div style="background:#212a3a;border:1px solid #373329;border-radius:8px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center;">
+        <div style="display:flex;flex-direction:column;gap:4px;width:100%;">
+          <p style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;margin:0;">Not seeing someone?</p>
+          <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#afadaa;margin:0;line-height:1.5;">Is there a Legacy obituary you'd like to see featured here?</p>
+        </div>
+        <button style="display:inline-flex;align-items:center;gap:8px;background:#e2ba60;color:#262116;padding:0 12px;height:32px;border-radius:9999px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;">
+          <i class="ph-light ph-user-circle-plus" style="font-size:16px;"></i>
+          Add Someone
+        </button>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- MEMORIES TAB -->
+<div id="tab-content-memories" style="display:none;">
+  <div id="memories-grid" class="max-w-[1440px] mx-auto px-4 md:pl-4 md:pr-6 lg:pl-6 lg:pr-2 pb-8 flex gap-8">
+
+    <!-- LEFT SIDEBAR MEMORIES -->
+    <aside class="left-sidebar w-60 flex-shrink-0 hidden md:block" id="left-sidebar-memories">
+      <h3 style="font-family:'DM Serif Text',serif;font-size:20px;font-weight:400;color:#fff;line-height:1.3;margin-bottom:20px;">Search &amp; Filter</h3>
+
+      <!-- Keyword search -->
+      <div style="margin-bottom:20px;">
+        <p style="font-size:12px;font-weight:600;color:#fff;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;">Search Within Comments</p>
+        <textarea id="memories-search-input" placeholder="Search by keyword..." oninput="filterPosts()" rows="2"
+          style="width:100%;background:#1a2233;border:1px solid #514d45;color:#fff;padding:10px 12px;border-radius:8px;font-size:13px;outline:none;resize:none;"
+          onfocus="this.style.borderColor='#dcb05e'" onblur="this.style.borderColor='#514d45'"></textarea>
+        <button onclick="filterPosts()" style="margin-top:8px;background:#dcb05e;color:#262116;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;width:100%;">Search</button>
+      </div>
+      <div style="height:1px;background:#373329;margin-bottom:20px;"></div>
+
+      <!-- 9/11 Locations -->
+      <div style="margin-bottom:20px;">
+        <p style="font-size:12px;font-weight:600;color:#fff;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;">9/11 Locations</p>
+        <div style="display:flex;flex-direction:column;gap:2px;">
+          <label class="filter-label"><input type="checkbox" onchange="filterPosts()" value="WTC"> World Trade Center</label>
+          <label class="filter-label"><input type="checkbox" onchange="filterPosts()" value="Pentagon"> The Pentagon</label>
+          <label class="filter-label"><input type="checkbox" onchange="filterPosts()" value="Flight 93"> Flight 93</label>
+          <label class="filter-label"><input type="checkbox" onchange="filterPosts()" value="Flight 11"> Flight 11</label>
+          <label class="filter-label"><input type="checkbox" onchange="filterPosts()" value="Flight 77"> Flight 77</label>
+        </div>
+      </div>
+      <div style="height:1px;background:#373329;margin-bottom:20px;"></div>
+
+      <!-- Sort -->
+      <div style="margin-bottom:20px;">
+        <p style="font-size:12px;font-weight:600;color:#fff;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;">Sort Comments</p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label class="filter-label"><input type="radio" name="sort-memories" value="newest" checked onchange="filterPosts()"> Newest First</label>
+          <label class="filter-label"><input type="radio" name="sort-memories" value="top" onchange="filterPosts()"> Top Comments</label>
+        </div>
+      </div>
+      <div style="height:1px;background:#373329;margin-bottom:20px;"></div>
+
+      <!-- Comment type -->
+      <div>
+        <p style="font-size:12px;font-weight:600;color:#fff;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;">Comment Type</p>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <label class="filter-label"><input type="radio" name="post-type" value="all" checked onchange="filterPosts()"> All Comments</label>
+          <label class="filter-label"><input type="radio" name="post-type" value="photos" onchange="filterPosts()"> With Photos</label>
+          <label class="filter-label"><input type="radio" name="post-type" value="text" onchange="filterPosts()"> Text Only</label>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER MEMORIES -->
+    <main class="flex-1 min-w-0">
+      <!-- Guestbook UI -->
+      <div style="background:#293548;border:1px solid #514d45;border-radius:16px;padding:24px;margin-bottom:24px;" id="guestbook">
+        <h3 style="font-family:'DM Serif Text',serif;font-size:20px;color:#fff;margin-bottom:20px;">Leave a message</h3>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <i class="ph-light ph-user" style="font-size:20px;color:#afadaa;flex-shrink:0;"></i>
+          <input type="text" id="post-name" placeholder="Your First & Last Name"
+            style="flex:1;background:#fbfbfb;border:1px solid #afadaa;color:#262116;padding:10px 16px;border-radius:8px;font-size:14px;outline:none;"
+            onfocus="expandComposer()" />
+        </div>
+        <div id="composer-expanded" style="display:none;">
+          <textarea id="post-message" placeholder="Share your memory, thoughts, or tribute..." rows="4"
+            style="width:100%;background:#fbfbfb;border:1px solid #afadaa;color:#262116;padding:12px 16px;border-radius:8px;font-size:14px;outline:none;resize:vertical;margin-bottom:16px;"
+            onfocus="this.style.borderColor='#dcb05e'" onblur="this.style.borderColor='#afadaa'"></textarea>
+          <div id="photo-preview" style="display:none;margin-bottom:12px;background:#1a2233;border-radius:8px;padding:12px;border:1px dashed #3c4d69;text-align:center;color:#afadaa;font-size:13px;">
+            📎 Photo attached: <span id="photo-name"></span>
+            <button onclick="removePhoto()" style="margin-left:8px;color:#e55;background:none;border:none;cursor:pointer;font-size:12px;">Remove</button>
+          </div>
+          <div id="candle-notice" style="display:none;margin-bottom:12px;padding:10px 14px;background:#1e2d42;border-radius:8px;font-size:13px;color:#dcb05e;">
+            🕯 A candle will be included with your memory
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button onclick="triggerPhotoUpload()" id="add-photos-btn" style="border:1px solid #fff;color:#fff;padding:8px 16px;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;display:flex;align-items:center;gap:6px;">
+              <i class="ph-light ph-image" style="font-size:16px;"></i> Add Photos
+            </button>
+            <input type="file" id="photo-input" accept="image/*" style="display:none;" onchange="handlePhotoSelect(event)">
+            <button onclick="toggleCandle()" id="candle-btn" style="border:1px solid #fff;color:#fff;padding:8px 16px;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;display:flex;align-items:center;gap:6px;">
+              <i class="ph-light ph-flame" style="font-size:16px;"></i> Light a Candle
+            </button>
+          </div>
+          <button onclick="submitPost()" style="background:#e2ba60;color:#262116;padding:9px 24px;border-radius:9999px;font-size:14px;font-weight:600;border:none;cursor:pointer;">Submit Post</button>
+        </div>
+      </div>
+
+      <!-- Posts feed -->
+      <div id="posts-feed"></div>
+      <div id="posts-no-results" style="display:none;text-align:center;padding:40px;color:#afadaa;">
+        <i class="ph-light ph-chat-slash" style="font-size:40px;opacity:0.4;display:block;margin-bottom:8px;"></i>
+        No posts match your search.
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR MEMORIES -->
+    <aside class="hidden lg:block w-72 flex-shrink-0" style="position:sticky;top:24px;align-self:flex-start;">
+      <h3 style="font-family:'DM Serif Text',serif;font-size:20px;font-weight:400;color:#fff;line-height:1.3;margin-bottom:16px;">Honor Their Memory</h3>
+
+      <!-- Charity -->
+      <div style="background:#212a3a;border:1px solid #373329;border-radius:8px;padding:24px 16px;margin-bottom:16px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
+        <div style="display:flex;flex-direction:column;gap:8px;width:100%;">
+          <p style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#dcb05e;letter-spacing:0.84px;text-transform:uppercase;margin:0;">Consider a Donation to</p>
+          <p style="font-family:'DM Sans',sans-serif;font-size:16px;color:#fff;margin:0;">The American Red Cross</p>
+        </div>
+        <div style="background:#fff;border-radius:8px;width:148px;height:64px;display:flex;align-items:center;justify-content:center;padding:5px 4px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 48" style="max-width:108px;max-height:48px;" role="img" aria-label="American Red Cross">
+            <rect x="18" y="6" width="12" height="36" fill="#ED1B2E"/>
+            <rect x="6" y="18" width="36" height="12" fill="#ED1B2E"/>
+            <text x="52" y="20" font-family="Arial,sans-serif" font-size="8.5" font-weight="700" fill="#ED1B2E" letter-spacing="0.3">AMERICAN</text>
+            <text x="52" y="31" font-family="Arial,sans-serif" font-size="8.5" font-weight="700" fill="#ED1B2E" letter-spacing="0.3">RED CROSS</text>
+          </svg>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;">
+          <button style="background:#e2ba60;color:#262116;padding:0 12px;height:32px;border-radius:9999px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;">Make a Donation</button>
+          <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#fff;margin:0;line-height:1.25;"><strong>$8,400</strong> raised by 300 people</p>
+        </div>
+      </div>
+
+      <!-- Memorial Tree -->
+      <div style="background:#212a3a;border:1px solid #373329;border-radius:8px;padding:16px;margin-bottom:16px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
+        <div style="display:flex;flex-direction:column;gap:8px;width:100%;">
+          <p style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;margin:0;">Over 3,255 Trees Planted</p>
+          <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#afadaa;margin:0;line-height:1.5;">Join us in planting trees for the lives lost—We'll match every one.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;">
+          <button style="display:inline-flex;align-items:center;gap:6px;background:#e2ba60;color:#262116;padding:0 16px;height:32px;border-radius:9999px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;">
+            <i class="ph-light ph-tree" style="font-size:16px;"></i>
+            Plant a Tree
+          </button>
+          <a href="#" style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:#dcb05e;text-decoration:underline;">Learn More</a>
+        </div>
+      </div>
+
+      <!-- Community notice -->
+      <div style="background:#293548;border:1px solid #373329;border-radius:12px;padding:20px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <i class="ph-light ph-shield-check" style="font-size:22px;color:#6ab04c;"></i>
+          <p style="font-size:14px;font-weight:600;color:#fff;">Community Notice</p>
+        </div>
+        <p style="font-size:12px;color:#afadaa;line-height:1.6;">To protect the families we serve, all posts are moderated using AI and human review. Respectful remembrance is welcome; hate speech or disrespectful content will be removed.</p>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer style="background:#151b24;border-top:1px solid #293548;padding:40px 0 24px;margin-top:48px;">
+  <div class="max-w-[1440px] mx-auto px-8">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:32px;margin-bottom:32px;">
+      <div>
+        <div style="font-family:'DM Serif Text',serif;font-size:20px;color:#fff;margin-bottom:12px;">Legacy</div>
+        <p style="font-size:12px;color:#63605b;line-height:1.7;">Honoring lives.<br>Connecting families.</p>
+      </div>
+      <div>
+        <p style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;">Services</p>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <a href="#" style="font-size:12px;color:#63605b;text-decoration:none;hover:color:#afadaa">Create & Publish</a>
+          <a href="#" style="font-size:12px;color:#63605b;text-decoration:none;">Plan Ahead</a>
+          <a href="#" style="font-size:12px;color:#63605b;text-decoration:none;">Send a Gift</a>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;">Find Obituaries</p>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <a href="#" style="font-size:12px;color:#63605b;text-decoration:none;">Browse by Name</a>
+          <a href="#" style="font-size:12px;color:#63605b;text-decoration:none;">Browse by Location</a>
+          <a href="#" style="font-size:12px;color:#63605b;text-decoration:none;">Military Obituaries</a>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;">Support</p>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <a href="#" style="font-size:12px;color:#63605b;text-decoration:none;">Help Center</a>
+          <a href="#" style="font-size:12px;color:#63605b;text-decoration:none;">Contact Us</a>
+          <a href="#" style="font-size:12px;color:#63605b;text-decoration:none;">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+    <div style="border-top:1px solid #293548;padding-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <p style="font-size:11px;color:#514d45;">© 2026 Legacy.com All rights reserved.</p>
+      <div style="display:flex;gap:16px;">
+        <a href="#" style="font-size:11px;color:#514d45;text-decoration:none;">Do Not Sell My Information</a>
+        <a href="#" style="font-size:11px;color:#514d45;text-decoration:none;">Privacy Policy</a>
+        <a href="#" style="font-size:11px;color:#514d45;text-decoration:none;">Terms of Use</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div id="toast">Link copied to clipboard</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+
+const PAPER_NAMES = {
+  'NYT':'The New York Times',
+  'WP':'The Washington Post',
+  'DMN':'Dallas Morning News',
+  'HC':'Houston Chronicle',
+  'NJA':'The Star-Ledger',
+  'WT':'Waco Tribune-Herald'
+};
+
+// ============================================================
+// PERSON IDs — replace with real Legacy.com 9/11 victim IDs
+// ============================================================
+const PERSON_IDS = [
+  5052822, 60911591, 60911587, 60910268, 60910284,
+  60910910, 60909591, 60909597, 60909623, 60909632,
+  60909765, 60909626, 60909723, 60909690, 60909856,
+  60909883, 60909886, 60910022, 60909833, 60909895,
+  60909934, 60909944, 60910094, 60910163, 60910430,
+  60910438, 60910368, 60909322, 60909323, 60909303,
+  60909304, 60909378, 60909335, 60909339, 60909364,
+];
+
+// Supplementary metadata (fields not returned by the API)
+// Keyed by personId — loc, state, role, org, paper, memories can be filled in over time
+const PERSON_META = {
+  // WTC North Tower (Tower 1)
+  5052822:  { name: "George C. Cain",                      loc: "WTC Tower 1",        state: "NY", role: "Firefighter",                 org: "FDNY Ladder 7" },
+  60911591: { name: "Moises N. Rivas",                     loc: "WTC Tower 1",        state: "NY", role: "Cafeteria Cook",              org: "Windows on the World" },
+  60909597: { name: "Candace Lee Williams",                loc: "WTC Tower 1",        state: "CT", role: "Intern",                      org: "Merrill Lynch" },
+  60909623: { name: "Thomas Hannafin",                     loc: "WTC Tower 1",        state: "NY", role: "Firefighter",                 org: "FDNY" },
+  60909626: { name: "Captain Walter Hynes",                loc: "WTC Tower 1",        state: "NY", role: "Captain",                    org: "FDNY Ladder 13" },
+  60909690: { name: "Lt. Glenn Wilkinson",                 loc: "WTC Tower 1",        state: "NY", role: "Lieutenant",                 org: "FDNY" },
+  60909856: { name: "William L. Henry Jr.",                loc: "WTC Tower 1",        state: "NY", role: "Firefighter",                 org: "FDNY Rescue 1" },
+  60909883: { name: "Lt. Dennis Mojica",                   loc: "WTC Tower 1",        state: "NY", role: "Lieutenant",                 org: "FDNY Rescue 1" },
+  60909886: { name: "Manuel Mojica Jr.",                   loc: "WTC Tower 1",        state: "NY", role: "Firefighter",                 org: "FDNY Squad 18" },
+  60909833: { name: "Louis Arena",                         loc: "WTC Tower 1",        state: "NY", role: "Firefighter",                 org: "FDNY Ladder 5" },
+  60909895: { name: "Richard Prunty",                      loc: "WTC Tower 1",        state: "NY", role: "Battalion Chief",            org: "FDNY" },
+  60909934: { name: "Lt. Michael Warchola",                loc: "WTC Tower 1",        state: "NY", role: "Lieutenant",                 org: "FDNY Ladder 5" },
+  60909944: { name: "John Charles Willett",                loc: "WTC Tower 1",        state: "NJ", role: "Financial Services",         org: "Cantor Fitzgerald" },
+  // WTC South Tower (Tower 2)
+  60911587: { name: "Babita Guman",                        loc: "WTC Tower 2",        state: "NY", role: "Computer Specialist",        org: "Fiduciary Trust" },
+  60909632: { name: "John Keohane",                        loc: "WTC Tower 2",        state: "NJ", role: "Assistant General Counsel",  org: "Zurich Insurance" },
+  60909910: { name: "Antoinette (Toni) Sherman",           loc: "WTC Tower 2",        state: "NY", role: "Administrator",             org: "Port Authority" },
+  // Pentagon
+  60910268: { name: "Janice Scott",                        loc: "Pentagon",           state: "VA", role: "Financial Manager",         org: "U.S. Army" },
+  60910284: { name: "Gerald (Geep) P. Fisher",             loc: "Pentagon",           state: "IL", role: "Consultant",                org: "Booz Allen Hamilton" },
+  60910910: { name: "Antoinette (Toni) Sherman",           loc: "Pentagon",           state: "IL", role: "Budget Analyst",            org: "U.S. Army" },
+  60910022: { name: "Donna Bowen",                         loc: "Pentagon",           state: "IL", role: "Communications Rep",        org: "Verizon" },
+  60910094: { name: "Rosa (Rosemary) Maria Chapa",         loc: "Pentagon",           state: "VA", role: "Senior Management Officer", org: "Defense Intelligence Agency" },
+  60910163: { name: "Scott Powell",                        loc: "Pentagon",           state: "MD", role: "Systems Engineer",          org: "BTG Inc." },
+  60910430: { name: "Lt. Commander David Lucian Williams", loc: "Pentagon",           state: "VA", role: "Lt. Commander",             org: "U.S. Navy" },
+  60910438: { name: "Angela Houtz",                        loc: "Pentagon",           state: "VA", role: "Senior Analyst",            org: "U.S. Navy" },
+  60910368: { name: "Maj. Kip P. Taylor",                  loc: "Pentagon",           state: "VA", role: "Major",                     org: "U.S. Army" },
+  // American Flight 11
+  60909591: { name: "Mary Wahlstrom",                      loc: "Flight 11", state: "UT", role: "Retired",                   org: "" },
+  60909723: { name: "Michael Theodoridis",                 loc: "Flight 11", state: "MA", role: "Technology Consultant",     org: "Self-Employed" },
+  // United Flight 93
+  60909765: { name: "Louis J. Nacke",                      loc: "Flight 93",   state: "NJ", role: "Business Owner",            org: "Amy's Toy Barn" },
+  60909322: { name: "Linda Gronlund",                      loc: "Flight 93",   state: "NY", role: "Attorney",                  org: "BMW of North America" },
+  60909323: { name: "Thomas E. Burnett Jr.",               loc: "Flight 93",   state: "CA", role: "COO",                       org: "Thoratec Corporation" },
+  60909303: { name: "CeeCee Lyles",                        loc: "Flight 93",   state: "FL", role: "Flight Attendant",          org: "United Airlines" },
+  60909304: { name: "Sandra (Sandy) W. Bradshaw",          loc: "Flight 93",   state: "NC", role: "Flight Attendant",          org: "United Airlines" },
+  60909378: { name: "Ronald Brandhorst Gamboa",            loc: "Flight 93",   state: "CA", role: "Athletic Director",         org: "Concord Union Elementary" },
+  60909335: { name: "Mark Rothenberg",                     loc: "Flight 93",   state: "NJ", role: "Business Owner",            org: "" },
+  60909339: { name: "Colleen Fraser",                      loc: "Flight 93",   state: "NJ", role: "Executive Director",        org: "Progressive Center for Independent Living" },
+  60909364: { name: "Daniel Brandhorst Gamboa",            loc: "Flight 93",   state: "CA", role: "Passenger",                 org: "" },
+};
+
+// Populated async by loadVictims() — do not edit directly
+let VICTIMS = [];
+
+// ============================================================
+// REAL data — pre-fetched from Legacy API (avoids CORS)
+// ============================================================
+const VICTIMS_REAL = [
+  {id:5052822,name:"George C. Cain",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/21cce9bc-ebdc-421f-8636-904bd8640ac4.jpg",bio:"GEORGE C. CAIN FDNY 5/13/1966 - 9/11/2001 Today and everyday, we celebrate your life. Thank you for the happy memories. You are always with us. Love Mom, Nancy, Danny, Erin and families",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60911591,name:"Moises N. Rivas",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/f42ca918-adb9-44f6-8969-f292f194deb9.jpg",bio:"'Some Kind of Moves' When Moises Rivas first laid eyes on Elizabeth, it was at a local beauty pageant in Queens, and he was the lead singer of the band. He was smitten, and made a $50 bet with another band member that he would get her to go out with him. \"When he finished singing he came down from the stage and started talking to me,\" Elizabeth...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60911587,name:"Babita Guman",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/1282322a-c9b7-4997-ad33-bf58e60f9cf4.jpg",bio:"The Best Catch of All Babita Guman was the type who \"doesn't back down,\" said her husband, Deodat Guman. When a fellow shopper at a market once told her to go back to her country, Mrs. Guman, 33, threw the question back at her. \"Why don't you go back to your country?\" she asked. A native of Guyana who moved to the United States as a teenager,...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60910268,name:"Janice Scott",born:1945,photo:"https://www.legacy.com/media.legacy.net/obituary/image/de0899fa-8296-4c1e-bfd9-cb16458a8ed7.jpg",bio:"Janice Marie Scott was born on October 12, 1945, in Memphis Tennessee. In 1954, her mother moved the family to Milwaukee, Wisconsin, where she attends the local public schools until her early teen years. Janice then moved with her family in the 1970s to Colorado Springs, Colorado. There, she graduated from Harrison High School on May 28, 1972....",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60910284,name:"Gerald (Geep) P. Fisher",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/36857347-a2e8-4c14-8e59-bb7f72ae0537.jpg",bio:"An Eternal Optimist As one of Booz, Allen & Hamilton's most respected consultants, Gerald P. Fisher never saw the need to dress for success. \"He was a character,\" said Joyce Doria, a senior vice president who supervised Mr. Fisher at the firm's Mclean, Va., office. \"Geep,\" as friends and co-workers called him, \"would sometimes come in...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60910910,name:"Antoinette (Toni) Sherman",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/e88c8fcc-cb70-4a69-953f-c4ebb0bb9da7.jpg",bio:"There was nothing Antionette \"Toni\" Sherman loved more than ending her day with an impromptu fishing trip. After a long day crunching numbers in the Pentagon, Sherman would pick up her foster son and fishing gear and head to her favorite spot. At 35, Sherman filled her life with the things she loved - island cruises, family reunions, the little...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909591,name:"Mary Wahlstrom",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/49b50db8-0633-4b9d-9366-9f3b92a3e7a1.jpg",bio:"Unstoppable 78 She extracted the maximum out of life. Up at 5 in the morning, reading, traveling, debating current events, going to the movies. As Scott Wahlstrom said about his mother, Mary Alice Wahlstrom, \"She was a ball of fire.\" She was 78. \"She could have lived another 25 years,\" he said. \"I have no doubt about it.\" Mrs. Wahlstrom, a...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909597,name:"Candace Lee Williams",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/bab9e2c7-5ede-45e7-aaf7-bc468d8cb3ac.jpg",bio:"On the Way to Hollywood How to comprehend the terrible symmetry that returned Candace Lee Williams to the place of her triumph, the World Trade Center? A 20-year-old student in the cooperative work-study program at Northeastern University in Boston, she toiled from January to June at Merrill Lynch as an intern on the 14th floor of 1 World Trade...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909623,name:"Thomas Hannafin",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/e2bf131a-610b-4879-adc7-de0b2928e3ae.jpg",bio:"In a Brother's Footsteps Thomas Hannafin was a high school and college basketball star on Staten Island. When he followed his eldest brother, Kevin, into the Fire Department, he joined Ladder Company 5 in Greenwich Village. The captain there, John Drennan, a football coach on Staten Island, was building the firehouse into an athletic powerhouse,...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909632,name:"John Keohane",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/3d1ae03e-b578-43e9-a7a1-f180dfd4d863.jpg",bio:"Spirit of a Traveler One year, before he moved to New Jersey, he took his mother to New York. One year he took her to Washington for a tour of the White House. Some years, she would simply visit his apartment and cook. This year, for their annual vacation, Mary Keohane and her son, John, 41, were planning to meet in Florida on Saturday, Sept. 15....",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909765,name:"Louis J. Nacke",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/a0c156f7-129f-4119-ba50-c3bbd20bcb5c.jpg",bio:"On what would have been Louis J. Nacke's first wedding anniversary, he was feted with his favorite food and wine by the family he left behind. \"He would have wanted us to do it this way,\" said Nacke's father-in-law, Robert Weisberg. \"It was very poignant, and we will always remember him.\" Nacke, 42, of New Hope, Pa., was killed when United...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909626,name:"Captain Walter Hynes",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/d8fb2a76-65a8-4710-b7bc-58ef31e18000.jpg",bio:"Handyman and Lawyer Capt. Walter Hynes was the person his extended family relied on for everything. If you needed your plumbing fixed or a room painted, Walter would do it. He would change your tire. He was the family lawyer. He even met his wife while lending a hand: he was helping another firefighter, Richard Fanning, move into a new house and...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909723,name:"Michael Theodoridis",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/c94757b3-470b-427b-9765-a336901826b3.jpg",bio:"Almost Parents Rahma Salie, of Sri Lankan descent, grew up in Japan. Michael Theodoridis, of Greek descent, grew up in Switzerland. She was a Muslim; he converted to Islam before they married in 1998. They had received some good news a few months earlier. Ms. Salie, 28, a graduate of Wellesley College, was chief operating officer of Cinoni, and...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909690,name:"Lt. Glenn Wilkinson",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/696ccea9-59fd-4271-8e6f-e7a23e5850c5.jpg",bio:"Lt. Glenn Wilkinson, 46, of Bayport, New York, a firefighter with the New York Fire Department.",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909856,name:"William L. Henry Jr.",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/8a7b5c48-02a0-4ede-ba62-8aca0cc955bd.jpg",bio:"The Big Red Truck Henry Jr., who was known as Bill or Buddy, had a galaxy of friends and admirers that stretched from the Ladder 24 firehouse on West 31st Street to the paddle tennis courts at wind-swept Jacob Riis Park in the Rockaways. He spent his vacations in places like Brazil, and his free time fixing up houses for people like his mother,...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909883,name:"Lt. Dennis Mojica",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/7a435d87-b2ea-43ad-ba3c-27cb876cad86.jpg",bio:"A Dream Accomplished \"The first time I met him, I told people I had met a man that was 10 feet tall,\" Maria Barreto said about her fiancé, Lt. Dennis Mojica, who was 5 feet 11 inches tall. She carefully outlines the story of his life: his mother died when he was a year old. He graduated from the competitive Aviation High School, and served in...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909886,name:"Manuel Mojica Jr.",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/52bba04d-1d60-47b4-bfc4-feca52096c8e.jpg",bio:"A Motorcycle Man's Ritual If you missed the muscle-bound guy with six tattoos, smirk tucked under his mustache, roaring around on a Harley-Davidson, Manny Mo — as Manuel Mojica Jr. was known — had one more way to announce himself. Without using his fingers, he could whistle so forcefully that he never had to ring his fiancée's apartment buzzer. One...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60910022,name:"Donna Bowen",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/2a594f1d-affe-436e-8793-9edccd08eaf0.jpg",bio:"Donna Bowen, 42, of Waldorf, Maryland, a Pentagon communications representative with Verizon Communications.",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909833,name:"Louis Arena",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/4283d9db-9d48-4eb1-844c-a04a0818dd36.jpg",bio:"Scent of a Firefighter Louis Arena loved being a firefighter, and one of the ways he showed it was this: He would return to his Staten Island home from Ladder Company 5 and tell his wife, Wanda, \"Smell my head.\" Mrs. Arena, 31, was crazy about the way her husband smelled, especially after a fire. She would rub his hair and breathe the smell of...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909895,name:"Richard Prunty",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/ebfd0197-3a0a-4e61-ad51-df1901bdfd10.jpg",bio:"Answering a Daughter's Call Richard Prunty's world revolved around two families. There was his family in Sayville, on Long Island, and there was the Second Battalion of the New York City Fire Department. Mr. Prunty, the battalion chief, would explain to his wife, Susan, that his life depended on his firefighters. They depended on him, too. When he...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909934,name:"Lt. Michael Warchola",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/87cab5b2-e355-498b-bff8-696c5aba42b4.jpg",bio:"The Name Meant Something When Lt. Michael Warchola was a child in Greenpoint, Brooklyn, his grandmother brought British tabloid newspapers into the house. Paging through the tales of three-headed babies and ichthyological anthropomorphism, he developed a passion for reading and a flair for the bizarre. He parlayed his appetite for books into a...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909944,name:"John Charles Willett",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/feeaa0d6-3161-4476-bc1a-075a989a1d07.jpg",bio:"One Who Spoke His Mind John Charles Willett was the youngest county treasurer in the history of Missouri. Mr. Willett, fresh out of college, was appointed in 1993 by the governor to mind the finances of Taney County. The county is almost all Republican, and when young Mr. Willett, a Democrat, asked prosecutors to investigate the Republican county...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60910094,name:"Rosa (Rosemary) Maria Chapa",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/b9b7379e-e371-4960-8690-da6740bcab61.jpg",bio:"Rosemary Chapa, 64, of Springfield, Va., had worked in the Pentagon for 20 years, the last as a high-ranking civilian employee of the Defense Intelligence Agency. Her section's offices moved within the last month to the first floor of the newly renovated section of the Pentagon, the part of the building hit Tuesday. She remained one of the seven...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60910163,name:"Scott Powell",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/39ddcb3e-ec67-4d88-8843-d1b3f995bc9f.jpg",bio:"Scott Powell worked on computers at the Pentagon, but his first love was music. The 35-year-old grew up in Washington, D.C., and graduated from Washington's Duke Ellington School of the Arts. He composed songs, most of them rhythm and blues, and played more than a half-dozen instruments from piano to drums. He performed in several bands, and, with...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60910430,name:"Lt. Commander David Lucian Williams",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/67bf81d8-332f-4bf2-87f6-f6cd9c92c8e3.jpg",bio:"Lt. Commander David Lucian Williams, 32, of Newport, Oregon, U.S. Navy.",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60910438,name:"Angela Houtz",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/e94ba263-23c0-47ce-9baa-bc2d408f96e7.jpg",bio:"A photo of Angela Houtz, 27, a civilian naval employee at the Pentagon, still hangs in her Maryland high school, where she graduated as salutatorian in 1992. Houtz was working at the Pentagon on Tuesday when the hijacked plane struck the building. Davis A. Rice, who taught her Latin for four years and advanced placement English in her senior year...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60910368,name:"Maj. Kip P. Taylor",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/81cf3802-2345-4c2c-b3d3-3319b5de1d2c.jpg",bio:"Maj. Kip Taylor was excited about the coming months for two reasons very dear to him: the birth of his second child in late October and a promotion in November. Now, his wife, Nancy, and family are gathered in his McLean, Va., home waiting to receive word that Taylor's remains have been recovered. Taylor, among those missing at the Pentagon, had...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909322,name:"Linda Gronlund",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/911c9695-a6f1-46e5-9039-59203d417bf1.jpg",bio:"Linda Gronlund was a sailor, a scuba diver, a brown belt in karate, a lawyer, a car mechanic, a gardener, a photographer, a gourmet cook, a guitarist, an emergency medical technician and a volunteer with autistic children. She planned to start piano lessons in the fall. As manager of environmental compliance for BMW, she spearheaded the...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909323,name:"Thomas E. Burnett Jr.",born:1963,photo:"https://www.legacy.com/media.legacy.net/obituary/image/d07b873b-900a-42f8-86f5-fef86508bfda.jpg",bio:"Thomas Edward Burnett, Jr., born May 29, 1963 in Minneapolis, MN, died heroically on September 11, 2001. Tom is survived by his devoted wife, Deena; his 3 beautiful daughters, Halley, Madison and Anna Clare; his parents, Tom and Beverly Burnett; his sister, Mary Margaret and her fiance, Chad Jurgens; his sister, Martha Jane and her husband David...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909303,name:"CeeCee Lyles",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/8c258372-c0fb-473a-a478-f75125987df5.jpg",bio:"Former police officer CeeCee Lyles, a flight attendant, called her husband to say she loved him just before her aircraft crashed in Pennsylvania. \"Just hearing my wife saying she loved us through all that chaos on that plane is just embedded in my heart forever,\" said Lorne Lyles, her husband and a Ft. Myers police office. \"That's my baby....",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909304,name:"Sandra (Sandy) W. Bradshaw",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/40bf548e-389d-41f3-a0e9-a9cbfd835b62.jpg",bio:"Sandy Bradshaw was a flight attendant for United Airlines. She was 38 and married to a pilot. The couple lived in Greensboro with their two young children.",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909378,name:"Ronald Brandhorst-Gamboa",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/1b8b4963-d8fc-48a1-b425-c2a73fd27910.jpg",bio:"Daniel and Ron and their son, David; victims of United Airlines Flight #175 on September 11, 2001. Dear friends of Donato Tramuto and Jeffrey Porter of Ogunquit. A celebration of their lives will be held on Saturday, October 6th at 11 o'clock at the Ogunquit Baptist Church, 175 Shore Road, Ogunquit.",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909335,name:"Mark Rothenberg",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/ab21e2f7-4f2f-4ebb-8142-15ef4227407b.jpg",bio:"Mark Rothenberg of Scotch Plains, New Jersey, owner of MDR Global Resources.",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909339,name:"Colleen Fraser",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/2b019645-50fc-4328-af9c-feff3792e893.jpg",bio:"Born with a form of dwarfism, Colleen Fraser stood less than 4 feet tall. She walked with a cane, which she would shake wildly to make a point. Often that point was making the world friendlier to people with disabilities. Fraser clearly had a flair for it. \"She was a firebrand,\" said longtime friend Ethan Ellis, executive director of the New...",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+  {id:60909364,name:"Daniel Brandhorst-Gamboa",born:null,photo:"https://www.legacy.com/media.legacy.net/obituary/image/c48a58dd-f2e5-4822-8585-ed5777f9ed21.jpg",bio:"Daniel and Ron and their son, David; victims of United Airlines Flight #175 on September 11, 2001. Dear friends of Donato Tramuto and Jeffrey Porter of Ogunquit. A celebration of their lives will be held on Saturday, October 6th at 11 o'clock at the Ogunquit Baptist Church, 175 Shore Road, Ogunquit.",loc:"",state:"",role:"",org:"",paper:"",memories:0},
+];
+
+// ============================================================
+// FALLBACK mock data (used if VICTIMS_REAL is unavailable)
+// ============================================================
+const VICTIMS_MOCK = [
+  {id:1,name:"Robert James Thomas",born:1962,loc:"WTC Tower 1",state:"NY",role:"Financial Analyst",org:"Cantor Fitzgerald",paper:"NYT",bio:"Robert was known throughout the office for his infectious laugh and the family photos that covered every inch of his desk. He coached his son's Little League team every spring and never missed a game. He is survived by his wife Carol and three children.",memories:14,photo:1},
+  {id:2,name:'Danielle "Toni" Meadows',born:1972,loc:"WTC Tower 2",state:"NJ",role:"Executive Assistant",org:"Marsh & McLennan",paper:"NYT",bio:"Toni lit up every room she entered. She was the kind of person who remembered everyone's birthday and always had a kind word ready. Her brother Marcus says she was 'the glue that held our family together.'",memories:8,photo:2},
+  {id:3,name:"Walter Eugene Simmons",born:1958,loc:"Pentagon",state:"VA",role:"Senior Defense Analyst",org:"U.S. Department of Defense",paper:"WP",bio:"Walt dedicated 27 years of service to his country with humility and quiet strength. A devoted husband and father of two daughters, he spent weekends coaching youth soccer and tending his vegetable garden in Arlington.",memories:11,photo:3},
+  {id:4,name:"Marjorie Anne Lykes",born:1965,loc:"WTC Tower 1",state:"NY",role:"Elementary School Teacher",org:"PS 124, Manhattan",paper:"NYT",bio:"Marjorie was accompanying a class field trip to the Windows on the World observation deck when tragedy struck. Her students' parents called her 'the best teacher their children ever had.' She had taught for 16 years.",memories:22,photo:4},
+  {id:5,name:"Harold Lawrence Benton",born:1951,loc:"Flight 93",state:"PA",role:"Retired Music Teacher",org:"Shanksville Area School District",paper:"NYT",bio:"Harold was traveling to California to visit his grandchildren when he boarded United Flight 93 in Newark. His family says he was composing a song for his 30th wedding anniversary. He is remembered as a gentle soul who believed music could heal any wound.",memories:7,photo:5},
+  {id:6,name:"Karen Torres",born:1978,loc:"WTC Tower 2",state:"TX",role:"Junior Accountant",org:"Aon Corporation",paper:"DMN",bio:"Karen had just moved to New York three months before September 11th, chasing her dream of working in finance. Her colleagues remember her bringing homemade empanadas every Monday morning. She was 23 years old.",memories:5,photo:6},
+  {id:7,name:"Michael D. O'Brien",born:1955,loc:"WTC Tower 1",state:"NY",role:"FDNY Firefighter",org:"Engine Company 226",paper:"NYT",bio:"Mike ran into the tower knowing the risks, telling a colleague, 'That's the job.' A decorated firefighter with 22 years of service, he was beloved by his community in Brooklyn. His helmet is on permanent display at the FDNY Memorial Wall.",memories:31,photo:7},
+  {id:8,name:"Patricia Anne Walsh",born:1969,loc:"Flight 11",state:"MA",role:"Software Engineer",org:"Akamai Technologies",paper:"NYT",bio:"Patricia boarded American Airlines Flight 11 in Boston bound for a technology conference in Los Angeles. Her colleagues describe her as a brilliant engineer and an even better friend. She is survived by her parents and two sisters.",memories:6,photo:8},
+  {id:9,name:"James Franklin Kowalski",born:1948,loc:"Pentagon",state:"VA",role:"U.S. Army Lieutenant Colonel",org:"U.S. Army",paper:"WP",bio:"Jim served his country for 32 years with honor and distinction. His office was in the newly renovated section of the Pentagon that suffered the direct impact. His daughter Angela says he called home every day at noon, without exception.",memories:9,photo:9},
+  {id:10,name:"Sophia Chen",born:1980,loc:"WTC Tower 1",state:"NY",role:"Graduate Research Intern",org:"Fiduciary Trust Company",paper:"NYT",bio:"Sophia was spending her summer before graduate school working at Fiduciary Trust on the 90th floor. Her family had immigrated from Hong Kong when she was seven. She had been accepted to Columbia's MBA program just weeks before.",memories:4,photo:10},
+  {id:11,name:"Thomas 'Tom' Albright",born:1944,loc:"Flight 77",state:"VA",role:"Retired High School Principal",org:"Retired – Falls Church High School",paper:"WP",bio:"Tom was returning to Los Angeles to help his daughter move into her new home. He spent 34 years shaping the lives of thousands of students in Northern Virginia. His family planted an oak tree in the school courtyard in his memory.",memories:16,photo:11},
+  {id:12,name:"Nadine Marie Okafor",born:1967,loc:"WTC Tower 2",state:"NY",role:"Registered Nurse",org:"Lehman Brothers Medical Dept.",paper:"NYT",bio:"Nadine was stationed in the medical office on the 40th floor of Tower 2. Witnesses reported she was helping injured colleagues evacuate when the tower fell. She had served as a volunteer EMT in her Queens neighborhood for over a decade.",memories:18,photo:12},
+  {id:13,name:"David Hernandez",born:1970,loc:"WTC Tower 1",state:"NJ",role:"Securities Trader",org:"Cantor Fitzgerald",paper:"NYT",bio:"David was a beloved father of four who coached soccer and never missed a school play. His wife Maria says he called her every morning from the trading floor just to say good morning. He was 31 years old.",memories:12,photo:13},
+  {id:14,name:"Aisha Patel",born:1975,loc:"Pentagon",state:"VA",role:"Budget Analyst",org:"U.S. Navy Financial Management",paper:"WP",bio:"Aisha was the first in her family to work for the federal government, a source of enormous pride. Her colleagues describe her as meticulous, warm, and unfailingly generous with her time. She had just been promoted two weeks before September 11th.",memories:3,photo:14},
+  {id:15,name:"William 'Bill' Chang",born:1960,loc:"WTC Tower 2",state:"NY",role:"Portfolio Manager",org:"Salomon Smith Barney",paper:"NYT",bio:"Bill was a first-generation immigrant who built a life and career in New York over three decades. He volunteered every Thanksgiving at a soup kitchen in Chinatown. He is remembered for his humor, his kindness, and his perfect dumplings.",memories:7,photo:15},
+  {id:16,name:"Catherine O'Sullivan",born:1963,loc:"Flight 11",state:"CT",role:"Flight Attendant",org:"American Airlines",paper:"NYT",bio:"Catherine loved her job because it let her meet people from every corner of the world. She had been a flight attendant for 18 years and was known for her warmth and professionalism. Her family in Connecticut keeps her uniform in a glass case.",memories:9,photo:16},
+  {id:17,name:"Marcus Reyes",born:1979,loc:"WTC Tower 1",state:"NY",role:"IT Support Technician",org:"Marsh & McLennan",paper:"NYT",bio:"Marcus was 22 years old and had started at Marsh just eight months before 9/11. His mother says he called her every Sunday from his apartment in the Bronx. He had plans to propose to his girlfriend that coming Christmas.",memories:6,photo:17},
+  {id:18,name:"Linda Goldberg",born:1956,loc:"WTC Tower 1",state:"NY",role:"Senior Vice President",org:"Cantor Fitzgerald",paper:"NYT",bio:"Linda broke glass ceilings throughout a 20-year career in finance, mentoring dozens of young women along the way. She is survived by her husband and twin daughters, who were 12 years old at the time. Her daughters now run a scholarship fund in her name.",memories:21,photo:18},
+  {id:19,name:"Frank DeLuca",born:1952,loc:"WTC Tower 2",state:"NJ",role:"Elevator Technician",org:"Schindler Elevator",paper:"NYT",bio:"Frank was making a routine service call when the attacks occurred. His coworkers say he was trying to help trapped workers evacuate the building. A Vietnam veteran, he had three grandchildren who called him 'Pop-Pop.'",memories:8,photo:19},
+  {id:20,name:"Sandra Nguyen",born:1971,loc:"Flight 175",state:"CA",role:"Sales Director",org:"Oracle Corporation",paper:"HC",bio:"Sandra was flying home to San Francisco after a client meeting in Boston. Her team at Oracle says she was the kind of leader who remembered every person's name and made everyone feel seen. She had two children, ages 5 and 8.",memories:5,photo:20},
+  {id:21,name:"Christopher Jackson",born:1966,loc:"WTC Tower 1",state:"NY",role:"NYPD Emergency Service Unit Officer",org:"New York City Police Dept.",paper:"NYT",bio:"Chris was among the first responders to arrive at the scene. His partner says he ran into the tower without hesitation to help civilians evacuate. He received the Medal of Valor posthumously. He is survived by his wife and son.",memories:27,photo:21},
+  {id:22,name:"Elena Vasquez",born:1983,loc:"WTC Tower 2",state:"NY",role:"Administrative Assistant",org:"Kidder Peabody",paper:"NYT",bio:"Elena had graduated from college just four months before September 11th and was thrilled to have landed her first job in Manhattan. Her family in Queens still sets a place for her at the dinner table every year on her birthday.",memories:3,photo:22},
+  {id:23,name:"Peter Kwan",born:1959,loc:"Pentagon",state:"MD",role:"Defense Intelligence Analyst",org:"Defense Intelligence Agency",paper:"WP",bio:"Peter had served the U.S. intelligence community for 24 years. Born in Hong Kong, he became a U.S. citizen in 1982 and considered it the greatest honor of his life. He is survived by his wife and three grown children.",memories:6,photo:23},
+  {id:24,name:"Barbara Foster",born:1948,loc:"Flight 93",state:"NJ",role:"Retired Teacher",org:"Retired – Newark Public Schools",paper:"NYT",bio:"Barbara was flying to California to visit her grandchildren when she boarded United Flight 93. She had just retired after 30 years of teaching middle school English. Her daughter says she always carried a book and a kind word wherever she went.",memories:10,photo:24},
+  {id:25,name:"Derek Mills",born:1974,loc:"WTC Tower 1",state:"NY",role:"Network Engineer",org:"Merrill Lynch",paper:"NYT",bio:"Derek was a tech whiz who could fix anything and loved to tinker with gadgets. He was restoring a 1967 Mustang in his garage in Staten Island. He had just gotten engaged the previous month.",memories:7,photo:25},
+  {id:26,name:"Ruth Abramowitz",born:1951,loc:"WTC Tower 2",state:"NY",role:"Claims Supervisor",org:"Aon Risk Services",paper:"NYT",bio:"Ruth had worked at the World Trade Center since the buildings opened in 1973. She knew every security guard by name and brought homemade rugelach on holidays. Her coworkers called her 'the heart of the office.'",memories:19,photo:26},
+  {id:27,name:"Luis Santos",born:1977,loc:"Pentagon",state:"VA",role:"Army Staff Sergeant",org:"U.S. Army",paper:"WP",bio:"Luis had just returned from a deployment abroad and was back at his desk when the attack occurred. He was 24 years old. His family in Puerto Rico gathered at their church to light candles in his memory.",memories:4,photo:27},
+  {id:28,name:"Margaret 'Maggie' Callahan",born:1954,loc:"Flight 77",state:"VA",role:"Pentagon Contractor",org:"Booz Allen Hamilton",paper:"WP",bio:"Maggie was traveling to a technology conference in Los Angeles on behalf of the Department of Defense. She had worked as a government contractor for 18 years. Her husband built a garden in their backyard in her honor.",memories:8,photo:28},
+  {id:29,name:"Anthony Russo",born:1968,loc:"WTC Tower 1",state:"NY",role:"Restaurant Manager",org:"Windows on the World",paper:"NYT",bio:"Anthony helped run one of the world's most famous restaurants at the top of the North Tower. On the morning of September 11th, the restaurant was hosting a risk-management conference. He is remembered for his joy, his generosity, and his legendary osso buco.",memories:13,photo:29},
+  {id:30,name:"Diana Park",born:1981,loc:"WTC Tower 1",state:"NY",role:"Junior Analyst",org:"Deutsche Bank",paper:"NYT",bio:"Diana had just celebrated her 20th birthday in August. Her colleagues say she was one of the sharpest minds they had encountered. Her parents, who immigrated from South Korea, were immensely proud of her accomplishments.",memories:6,photo:30},
+  {id:31,name:"Steven Cho",born:1973,loc:"Flight 175",state:"NY",role:"Investment Banker",org:"Goldman Sachs",paper:"NYT",bio:"Steven was flying to meet clients in Los Angeles. He was known at the firm for his ability to simplify complex financial structures and his willingness to mentor junior analysts. He left behind a wife and infant daughter.",memories:5,photo:31},
+  {id:32,name:"Paulette Williams",born:1961,loc:"WTC Tower 2",state:"NY",role:"Human Resources Manager",org:"Lehman Brothers",paper:"NYT",bio:"Paulette was known throughout the company for her fairness and her infectious warmth. She was the first person new employees met on their first day. She volunteered every Saturday at a food pantry in Harlem.",memories:14,photo:32},
+  {id:33,name:"Nathan Greenberg",born:1949,loc:"Pentagon",state:"MD",role:"Senior Budget Officer",org:"U.S. Department of the Army",paper:"WP",bio:"Nathan was just two years from retirement. He had served the Army's financial management office since 1979 and was known for his institutional memory and meticulous records. He and his wife had planned a trip to Israel for their 35th anniversary.",memories:7,photo:33},
+  {id:34,name:"Isabelle Moreau",born:1976,loc:"Flight 11",state:"MA",role:"Marketing Executive",org:"Compaq Computer",paper:"NYT",bio:"Isabelle was born in Lyon, France, and came to the United States for graduate school, never leaving. She was boarding Flight 11 for a West Coast client meeting. Her husband remembers her last words before she left for the airport: 'I'll call you from the hotel.'",memories:9,photo:34},
+  {id:35,name:"James 'Jimmy' Fitzgerald",born:1964,loc:"WTC Tower 1",state:"NY",role:"FDNY Captain",org:"Ladder Company 10",paper:"NYT",bio:"Jimmy led his team into the tower on that clear September morning with calm and purpose. He had 23 years with the FDNY and was just six months from retirement. His station house on Liberty Street now bears his name.",memories:23,photo:35},
+  {id:36,name:"Grace Lee",born:1985,loc:"WTC Tower 2",state:"NY",role:"Intern",org:"Morgan Stanley",paper:"NYT",bio:"Grace was a college senior completing a summer internship that had been extended through September. She was 16 credits away from her finance degree. Her professors at Fordham University established a scholarship in her memory.",memories:4,photo:36},
+  {id:37,name:"Owen Murphy",born:1957,loc:"Flight 93",state:"PA",role:"Sales Manager",org:"United Airlines",paper:"NYT",bio:"Owen worked for United Airlines and was traveling on a company pass. He loved fishing and had planned a trip to Alaska the following spring. His daughter reads his letters aloud at their family reunion every year.",memories:8,photo:37},
+  {id:38,name:"Caroline Tran",born:1979,loc:"WTC Tower 1",state:"NY",role:"Paralegal",org:"Sidley Austin",paper:"NYT",bio:"Caroline was the first in her Vietnamese-American family to work at a major law firm. She had plans to attend law school in the spring. Her family lights a candle for her every evening and has done so without exception since September 11, 2001.",memories:6,photo:38},
+  {id:39,name:"Albert Jenkins",born:1944,loc:"Pentagon",state:"VA",role:"Civilian Army Analyst",org:"U.S. Army Pentagon Staff",paper:"WP",bio:"Albert had worked in the same building for 31 years. He was close to receiving a commendation from the Secretary of the Army. His coworkers threw him a surprise birthday party the week before September 11th.",memories:5,photo:39},
+  {id:40,name:"Miriam Cohen",born:1953,loc:"WTC Tower 1",state:"NY",role:"Bookkeeper",org:"Cantor Fitzgerald",paper:"NYT",bio:"Miriam was known for keeping every department running smoothly with quiet efficiency. She and her husband had been married for 28 years. Every morning she brought fresh bagels from the bakery down the street.",memories:11,photo:40},
+  {id:41,name:"Ricardo Alvarez",born:1966,loc:"WTC Tower 2",state:"NY",role:"Building Security Officer",org:"World Trade Center Security",paper:"NYT",bio:"Ricardo spent his mornings helping people get where they needed to go and his evenings coaching youth basketball in the Bronx. Dozens of people credit him with helping them evacuate Tower 2 on that morning. He stayed behind to help others.",memories:17,photo:41},
+  {id:42,name:"Dorothy Hayes",born:1946,loc:"Flight 77",state:"VA",role:"Retired Administrative Assistant",org:"Retired – U.S. Navy",paper:"WP",bio:"Dorothy was traveling to California for a family reunion, a trip she had been planning for six months. At 55, she was finally getting to meet her cousin's grandchildren for the first time. She was known for her legendary apple pie and unconditional love.",memories:9,photo:42},
+  {id:43,name:"Ronald Baker",born:1969,loc:"WTC Tower 1",state:"NY",role:"Maintenance Supervisor",org:"Silverstein Properties",paper:"NYT",bio:"Ron knew every inch of the World Trade Center and took enormous pride in keeping it running. Witnesses say he was directing building workers and visitors toward exits when the tower collapsed. He left behind a wife and four children.",memories:13,photo:43},
+  {id:44,name:"Fatima Al-Hassan",born:1978,loc:"WTC Tower 2",state:"NY",role:"Financial Advisor",org:"Kidder Peabody",paper:"NYT",bio:"Fatima was a first-generation American who had worked hard to build a successful career on Wall Street. She was deeply involved in her local mosque's community outreach programs. Her family established an interfaith scholarship in her honor.",memories:6,photo:44},
+  {id:45,name:"George Petrov",born:1962,loc:"Pentagon",state:"VA",role:"Defense Systems Engineer",org:"Raytheon Technologies",paper:"WP",bio:"George immigrated from Bulgaria in 1987 and became a U.S. citizen in 1994. He was a talented engineer who held three patents. His son, who was 8 in 2001, is now an aerospace engineer himself, carrying on his father's legacy.",memories:5,photo:45},
+  {id:46,name:"Theresa Donnelly",born:1970,loc:"Flight 93",state:"PA",role:"Nonprofit Director",org:"United Way of Western Pennsylvania",paper:"NYT",bio:"Theresa was traveling to San Francisco for a nonprofit leadership summit. She was known in Pittsburgh for her passionate advocacy for children in underserved communities. Her organization renamed their annual award in her honor.",memories:8,photo:46},
+  {id:47,name:"Earl Washington",born:1960,loc:"WTC Tower 1",state:"NY",role:"FDNY EMT",org:"EMS Battalion 8",paper:"NYT",bio:"Earl responded to the scene immediately after the first plane hit. Colleagues say he worked with calm precision in the chaos, triaging dozens of patients. He was 41 years old and had been with EMS for 17 years.",memories:15,photo:47},
+  {id:48,name:"Wendy Nakamura",born:1982,loc:"Flight 175",state:"CA",role:"Student",org:"University of California, Berkeley",paper:"HC",bio:"Wendy was returning to San Francisco after visiting her parents in Boston following a summer internship. She had just been offered a full-time position with the firm where she had interned. She had called her mother to say she had made her flight.",memories:4,photo:48},
+  {id:49,name:"Brian Shaughnessy",born:1955,loc:"WTC Tower 1",state:"NY",role:"Senior Vice President",org:"AON Corporation",paper:"NYT",bio:"Brian had worked in the towers for 18 years, watching the New York skyline change around them. His daughter says he kept a baseball signed by Mickey Mantle on his desk and a photo of his family next to his computer. He is profoundly missed.",memories:10,photo:49},
+  {id:50,name:"Yolanda Torres",born:1967,loc:"WTC Tower 2",state:"NY",role:"Restaurant Worker",org:"Windows on the World",paper:"NYT",bio:"Yolanda worked the early shift at the Windows on the World restaurant and was beloved by regulars and colleagues alike. She was raising two teenage children on her own. Her daughter Luz says her mother's greatest joy was cooking for the people she loved.",memories:8,photo:50}
+];
+
+// ============================================================
+// API FETCH
+// ============================================================
+async function fetchPerson(id) {
+  const res = await fetch(`https://obit-intake.prod.legint.net/api/v1/person/${id}/`);
+  if (!res.ok) throw new Error(`Failed ${id}: ${res.status}`);
+  const d = await res.json();
+  const meta = PERSON_META[id] || {};
+  // Prefer obituaries[0] text, fall back to root obituaryText
+  const bio = (d.obituaries?.[0]?.obituaryText || d.obituaryText || '').trim();
+  return {
+    id:       d.personId,
+    name:     d.fullName || meta.name || 'Unknown',
+    born:     d.dateOfBirth ? new Date(d.dateOfBirth).getFullYear() : null,
+    photo:    d.imageUrl || null,
+    bio:      bio,
+    loc:      meta.loc  || '',
+    state:    meta.state|| '',
+    role:     meta.role || '',
+    org:      meta.org  || '',
+    paper:    meta.paper|| '',
+    memories: meta.memories || 0,
+  };
+}
+
+function showLoadingState() {
+  const el = document.getElementById('results-container');
+  if (el) el.innerHTML = `<div style="text-align:center;color:#afadaa;padding:64px 0;font-family:'DM Sans',sans-serif;font-size:16px;">Loading...</div>`;
+}
+
+function loadVictims() {
+  // Use pre-fetched real data (avoids CORS); fall back to mock if unavailable
+  // Merge PERSON_META overrides into each record (loc/state/role/org were empty strings when baked)
+  VICTIMS = (VICTIMS_REAL.length ? VICTIMS_REAL : VICTIMS_MOCK).map(v => {
+    const meta = PERSON_META[v.id] || {};
+    return {
+      ...v,
+      loc:   meta.loc   || v.loc,
+      state: meta.state || v.state,
+      role:  meta.role  || v.role,
+      org:   meta.org   || v.org,
+    };
+  });
+  applyFilters();
+}
+
+const POSTS = [
+  {id:1,author:"Maria Sanchez",time:"1 day ago",text:"My deepest condolences to all the families who lost loved ones. I'll always remember Mr. Abernathy from the corner store — he always had a kind word and a piece of candy for my kids. His warmth will be sorely missed in our community. May he and all the victims rest in peace.",likes:4,hasPhoto:false,hasCandle:false,replies:[{author:"Johnathan Doebenheimer",time:"20 min ago",text:"I'll cherish the memories we made together. You were a true friend.",likes:0}],tag:"WTC"},
+  {id:2,author:"Samuel Jones",time:"1 day ago",text:"I wanted to share this photo from the community cleanup day last month. It was amazing to see so many people from all over the state come to help put the pieces back together. It's a testament to the human spirit. We will never forget those we lost.",likes:11,hasPhoto:true,photoCaption:"Community volunteers gather near the memorial site.",hasCandle:false,replies:[],tag:"WTC"},
+  {id:3,author:"The Harrison Family",time:"1 day ago",text:"We are heartbroken for the entire community. The stories of heroism and loss are a powerful reminder of how precious life is. This memorial is a beautiful tribute to the strength and resilience of those who came before us. We are holding everyone in our thoughts.",likes:7,hasPhoto:false,hasCandle:false,replies:[],tag:"WTC"},
+  {id:4,author:"Carol Thomas",time:"3 days ago",text:"He called home at 8:52 to say he was okay. He told me he was going to try to help people get out. That was Robert — always thinking of others. I replay that call in my mind every day. Twenty-five years on, his voice is still so clear to me.",likes:23,hasPhoto:false,hasCandle:true,replies:[{author:"Patricia Thomas",time:"2 days ago",text:"We miss Dad every single day. His laugh, his voice, the way he always had the right thing to say. Thank you for sharing this, Mom.",likes:12},{author:"Michael Thomas",time:"1 day ago",text:"Dad was everything a son could ask for. I'm going to make sure his grandkids know exactly who he was.",likes:8}],tag:"WTC"},
+  {id:5,author:"Marcus Meadows",time:"1 week ago",text:"This is my sister Toni. She was the kind of person who remembered everyone's birthday, kept notes about what everyone was going through, and showed up with food anytime someone was hurting. Twenty-five years feels impossible. Sharing this photo of her at our cousin's wedding — the last time we were all together.",likes:31,hasPhoto:true,photoCaption:"Toni at our cousin's wedding, August 2001.",hasCandle:true,replies:[{author:"Carol Meadows",time:"5 days ago",text:"She would have loved this memorial. She always said the ones who go too soon deserve to be remembered every single day.",likes:18}],tag:"WTC"},
+  {id:6,author:"Patricia Simmons",time:"2 weeks ago",text:"My mother, Marjorie Lykes, was a teacher for 16 years and loved every one of her students. She was on a class field trip the morning of September 11th. I find comfort knowing that even at the end, she was doing what she loved — being there for her kids.",likes:19,hasPhoto:false,hasCandle:true,replies:[],tag:"WTC"},
+  {id:7,author:"Luz Martinez",time:"3 weeks ago",text:"Karen Torres brought homemade empanadas every Monday morning without fail. She'd spend all Sunday cooking just so we'd start the week right. She had only been at Aon for four months but she already felt like family. She was 23 and she had so much life ahead of her.",likes:14,hasPhoto:false,hasCandle:false,replies:[{author:"Ana Torres",time:"2 weeks ago",text:"Karen was my little cousin. Reading this after all these years still makes me cry. She really did love feeding people — learned it from our grandma. Thank you for sharing this.",likes:22}],tag:"WTC"},
+  {id:8,author:"James Benton Jr.",time:"1 month ago",text:"My father, Harold, was composing a song for their 30th anniversary — a waltz — when he boarded the plane to California. He had only written three measures. My mother still has the sheet music on her piano. She says she can hear the rest of the song in her heart.",likes:38,hasPhoto:true,photoCaption:"Dad's handwritten sheet music, still on Mom's piano.",hasCandle:true,replies:[],tag:"Flight 93"},
+  {id:9,author:"Officer Kevin Walsh",time:"1 month ago",text:"I arrived at Ground Zero on September 12th as part of the first response wave. Nothing could have prepared us for what we saw. But what I'll never forget is the silence broken only by the sounds of people still searching, still hoping. I carry every name with me. This memorial matters more than I can say.",likes:47,hasPhoto:false,hasCandle:false,replies:[{author:"Chief Robert Dolan",time:"3 weeks ago",text:"We all carry those days. Thank you for your service then and now, Kevin.",likes:29}],tag:"WTC"},
+  {id:10,author:"The Kowalski Sisters",time:"6 weeks ago",text:"Our dad, Lt. Col. James Kowalski, hung this portrait in the dining room the day he was promoted. He called every day at noon — without fail — until the day he couldn't. We framed the last voicemail. Angela still plays it on his birthday. We are so proud to be his daughters.",likes:52,hasPhoto:true,photoCaption:"Dad's official military portrait, taken 1999.",hasCandle:true,replies:[{author:"Col. David Marsh",time:"5 weeks ago",text:"Jim was one of the finest officers I ever served with. His dedication was absolute and his character unimpeachable. His family should know how deeply he was respected.",likes:34}],tag:"Pentagon"},
+  {id:11,author:"Yuki Nakamura",time:"2 months ago",text:"My neighbor, Mr. DiNapoli, helped carry three people down twelve flights of stairs that morning before going back up. He never came home. He was 58. He wasn't a firefighter or a police officer — just a man from the neighborhood who couldn't leave people behind. I think about him every day.",likes:63,hasPhoto:false,hasCandle:true,replies:[],tag:"WTC"},
+  {id:12,author:"Dr. Robert Simms",time:"3 months ago",text:"I was a physician at Bellevue Hospital on September 11th. We braced for hundreds of patients and I will carry the memory of the long silence that followed. What broke through that silence over the weeks and months were the family members who came in with photos, with flyers, with hope I could not always return. Twenty-five years later, I am still trying to honor every one of those names. This memorial does something no hospital can — it lets the living speak.",likes:78,hasPhoto:false,hasCandle:false,replies:[{author:"Nurse Angela Reyes",time:"2 months ago",text:"I was on shift that day too. Every word of this is true. Thank you for putting it into words, Doctor.",likes:41},{author:"Helen Park",time:"6 weeks ago",text:"My husband was one of those patients. He survived, but 47 of his coworkers didn't. Reading this 25 years later still makes it feel impossibly close.",likes:35}],tag:"WTC"}
+];
+
+const GRIEF_ARTICLES = [
+  {title:"Finding a Way Forward: Grief Resources for 9/11 Families",img:"https://picsum.photos/seed/grief1/280/200",category:"Grief Support"},
+  {title:"How Ritual and Remembrance Help Us Heal After Loss",img:"https://picsum.photos/seed/grief2/280/200",category:"Healing"},
+  {title:"Speaking to Children About 9/11: A Guide for Families",img:"https://picsum.photos/seed/grief3/280/200",category:"Family"},
+  {title:"The Long Arc of Grief: Processing Loss Across Decades",img:"https://picsum.photos/seed/grief4/280/200",category:"Mental Health"},
+  {title:"Community as Healer: How Shared Memory Sustains Us",img:"https://picsum.photos/seed/grief5/280/200",category:"Community"}
+];
+
+const VOICE_CARDS = [
+  {quote:'"She was the kind of person who remembered everyone\'s birthday. Her warmth will be sorely missed in our community."',attribution:"— Carol Thomas, wife · 3 days ago"},
+  {quote:'"He always had a kind word and a piece of candy for my kids. His warmth filled every room he entered."',attribution:"— Marcus Meadows, brother · 1 week ago"},
+  {quote:'"She was a teacher who cared about every single student. Her classroom was the one place everyone felt safe."',attribution:"— Patricia Simmons, daughter · 2 weeks ago"}
+];
+
+const CAROUSEL_QUOTES = [
+  {text:'"He called home at 8:52 to say he was okay. He told me he was going to try to help people get out."',attr:"For Robert James Thomas · Shared by Carol T., wife"},
+  {text:'"She brought homemade empanadas every Monday. The office was never the same without her."',attr:"For Karen Torres · Shared by Luz M., colleague"},
+  {text:'"He was composing a song for their 30th anniversary when he boarded the plane. Three measures."',attr:"For Harold Benton · Shared by James B., son"},
+  {text:'"She was my teacher. She made every single one of us feel like we were capable of anything."',attr:"For Marjorie Lykes · Shared by former student"},
+  {text:'"I arrived at Ground Zero the next day and carry every name with me. This memorial matters."',attr:"Shared by Officer Kevin Walsh"}
+];
+
+// ============================================================
+// STATE
+// ============================================================
+
+let state = {
+  activeTab: 'memorials',
+  filteredVictims: [...VICTIMS],
+  postLikes: {},
+  likedPosts: new Set(),
+  expandedBios: new Set(),
+  expandedReplies: new Set(),
+  carouselIdx: 0,
+  griefIdx: 0,
+  layoutMode: 'list',
+  hasCandle: false,
+  hasPhoto: false,
+  photoFileName: null,
+  composerOpen: false,
+  newPosts: [],
+  filteredPosts: [...POSTS]
+};
+
+// ============================================================
+// HERO ORBS
+// ============================================================
+function buildHeroOrbs() {
+  const container = document.getElementById('hero-orbs');
+  const orbDefs = [
+    {size:140,top:8,left:5,opacity:0.85,delay:0},
+    {size:96,top:4,left:14,opacity:0.6,delay:0.8},
+    {size:128,top:18,left:2,opacity:0.8,delay:1.5},
+    {size:190,top:5,left:72,opacity:0.9,delay:0.3},
+    {size:100,top:15,left:79,opacity:0.7,delay:1.2},
+    {size:161,top:55,left:82,opacity:0.85,delay:0.6},
+    {size:110,top:2,left:54,opacity:0.8,delay:1.8},
+    {size:83,top:12,left:62,opacity:0.5,delay:0.4},
+    {size:76,top:30,left:65,opacity:0.4,delay:1.1},
+    {size:192,top:50,left:0,opacity:0.85,delay:0.9},
+    {size:97,top:55,left:18,opacity:0.5,delay:1.4},
+    {size:62,top:38,left:28,opacity:0.3,delay:0.2},
+    {size:85,top:42,left:72,opacity:0.4,delay:1.6},
+    {size:144,top:60,left:70,opacity:0.8,delay:0.7},
+    {size:52,top:28,left:57,opacity:0.25,delay:2.0}
+  ];
+  orbDefs.forEach((o,i) => {
+    const el = document.createElement('div');
+    el.className = 'orb';
+    el.style.cssText = `width:${o.size}px;height:${o.size}px;top:${o.top}%;left:${o.left}%;opacity:${o.opacity};animation-delay:${o.delay}s;animation-duration:${5+i%3}s;`;
+    el.innerHTML = `<img src="https://i.pravatar.cc/${o.size}?img=${(i+1)*3}" alt="" loading="lazy">`;
+    container.appendChild(el);
+  });
+}
+
+// ============================================================
+// VOICE CARDS
+// ============================================================
+function buildVoiceCards() {
+  const el = document.getElementById('voice-cards');
+  el.innerHTML = VOICE_CARDS.map(v=>`
+    <div style="background:rgba(41,53,72,0.5);border:1px solid #293548;border-radius:12px;padding:24px;text-align:left;">
+      <p style="font-family:'PT Serif',serif;font-size:15px;color:#fff;line-height:1.7;margin-bottom:16px;">${v.quote}</p>
+      <p style="font-size:12px;color:#afadaa;">${v.attribution}</p>
+      <button style="margin-top:12px;color:#dcb05e;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;">Read Full Memory →</button>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// MEMORIAL CARDS
+// ============================================================
+function locationColor(loc){
+  if(loc.includes('WTC')) return {bg:'#1e3a2f',color:'#6ab04c',text:loc};
+  if(loc==='Pentagon') return {bg:'#2a1e3a',color:'#9b6fd4',text:'The Pentagon'};
+  if(loc.includes('Flight')) return {bg:'#3a1e1e',color:'#e55',text:loc};
+  return {bg:'#1e2d42',color:'#afadaa',text:loc};
+}
+
+function renderVictimCard(v, mode='list'){
+  const lc = locationColor(v.loc);
+  // Use real photo URL if available, otherwise fall back to seeded avatar
+  const photoSmall = (v.photo && v.photo.startsWith('http')) ? v.photo : `https://i.pravatar.cc/80?img=${(v.id % 70) + 1}`;
+  const photoLarge = (v.photo && v.photo.startsWith('http')) ? v.photo : `https://i.pravatar.cc/300?img=${(v.id % 70) + 1}`;
+  if(mode==='grid'){
+    return `<div class="grid-card" data-id="${v.id}" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <img src="${photoSmall}" alt="${v.name}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid #3c4d69;">
+        <div>
+          <h3 style="font-family:'DM Serif Text',serif;font-size:16px;color:#fff;margin-bottom:4px;">${v.name}</h3>
+          <p style="font-size:12px;color:#afadaa;">${v.born ? v.born + '–2001' : 'd. 2001'}</p>
+          <p style="font-size:11px;color:#807e7a;">${v.role}</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <span class="tag" style="background:${lc.bg};color:${lc.color};font-size:11px;">${lc.text}</span>
+        <span class="tag" style="background:#1a2233;color:#afadaa;font-size:11px;">${v.state}</span>
+      </div>
+      <p style="font-size:13px;color:#afadaa;line-height:1.6;truncated">${v.bio.substring(0,100)}...</p>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px;">
+        <span style="font-size:12px;color:#807e7a;"><i class="ph-light ph-chat-text"></i> ${v.memories} memories</span>
+        <button onclick="openMemorial(${v.id})" style="color:#dcb05e;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;">View →</button>
+      </div>
+    </div>`;
+  }
+  return `<div class="result-card" data-id="${v.id}">
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:24px;padding:24px;">
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <h3 style="font-family:'DM Serif Text',serif;font-size:30px;color:#fff;line-height:1.2;margin:0;">${v.name}</h3>
+        <p style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;letter-spacing:-0.02em;margin:0;">${v.born ? v.born + ' – 2001' : 'd. 2001'}</p>
+      </div>
+      <p style="font-family:'PT Serif',serif;font-size:18px;color:#fff;line-height:1.5;margin:0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;">${v.bio}</p>
+      <div style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;">
+        <span style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;letter-spacing:-0.02em;">Visit Their Legacy Page</span>
+        <i class="ph-light ph-arrow-right" style="font-size:18px;color:#dcb05e;"></i>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#afadaa;margin:0;">Read their obituaries:</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <span style="background:#f6e5b8;color:#655b34;padding:2px 12px;border-radius:9999px;font-size:14px;font-family:'DM Sans',sans-serif;white-space:nowrap;">Legacy</span>
+          <span style="background:#f6e5b8;color:#655b34;padding:2px 12px;border-radius:9999px;font-size:14px;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">${PAPER_NAMES[v.paper]||v.paper} <i class="ph-light ph-arrow-square-out" style="font-size:12px;color:#655b34;"></i></span>
+        </div>
+      </div>
+    </div>
+    <div style="width:234px;flex-shrink:0;align-self:stretch;overflow:hidden;border-radius:0 8px 8px 0;display:flex;align-items:center;justify-content:center;padding-right:16px;">
+      <img src="${photoLarge}" alt="${v.name}" style="width:234px;max-height:344px;object-fit:contain;display:block;">
+    </div>
+  </div>`;
+}
+
+function renderResults(){
+  const listEl = document.getElementById('results-list');
+  const gridEl = document.getElementById('results-grid');
+  const noRes = document.getElementById('no-results');
+  const countEl = document.getElementById('results-count');
+  const victims = state.filteredVictims;
+
+  // Build results count label — include state name when filtering by a single state
+  let countLabel;
+  if(victims.length === VICTIMS.length){
+    countLabel = `${victims.length.toLocaleString()} Lives Remembered`;
+  } else {
+    const checkedStates = getCheckedValues('#filter-states');
+    const stateNames = {NY:'New York',NJ:'New Jersey',TX:'Texas',CA:'California',IL:'Illinois',VA:'Virginia',PA:'Pennsylvania',CT:'Connecticut'};
+    if(checkedStates.length === 1){
+      countLabel = `${victims.length.toLocaleString()} ${stateNames[checkedStates[0]]||checkedStates[0]} Results Found`;
+    } else {
+      countLabel = `${victims.length.toLocaleString()} Results Found`;
+    }
+  }
+  countEl.textContent = countLabel;
+  noRes.style.display = victims.length===0 ? 'block' : 'none';
+
+  // Rescue callout elements before innerHTML wipes them if they were moved inside listEl
+  const callout = document.getElementById('memories-callout');
+  const grief = document.getElementById('grief-support');
+  if(callout) callout.remove();
+  if(grief) grief.remove();
+
+  // Build list inserting anchors
+  const listFragments = [];
+  victims.forEach((v, idx)=>{
+    listFragments.push(renderVictimCard(v,'list'));
+    if(idx===3){
+      listFragments.push('<div id="memories-callout-anchor" style="display:contents;"></div>');
+    }
+    if(idx===7){
+      listFragments.push('<div id="grief-anchor"></div>');
+    }
+  });
+  listEl.innerHTML = listFragments.join('');
+  gridEl.innerHTML = victims.map(v=>renderVictimCard(v,'grid')).join('');
+
+  // Re-insert callouts after new anchors exist in DOM
+  const anchor = document.getElementById('memories-callout-anchor');
+  const griefAnchor = document.getElementById('grief-anchor');
+  if(anchor && victims.length > 3 && callout){
+    anchor.after(callout);
+    callout.style.display='block';
+    buildCarousel();
+  }
+  if(griefAnchor && victims.length > 7 && grief){
+    griefAnchor.after(grief);
+    grief.style.display='block';
+    buildGriefCarousel();
+  }
+}
+
+function buildCarousel(){
+  const track = document.getElementById('carousel-track');
+  const dots = document.getElementById('carousel-dots');
+  if(!track) return;
+  track.innerHTML = CAROUSEL_QUOTES.map(q=>`
+    <div style="min-width:100%;text-align:center;display:flex;flex-direction:column;gap:12px;">
+      <p style="font-family:'PT Serif',serif;font-size:18px;color:#fff;line-height:1.5;margin:0;">${q.text}</p>
+      <p style="font-family:'DM Sans',sans-serif;font-size:16px;color:#728ab0;margin:0;">— ${q.attr}</p>
+    </div>
+  `).join('');
+  dots.innerHTML = CAROUSEL_QUOTES.map((_,i)=>`
+    <div onclick="goCarousel(${i})" style="width:${i===state.carouselIdx?24:8}px;height:8px;border-radius:9999px;background:${i===state.carouselIdx?'#fff':'#3c4d69'};cursor:pointer;transition:all 0.3s;"></div>
+  `).join('');
+  updateCarousel();
+  startCarouselTimer();
+}
+
+function updateCarousel(){
+  const track = document.getElementById('carousel-track');
+  if(track) track.style.transform = `translateX(-${state.carouselIdx*100}%)`;
+  const dots = document.getElementById('carousel-dots');
+  if(dots){
+    [...dots.children].forEach((d,i)=>{
+      d.style.width = i===state.carouselIdx?'24px':'8px';
+      d.style.background = i===state.carouselIdx?'#fff':'#3c4d69';
+    });
+  }
+}
+
+let carouselTimer = null;
+function startCarouselTimer(){
+  clearInterval(carouselTimer);
+  carouselTimer = setInterval(()=>{
+    state.carouselIdx = (state.carouselIdx+1) % CAROUSEL_QUOTES.length;
+    updateCarousel();
+  }, 4000);
+}
+function prevCarousel(){ state.carouselIdx=(state.carouselIdx-1+CAROUSEL_QUOTES.length)%CAROUSEL_QUOTES.length; updateCarousel(); startCarouselTimer(); }
+function nextCarousel(){ state.carouselIdx=(state.carouselIdx+1)%CAROUSEL_QUOTES.length; updateCarousel(); startCarouselTimer(); }
+function goCarousel(i){ state.carouselIdx=i; updateCarousel(); startCarouselTimer(); }
+
+function buildGriefCarousel(){
+  const track = document.getElementById('grief-track');
+  if(!track) return;
+  track.innerHTML = GRIEF_ARTICLES.map(a=>`
+    <div style="min-width:272px;background:#293548;border:1px solid #373329;border-radius:12px;overflow:hidden;cursor:pointer;flex-shrink:0;">
+      <img src="${a.img}" alt="" style="width:100%;height:160px;object-fit:cover;">
+      <div style="padding:16px;">
+        <span style="font-size:11px;color:#dcb05e;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;">${a.category}</span>
+        <h4 style="font-size:14px;color:#fff;margin-top:6px;line-height:1.5;">${a.title}</h4>
+      </div>
+    </div>
+  `).join('');
+}
+function prevGrief(){ state.griefIdx=Math.max(0,state.griefIdx-1); document.getElementById('grief-track').style.transform=`translateX(-${state.griefIdx*288}px)`; }
+function nextGrief(){ state.griefIdx=Math.min(GRIEF_ARTICLES.length-2,state.griefIdx+1); document.getElementById('grief-track').style.transform=`translateX(-${state.griefIdx*288}px)`; }
+
+// ============================================================
+// FILTERS
+// ============================================================
+function getCheckedValues(containerSelector){
+  return [...document.querySelectorAll(containerSelector+' input:checked')].map(el=>el.value);
+}
+
+function applyFilters(){
+  const search = (document.getElementById('memorial-search')||{value:''}).value.trim().toLowerCase();
+  const locs = getCheckedValues('#filter-locations');
+  const states = getCheckedValues('#filter-states');
+  const papers = getCheckedValues('#filter-papers');
+  const sort = (document.getElementById('sort-select')||{value:'alpha'}).value;
+
+  let results = VICTIMS.filter(v=>{
+    if(locs.length && !locs.includes(v.loc)) return false;
+    if(states.length && !states.includes(v.state)) return false;
+    if(papers.length && !papers.includes(v.paper)) return false;
+    if(search && !v.name.toLowerCase().includes(search) && !v.bio.toLowerCase().includes(search) && !v.role.toLowerCase().includes(search) && !v.loc.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  if(sort==='alpha') results.sort((a,b)=>a.name.localeCompare(b.name));
+  else if(sort==='alpha-desc') results.sort((a,b)=>b.name.localeCompare(a.name));
+  else if(sort==='age') results.sort((a,b)=>b.born-a.born);
+  else if(sort==='location') results.sort((a,b)=>a.loc.localeCompare(b.loc));
+
+  state.filteredVictims = results;
+  renderResults();
+  updateClearBtn();
+  renderFilterChips();
+}
+
+function clearFilters(){
+  document.querySelectorAll('#filter-locations input, #filter-states input, #filter-papers input').forEach(el=>el.checked=false);
+  document.getElementById('memorial-search').value='';
+  state.filteredVictims = [...VICTIMS];
+  renderResults();
+  updateClearBtn();
+  renderFilterChips();
+}
+
+function renderFilterChips(){
+  const container = document.getElementById('filter-chips');
+  if(!container) return;
+  container.innerHTML = '';
+  const chips = [];
+
+  // Label maps for friendly display names
+  const locLabels = {'WTC Tower 1':'WTC Tower 1','WTC Tower 2':'WTC Tower 2','Pentagon':'The Pentagon','Flight 11':'Flight 11','Flight 93':'Flight 93','Flight 175':'Flight 175','Flight 77':'Flight 77'};
+  const stateLabels = {NY:'New York',NJ:'New Jersey',TX:'Texas',CA:'California',IL:'Illinois',VA:'Virginia',PA:'Pennsylvania',CT:'Connecticut'};
+  const paperLabels = {NYT:'NY Times',WP:'Washington Post',HC:'Houston Chronicle',DMN:'Dallas Morning News'};
+
+  document.querySelectorAll('#filter-locations input:checked').forEach(cb=>{
+    chips.push({label: locLabels[cb.value]||cb.value, cb});
+  });
+  document.querySelectorAll('#filter-states input:checked').forEach(cb=>{
+    chips.push({label: stateLabels[cb.value]||cb.value, cb});
+  });
+  document.querySelectorAll('#filter-papers input:checked').forEach(cb=>{
+    chips.push({label: paperLabels[cb.value]||cb.value, cb});
+  });
+
+  if(chips.length === 0){
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = 'flex';
+
+  chips.forEach(({label, cb})=>{
+    const chip = document.createElement('button');
+    chip.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:2px 12px;border-radius:6px;border:none;background:#f6e5b8;color:#655b34;font-family:"DM Sans",sans-serif;font-size:14px;font-weight:400;cursor:pointer;white-space:nowrap;transition:opacity 0.15s;line-height:1.5;';
+    chip.innerHTML = label + ' <i class="ph ph-x" style="font-size:14px;color:#655b34;"></i>';
+    chip.addEventListener('click',()=>{
+      cb.checked = false;
+      applyFilters();
+    });
+    chip.addEventListener('mouseenter',()=>{ chip.style.opacity='0.8'; });
+    chip.addEventListener('mouseleave',()=>{ chip.style.opacity='1'; });
+    container.appendChild(chip);
+  });
+}
+
+function updateClearBtn(){
+  const anyActive = document.querySelectorAll('#filter-locations input:checked, #filter-states input:checked, #filter-papers input:checked').length > 0
+    || (document.getElementById('memorial-search')||{value:''}).value.trim().length > 0;
+  const btn = document.getElementById('clear-all-btn');
+  if(btn) btn.style.display = anyActive ? 'flex' : 'none';
+}
+
+function setLayout(mode){
+  state.layoutMode = mode;
+  const listBtn = document.getElementById('layout-list');
+  const gridBtn = document.getElementById('layout-grid');
+  const activeStyle='flex:1;height:36px;font-size:13px;font-weight:600;cursor:pointer;background:#e2ba60;color:#262116;border:1px solid #e2ba60;display:flex;align-items:center;justify-content:center;gap:4px;';
+  const inactiveStyle='flex:1;height:36px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:#afadaa;border:1px solid #514d45;display:flex;align-items:center;justify-content:center;gap:4px;';
+  if(mode==='grid'){
+    document.body.classList.add('grid-view');
+    listBtn.style.cssText=inactiveStyle+'border-radius:6px 0 0 6px;';
+    gridBtn.style.cssText=activeStyle+'border-radius:0 6px 6px 0;margin-left:-1px;';
+  } else {
+    document.body.classList.remove('grid-view');
+    listBtn.style.cssText=activeStyle+'border-radius:6px 0 0 6px;';
+    gridBtn.style.cssText=inactiveStyle+'border-radius:0 6px 6px 0;margin-left:-1px;';
+  }
+  renderResults();
+}
+
+function toggleBio(id, event){
+  if(event) event.stopPropagation();
+  if(state.expandedBios.has(id)) state.expandedBios.delete(id);
+  else state.expandedBios.add(id);
+  renderResults();
+}
+
+function openMemorial(id){
+  const v = VICTIMS.find(x=>x.id===id);
+  if(v) alert(`Memorial for ${v.name}\n\n${v.bio}\n\nBorn: ${v.born} · Died: September 11, 2001\nLocation: ${v.loc}`);
+}
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+function switchTab(tab){
+  state.activeTab = tab;
+  const memTab = document.getElementById('tab-content-memorials');
+  const memTab2 = document.getElementById('tab-content-memories');
+  const tabBtn1 = document.getElementById('tab-memorials');
+  const tabBtn2 = document.getElementById('tab-memories');
+
+  if(tab==='memorials'){
+    memTab.style.display='block';
+    memTab2.style.display='none';
+    tabBtn1.className='seg-item active';
+    tabBtn2.className='seg-item inactive';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const el = document.getElementById('seg-control');
+      const top = el.getBoundingClientRect().top + window.scrollY - 32;
+      window.scrollTo({top, behavior:'smooth'});
+    }));
+  } else {
+    memTab.style.display='none';
+    memTab2.style.display='block';
+    tabBtn1.className='seg-item inactive';
+    tabBtn2.className='seg-item active';
+    renderPosts();
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const el = document.getElementById('seg-control');
+      const top = el.getBoundingClientRect().top + window.scrollY - 32;
+      window.scrollTo({top, behavior:'smooth'});
+    }));
+  }
+}
+
+// ============================================================
+// POSTS
+// ============================================================
+function renderPosts(){
+  const feed = document.getElementById('posts-feed');
+  if(!feed) return;
+  const allPosts = [...state.newPosts, ...state.filteredPosts];
+  feed.innerHTML = allPosts.map(post=>renderPostCard(post)).join('');
+}
+
+function renderPostCard(post){
+  const likes = (state.postLikes[post.id]||0) + (post.likes||0);
+  const liked = state.likedPosts.has(post.id);
+  const heartColor = liked ? '#e55' : '#afadaa';
+  const heartWeight = liked ? 'ph-fill' : 'ph-light';
+  const repliesHtml = (post.replies||[]).map(r=>`
+    <div class="reply-box" style="margin-bottom:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:14px;font-weight:700;color:#fff;">${r.author}</span>
+          <span style="font-size:12px;color:#afadaa;">${r.time}</span>
+        </div>
+        <button style="background:none;border:none;cursor:pointer;color:#afadaa;padding:4px;"><i class="ph-light ph-dots-three" style="font-size:20px;"></i></button>
+      </div>
+      <p style="font-size:14px;color:#fff;line-height:1.6;font-family:'PT Serif',serif;">${r.text}</p>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:6px;">
+        <i class="ph-light ph-heart" style="font-size:18px;color:#afadaa;cursor:pointer;"></i>
+        <span style="font-size:13px;color:#afadaa;">${r.likes||0}</span>
+      </div>
+    </div>
+  `).join('');
+  const expanded = state.expandedReplies.has(post.id);
+
+  return `<div class="post-card" id="post-${post.id}">
+    <div style="padding:24px 24px 0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:#3c4d69;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;">${post.author.split(' ').map(w=>w[0]).join('').substring(0,2)}</div>
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span style="font-size:15px;font-weight:700;color:#fff;">${post.author}</span>
+              <span style="font-size:12px;color:#afadaa;">${post.time}</span>
+              ${post.tag?`<span class="tag" style="background:#1e3a2f;color:#6ab04c;font-size:10px;">${post.tag}</span>`:''}
+              ${post.hasCandle?`<span class="candle-lit" style="font-size:14px;">🕯</span>`:''}
+            </div>
+          </div>
+        </div>
+        <button style="background:none;border:none;cursor:pointer;color:#afadaa;"><i class="ph-light ph-dots-three" style="font-size:22px;"></i></button>
+      </div>
+      <div style="font-family:'PT Serif',serif;font-size:15px;color:#fff;line-height:1.7;margin-bottom:8px;"
+           id="post-text-${post.id}" class="${post.text.length>240?'truncated':''}">${post.text}</div>
+      ${post.text.length>240?`<button onclick="expandPostText(${post.id})" style="color:#dcb05e;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;display:block;margin-bottom:12px;">Read More</button>`:''}
+    </div>
+    ${post.hasPhoto?`
+      <div style="margin:12px 0;">
+        <img src="https://picsum.photos/seed/post${post.id}/640/400" alt="" style="width:100%;object-fit:cover;max-height:400px;">
+        ${post.photoCaption?`<div style="background:#293548;padding:8px 24px;font-size:13px;color:#afadaa;">${post.photoCaption}</div>`:''}
+      </div>
+    `:''}
+    <div style="padding:0 24px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid #293548;">
+        <div style="display:flex;align-items:center;gap:20px;">
+          <button class="heart-btn ${liked?'liked':''}" onclick="toggleLike(${post.id})" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;">
+            <i class="${heartWeight} ph-heart" style="font-size:22px;color:${heartColor};"></i>
+            <span style="font-size:14px;color:#fff;" id="likes-${post.id}">${likes}</span>
+          </button>
+          <button onclick="toggleReplies(${post.id})" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;color:#afadaa;">
+            <i class="ph-light ph-chat-circle" style="font-size:22px;"></i>
+            <span style="font-size:14px;">${post.replies?post.replies.length:0}</span>
+          </button>
+        </div>
+        <button onclick="sharePost(${post.id})" style="border:1px solid #dbdad7;color:#262116;background:#fff;padding:8px 18px;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
+          <i class="ph-light ph-share-fat" style="font-size:16px;"></i> Share
+        </button>
+      </div>
+    </div>
+    ${(post.replies&&post.replies.length>0)||expanded?`
+      <div style="padding:0 24px 16px;">
+        ${post.replies&&post.replies.length>1?`<button onclick="toggleReplies(${post.id})" style="color:#dcb05e;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;margin-bottom:12px;">
+          ${expanded?'Hide previous comments':'See '+post.replies.length+' previous comments'}
+        </button>`:''}
+        ${expanded?repliesHtml:''}
+        <div style="display:flex;flex-direction:column;gap:10px;padding-top:8px;border-top:1px solid #293548;margin-top:8px;">
+          <input type="text" placeholder="Add a comment..." id="reply-input-${post.id}"
+            style="width:100%;background:#fbfbfb;border:1px solid #afadaa;color:#262116;padding:10px 14px;border-radius:8px;font-size:14px;outline:none;"
+            onfocus="this.style.borderColor='#dcb05e'" onblur="this.style.borderColor='#afadaa'">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <button style="width:36px;height:36px;border-radius:50%;border:1px solid #514d45;background:#293548;color:#afadaa;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+              <i class="ph-light ph-image" style="font-size:16px;"></i>
+            </button>
+            <button onclick="addReply(${post.id})" style="background:#293548;color:#fff;padding:8px 20px;border-radius:9999px;font-size:13px;font-weight:600;border:none;cursor:pointer;">Comment</button>
+          </div>
+        </div>
+      </div>
+    `:`
+      <div style="padding:0 24px 16px;">
+        <div style="display:flex;flex-direction:column;gap:10px;padding-top:8px;border-top:1px solid #293548;">
+          <input type="text" placeholder="Add a comment..." id="reply-input-${post.id}"
+            style="width:100%;background:#fbfbfb;border:1px solid #afadaa;color:#262116;padding:10px 14px;border-radius:8px;font-size:14px;outline:none;"
+            onfocus="this.style.borderColor='#dcb05e'" onblur="this.style.borderColor='#afadaa'">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <button style="width:36px;height:36px;border-radius:50%;border:1px solid #514d45;background:#293548;color:#afadaa;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+              <i class="ph-light ph-image" style="font-size:16px;"></i>
+            </button>
+            <button onclick="addReply(${post.id})" style="background:#293548;color:#fff;padding:8px 20px;border-radius:9999px;font-size:13px;font-weight:600;border:none;cursor:pointer;">Comment</button>
+          </div>
+        </div>
+      </div>
+    `}
+  </div>`;
+}
+
+function toggleLike(id){
+  if(state.likedPosts.has(id)){
+    state.likedPosts.delete(id);
+    state.postLikes[id]=(state.postLikes[id]||1)-1;
+  } else {
+    state.likedPosts.add(id);
+    state.postLikes[id]=(state.postLikes[id]||0)+1;
+  }
+  const post = [...state.newPosts,...POSTS].find(p=>p.id===id);
+  const base = post?post.likes:0;
+  const total = base + (state.postLikes[id]||0);
+  const likesEl = document.getElementById(`likes-${id}`);
+  if(likesEl) likesEl.textContent=total;
+  const btn = document.querySelector(`[onclick="toggleLike(${id})"]`);
+  if(btn){
+    const icon = btn.querySelector('i');
+    if(state.likedPosts.has(id)){
+      if(icon){icon.className='ph-fill ph-heart';icon.style.color='#e55';}
+    } else {
+      if(icon){icon.className='ph-light ph-heart';icon.style.color='#afadaa';}
+    }
+  }
+}
+
+function toggleReplies(id){
+  if(state.expandedReplies.has(id)) state.expandedReplies.delete(id);
+  else state.expandedReplies.add(id);
+  renderPosts();
+}
+
+function addReply(postId){
+  const input = document.getElementById(`reply-input-${postId}`);
+  if(!input||!input.value.trim()) return;
+  const text = input.value.trim();
+  const allPosts = [...state.newPosts,...POSTS];
+  const post = allPosts.find(p=>p.id===postId);
+  if(post){
+    if(!post.replies) post.replies=[];
+    post.replies.push({author:'You',time:'Just now',text,likes:0});
+    state.expandedReplies.add(postId);
+  }
+  renderPosts();
+  showToast('Your comment was added');
+}
+
+function expandPostText(id){
+  const el = document.getElementById(`post-text-${id}`);
+  if(el){
+    el.classList.remove('truncated');
+    el.nextElementSibling.style.display='none';
+  }
+}
+
+function sharePost(id){
+  showToast('Link copied to clipboard');
+}
+
+function filterPosts(){
+  const search = (document.getElementById('memories-search-input')||{value:''}).value.trim().toLowerCase();
+  const type = document.querySelector('input[name="post-type"]:checked')?.value || 'all';
+  const sort = document.querySelector('input[name="sort-memories"]:checked')?.value || 'newest';
+  const locs = [...document.querySelectorAll('#left-sidebar-memories input[type=checkbox]:checked')].map(el=>el.value);
+
+  let results = POSTS.filter(p=>{
+    if(search && !p.text.toLowerCase().includes(search) && !p.author.toLowerCase().includes(search)) return false;
+    if(type==='photos' && !p.hasPhoto) return false;
+    if(type==='text' && p.hasPhoto) return false;
+    if(locs.length && p.tag && !locs.some(l=>p.tag.includes(l))) return false;
+    return true;
+  });
+
+  if(sort==='top') results = [...results].sort((a,b)=>(b.likes||0)-(a.likes||0));
+
+  state.filteredPosts = results;
+  renderPosts();
+  const noRes = document.getElementById('posts-no-results');
+  if(noRes) noRes.style.display = results.length===0&&state.newPosts.length===0 ? 'block' : 'none';
+}
+
+// ============================================================
+// GUESTBOOK
+// ============================================================
+function expandComposer(){
+  if(!state.composerOpen){
+    state.composerOpen = true;
+    document.getElementById('composer-expanded').style.display='block';
+  }
+}
+
+function toggleCandle(){
+  state.hasCandle = !state.hasCandle;
+  const btn = document.getElementById('candle-btn');
+  const notice = document.getElementById('candle-notice');
+  if(state.hasCandle){
+    btn.style.cssText='border:1px solid #dcb05e;color:#dcb05e;padding:8px 16px;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer;background:rgba(220,176,94,0.1);display:flex;align-items:center;gap:6px;';
+    notice.style.display='block';
+    expandComposer();
+  } else {
+    btn.style.cssText='border:1px solid #fff;color:#fff;padding:8px 16px;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;display:flex;align-items:center;gap:6px;';
+    notice.style.display='none';
+  }
+}
+
+function triggerPhotoUpload(){
+  expandComposer();
+  document.getElementById('photo-input').click();
+}
+
+function handlePhotoSelect(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  state.hasPhoto = true;
+  state.photoFileName = file.name;
+  document.getElementById('photo-name').textContent = file.name;
+  document.getElementById('photo-preview').style.display='block';
+  const btn = document.getElementById('add-photos-btn');
+  btn.style.cssText='border:1px solid #dcb05e;color:#dcb05e;padding:8px 16px;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer;background:rgba(220,176,94,0.1);display:flex;align-items:center;gap:6px;';
+}
+
+function removePhoto(){
+  state.hasPhoto = false;
+  state.photoFileName = null;
+  document.getElementById('photo-preview').style.display='none';
+  document.getElementById('photo-input').value='';
+  const btn = document.getElementById('add-photos-btn');
+  btn.style.cssText='border:1px solid #fff;color:#fff;padding:8px 16px;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;display:flex;align-items:center;gap:6px;';
+}
+
+function submitPost(){
+  const name = document.getElementById('post-name').value.trim();
+  const message = document.getElementById('post-message')?.value.trim();
+  if(!name){
+    document.getElementById('post-name').focus();
+    document.getElementById('post-name').style.borderColor='#e55';
+    showToast('Please enter your name');
+    return;
+  }
+  if(!message){
+    expandComposer();
+    document.getElementById('post-message').focus();
+    showToast('Please write a message');
+    return;
+  }
+  const newPost = {
+    id: Date.now(),
+    author: name,
+    time: 'Just now',
+    text: message,
+    likes: 0,
+    hasPhoto: state.hasPhoto,
+    hasCandle: state.hasCandle,
+    replies: []
+  };
+  state.newPosts.unshift(newPost);
+  // Reset form
+  document.getElementById('post-name').value='';
+  document.getElementById('post-message').value='';
+  document.getElementById('composer-expanded').style.display='none';
+  state.composerOpen=false;
+  state.hasCandle=false;
+  state.hasPhoto=false;
+  document.getElementById('candle-notice').style.display='none';
+  document.getElementById('photo-preview').style.display='none';
+  document.getElementById('candle-btn').style.cssText='border:1px solid #fff;color:#fff;padding:8px 16px;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;display:flex;align-items:center;gap:6px;';
+  document.getElementById('add-photos-btn').style.cssText='border:1px solid #fff;color:#fff;padding:8px 16px;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;display:flex;align-items:center;gap:6px;';
+  renderPosts();
+  showToast('Your memory has been shared. Thank you.');
+  document.getElementById('posts-feed').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ============================================================
+// MOBILE SIDEBAR
+// ============================================================
+function openSidebar(){
+  document.getElementById('left-sidebar-memorials').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('open');
+}
+function closeSidebar(){
+  document.getElementById('left-sidebar-memorials').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ============================================================
+// URL PARAMETER FILTERING
+// ============================================================
+function parseURLFilters(){
+  const params = new URLSearchParams(window.location.search);
+  const stateParam = params.get('state');
+  if(stateParam){
+    const checkboxes = document.querySelectorAll('#filter-states input[type="checkbox"]');
+    checkboxes.forEach(cb=>{
+      if(cb.value === stateParam) cb.checked = true;
+    });
+  }
+  // Swap to partner header when navigating from a newspaper page
+  const partner = params.get('partner');
+  if(partner === 'cst'){
+    const legacy = document.getElementById('legacy-header');
+    const partnerH = document.getElementById('partner-header');
+    if(legacy) legacy.style.display = 'none';
+    if(partnerH) partnerH.style.display = 'block';
+  }
+}
+
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded',()=>{
+  if(document.getElementById('hero-orbs')) buildHeroOrbs();
+  buildVoiceCards();
+  parseURLFilters(); // pre-check filters from URL params before loading data
+  loadVictims(); // fetches real data if PERSON_IDS populated; falls back to mock
+  updateClearBtn();
+  document.getElementById('clear-all-btn').style.display='none';
+  // Prevent memorial search form submit on enter
+  document.getElementById('memorial-search').addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();applyFilters();} });
+});
+</script>
+</body>
+</html>

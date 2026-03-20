@@ -1,0 +1,18 @@
+# Ignore everything by default
+*
+
+# Allow shared files
+!.gitignore
+!CLAUDE.md
+!design-system.md
+!memory.md
+
+# Allow the two linked projects
+!911-memorial/
+!911-memorial/**
+!newspaper-listing/
+!newspaper-listing/**
+
+# OS files
+.DS_Store
+**/.DS_Store

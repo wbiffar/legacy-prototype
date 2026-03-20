@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "newspaper-listing",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "8091", "/Users/wesleybiffar/Library/CloudStorage/OneDrive-Legacy.com/Documents/claude-code-projects/newspaper-listing"],
+      "port": 8091
+    }
+  ]
+}
