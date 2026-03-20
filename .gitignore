@@ -3,6 +3,7 @@
 
 # Allow shared files
 !.gitignore
+!index.html
 !CLAUDE.md
 !design-system.md
 !memory.md
