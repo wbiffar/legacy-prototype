@@ -175,8 +175,9 @@ tailwind.config = {
 </nav>
 
 <!-- PARTNERSHIP BAR -->
-<div style="background:#dcb05e;padding:8px 16px;text-align:center;font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.25;color:#262116;">
-  Brought to you in partnership with The New York Times
+<div style="background:#dcb05e;padding:8px 16px;text-align:center;color:#262116;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;">
+  <p style="font-family:'DM Serif Text',serif;font-size:20px;line-height:1.1;margin:0;">Chicago Remembers September 11</p>
+  <p style="font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.25;font-weight:400;margin:0;">9 lives from your community are remembered here. This memorial honors all 2,977 lost on 9/11.</p>
 </div>
 
 <!-- HERO -->
@@ -206,8 +207,8 @@ tailwind.config = {
   </div>
 </div>
 
-<!-- Segmented control (always visible) -->
-<div style="background:#151b24;display:flex;align-items:center;justify-content:center;padding:32px 64px 40px;gap:24px;">
+<!-- Segmented control (always visible, sticky on scroll) -->
+<div id="seg-control-bar" style="background:#151b24;display:flex;align-items:center;justify-content:center;padding:32px 64px 40px;gap:24px;position:sticky;top:0;z-index:50;transition:padding 0.2s ease, box-shadow 0.2s ease;">
   <div style="flex:1;height:1px;background:#dcb05e;opacity:0.35;"></div>
   <div style="background:#c49e54;border-radius:9999px;padding:4px;flex-shrink:0;" id="seg-control">
     <div style="background:rgba(255,255,255,0.08);border-radius:9999px;display:flex;gap:0;padding:0;">
@@ -1648,6 +1649,16 @@ function parseURLFilters(){
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded',()=>{
+  // Sticky segmented control — compact when stuck
+  const segBar = document.getElementById('seg-control-bar');
+  if(segBar){
+    const observer = new IntersectionObserver(([e])=>{
+      const isStuck = e.intersectionRatio < 1;
+      segBar.style.padding = isStuck ? '12px 64px' : '32px 64px 40px';
+      segBar.style.boxShadow = isStuck ? '0 4px 12px rgba(0,0,0,0.3)' : 'none';
+    },{threshold:[1],rootMargin:'-1px 0px 0px 0px'});
+    observer.observe(segBar);
+  }
   if(document.getElementById('hero-orbs')) buildHeroOrbs();
   buildVoiceCards();
   parseURLFilters(); // pre-check filters from URL params before loading data
