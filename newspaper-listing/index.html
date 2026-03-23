@@ -134,7 +134,7 @@ tailwind.config = {
       <!-- Featured Obituaries -->
       <div class="flex-1 min-w-0">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="font-serif text-2xl text-wb-900 italic">Today's Featured Obituaries</h2>
+          <h2 class="font-serif text-2xl text-wb-900">Today's Featured Obituaries</h2>
           <div class="flex gap-2">
             <button onclick="scrollCarousel(-1)" class="w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center hover:bg-wb-50"><i class="ph ph-caret-left text-wb-600"></i></button>
             <button onclick="scrollCarousel(1)" class="w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center hover:bg-wb-50"><i class="ph ph-caret-right text-wb-600"></i></button>
@@ -147,11 +147,11 @@ tailwind.config = {
           <button class="px-4 py-2 rounded-full text-sm font-semibold border border-wb-300 text-wb-900 hover:bg-wb-50">In Memoriam</button>
         </div>
         <!-- Carousel -->
-        <div class="overflow-hidden" id="featuredCarouselWrap">
-          <div class="carousel-track gap-4" id="featuredCarousel">
+        <div class="" id="featuredCarouselWrap">
+          <div class="carousel-track gap-4 py-2" id="featuredCarousel">
             <!-- Card 1 -->
             <div class="min-w-[230px] max-w-[230px] rounded-xl overflow-hidden border border-wb-200 bg-white cursor-pointer hover:shadow-md transition-shadow flex-shrink-0">
-              <div class="h-[200px] bg-navy-300 overflow-hidden"><img src="https://picsum.photos/seed/obit1/300/300" alt="" class="w-full h-full object-cover"></div>
+              <div class="h-[200px] overflow-hidden flex items-center justify-center" style="background:#8b7d6b;"><img src="https://this-person-does-not-exist.com/img/avatar-gend9b08e70f4eff8be8843f233fbd76425.jpg" alt="" class="w-full h-full object-contain"></div>
               <div class="p-4 text-center">
                 <p class="font-semibold text-wb-900">Danny Seagren</p>
                 <p class="text-gold-700 text-sm">1948–2025</p>
@@ -160,7 +160,7 @@ tailwind.config = {
             </div>
             <!-- Card 2 -->
             <div class="min-w-[230px] max-w-[230px] rounded-xl overflow-hidden border border-wb-200 bg-white cursor-pointer hover:shadow-md transition-shadow flex-shrink-0">
-              <div class="h-[200px] bg-gold-100 overflow-hidden"><img src="https://picsum.photos/seed/obit2/300/300" alt="" class="w-full h-full object-cover"></div>
+              <div class="h-[200px] overflow-hidden flex items-center justify-center" style="background:#a59e91;"><img src="https://this-person-does-not-exist.com/img/avatar-genb7c746c8918cec54afbaee3328a55f50.jpg" alt="" class="w-full h-full object-contain"></div>
               <div class="p-4 text-center">
                 <p class="font-semibold text-wb-900">Eleanor Vance</p>
                 <p class="text-gold-700 text-sm">1972–2025</p>
@@ -169,7 +169,7 @@ tailwind.config = {
             </div>
             <!-- Card 3 -->
             <div class="min-w-[230px] max-w-[230px] rounded-xl overflow-hidden border border-wb-200 bg-white cursor-pointer hover:shadow-md transition-shadow flex-shrink-0">
-              <div class="h-[200px] bg-seaFoam-400 overflow-hidden"><img src="https://picsum.photos/seed/obit3/300/300" alt="" class="w-full h-full object-cover"></div>
+              <div class="h-[200px] overflow-hidden flex items-center justify-center" style="background:#6b5e52;"><img src="https://this-person-does-not-exist.com/img/avatar-gen7d42d981620ed239f05f23f2bed49657.jpg" alt="" class="w-full h-full object-contain"></div>
               <div class="p-4 text-center">
                 <p class="font-semibold text-wb-900">Dr. Steven Hayes</p>
                 <p class="text-gold-700 text-sm">1933–2025</p>
@@ -178,7 +178,7 @@ tailwind.config = {
             </div>
             <!-- Card 4 -->
             <div class="min-w-[230px] max-w-[230px] rounded-xl overflow-hidden border border-wb-200 bg-white cursor-pointer hover:shadow-md transition-shadow flex-shrink-0">
-              <div class="h-[200px] bg-navy-200 overflow-hidden"><img src="https://picsum.photos/seed/obit4/300/300" alt="" class="w-full h-full object-cover"></div>
+              <div class="h-[200px] overflow-hidden flex items-center justify-center" style="background:#7a8b8a;"><img src="https://this-person-does-not-exist.com/img/avatar-gencd75167c56cc012671193a05df2c9ced.jpg" alt="" class="w-full h-full object-contain"></div>
               <div class="p-4 text-center">
                 <p class="font-semibold text-wb-900">Ralph Thomas</p>
                 <p class="text-gold-700 text-sm">1975–2025</p>
@@ -187,7 +187,7 @@ tailwind.config = {
             </div>
             <!-- Card 5 -->
             <div class="min-w-[230px] max-w-[230px] rounded-xl overflow-hidden border border-wb-200 bg-white cursor-pointer hover:shadow-md transition-shadow flex-shrink-0">
-              <div class="h-[200px] bg-gold-200 overflow-hidden"><img src="https://picsum.photos/seed/obit5/300/300" alt="" class="w-full h-full object-cover"></div>
+              <div class="h-[200px] overflow-hidden flex items-center justify-center" style="background:#9e8e7e;"><img src="https://this-person-does-not-exist.com/img/avatar-genb705b487a49032201c17050b16d87a3d.jpg" alt="" class="w-full h-full object-contain"></div>
               <div class="p-4 text-center">
                 <p class="font-semibold text-wb-900">Margaret Liu</p>
                 <p class="text-gold-700 text-sm">1940–2025</p>
@@ -199,7 +199,7 @@ tailwind.config = {
       </div>
       <!-- Featured Groups -->
       <div class="w-full lg:w-[300px] flex-shrink-0">
-        <h2 class="font-serif text-2xl text-wb-900 italic mb-5">Featured Groups</h2>
+        <h2 class="font-serif text-2xl text-wb-900 mb-5">Featured Groups</h2>
         <div class="flex flex-col">
           <!-- Group 1 -->
           <a href="../911-memorial/?state=IL&partner=cst" class="flex items-start justify-between py-3 border-b border-wb-200 hover:bg-gold-50 transition-colors rounded-lg px-1 -mx-1">
@@ -429,8 +429,8 @@ tailwind.config = {
             <p class="text-wb-700 text-sm leading-relaxed mb-4">Harold Eugene Whitaker, 87, of Springfield, Illinois, passed away peacefully on April 27, 2025, surrounded by his loving family. Born on August 12, 1937, in Qui...</p>
             <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
           </div>
-          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
-            <img src="https://picsum.photos/seed/harold/400/400" alt="Harold Whitacker" class="w-full h-full object-cover">
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0 sm:pr-4">
+            <img src="https://this-person-does-not-exist.com/img/avatar-gen3bb3675202546189326277f69cda44db.jpg" alt="Harold Whitacker" class="w-full h-full object-contain">
           </div>
         </article>
 
@@ -442,8 +442,8 @@ tailwind.config = {
             <p class="text-wb-700 text-sm leading-relaxed mb-4">Karen Elaine Stavros, 82, of Chicago, Illinois, passed away on March 12, 2025. She was born to George and Helen Williams on January 5, 1943, in Evanst...</p>
             <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
           </div>
-          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
-            <img src="https://picsum.photos/seed/karen/400/400" alt="Karen Elaine Stavros" class="w-full h-full object-cover">
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0 sm:pr-4">
+            <img src="https://this-person-does-not-exist.com/img/avatar-gen325a1a3ba4d2635cc7d54b6da220eaa6.jpg" alt="Karen Elaine Stavros" class="w-full h-full object-contain">
           </div>
         </article>
 
@@ -458,8 +458,8 @@ tailwind.config = {
             <p class="text-wb-700 text-sm leading-relaxed mb-4">Reynaldo "Nard" Meadows, peace to you my brother. Reynaldo leaves behind his wife Patricia, three sons, and a legacy of community service that touched...</p>
             <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
           </div>
-          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
-            <img src="https://picsum.photos/seed/reynaldo/400/400" alt="Reynaldo Meadows" class="w-full h-full object-cover">
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0 sm:pr-4">
+            <img src="https://this-person-does-not-exist.com/img/avatar-gen9edd0007e3cdd8d3c44081eba69a77e9.jpg" alt="Reynaldo Meadows" class="w-full h-full object-contain">
           </div>
         </article>
 
@@ -476,8 +476,8 @@ tailwind.config = {
             <p class="text-wb-700 text-sm leading-relaxed mb-4">Walt Simmons served this community for over forty years as a dedicated public school teacher. His patience and kindness inspired generations of studen...</p>
             <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
           </div>
-          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
-            <img src="https://picsum.photos/seed/walter/400/400" alt="Walter Eugene Simmons" class="w-full h-full object-cover">
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0 sm:pr-4">
+            <img src="https://this-person-does-not-exist.com/img/avatar-gen716d027f221b5ea641b37e82648ab07b.jpg" alt="Walter Eugene Simmons" class="w-full h-full object-contain">
           </div>
         </article>
 
@@ -489,8 +489,8 @@ tailwind.config = {
             <p class="text-wb-700 text-sm leading-relaxed mb-4">Harriet Lydia Bennett, 86, of Oak Park, Illinois, went home to be with the Lord on March 17, 2025. A vibrant woman of faith, Harriet served her chur...</p>
             <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
           </div>
-          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
-            <img src="https://picsum.photos/seed/harriet/400/400" alt="Harriet Lydia Bennett" class="w-full h-full object-cover">
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0 sm:pr-4">
+            <img src="https://this-person-does-not-exist.com/img/avatar-gen43d2a142b3f52ebedf3474e8a37f49d7.jpg" alt="Harriet Lydia Bennett" class="w-full h-full object-contain">
           </div>
         </article>
 
@@ -505,8 +505,8 @@ tailwind.config = {
             <p class="text-wb-700 text-sm leading-relaxed mb-4">Major Alice Lykes (Ret.) served her country with distinction for 28 years in the United States Army. After retiring, she devoted herself to veteran ou...</p>
             <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
           </div>
-          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
-            <img src="https://picsum.photos/seed/alice/400/400" alt="Major Alice Lykes" class="w-full h-full object-cover">
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0 sm:pr-4">
+            <img src="https://this-person-does-not-exist.com/img/avatar-gen4c511c7118871420c310400aaa747dd6.jpg" alt="Major Alice Lykes" class="w-full h-full object-contain">
           </div>
         </article>
 
@@ -518,8 +518,8 @@ tailwind.config = {
             <p class="text-wb-700 text-sm leading-relaxed mb-4">John Marcus Bryant, beloved father, grandfather, and retired firefighter, passed away March 14, 2025. John served the Chicago Fire Department for 32...</p>
             <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
           </div>
-          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
-            <img src="https://picsum.photos/seed/john/400/400" alt="John Marcus Bryant" class="w-full h-full object-cover">
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0 sm:pr-4">
+            <img src="https://this-person-does-not-exist.com/img/avatar-gen6b3b5faef405b1681627466f154dd5bf.jpg" alt="John Marcus Bryant" class="w-full h-full object-contain">
           </div>
         </article>
 
@@ -531,8 +531,8 @@ tailwind.config = {
             <p class="text-wb-700 text-sm leading-relaxed mb-4">Ellen Ruth McIntosh, affectionately known as "Nana," passed away at 95 years old. She was the heart of her family and known for her legendary cooking...</p>
             <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
           </div>
-          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
-            <img src="https://picsum.photos/seed/ellen/400/400" alt="Ellen McIntosh" class="w-full h-full object-cover">
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0 sm:pr-4">
+            <img src="https://this-person-does-not-exist.com/img/avatar-gen7f02a2a02b6f46121f161ef20ede876a.jpg" alt="Ellen McIntosh" class="w-full h-full object-contain">
           </div>
         </article>
 
@@ -580,8 +580,8 @@ tailwind.config = {
             <p class="text-wb-700 text-sm leading-relaxed mb-4">Thomas, or "Tommy" as his friends called him, was the kind of person who lit up every room. A devoted father and passionate Little League coach, he sp...</p>
             <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
           </div>
-          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
-            <img src="https://picsum.photos/seed/tommy/400/400" alt="Thomas Grijalva" class="w-full h-full object-cover">
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0 sm:pr-4">
+            <img src="https://this-person-does-not-exist.com/img/avatar-gena977b30ca10fc3982b915dc3e1b93c57.jpg" alt="Thomas Grijalva" class="w-full h-full object-contain">
           </div>
         </article>
 
@@ -592,8 +592,8 @@ tailwind.config = {
             <p class="text-wb-700 text-sm leading-relaxed mb-4">Judith Mae Bellmann, 83, of Naperville, Illinois, passed away peacefully at home. A devoted wife of 58 years, she is survived by her husband Richard,...</p>
             <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
           </div>
-          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
-            <img src="https://picsum.photos/seed/judith/400/400" alt="Judith Mae Bellmann" class="w-full h-full object-cover">
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0 sm:pr-4">
+            <img src="https://this-person-does-not-exist.com/img/avatar-gen927b6d203555401b0e8983c8be48eef9.jpg" alt="Judith Mae Bellmann" class="w-full h-full object-contain">
           </div>
         </article>
 
@@ -607,8 +607,8 @@ tailwind.config = {
             <p class="text-wb-700 text-sm leading-relaxed mb-4">John Monroe, 72, beloved husband and father, passed away March 6, 2025. Known for his warm smile and generous spirit, John touched the lives of all w...</p>
             <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
           </div>
-          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
-            <img src="https://picsum.photos/seed/monroe/400/400" alt="John Monroe" class="w-full h-full object-cover">
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0 sm:pr-4">
+            <img src="https://this-person-does-not-exist.com/img/avatar-gen8c7605579539c49456894cc4f5a791ae.jpg" alt="John Monroe" class="w-full h-full object-contain">
           </div>
         </article>
 
@@ -619,8 +619,8 @@ tailwind.config = {
             <p class="text-wb-700 text-sm leading-relaxed mb-4">Bea Ackerman, 89, was a pillar of her community, a dedicated volunteer, and a loving grandmother of 12. She will be dearly missed by all who knew her...</p>
             <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
           </div>
-          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
-            <img src="https://picsum.photos/seed/bea/400/400" alt="Beatrice Ackerman" class="w-full h-full object-cover">
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0 sm:pr-4">
+            <img src="https://this-person-does-not-exist.com/img/avatar-gen0f413bddf075ce17ee6502b9fb243851.jpg" alt="Beatrice Ackerman" class="w-full h-full object-contain">
           </div>
         </article>
 
@@ -631,15 +631,15 @@ tailwind.config = {
             <p class="text-wb-700 text-sm leading-relaxed mb-4">Dennis Woodrow Vance, 77, of Joliet, Illinois, passed away on March 3, 2025. A proud Korean War veteran and lifelong Cubs fan, Dennis was known for h...</p>
             <a href="#" class="inline-flex items-center gap-1.5 text-navy-500 text-sm font-semibold hover:underline">Read the Obituary <i class="ph ph-arrow-right"></i></a>
           </div>
-          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0">
-            <img src="https://picsum.photos/seed/dennis/400/400" alt="Dennis Woodrow Vance" class="w-full h-full object-cover">
+          <div class="w-full sm:w-[200px] h-[200px] sm:h-auto flex-shrink-0 sm:pr-4">
+            <img src="https://this-person-does-not-exist.com/img/avatar-genf88237332027dd43c2f57d2084532ea9.jpg" alt="Dennis Woodrow Vance" class="w-full h-full object-contain">
           </div>
         </article>
 
         <!-- ===== GRIEF SUPPORT ===== -->
         <div class="mb-6 mt-2">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="font-serif text-xl text-wb-900 italic">Grief Support</h3>
+            <h3 class="font-serif text-xl text-wb-900">Grief Support</h3>
             <div class="flex gap-2">
               <button class="w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center hover:bg-wb-50"><i class="ph ph-caret-left text-wb-600"></i></button>
               <button class="w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center hover:bg-wb-50"><i class="ph ph-caret-right text-wb-600"></i></button>
@@ -689,16 +689,6 @@ tailwind.config = {
 
       <!-- ===== RIGHT SIDEBAR ===== -->
       <aside class="hidden lg:block w-[300px] flex-shrink-0">
-        <!-- Featured card -->
-        <div class="bg-white rounded-xl border border-wb-200 overflow-hidden mb-6 cursor-pointer hover:shadow-md transition-shadow">
-          <div class="h-[160px] overflow-hidden"><img src="https://picsum.photos/seed/featured1/400/300" alt="" class="w-full h-full object-cover"></div>
-          <div class="p-4">
-            <span class="inline-block px-2 py-0.5 rounded-full bg-gold-100 text-gold-900 text-[11px] font-bold mb-2">Sponsored</span>
-            <h4 class="font-serif text-lg text-wb-900 mb-1">Remember Your Loved Ones</h4>
-            <p class="text-wb-600 text-sm">Create a lasting tribute with Legacy.com's memorial pages.</p>
-          </div>
-        </div>
-
         <!-- AD 300x600 -->
         <div class="bg-wb-100 rounded-xl flex items-center justify-center h-[600px] mb-6">
           <span class="text-wb-400 text-sm font-semibold tracking-widest">AD</span>
@@ -805,10 +795,6 @@ tailwind.config = {
 </footer>
 
 <!-- Sticky bottom ad -->
-<div class="fixed bottom-0 left-0 right-0 bg-wb-100 border-t border-wb-300 h-[90px] flex items-center justify-center z-30" id="stickyAd">
-  <span class="text-wb-400 text-sm font-semibold tracking-widest">STICKY BOTTOM AD</span>
-  <button class="absolute right-4 top-2 text-wb-500 hover:text-wb-700" onclick="document.getElementById('stickyAd').style.display='none'"><i class="ph ph-x text-xl"></i></button>
-</div>
 
 <script>
 // Featured obituaries carousel
