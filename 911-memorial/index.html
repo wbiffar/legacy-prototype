@@ -111,6 +111,10 @@ tailwind.config = {
     .left-sidebar{max-height:calc(100vh - 32px);overflow-y:auto;}
   }
 
+  /* Recommended memorials grid */
+  .recommended-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+  @media(max-width:767px){.recommended-grid{display:flex;flex-direction:column;gap:16px;}}
+
   /* Read more truncation */
   .truncated{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
   .truncated.expanded{display:block;}
@@ -417,6 +421,66 @@ tailwind.config = {
         </div>
         <div style="overflow:hidden;">
           <div id="grief-track" style="display:flex;gap:16px;transition:transform 0.4s ease;"></div>
+        </div>
+      </div>
+
+      <!-- Related memorials (inserted after card 10 by JS) -->
+      <div id="related-memorials" style="display:none;background:#212a3a;border:1px solid #293548;border-radius:16px;padding:24px;">
+        <h3 style="font-family:'DM Serif Text',serif;font-size:24px;font-weight:400;color:#fff;line-height:1.2;margin:0 0 24px;">Recommended Memorials</h3>
+        <div class="recommended-grid">
+          <!-- FDNY First Responders -->
+          <div style="border-bottom:1px solid #293548;padding-bottom:16px;display:flex;flex-direction:column;gap:4px;">
+            <span style="background:#f6e5b8;color:#85713e;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;padding:2px 10px;border-radius:80px;display:inline-block;width:fit-content;line-height:1.5;margin-bottom:2px;">New</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;">
+                <p style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;line-height:1.25;margin:0 0 4px;">FDNY First Responders</p>
+                <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#afadaa;line-height:1.2;margin:0;">New York, NY</p>
+              </div>
+              <button style="width:32px;height:32px;border-radius:9999px;background:#293548;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="ph-light ph-bookmark" style="font-size:16px;color:#afadaa;"></i>
+              </button>
+            </div>
+          </div>
+          <!-- NYPD First Responders -->
+          <div style="border-bottom:1px solid #293548;padding-bottom:16px;display:flex;flex-direction:column;gap:4px;">
+            <span style="background:#f6e5b8;color:#85713e;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;padding:2px 10px;border-radius:80px;display:inline-block;width:fit-content;line-height:1.5;margin-bottom:2px;">New</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;">
+                <p style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;line-height:1.25;margin:0 0 4px;">NYPD First Responders</p>
+                <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#afadaa;line-height:1.2;margin:0;">New York, NY</p>
+              </div>
+              <button style="width:32px;height:32px;border-radius:9999px;background:#293548;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="ph-light ph-bookmark" style="font-size:16px;color:#afadaa;"></i>
+              </button>
+            </div>
+          </div>
+          <!-- Pentagon First Responders -->
+          <div style="border-bottom:1px solid #293548;padding-bottom:16px;display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;">
+                <p style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;line-height:1.25;margin:0 0 4px;">Pentagon First Responders</p>
+                <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#afadaa;line-height:1.2;margin:0;">Washington, DC</p>
+              </div>
+              <button style="width:32px;height:32px;border-radius:9999px;background:#293548;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="ph-light ph-bookmark" style="font-size:16px;color:#afadaa;"></i>
+              </button>
+            </div>
+          </div>
+          <!-- Port Authority Police Department -->
+          <div style="border-bottom:1px solid #293548;padding-bottom:16px;display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;">
+                <p style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;line-height:1.25;margin:0 0 4px;">Port Authority Police Dept.</p>
+                <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#afadaa;line-height:1.2;margin:0;">New York, NY</p>
+              </div>
+              <button style="width:32px;height:32px;border-radius:9999px;background:#293548;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="ph-light ph-bookmark" style="font-size:16px;color:#afadaa;"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:24px;display:flex;justify-content:center;">
+          <a href="#" style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;text-decoration:underline;letter-spacing:-0.02em;">View All Memorials</a>
         </div>
       </div>
 
@@ -1103,8 +1167,10 @@ function renderResults(){
   // Rescue callout elements before innerHTML wipes them if they were moved inside listEl
   const callout = document.getElementById('memories-callout');
   const grief = document.getElementById('grief-support');
+  const related = document.getElementById('related-memorials');
   if(callout) callout.remove();
   if(grief) grief.remove();
+  if(related) related.remove();
 
   // Build list inserting anchors
   const listFragments = [];
@@ -1116,6 +1182,9 @@ function renderResults(){
     if(idx===7){
       listFragments.push('<div id="grief-anchor"></div>');
     }
+    if(idx===9){
+      listFragments.push('<div id="related-anchor"></div>');
+    }
   });
   listEl.innerHTML = listFragments.join('');
   gridEl.innerHTML = victims.map(v=>renderVictimCard(v,'grid')).join('');
@@ -1123,6 +1192,7 @@ function renderResults(){
   // Re-insert callouts after new anchors exist in DOM
   const anchor = document.getElementById('memories-callout-anchor');
   const griefAnchor = document.getElementById('grief-anchor');
+  const relatedAnchor = document.getElementById('related-anchor');
   if(anchor && victims.length > 3 && callout){
     anchor.after(callout);
     callout.style.display='block';
@@ -1132,6 +1202,10 @@ function renderResults(){
     griefAnchor.after(grief);
     grief.style.display='block';
     buildGriefCarousel();
+  }
+  if(relatedAnchor && victims.length > 9 && related){
+    relatedAnchor.after(related);
+    related.style.display='block';
   }
 }
 
