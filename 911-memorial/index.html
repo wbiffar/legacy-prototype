@@ -58,8 +58,21 @@ tailwind.config = {
   .filter-card-title span{font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#fff;line-height:1;}
 
   /* Result card list view */
-  .result-card{background:#212a3a;border:1px solid #373329;border-radius:16px;padding:0;display:flex;overflow:hidden;cursor:pointer;transition:border-color 0.2s;}
+  .result-card{background:#212a3a;border:1px solid #373329;border-radius:16px;padding:0;display:flex;flex-direction:column;overflow:hidden;cursor:pointer;transition:border-color 0.2s;}
   .result-card:hover{border-color:#3c4d69;}
+  .card-top-row{display:flex;align-items:stretch;}
+  .obit-drawer{display:none;border-top:1px solid #373329;padding:8px 8px 8px 16px;align-items:center;justify-content:space-between;width:100%;}
+  @media(max-width:767px){
+    .card-text{padding:16px 8px 16px 16px !important;gap:8px !important;}
+    .card-name{font-size:20px !important;line-height:1.1 !important;}
+    .card-date{font-size:14px !important;}
+    .card-bio{font-size:14px !important;-webkit-line-clamp:2 !important;}
+    .card-legacy{display:none !important;}
+    .card-obit-tags{display:none !important;}
+    .card-photo-wrap{width:147px !important;padding:4px 4px 4px 0 !important;}
+    .card-photo-wrap img{max-height:156px !important;width:100% !important;}
+    .obit-drawer{display:flex !important;}
+  }
 
   /* Result card grid view */
   .grid-card{background:#293548;border:1px solid #373329;border-radius:12px;padding:20px;cursor:pointer;transition:border-color 0.2s;}
@@ -1030,27 +1043,36 @@ function renderVictimCard(v, mode='list'){
       </div>
     </div>`;
   }
+  const obitCount = (v.paper && v.paper.trim()) ? '2 Obituaries' : '1 Obituary';
   return `<div class="result-card" data-id="${v.id}">
-    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:24px;padding:24px;">
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <h3 style="font-family:'DM Serif Text',serif;font-size:30px;color:#fff;line-height:1.2;margin:0;">${v.name}</h3>
-        <p style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;letter-spacing:-0.02em;margin:0;">${v.born ? v.born + ' – 2001' : 'd. 2001'}</p>
-      </div>
-      <p style="font-family:'PT Serif',serif;font-size:18px;color:#fff;line-height:1.5;margin:0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;">${v.bio}</p>
-      <div style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;">
-        <span style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;letter-spacing:-0.02em;">Visit Their Legacy Page</span>
-        <i class="ph-light ph-arrow-right" style="font-size:18px;color:#dcb05e;"></i>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#afadaa;margin:0;">Read their obituaries:</p>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          <span style="background:#f6e5b8;color:#655b34;padding:2px 12px;border-radius:9999px;font-size:14px;font-family:'DM Sans',sans-serif;white-space:nowrap;">Legacy</span>
-          <span style="background:#f6e5b8;color:#655b34;padding:2px 12px;border-radius:9999px;font-size:14px;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">${PAPER_NAMES[v.paper]||v.paper} <i class="ph-light ph-arrow-square-out" style="font-size:12px;color:#655b34;"></i></span>
+    <div class="card-top-row">
+      <div class="card-text" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:24px;padding:24px;">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <h3 class="card-name" style="font-family:'DM Serif Text',serif;font-size:30px;color:#fff;line-height:1.2;margin:0;">${v.name}</h3>
+          <p class="card-date" style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;letter-spacing:-0.02em;margin:0;">${v.born ? v.born + ' – 2001' : 'd. 2001'}</p>
+        </div>
+        <p class="card-bio" style="font-family:'PT Serif',serif;font-size:18px;color:#fff;line-height:1.5;margin:0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;">${v.bio}</p>
+        <div class="card-legacy" style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;">
+          <span style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;letter-spacing:-0.02em;">Visit Their Legacy Page</span>
+          <i class="ph-light ph-arrow-right" style="font-size:18px;color:#dcb05e;"></i>
+        </div>
+        <div class="card-obit-tags" style="display:flex;flex-direction:column;gap:8px;">
+          <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#afadaa;margin:0;">Read their obituaries:</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            <span style="background:#f6e5b8;color:#655b34;padding:2px 12px;border-radius:9999px;font-size:14px;font-family:'DM Sans',sans-serif;white-space:nowrap;">Legacy</span>
+            <span style="background:#f6e5b8;color:#655b34;padding:2px 12px;border-radius:9999px;font-size:14px;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">${PAPER_NAMES[v.paper]||v.paper} <i class="ph-light ph-arrow-square-out" style="font-size:12px;color:#655b34;"></i></span>
+          </div>
         </div>
       </div>
+      <div class="card-photo-wrap" style="width:234px;flex-shrink:0;align-self:stretch;overflow:hidden;border-radius:0 8px 8px 0;display:flex;align-items:center;justify-content:center;padding-right:16px;">
+        <img src="${photoLarge}" alt="${v.name}" style="width:234px;max-height:344px;object-fit:contain;display:block;">
+      </div>
     </div>
-    <div style="width:234px;flex-shrink:0;align-self:stretch;overflow:hidden;border-radius:0 8px 8px 0;display:flex;align-items:center;justify-content:center;padding-right:16px;">
-      <img src="${photoLarge}" alt="${v.name}" style="width:234px;max-height:344px;object-fit:contain;display:block;">
+    <div class="obit-drawer">
+      <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#fff;">${obitCount}</span>
+      <button style="width:24px;height:24px;border-radius:9999px;background:#514d45;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+        <i class="ph-light ph-caret-down" style="font-size:14px;color:#fff;"></i>
+      </button>
     </div>
   </div>`;
 }
