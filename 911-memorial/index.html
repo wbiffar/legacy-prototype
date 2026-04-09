@@ -625,7 +625,10 @@ tailwind.config = {
     <main class="flex-1 min-w-0">
       <!-- Guestbook UI -->
       <div style="background:#293548;border:1px solid #514d45;border-radius:16px;padding:24px;margin-bottom:24px;" id="guestbook">
-        <h3 style="font-family:'DM Serif Text',serif;font-size:20px;color:#fff;margin-bottom:20px;">Leave a message</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
+          <h3 style="font-family:'DM Serif Text',serif;font-size:20px;line-height:1.1;color:#fff;margin:0;">Leave a message for the memorial community</h3>
+          <p style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:400;line-height:1.25;color:#fff;margin:0;">You can also visit a specific life story to leave a message in their guestbook.</p>
+        </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
           <i class="ph-light ph-user" style="font-size:20px;color:#afadaa;flex-shrink:0;"></i>
           <input type="text" id="post-name" placeholder="Your First & Last Name"
