@@ -44,10 +44,9 @@ tailwind.config = {
   .tag{display:inline-flex;align-items:center;padding:2px 10px;border-radius:9999px;font-size:12px;font-weight:600;white-space:nowrap;}
 
   /* Segmented control */
-  .seg-item{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9999px;cursor:pointer;transition:all 0.2s;font-weight:600;font-size:15px;}
-  .seg-item.active{background:#fff;color:#262116;}
-  .seg-item.inactive{color:#fff;}
-  .seg-badge{background:#f6e5b8;color:#655b34;font-size:11px;font-weight:700;padding:1px 6px;border-radius:40px;}
+  .seg-item{display:flex;align-items:center;gap:4px;padding:8px 12px;height:48px;border-radius:9999px;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;font-weight:600;font-size:16px;letter-spacing:-0.03em;border:none;white-space:nowrap;}
+  .seg-item.active{background:#fbf7ef;color:#293548;box-shadow:0px 10px 15px 0px rgba(0,0,0,0.1),0px 4px 6px 0px rgba(0,0,0,0.05);}
+  .seg-item.inactive{background:transparent;color:#fff;}
 
   /* Filter checkbox label */
   .filter-label{display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;color:#fff;padding:8px 12px;transition:background 0.15s;border-radius:4px;}
@@ -273,19 +272,15 @@ tailwind.config = {
 <!-- Segmented control (always visible, sticky on scroll) -->
 <div id="seg-control-bar" style="background:#151b24;display:flex;align-items:center;justify-content:center;padding:32px 64px 40px;gap:24px;position:sticky;top:0;z-index:50;transition:padding 0.2s ease, box-shadow 0.2s ease;">
   <div style="flex:1;height:1px;background:#dcb05e;opacity:0.35;"></div>
-  <div style="background:#c49e54;border-radius:9999px;padding:4px;flex-shrink:0;" id="seg-control">
-    <div style="background:rgba(255,255,255,0.08);border-radius:9999px;display:flex;gap:0;padding:0;">
-      <button class="seg-item active" onclick="switchTab('memorials')" id="tab-memorials">
-        <i class="ph-light ph-users-three" style="font-size:20px;"></i>
-        <span>Memorials</span>
-        <span class="seg-badge">2.9k</span>
-      </button>
-      <button class="seg-item inactive" onclick="switchTab('memories')" id="tab-memories">
-        <i class="ph-light ph-chat-text" style="font-size:20px;"></i>
-        <span>Messages</span>
-        <span class="seg-badge">+14k</span>
-      </button>
-    </div>
+  <div style="background:#293548;border:1px solid #63605b;border-radius:9999px;padding:4px;flex-shrink:0;display:flex;" id="seg-control">
+    <button class="seg-item active" onclick="switchTab('memorials')" id="tab-memorials">
+      <i class="ph-light ph-users-three" style="font-size:24px;"></i>
+      <span>Memorials</span>
+    </button>
+    <button class="seg-item inactive" onclick="switchTab('memories')" id="tab-memories">
+      <i class="ph-light ph-chat-text" style="font-size:24px;"></i>
+      <span>Messages</span>
+    </button>
   </div>
   <div style="flex:1;height:1px;background:#dcb05e;opacity:0.35;"></div>
 </div>
@@ -1080,7 +1075,8 @@ let state = {
   photoFileName: null,
   composerOpen: false,
   newPosts: [],
-  filteredPosts: [...POSTS]
+  filteredPosts: [...POSTS],
+  gbPersonName: null
 };
 
 // ============================================================
@@ -1174,7 +1170,7 @@ function renderVictimCard(v, mode='list'){
         </div>
         <p class="card-bio" style="font-family:'PT Serif',serif;font-size:18px;color:#fff;line-height:1.5;margin:0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;">${v.bio}</p>
         <div class="card-legacy" style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;" onclick="openGuestbookDrawer('${v.name}')">
-          <span style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;letter-spacing:-0.02em;">Leave a Message</span>
+          <span style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:#dcb05e;letter-spacing:-0.02em;">Leave a Message</span>
           <i class="ph-light ph-arrow-right" style="font-size:18px;color:#dcb05e;"></i>
         </div>
         <div class="card-obit-tags" style="display:flex;flex-direction:column;gap:8px;">
@@ -1457,6 +1453,7 @@ function toggleBio(id, event){
 // GUESTBOOK DRAWER
 // ============================================================
 function openGuestbookDrawer(name){
+  state.gbPersonName = name;
   const firstName = name.split(' ')[0];
   const possessive = name.endsWith('s') ? name + '\u2019' : name + '\u2019s';
   document.getElementById('gb-title').textContent = 'Leave a Message in ' + possessive + ' Guest Book';
@@ -1478,7 +1475,24 @@ function closeGuestbookDrawer(){
 function submitGuestbookDrawer(){
   const name = document.getElementById('gb-name').value.trim();
   const msg = document.getElementById('gb-message').value.trim();
-  if(!name || !msg){ alert('Please enter your name and a message.'); return; }
+  if(!name){ showToast('Please enter your name.'); return; }
+  if(!msg){ showToast('Please write a message.'); return; }
+  const alsoPost = document.getElementById('gb-also-post').checked;
+  if(alsoPost){
+    const newPost = {
+      id: Date.now(),
+      author: name,
+      time: 'Just now',
+      text: msg,
+      likes: 0,
+      hasPhoto: false,
+      hasCandle: false,
+      replies: [],
+      forPerson: state.gbPersonName || null
+    };
+    state.newPosts.unshift(newPost);
+    renderPosts();
+  }
   closeGuestbookDrawer();
   showToast('Your message has been shared. Thank you.');
 }
@@ -1566,6 +1580,7 @@ function renderPostCard(post){
               <span style="font-size:15px;font-weight:700;color:#fff;">${post.author}</span>
               <span style="font-size:12px;color:#afadaa;">${post.time}</span>
               ${post.tag?`<span class="tag" style="background:#1e3a2f;color:#6ab04c;font-size:10px;">${post.tag}</span>`:''}
+              ${post.forPerson?`<span class="tag" style="background:#212a3a;color:#afadaa;font-size:10px;">For ${post.forPerson}</span>`:''}
               ${post.hasCandle?`<span class="candle-lit" style="font-size:14px;">🕯</span>`:''}
             </div>
           </div>
