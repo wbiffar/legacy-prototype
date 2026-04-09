@@ -67,7 +67,7 @@ tailwind.config = {
     .card-name{font-size:20px !important;line-height:1.1 !important;}
     .card-date{font-size:14px !important;}
     .card-bio{font-size:14px !important;-webkit-line-clamp:2 !important;}
-    .card-legacy{display:none !important;}
+    .card-legacy{display:inline-flex !important;}
     .card-obit-tags{display:none !important;}
     .card-photo-wrap{width:147px !important;padding:4px 4px 4px 0 !important;}
     .card-photo-wrap img{max-height:156px !important;width:100% !important;}
@@ -1191,11 +1191,7 @@ function renderVictimCard(v, mode='list'){
     </div>
     <div class="obit-drawer">
       <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#fff;">${obitCount}</span>
-      <button onclick="openGuestbookDrawer('${v.name}')" style="display:inline-flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;padding:0;">
-        <span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:#dcb05e;">Leave a Message</span>
-        <i class="ph-light ph-arrow-right" style="font-size:14px;color:#dcb05e;"></i>
-      </button>
-      <button style="width:24px;height:24px;border-radius:9999px;background:#514d45;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+<button style="width:24px;height:24px;border-radius:9999px;background:#514d45;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">
         <i class="ph-light ph-caret-down" style="font-size:14px;color:#fff;"></i>
       </button>
     </div>
