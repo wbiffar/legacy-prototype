@@ -1191,6 +1191,10 @@ function renderVictimCard(v, mode='list'){
     </div>
     <div class="obit-drawer">
       <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#fff;">${obitCount}</span>
+      <button onclick="openGuestbookDrawer('${v.name}')" style="display:inline-flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;padding:0;">
+        <span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:#dcb05e;">Leave a Message</span>
+        <i class="ph-light ph-arrow-right" style="font-size:14px;color:#dcb05e;"></i>
+      </button>
       <button style="width:24px;height:24px;border-radius:9999px;background:#514d45;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">
         <i class="ph-light ph-caret-down" style="font-size:14px;color:#fff;"></i>
       </button>
