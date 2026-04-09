@@ -1058,6 +1058,84 @@ const CAROUSEL_QUOTES = [
 // ============================================================
 // STATE
 // ============================================================
+// RELATED DEATHS (first responders / volunteers who died after 9/11)
+// ============================================================
+const RELATED_DEATHS = [
+  {id:60943411,name:"John Gera",url:"https://www.legacy.com/us/obituaries/triblive-tribune-review/name/john-gera-obituary?id=60943411"},
+  {id:15255197,name:"John Moran",url:"https://www.legacy.com/us/obituaries/lohud/name/john-moran-obituary?id=15255197"},
+  {id:7435334,name:"Thomas Gallo",url:"https://www.legacy.com/us/obituaries/mooresvilletribune/name/thomas-gallo-obituary?id=7435334"},
+  {id:12533696,name:"Leonard Henderson",url:"https://www.legacy.com/us/obituaries/siadvance/name/leonard-henderson-obituary?id=12533696"},
+  {id:21765886,name:"Owen Carlock",url:"https://www.legacy.com/us/obituaries/starledger/name/owen-carlock-obituary?id=21765886"},
+  {id:1871579,name:"Brent Hartley",url:"https://www.legacy.com/us/obituaries/toledoblade/name/brent-hartley-obituary?id=1871579"},
+  {id:35002331,name:"Christopher Jones",url:"https://www.legacy.com/us/obituaries/name/christopher-jones-obituary?id=35002331"},
+  {id:54812636,name:"Marjorie Ackerman",url:"https://www.legacy.com/us/obituaries/bradenton/name/marjorie-ackerman-obituary?id=54812636"},
+  {id:58226577,name:"Sylvia Baker",url:"https://www.legacy.com/us/obituaries/triblive-tribune-review/name/sylvia-baker-obituary?id=58226577"},
+  {id:56771805,name:"Robert Shank",url:"https://www.legacy.com/us/obituaries/toledoblade/name/robert-shank-obituary?id=56771805"},
+  {id:9740451,name:"Nancymarie Bride",url:"https://www.legacy.com/us/obituaries/starledger/name/nancymarie-bride-obituary?id=9740451"},
+  {id:20970381,name:"Fay Wood",url:"https://www.legacy.com/us/obituaries/oleantimesherald/name/fay-wood-obituary?id=20970381"},
+  {id:13320278,name:"Rosario Tirella",url:"https://www.legacy.com/us/obituaries/siadvance/name/rosario-tirella-obituary?id=13320278"},
+  {id:31677132,name:"George Wiseman",url:"https://www.legacy.com/us/obituaries/tampabaytimes/name/george-wiseman-obituary?id=31677132"},
+  {id:9911763,name:"Nano Gillen",url:"https://obits.nj.com/us/obituaries/starledger/name/nano-gillen-obituary?id=9911763"},
+  {id:55127572,name:"Wayne Knapp",url:"https://www.legacy.com/us/obituaries/news-gazette/name/wayne-knapp-obituary?id=55127572"},
+  {id:12164996,name:"David Krahe",url:"https://www.legacy.com/us/obituaries/oleantimesherald/name/david-krahe-obituary?id=12164996"},
+  {id:10894537,name:"Edward Voisard",url:"https://www.legacy.com/us/obituaries/theeveningleader/name/edward-voisard-obituary?id=10894537"},
+  {id:14594477,name:"John Enright",url:"https://www.legacy.com/us/obituaries/siadvance/name/john-enright-obituary?id=14594477"},
+  {id:58496199,name:"Clarence Reynolds",url:"https://www.legacy.com/us/obituaries/name/clarence-reynolds-obituary?id=58496199"},
+  {id:57864009,name:"William Tamraz",url:"https://www.legacy.com/us/obituaries/name/william-tamraz-obituary?id=57864009"},
+  {id:51657428,name:"Richard Bishop",url:"https://www.legacy.com/us/obituaries/whitecountycitizen/name/richard-bishop-obituary?id=51657428"},
+  {id:6653522,name:"Edward Grimm",url:"https://www.legacy.com/us/obituaries/dailycourier/name/edward-grimm-obituary?id=6653522"},
+  {id:47827965,name:"Gary Shores",url:"https://www.legacy.com/us/obituaries/toledoblade/name/gary-shores-obituary?id=47827965"},
+  {id:60424678,name:"Riley Porter",url:"https://www.legacy.com/us/obituaries/name/riley-porter-obituary?id=60424678"},
+  {id:57945227,name:"Mickey Blashfield",url:"https://www.legacy.com/us/obituaries/name/mickey-blashfield-obituary?id=57945227"},
+  {id:56822149,name:"Richard Williams",url:"https://www.legacy.com/us/obituaries/tnonline/name/richard-williams-obituary?id=56822149"},
+  {id:60676260,name:"Peter Lobdell",url:"https://www.legacy.com/us/obituaries/kansascity/name/peter-lobdell-obituary?id=60676260"},
+  {id:60328553,name:"Matthew Higgins",url:"https://www.legacy.com/us/obituaries/timesunion-albany/name/matthew-higgins-obituary?id=60328553"},
+  {id:59721704,name:"Eric Iversen",url:"https://www.legacy.com/us/obituaries/name/eric-iversen-obituary?id=59721704"},
+  {id:59572384,name:"James Kilcullen",url:"https://www.legacy.com/us/obituaries/name/james-kilcullen-obituary?id=59572384"},
+  {id:59756429,name:"Robert Sullivan",url:"https://www.legacy.com/us/obituaries/name/robert-sullivan-obituary?id=59756429"},
+  {id:59580743,name:"Peter Gianatiempo",url:"https://www.legacy.com/us/obituaries/name/peter-gianatiempo-obituary?id=59580743"},
+  {id:16077260,name:"Edward Thompson",url:"https://www.legacy.com/us/obituaries/legacyremembers/edward-thompson-obituary?id=16077260"},
+  {id:59119931,name:"Christopher Winterstein",url:"https://www.legacy.com/us/obituaries/name/christopher-winterstein-obituary?id=59119931"},
+  {id:58023667,name:"Fred Brothers",url:"https://www.legacy.com/us/obituaries/charlotte/name/fred-brothers-obituary?id=58023667"},
+  {id:58749207,name:"Michael Leddy",url:"https://www.legacy.com/us/obituaries/name/michael-leddy-obituary?id=58749207"},
+  {id:58685853,name:"Joseph Grigas",url:"https://www.legacy.com/us/obituaries/name/joseph-grigas-obituary?id=58685853"},
+  {id:58602068,name:"Timothy Keane",url:"https://www.legacy.com/us/obituaries/name/timothy-keane-obituary?id=58602068"},
+  {id:58324999,name:"George Gomez",url:"https://www.legacy.com/us/obituaries/wfsb/name/george-gomez-obituary?id=58324999"},
+  {id:58106225,name:"Neal Hileman",url:"https://www.legacy.com/us/obituaries/name/neal-hileman-obituary?id=58106225"},
+  {id:58082599,name:"Brian Lavin",url:"https://www.legacy.com/us/obituaries/name/brian-lavin-obituary?id=58082599"},
+  {id:57990692,name:"Christopher Revere",url:"https://www.legacy.com/us/obituaries/name/christopher-revere-obituary?id=57990692"},
+  {id:57947412,name:"Robert Porfert",url:"https://www.legacy.com/us/obituaries/name/robert-porfert-obituary?id=57947412"},
+  {id:57575252,name:"Richard Chen",url:"https://www.legacy.com/us/obituaries/charleston/name/richard-chen-obituary?id=57575252"},
+  {id:57452825,name:"Lawrence Baird",url:"https://www.legacy.com/us/obituaries/name/lawrence-baird-obituary?id=57452825"},
+  {id:57249163,name:"Ramon Martinez",url:"https://www.legacy.com/us/obituaries/name/ramon-martinez-obituary?id=57249163"},
+  {id:57176903,name:"Kenneth Taylor",url:"https://www.legacy.com/us/obituaries/siadvance/name/kenneth-taylor-obituary?id=57176903"},
+  {id:57129774,name:"Carol Hunter",url:"https://www.legacy.com/us/obituaries/name/carol-hunter-obituary?id=57129774"},
+  {id:57071234,name:"Joseph Schisani",url:"https://www.legacy.com/us/obituaries/name/joseph-schisani-obituary?id=57071234"},
+  {id:56924265,name:"Dennis Bootle",url:"https://www.legacy.com/us/obituaries/name/dennis-bootle-obituary?id=56924265"},
+  {id:56633245,name:"Kevin Hanley",url:"https://www.legacy.com/us/obituaries/name/kevin-hanley-obituary?id=56633245"},
+  {id:56415695,name:"Dr. Luis Antonio Arroyo",url:"https://www.legacy.com/us/obituaries/legacyremembers/dr-luis-antonio-arroyo-ph-d-obituary?id=56415695"},
+  {id:56299753,name:"Pamela Bennett",url:"https://www.legacy.com/us/obituaries/unionleader/name/pamela-bennett-obituary?id=56299753"},
+  {id:56198926,name:"Vincent Caruana",url:"https://www.legacy.com/us/obituaries/name/vincent-caruana-obituary?id=56198926"},
+  {id:56085092,name:"Robert Miller",url:"https://www.legacy.com/us/obituaries/name/robert-miller-obituary?id=56085092"},
+  {id:55380093,name:"Rudolph Russo",url:"https://www.legacy.com/us/obituaries/name/rudolph-russo-obituary?id=55380093"},
+  {id:55354355,name:"Daniel Walsh Jr.",url:"https://www.legacy.com/us/obituaries/theadvocate/name/daniel-walsh-jr-obituary?id=55354355"},
+  {id:55235667,name:"Christopher Misciagna",url:"https://www.legacy.com/us/obituaries/name/christopher-misciagna-obituary?id=55235667"},
+  {id:55237695,name:"Adell Jiles",url:"https://www.legacy.com/us/obituaries/name/adell-jiles-obituary?id=55237695"},
+  {id:55161030,name:"Willie Wilson",url:"https://www.legacy.com/us/obituaries/name/willie-wilson-obituary?id=55161030"},
+  {id:55135637,name:"Louis Ricciardi",url:"https://www.legacy.com/us/obituaries/name/louis-ricciardi-obituary?id=55135637"},
+  {id:55117375,name:"Anthony Mezzacappa",url:"https://www.legacy.com/us/obituaries/name/anthony-mezzacappa-obituary?id=55117375"},
+  {id:54900665,name:"Terrence Mindykowski",url:"https://www.legacy.com/person/Terrence-Mindykowski-54900665"},
+  {id:54984567,name:"Rafael Velazquez",url:"https://www.legacy.com/us/obituaries/name/rafael-velazquez-obituary?id=54984567"}
+].map(r => ({
+  ...r,
+  born: null,
+  photo: null,
+  bio: 'A first responder, rescue worker, or volunteer who died from 9/11-related causes in the years following the attacks.',
+  loc: '', state: '', role: 'First Responder / Volunteer', org: '', paper: '', memories: 0,
+  related: true
+}));
+
+// ============================================================
 
 let state = {
   activeTab: 'memorials',
@@ -1070,6 +1148,8 @@ let state = {
   griefIdx: 0,
   layoutMode: 'list',
   includeRelated: false,
+  filteredRelated: [],
+
   hasCandle: false,
   hasPhoto: false,
   photoFileName: null,
@@ -1161,12 +1241,14 @@ function renderVictimCard(v, mode='list'){
     </div>`;
   }
   const obitCount = (v.paper && v.paper.trim()) ? '2 Obituaries' : '1 Obituary';
+  const dateStr = v.related ? 'd. after 9/11' : (v.born ? v.born + ' – 2001' : 'd. 2001');
   return `<div class="result-card" data-id="${v.id}">
     <div class="card-top-row">
       <div class="card-text" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:24px;padding:24px;">
         <div style="display:flex;flex-direction:column;gap:8px;">
+          ${v.related ? '<span style="font-family:\'DM Sans\',sans-serif;font-size:11px;font-weight:700;color:#807e7a;text-transform:uppercase;letter-spacing:0.06em;">Related Death</span>' : ''}
           <h3 class="card-name" style="font-family:'DM Serif Text',serif;font-size:30px;color:#fff;line-height:1.2;margin:0;">${v.name}</h3>
-          <p class="card-date" style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;letter-spacing:-0.02em;margin:0;">${v.born ? v.born + ' – 2001' : 'd. 2001'}</p>
+          <p class="card-date" style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;letter-spacing:-0.02em;margin:0;">${dateStr}</p>
         </div>
         <p class="card-bio" style="font-family:'PT Serif',serif;font-size:18px;color:#fff;line-height:1.5;margin:0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;">${v.bio}</p>
         <div class="card-legacy" style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;" onclick="openGuestbookDrawer('${v.name}')">
@@ -1341,6 +1423,13 @@ function applyFilters(){
     return true;
   });
 
+  if(state.includeRelated){
+    const relatedFiltered = search
+      ? RELATED_DEATHS.filter(r => r.name.toLowerCase().includes(search))
+      : [...RELATED_DEATHS];
+    results = [...results, ...relatedFiltered];
+  }
+
   if(sort==='alpha') results.sort((a,b)=>a.name.localeCompare(b.name));
   else if(sort==='alpha-desc') results.sort((a,b)=>b.name.localeCompare(a.name));
   else if(sort==='age') results.sort((a,b)=>b.born-a.born);
@@ -1365,6 +1454,7 @@ function toggleRelatedDeaths(){
     knob.style.left = '2px';
     knob.style.background = '#afadaa';
   }
+  applyFilters();
 }
 
 function clearFilters(){
