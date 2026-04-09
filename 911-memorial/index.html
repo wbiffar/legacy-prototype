@@ -109,7 +109,7 @@ tailwind.config = {
     .left-sidebar.open{left:0;}
   }
   @media(min-width:768px){
-    .left-sidebar{max-height:calc(100vh - 32px);overflow-y:auto;}
+    .left-sidebar{align-self:flex-start;}
   }
 
   /* Filter button — only show when sidebar is hidden (mobile) */
@@ -360,21 +360,6 @@ tailwind.config = {
           </div>
         </div>
 
-        <!-- Layout -->
-        <div class="filter-card">
-          <div class="filter-card-title">
-            <span>Layout</span>
-            <i class="ph-light ph-caret-up" style="font-size:18px;color:#afadaa;"></i>
-          </div>
-          <div style="padding:0 12px 12px;display:flex;">
-            <button onclick="setLayout('list')" id="layout-list" style="flex:1;height:36px;border-radius:6px 0 0 6px;font-size:13px;font-weight:600;cursor:pointer;background:#e2ba60;color:#262116;border:1px solid #e2ba60;display:flex;align-items:center;justify-content:center;gap:4px;">
-              <i class="ph-light ph-list" style="font-size:16px;"></i> List
-            </button>
-            <button onclick="setLayout('grid')" id="layout-grid" style="flex:1;height:36px;border-radius:0 6px 6px 0;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:#afadaa;border:1px solid #514d45;margin-left:-1px;display:flex;align-items:center;justify-content:center;gap:4px;">
-              <i class="ph-light ph-grid-four" style="font-size:16px;"></i> Grid
-            </button>
-          </div>
-        </div>
 
       </div>
     </aside>
