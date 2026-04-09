@@ -111,6 +111,9 @@ tailwind.config = {
     .left-sidebar{max-height:calc(100vh - 32px);overflow-y:auto;}
   }
 
+  /* Filter button — only show when sidebar is hidden (mobile) */
+  .filter-btn{display:flex;}
+  @media(min-width:768px){.filter-btn{display:none !important;}}
   /* Filter button label — hide at smallest screens */
   @media(max-width:479px){.filter-btn-label{display:none;}}
 
@@ -348,7 +351,7 @@ tailwind.config = {
       <!-- Search + Filters row -->
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:20px;">
         <!-- Filters button (mobile only, collapses to icon at ≤479px) -->
-        <button onclick="openSidebar()" class="md:hidden" style="display:flex;align-items:center;gap:6px;padding:12px 16px;border:1px solid #dbdad7;border-radius:9999px;background:#fff;color:#514d45;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;">
+        <button onclick="openSidebar()" class="filter-btn" style="align-items:center;gap:6px;padding:12px 16px;border:1px solid #dbdad7;border-radius:9999px;background:#fff;color:#514d45;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;">
           <i class="ph-light ph-funnel" style="font-size:16px;"></i>
           <span class="filter-btn-label">Filters</span>
         </button>
