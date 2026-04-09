@@ -111,6 +111,9 @@ tailwind.config = {
     .left-sidebar{max-height:calc(100vh - 32px);overflow-y:auto;}
   }
 
+  /* Filter button label — hide at smallest screens */
+  @media(max-width:479px){.filter-btn-label{display:none;}}
+
   /* Recommended memorials grid */
   .recommended-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
   @media(max-width:767px){.recommended-grid{display:flex;flex-direction:column;gap:16px;}}
@@ -342,22 +345,25 @@ tailwind.config = {
 
     <!-- CENTER -->
     <main class="flex-1 min-w-0">
-      <!-- Mobile filter button -->
-      <button onclick="openSidebar()" class="md:hidden flex items-center gap-2 border border-wb-600 text-wb-400 text-sm font-semibold px-4 py-2 rounded-full mb-4 hover:border-wb-400">
-        <i class="ph-light ph-funnel"></i> Filters
-      </button>
-
-      <!-- Search -->
-      <div style="margin-bottom:20px;position:relative;">
-        <input type="text" id="memorial-search" placeholder="Search by name, location, or role..." oninput="applyFilters()"
-          style="width:100%;background:#1a2233;border:1px solid #514d45;color:#fff;padding:12px 44px 12px 20px;border-radius:9999px;font-size:15px;outline:none;"
-          onfocus="this.style.borderColor='#dcb05e'" onblur="this.style.borderColor='#514d45'">
-        <i class="ph-light ph-magnifying-glass" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:18px;color:#807e7a;pointer-events:none;"></i>
+      <!-- Search + Filters row -->
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:20px;">
+        <!-- Filters button (mobile only, collapses to icon at ≤479px) -->
+        <button onclick="openSidebar()" class="md:hidden" style="display:flex;align-items:center;gap:6px;padding:12px 16px;border:1px solid #dbdad7;border-radius:9999px;background:#fff;color:#514d45;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;">
+          <i class="ph-light ph-funnel" style="font-size:16px;"></i>
+          <span class="filter-btn-label">Filters</span>
+        </button>
+        <!-- Search input -->
+        <div style="flex:1;position:relative;">
+          <input type="text" id="memorial-search" placeholder="Search by name, location, or role..." oninput="applyFilters()"
+            style="width:100%;background:#fff;border:1px solid #dbdad7;color:#262116;padding:12px 44px 12px 20px;border-radius:9999px;font-size:15px;outline:none;font-family:'DM Sans',sans-serif;"
+            onfocus="this.style.borderColor='#42608f'" onblur="this.style.borderColor='#dbdad7'">
+          <i class="ph-light ph-magnifying-glass" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:18px;color:#807e7a;pointer-events:none;"></i>
+        </div>
       </div>
 
       <!-- Sort header -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:0 4px;">
-        <p style="font-weight:700;font-size:17px;color:#fff;" id="results-count">2,977 Lives Remembered</p>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px;">
+        <p style="font-family:'DM Sans',sans-serif;font-size:18px;font-weight:600;color:#fff;letter-spacing:-0.02em;margin:0;" id="results-count">2,977 Lives Remembered</p>
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="font-size:13px;color:#afadaa;">Sort By</span>
           <select id="sort-select" onchange="applyFilters()" style="background:#293548;border:1px solid #514d45;color:#fff;padding:8px 12px;border-radius:8px;font-size:13px;cursor:pointer;outline:none;">
@@ -367,6 +373,14 @@ tailwind.config = {
             <option value="location">Location</option>
           </select>
         </div>
+      </div>
+      <!-- Include related deaths toggle -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;padding:0 4px;cursor:pointer;" onclick="toggleRelatedDeaths()" id="related-deaths-toggle">
+        <div style="position:relative;width:40px;height:20px;flex-shrink:0;" id="related-deaths-track">
+          <div style="position:absolute;inset:0;border-radius:40px;background:#63605b;transition:background 0.2s;" id="related-deaths-bg"></div>
+          <div style="position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#afadaa;transition:left 0.2s,background 0.2s;" id="related-deaths-knob"></div>
+        </div>
+        <p style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:400;color:#fff;margin:0;line-height:1.25;">Include related deaths that occurred after 9/11/2001</p>
       </div>
 
       <!-- LIST VIEW -->
@@ -1018,6 +1032,7 @@ let state = {
   carouselIdx: 0,
   griefIdx: 0,
   layoutMode: 'list',
+  includeRelated: false,
   hasCandle: false,
   hasPhoto: false,
   photoFileName: null,
@@ -1297,6 +1312,21 @@ function applyFilters(){
   renderResults();
   updateClearBtn();
   renderFilterChips();
+}
+
+function toggleRelatedDeaths(){
+  state.includeRelated = !state.includeRelated;
+  const bg = document.getElementById('related-deaths-bg');
+  const knob = document.getElementById('related-deaths-knob');
+  if(state.includeRelated){
+    bg.style.background = '#dcb05e';
+    knob.style.left = '22px';
+    knob.style.background = '#fff';
+  } else {
+    bg.style.background = '#63605b';
+    knob.style.left = '2px';
+    knob.style.background = '#afadaa';
+  }
 }
 
 function clearFilters(){

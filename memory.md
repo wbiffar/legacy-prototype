@@ -63,6 +63,28 @@ Each entry should include:
 
 ---
 
+### Four breakpoints, not three
+- **What went wrong:** Stated the design system uses 3 breakpoints (375px, 768px, 1280px). Confused the CLAUDE.md testing widths with the actual design system breakpoints.
+- **What to do instead:** The design system defines **four** responsive breakpoints: Mobile (320–640px), Tablet Small (641–768px), Tablet Large (769–1024px), Desktop (1025–1536px). Reference frames are 640px, 768px, 1024px, and 1440px respectively. Always check design-system.md § Responsive Behavior, not CLAUDE.md, for the authoritative breakpoint spec.
+
+---
+
 ### Newspaper partner pages use white background, not gold/50
 - **What went wrong:** Used `bg-gold-50` for the main content section background on a newspaper partner page.
 - **What to do instead:** Newspaper partner pages use `surface/page/newspaper` which is always `white` (#ffffff), not the warm `gold/50` (`#fbf7ef`) used on Legacy-branded pages. When building newspaper partner templates, use white backgrounds throughout. Filter cards need `border border-wb-200` for visual separation on white backgrounds.
+
+---
+
+## 2026-04-07 — 911 Memorial Prototype (continued)
+
+### Dark mode link color is gold/500, not navy/400
+- **What went wrong:** Used `navy/400` `#728ab0` for link text in the Recommended Memorials component on the dark-bg prototype, then fell back to `#42608f` (the light-mode link color).
+- **What to do instead:** The `text/link` token is **mode-aware**. Light mode = `navy/500` `#42608f`. **Dark mode = `gold/500` `#dcb05e`**. Always check design-system.md § Color Tokens — Semantic before choosing a link color. On any dark surface (`navy/800`, `navy/900`), links must be gold.
+
+---
+
+## 2026-04-01 — Tree PDP Figma Capture
+
+### Read design-system.md BEFORE every build — no exceptions
+- **What went wrong:** Built 5 HTML files for Figma capture using wrong font (Georgia instead of DM Sans), wrong colors (arbitrary hex instead of DS tokens), wrong heading colors, wrong link colors, wrong page background, and wrong button colors. Had to be corrected twice.
+- **What to do instead:** Before writing ANY code — HTML, CSS, components, prototypes, Figma Plugin API calls — read design-system.md FIRST. This is not optional. Map every color to a semantic token, use DM Sans, use the 4px spacing scale, use DS shadow values. If the task is "recreate a page," the recreation must use DS tokens, not values eyeballed from the live site.
