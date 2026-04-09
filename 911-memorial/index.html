@@ -45,8 +45,8 @@ tailwind.config = {
 
   /* Segmented control */
   .seg-item{display:flex;align-items:center;gap:4px;padding:8px 12px;height:48px;border-radius:9999px;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;font-weight:600;font-size:16px;letter-spacing:-0.03em;border:none;white-space:nowrap;}
-  .seg-item.active{background:#fbf7ef;color:#293548;box-shadow:0px 10px 15px 0px rgba(0,0,0,0.1),0px 4px 6px 0px rgba(0,0,0,0.05);}
-  .seg-item.inactive{background:transparent;color:#fff;}
+  .seg-item.active{background:#151b24;color:#dcb05e;box-shadow:0px 10px 15px 0px rgba(0,0,0,0.1),0px 4px 6px 0px rgba(0,0,0,0.05);}
+  .seg-item.inactive{background:transparent;color:#262116;}
 
   /* Filter checkbox label */
   .filter-label{display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;color:#fff;padding:8px 12px;transition:background 0.15s;border-radius:4px;}
@@ -272,7 +272,7 @@ tailwind.config = {
 <!-- Segmented control (always visible, sticky on scroll) -->
 <div id="seg-control-bar" style="background:#151b24;display:flex;align-items:center;justify-content:center;padding:32px 64px 40px;gap:24px;position:sticky;top:0;z-index:50;transition:padding 0.2s ease, box-shadow 0.2s ease;">
   <div style="flex:1;height:1px;background:#dcb05e;opacity:0.35;"></div>
-  <div style="background:#293548;border:1px solid #63605b;border-radius:9999px;padding:4px;flex-shrink:0;display:flex;" id="seg-control">
+  <div style="background:#c49e54;border:1px solid #63605b;border-radius:9999px;padding:4px;flex-shrink:0;display:flex;" id="seg-control">
     <button class="seg-item active" onclick="switchTab('memorials')" id="tab-memorials">
       <i class="ph-light ph-users-three" style="font-size:24px;"></i>
       <span>Memorials</span>
