@@ -226,10 +226,10 @@ tailwind.config = {
     <!-- populated by JS -->
   </div>
   <div style="margin-top:48px;display:flex;flex-direction:column;align-items:center;gap:16px;">
-    <p style="font-family:'DM Sans',sans-serif;font-size:18px;font-weight:400;color:#b0c0d6;line-height:1.5;margin:0;text-align:center;">Have a memory to share? Their stories live on through yours.</p>
+    <p style="font-family:'DM Sans',sans-serif;font-size:18px;font-weight:400;color:#b0c0d6;line-height:1.5;margin:0;text-align:center;">Have a message to share? Their stories live on through yours.</p>
     <div style="display:flex;gap:16px;align-items:center;">
-      <button onclick="switchTab('memories')" style="background:#e2ba60;color:#262116;height:40px;padding:0 20px;border-radius:9999px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;">Add a Memory</button>
-      <button onclick="switchTab('memories')" style="background:transparent;color:#c49e54;height:40px;padding:0 20px;border-radius:9999px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:1px solid #c49e54;white-space:nowrap;">See all 14,382 Memories</button>
+      <button onclick="switchTab('memories')" style="background:#e2ba60;color:#262116;height:40px;padding:0 20px;border-radius:9999px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;">Add a Message</button>
+      <button onclick="switchTab('memories')" style="background:transparent;color:#c49e54;height:40px;padding:0 20px;border-radius:9999px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:1px solid #c49e54;white-space:nowrap;">See all 14,382 Messages</button>
     </div>
   </div>
 </div>
@@ -246,7 +246,7 @@ tailwind.config = {
       </button>
       <button class="seg-item inactive" onclick="switchTab('memories')" id="tab-memories">
         <i class="ph-light ph-chat-text" style="font-size:20px;"></i>
-        <span>Memories</span>
+        <span>Messages</span>
         <span class="seg-badge">+14k</span>
       </button>
     </div>
@@ -407,7 +407,7 @@ tailwind.config = {
             <i class="ph-light ph-caret-left" style="font-size:14px;"></i>
           </button>
           <div style="flex:1;display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center;min-width:0;">
-            <span style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:#dcb05e;text-transform:uppercase;letter-spacing:0.84px;">Recently Shared Memory</span>
+            <span style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:#dcb05e;text-transform:uppercase;letter-spacing:0.84px;">Recently Shared Message</span>
             <div style="overflow:hidden;width:100%;">
               <div class="carousel-track" id="carousel-track"></div>
             </div>
@@ -419,7 +419,7 @@ tailwind.config = {
         <!-- Bottom bar: dots | view all -->
         <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 32px;">
           <div style="display:flex;gap:8px;align-items:center;" id="carousel-dots"></div>
-          <button onclick="switchTab('memories')" style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;letter-spacing:-0.02em;background:none;border:none;cursor:pointer;white-space:nowrap;">View all 14,382 memories →</button>
+          <button onclick="switchTab('memories')" style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;letter-spacing:-0.02em;background:none;border:none;cursor:pointer;white-space:nowrap;">View all 14,382 messages →</button>
         </div>
       </div>
 
@@ -636,7 +636,7 @@ tailwind.config = {
             onfocus="expandComposer()" />
         </div>
         <div id="composer-expanded" style="display:none;">
-          <textarea id="post-message" placeholder="Share your memory, thoughts, or tribute..." rows="4"
+          <textarea id="post-message" placeholder="Share your message, thoughts, or tribute..." rows="4"
             style="width:100%;background:#fbfbfb;border:1px solid #afadaa;color:#262116;padding:12px 16px;border-radius:8px;font-size:14px;outline:none;resize:vertical;margin-bottom:16px;"
             onfocus="this.style.borderColor='#dcb05e'" onblur="this.style.borderColor='#afadaa'"></textarea>
           <div id="photo-preview" style="display:none;margin-bottom:12px;background:#1a2233;border-radius:8px;padding:12px;border:1px dashed #3c4d69;text-align:center;color:#afadaa;font-size:13px;">
@@ -644,7 +644,7 @@ tailwind.config = {
             <button onclick="removePhoto()" style="margin-left:8px;color:#e55;background:none;border:none;cursor:pointer;font-size:12px;">Remove</button>
           </div>
           <div id="candle-notice" style="display:none;margin-bottom:12px;padding:10px 14px;background:#1e2d42;border-radius:8px;font-size:13px;color:#dcb05e;">
-            🕯 A candle will be included with your memory
+            🕯 A candle will be included with your message
           </div>
         </div>
         <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
@@ -1087,7 +1087,7 @@ function buildVoiceCards() {
     <div style="background:rgba(41,53,72,0.5);border:1px solid #293548;border-radius:12px;padding:24px;text-align:left;">
       <p style="font-family:'PT Serif',serif;font-size:15px;color:#fff;line-height:1.7;margin-bottom:16px;">${v.quote}</p>
       <p style="font-size:12px;color:#afadaa;">${v.attribution}</p>
-      <button style="margin-top:12px;color:#dcb05e;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;">Read Full Memory →</button>
+      <button style="margin-top:12px;color:#dcb05e;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;">Read Full Message →</button>
     </div>
   `).join('');
 }
@@ -1123,7 +1123,7 @@ function renderVictimCard(v, mode='list'){
       </div>
       <p style="font-size:13px;color:#afadaa;line-height:1.6;truncated">${v.bio.substring(0,100)}...</p>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px;">
-        <span style="font-size:12px;color:#807e7a;"><i class="ph-light ph-chat-text"></i> ${v.memories} memories</span>
+        <span style="font-size:12px;color:#807e7a;"><i class="ph-light ph-chat-text"></i> ${v.memories} messages</span>
         <button onclick="openMemorial(${v.id})" style="color:#dcb05e;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;">View →</button>
       </div>
     </div>`;
@@ -1734,7 +1734,7 @@ function submitPost(){
   document.getElementById('candle-btn').style.cssText='border:1px solid #fff;color:#fff;padding:8px 16px;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;display:flex;align-items:center;gap:6px;';
   document.getElementById('add-photos-btn').style.cssText='border:1px solid #fff;color:#fff;padding:8px 16px;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;display:flex;align-items:center;gap:6px;';
   renderPosts();
-  showToast('Your memory has been shared. Thank you.');
+  showToast('Your message has been shared. Thank you.');
   document.getElementById('posts-feed').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
