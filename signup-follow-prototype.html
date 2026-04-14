@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy – Sign-Up Follow Flow Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&family=DM+Serif+Text&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy-700: #293548;
+      --navy-500: #42608f;
+      --gold-50: #fbf7ef;
+      --gold-100: #f6e5b8;
+      --gold-500: #dcb05e;
+      --gold-700: #a48849;
+      --gold-900: #655b34;
+      --warmblack-100: #f6f6f6;
+      --warmblack-300: #dbdad7;
+      --warmblack-400: #afadaa;
+      --warmblack-500: #807e7a;
+      --warmblack-700: #514d45;
+      --warmblack-900: #262116;
+      --white: #ffffff;
+      --border-default: #dbdad7;
+      --text-primary: #262116;
+      --text-secondary: #514d45;
+      --text-heading: #293548;
+      --text-link: #42608f;
+      --text-on-pill: #655b34;
+      --surface-page: #fbf7ef;
+      --surface-card: #ffffff;
+      --accent-gold: #a48849;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    body {
+      background: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+
+    /* ── Variation switcher ── */
+    .switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .switcher button {
+      padding: 10px 20px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
+      color: #ccc;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .switcher button:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    .switcher button.active {
+      background: var(--navy-700);
+      color: var(--white);
+      border-color: var(--navy-700);
+    }
+
+    .state-label {
+      color: rgba(255,255,255,0.5);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    /* ── Phone frame ── */
+    .phone-frame {
+      width: 375px;
+      min-height: 700px;
+      background: var(--surface-page);
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+      position: relative;
+    }
+
+    /* ── Logo header ── */
+    .logo-header {
+      display: flex;
+      justify-content: center;
+      padding: 24px 16px 16px;
+      border-bottom: 1px solid #e9e9e8;
+    }
+    .logo-header img { height: 56px; }
+    .logo-header .logo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .logo-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 3px solid var(--gold-500);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-mark::before {
+      content: '';
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--gold-500);
+    }
+    .logo-mark::after {
+      content: '';
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--gold-500);
+      position: absolute;
+    }
+    .logo-text {
+      font-family: 'DM Serif Text', serif;
+      font-size: 18px;
+      color: var(--text-heading);
+    }
+
+    /* ── Card ── */
+    .card-wrapper { padding: 16px; }
+    .card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-default);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: all 0.3s ease;
+    }
+
+    /* ── Card header ── */
+    .card-header { text-align: center; display: flex; flex-direction: column; gap: 8px; }
+    .step-label {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--accent-gold);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      line-height: 1.5;
+    }
+    .card-title {
+      font-family: 'DM Serif Text', serif;
+      font-size: 24px;
+      color: var(--text-heading);
+      line-height: 1.2;
+      transition: opacity 0.2s;
+    }
+    .card-desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ── Search link ── */
+    .search-link {
+      color: var(--text-link);
+      font-size: 14px;
+      text-decoration: underline;
+      cursor: pointer;
+      text-align: center;
+      padding: 4px 0;
+      transition: opacity 0.2s;
+    }
+    .search-link:hover { opacity: 0.8; }
+
+    /* ── Search input ── */
+    .search-input-container {
+      position: relative;
+      overflow: visible;
+    }
+    .search-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid var(--border-default);
+      border-radius: 8px;
+      background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      cursor: text;
+    }
+    .search-input.focused {
+      border-color: var(--navy-500);
+      box-shadow: 0 0 0 2px rgba(66,96,143,0.15);
+    }
+    .search-icon {
+      width: 18px; height: 18px;
+      border: 2px solid var(--warmblack-400);
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .search-icon::after {
+      content: '';
+      width: 6px; height: 2px;
+      background: var(--warmblack-400);
+      position: absolute;
+      bottom: -3px; right: -4px;
+      transform: rotate(45deg);
+      border-radius: 1px;
+    }
+    .search-input input {
+      border: none;
+      outline: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      color: var(--text-primary);
+      flex: 1;
+      background: none;
+    }
+    .search-input input::placeholder { color: var(--warmblack-400); }
+    .clear-btn {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--warmblack-300);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      font-size: 14px;
+      color: var(--warmblack-500);
+      font-weight: 600;
+      line-height: 1;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .clear-btn.visible { opacity: 1; }
+    .clear-btn:hover { background: var(--warmblack-400); color: var(--white); }
+
+    /* ── Search dropdown ── */
+    .search-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0; right: 0;
+      background: var(--white);
+      border: 1px solid var(--border-default);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px -4px rgba(0,0,0,0.08);
+      z-index: 10;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.25s ease, opacity 0.2s;
+    }
+    .search-dropdown.open {
+      max-height: 320px;
+      opacity: 1;
+    }
+
+    /* ── Result row ── */
+    .result-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-default);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-row:hover { background: var(--gold-50); }
+    .result-text { flex: 1; min-width: 0; }
+    .result-city {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.25;
+    }
+    .result-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ── Follow row (card content) ── */
+    .follow-rows { display: flex; flex-direction: column; }
+    .follow-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border-default);
+      animation: fadeSlideIn 0.3s ease;
+    }
+    .follow-row:last-child { border-bottom: none; }
+    .follow-row-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+    .follow-row-badge {
+      display: inline-flex;
+      padding: 2px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      line-height: 1.5;
+      width: fit-content;
+      margin-bottom: 4px;
+    }
+    .badge-featured { background: var(--gold-100); color: var(--text-on-pill); }
+    .badge-near-you { background: var(--gold-100); color: var(--text-on-pill); }
+    .follow-row-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.25;
+    }
+    .follow-row-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.25;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ── Follow / Following button ── */
+    .follow-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 4px;
+      border: 1px solid var(--navy-700);
+      background: transparent;
+      color: var(--navy-700);
+      font-family: 'DM Sans', sans-serif;
+    }
+    .follow-btn:hover { background: rgba(41,53,72,0.05); }
+    .follow-btn.following {
+      background: var(--navy-700);
+      color: var(--white);
+      border-color: var(--navy-700);
+    }
+    .follow-btn.following:hover { background: #1e2836; }
+    .follow-btn svg { width: 14px; height: 14px; }
+
+    /* ── Buttons ── */
+    .btn-container { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+    .btn-primary {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 9999px;
+      background: var(--navy-700);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      letter-spacing: -0.02em;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: #1e2836; }
+    .btn-skip {
+      background: none;
+      border: none;
+      color: var(--text-link);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: underline;
+      cursor: pointer;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── Footer ── */
+    .page-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+    }
+    .page-footer a {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-link);
+      text-decoration: underline;
+    }
+    .page-footer span {
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+
+    /* ── Step 2 placeholder ── */
+    .step2-screen {
+      text-align: center;
+      padding: 48px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+    }
+    .step2-screen .checkmark {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: #ebf2f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #5c9d94;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .fade-in { animation: fadeIn 0.3s ease; }
+
+    /* ── Hidden helper ── */
+    .hidden { display: none !important; }
+
+    /* ── Info bar ── */
+    .info-bar {
+      color: rgba(255,255,255,0.4);
+      font-size: 12px;
+      text-align: center;
+      margin-top: 16px;
+      max-width: 375px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Variation Switcher -->
+  <div class="switcher">
+    <button class="active" onclick="switchVariation('v1')">V1 — IP Detected</button>
+    <button onclick="switchVariation('v2')">V2 — No Location Data</button>
+  </div>
+  <div class="state-label" id="stateLabel">Default — IP location detected</div>
+
+  <!-- Phone Frame -->
+  <div class="phone-frame" id="phone">
+
+    <!-- Logo Header (hidden to match Figma) -->
+
+    <!-- Step 1 Content -->
+    <div id="step1" class="card-wrapper">
+      <div class="card" id="mainCard">
+
+        <!-- Card Header -->
+        <div class="card-header" id="cardHeader">
+          <div class="step-label">Step 1 of 2</div>
+          <div class="card-title" id="cardTitle">Follow the communities you care about</div>
+          <div class="card-desc" id="cardDesc">Choose the places that matter to you and we'll keep you updated when new obituaries are posted.</div>
+        </div>
+
+        <!-- Search link removed — both variations now lead with search -->
+
+        <!-- Search input (hidden initially in V1, visible in V2) -->
+        <div class="search-input-container hidden" id="searchContainer">
+          <div class="search-input" id="searchInputWrapper" onclick="focusSearch()">
+            <div class="search-icon"></div>
+            <input type="text" id="searchInput" placeholder="Search by city, state, or ZIP" oninput="onSearchInput()" onfocus="onSearchFocus()" />
+            <button class="clear-btn" id="clearBtn" onclick="clearSearch(event)">×</button>
+          </div>
+          <div class="search-dropdown" id="searchDropdown"></div>
+        </div>
+
+        <!-- Follow rows -->
+        <div class="follow-rows" id="followRows"></div>
+
+        <!-- Buttons -->
+        <div class="btn-container">
+          <button class="btn-primary" onclick="goToStep2()">Continue</button>
+          <button class="btn-skip" onclick="goToStep2()">Skip for now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 Placeholder -->
+    <div id="step2" class="card-wrapper hidden">
+      <div class="card">
+        <div class="step2-screen">
+          <div class="checkmark">✓</div>
+          <div class="card-title" style="font-size:22px;">You're all set!</div>
+          <div class="card-desc">Step 2 (email preferences) would appear here. This is a placeholder.</div>
+          <button class="btn-primary" style="margin-top:8px;" onclick="resetFlow()">Restart Prototype</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer (hidden to match Figma) -->
+  </div>
+
+  <div class="info-bar" id="infoBar">
+    Click "Not your location?" to see the search transform · Follow items to see state changes · Click Continue to advance
+  </div>
+
+<script>
+  // ── State ──
+  let currentVariation = 'v1'; // 'v1' or 'v2'
+  let followedItems = [];
+  let isSearchMode = false;
+
+  // ── Location Data ──
+  const searchResults = [
+    { id: 'boise', city: 'Boise, Idaho', desc: 'Obituaries from the Boise, ID area' },
+    { id: 'boise-city', city: 'Boise City, Oklahoma', desc: 'Obituaries from Boise City, OK' },
+    { id: 'boiseville', city: 'Boiseville, Louisiana', desc: 'Obituaries from Boiseville, LA' },
+  ];
+
+  const allLocations = [
+    { id: 'meridian', city: 'Meridian, Idaho', desc: 'Obituaries from Meridian, ID' },
+    { id: 'boise', city: 'Boise, Idaho', desc: 'Obituaries from the Boise, ID area' },
+    { id: 'boise-city', city: 'Boise City, Oklahoma', desc: 'Obituaries from Boise City, OK' },
+    { id: 'boiseville', city: 'Boiseville, Louisiana', desc: 'Obituaries from Boiseville, LA' },
+    { id: 'nampa', city: 'Nampa, Idaho', desc: 'Obituaries from Nampa, ID' },
+    { id: 'eagle', city: 'Eagle, Idaho', desc: 'Obituaries from Eagle, ID' },
+    { id: 'boston', city: 'Boston, Massachusetts', desc: 'Obituaries from the Boston, MA area' },
+    { id: 'boulder', city: 'Boulder, Colorado', desc: 'Obituaries from Boulder, CO' },
+    { id: 'chicago', city: 'Chicago, Illinois', desc: 'Obituaries from the Chicago, IL area' },
+    { id: 'portland', city: 'Portland, Oregon', desc: 'Obituaries from Portland, OR' },
+    { id: 'phoenix', city: 'Phoenix, Arizona', desc: 'Obituaries from Phoenix, AZ' },
+  ];
+
+  const v1DefaultRows = [
+    { id: 'meridian', badge: 'Suggested for you', badgeClass: 'badge-near-you', title: 'Meridian, Idaho Obituaries', desc: 'The most timely and comprehensive collection of local obituaries for Meridian, Idaho, updated regularly throughout the day.' },
+    { id: 'heart-memorial', badge: 'Featured', badgeClass: 'badge-featured', title: 'Lives Impacted by Heart Disease Memorial', desc: 'Every 34 seconds in the U.S., a loved one is lost to cardiovascular disease. In honor of Heart Month, this memorial celebrates the lives of those impacted.' },
+  ];
+
+  const v2DefaultRows = [
+    { id: 'heart-memorial', badge: 'Featured', badgeClass: 'badge-featured', title: 'Lives Impacted by Heart Disease Memorial', desc: 'Every 34 seconds in the U.S., a loved one is lost to cardiovascular disease. In honor of Heart Month, this memorial celebrates the lives of those impacted.' },
+  ];
+
+  // ── Bookmark SVG icons ──
+  const bookmarkOutline = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`;
+  const bookmarkFilled = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`;
+
+  // ── Initialize ──
+  function init() {
+    switchVariation(currentVariation);
+  }
+
+  // ── Switch V1/V2 ──
+  function switchVariation(v) {
+    currentVariation = v;
+    followedItems = [];
+    isSearchMode = false;
+
+    // Update switcher buttons
+    document.querySelectorAll('.switcher button').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.switcher button').forEach(btn => {
+      if ((v === 'v1' && btn.textContent.includes('V1')) || (v === 'v2' && btn.textContent.includes('V2'))) {
+        btn.classList.add('active');
+      }
+    });
+
+    // Reset to step 1
+    document.getElementById('step1').classList.remove('hidden');
+    document.getElementById('step2').classList.add('hidden');
+
+    if (v === 'v1') {
+      setStateLabel('Default — IP location detected');
+      document.getElementById('cardTitle').textContent = 'Follow the communities you care about';
+      document.getElementById('cardDesc').textContent = 'Choose the places that matter to you and we\'ll keep you updated when new obituaries are posted.';
+      document.getElementById('searchContainer').classList.remove('hidden');
+      renderFollowRows(v1DefaultRows);
+      updateInfoBar('Click "Not your location?" to see the search transform · Follow items to see state changes');
+    } else {
+      setStateLabel('Default — No location data available');
+      document.getElementById('cardTitle').textContent = 'Follow the communities you care about';
+      document.getElementById('cardDesc').textContent = 'Choose the places that matter to you and we\'ll keep you updated when new obituaries are posted.';
+      document.getElementById('searchContainer').classList.remove('hidden');
+      document.getElementById('searchInput').value = '';
+      document.getElementById('clearBtn').classList.remove('visible');
+      document.getElementById('searchDropdown').classList.remove('open');
+      document.getElementById('searchInputWrapper').classList.remove('focused');
+      renderFollowRows(v2DefaultRows);
+      updateInfoBar('Type in the search input to see results · Follow items from results or the card');
+    }
+  }
+
+  // ── Transform V1 → Search ──
+  function transformToSearch() {
+    isSearchMode = true;
+    setStateLabel('Transformed — User tapped "Not your location?"');
+
+    // Animate the transition
+    document.getElementById('cardTitle').textContent = 'Follow the communities you care about';
+    document.getElementById('cardDesc').textContent = 'Choose the places that matter to you and we\'ll keep you updated when new obituaries are posted.';
+    document.getElementById('searchLink').classList.add('hidden');
+    document.getElementById('searchContainer').classList.remove('hidden');
+    document.getElementById('searchContainer').classList.add('fade-in');
+
+    // Remove the "Near you" Meridian row, keep Featured
+    const featuredOnly = v1DefaultRows.filter(r => r.id !== 'meridian');
+    // Plus any graduated items
+    renderFollowRows([...getGraduatedRows(), ...featuredOnly]);
+
+    updateInfoBar('Search for a new location · Results appear as you type');
+  }
+
+  // ── Search ──
+  function focusSearch() {
+    document.getElementById('searchInputWrapper').classList.add('focused');
+    document.getElementById('searchInput').focus();
+  }
+
+  function onSearchFocus() {
+    document.getElementById('searchInputWrapper').classList.add('focused');
+  }
+
+  function onSearchInput() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const clearBtn = document.getElementById('clearBtn');
+    const dropdown = document.getElementById('searchDropdown');
+
+    clearBtn.classList.toggle('visible', query.length > 0);
+
+    if (query.length < 2) {
+      dropdown.classList.remove('open');
+      dropdown.innerHTML = '';
+      if (query.length === 0) setStateLabel(currentVariation === 'v1' && isSearchMode ? 'Transformed — Search cleared' : 'Default — No location data available');
+      return;
+    }
+
+    setStateLabel('Searching — Results for "' + document.getElementById('searchInput').value.trim() + '"');
+
+    // Filter locations
+    const results = allLocations.filter(loc =>
+      loc.city.toLowerCase().includes(query) && !followedItems.includes(loc.id)
+    ).slice(0, 4);
+
+    if (results.length === 0) {
+      dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--warmblack-500);font-size:14px;">No communities found for "' + document.getElementById('searchInput').value.trim() + '"</div>';
+      dropdown.classList.add('open');
+      return;
+    }
+
+    dropdown.innerHTML = results.map(r => `
+      <div class="result-row" onclick="followFromSearch('${r.id}', '${r.city}', '${r.desc}')">
+        <div class="result-text">
+          <div class="result-city">${highlightMatch(r.city, query)}</div>
+          <div class="result-desc">${r.desc}</div>
+        </div>
+        <button class="follow-btn" onclick="event.stopPropagation(); followFromSearch('${r.id}', '${r.city}', '${r.desc}')">
+          ${bookmarkOutline} Follow
+        </button>
+      </div>
+    `).join('');
+    dropdown.classList.add('open');
+  }
+
+  function highlightMatch(text, query) {
+    const idx = text.toLowerCase().indexOf(query);
+    if (idx === -1) return text;
+    return text.slice(0, idx) + '<strong>' + text.slice(idx, idx + query.length) + '</strong>' + text.slice(idx + query.length);
+  }
+
+  function clearSearch(e) {
+    e.stopPropagation();
+    document.getElementById('searchInput').value = '';
+    document.getElementById('clearBtn').classList.remove('visible');
+    document.getElementById('searchDropdown').classList.remove('open');
+    document.getElementById('searchDropdown').innerHTML = '';
+    document.getElementById('searchInput').focus();
+  }
+
+  // ── Follow from search results ──
+  function followFromSearch(id, city, desc) {
+    if (followedItems.includes(id)) return;
+    followedItems.push(id);
+
+    // Close dropdown
+    document.getElementById('searchDropdown').classList.remove('open');
+
+    // Clear search
+    document.getElementById('searchInput').value = '';
+    document.getElementById('clearBtn').classList.remove('visible');
+    document.getElementById('searchInputWrapper').classList.remove('focused');
+
+    setStateLabel('Followed — "' + city + '" graduated into card');
+
+    // Add graduated row to the follow rows
+    const graduatedRow = {
+      id: id,
+      badge: null,
+      title: city + ' Obituaries',
+      desc: 'The most timely and comprehensive collection of local obituaries for ' + city + '.',
+      isFollowed: true
+    };
+
+    // Get current default rows (without already-followed items)
+    const defaults = getCurrentDefaults();
+    renderFollowRows([graduatedRow, ...defaults]);
+
+    updateInfoBar('Item graduated into card · Search again to follow more · Click Continue to advance');
+  }
+
+  // ── Follow/unfollow from card row ──
+  function toggleFollow(id, btn) {
+    const idx = followedItems.indexOf(id);
+    if (idx > -1) {
+      followedItems.splice(idx, 1);
+      btn.classList.remove('following');
+      btn.innerHTML = bookmarkOutline + ' Follow';
+    } else {
+      followedItems.push(id);
+      btn.classList.add('following');
+      btn.innerHTML = bookmarkFilled + ' Following';
+    }
+  }
+
+  // ── Render follow rows ──
+  function renderFollowRows(rows) {
+    const container = document.getElementById('followRows');
+    container.innerHTML = rows.map(r => {
+      const isFollowed = r.isFollowed || followedItems.includes(r.id);
+      return `
+        <div class="follow-row">
+          <div class="follow-row-text">
+            ${r.badge ? `<div class="follow-row-badge ${r.badgeClass || 'badge-featured'}">${r.badge}</div>` : ''}
+            <div class="follow-row-title">${r.title}</div>
+            <div class="follow-row-desc">${r.desc}</div>
+          </div>
+          <button class="follow-btn ${isFollowed ? 'following' : ''}" onclick="toggleFollow('${r.id}', this)">
+            ${isFollowed ? bookmarkFilled + ' Following' : bookmarkOutline + ' Follow'}
+          </button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function getCurrentDefaults() {
+    if (currentVariation === 'v1') {
+      const base = isSearchMode ? v1DefaultRows.filter(r => r.id !== 'meridian') : v1DefaultRows;
+      return base.filter(r => !followedItems.includes(r.id));
+    }
+    return v2DefaultRows.filter(r => !followedItems.includes(r.id));
+  }
+
+  function getGraduatedRows() {
+    return followedItems.map(id => {
+      const loc = allLocations.find(l => l.id === id);
+      if (!loc) return null;
+      return {
+        id: loc.id,
+        badge: null,
+        title: loc.city + ' Obituaries',
+        desc: 'The most timely and comprehensive collection of local obituaries for ' + loc.city + '.',
+        isFollowed: true
+      };
+    }).filter(Boolean);
+  }
+
+  // ── Step 2 ──
+  function goToStep2() {
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step2').classList.remove('hidden');
+    setStateLabel('Step 2 — Email preferences (placeholder)');
+    updateInfoBar('This is a placeholder for Step 2 · Click Restart to try another variation');
+  }
+
+  function resetFlow() {
+    switchVariation(currentVariation);
+  }
+
+  // ── Helpers ──
+  function setStateLabel(text) {
+    document.getElementById('stateLabel').textContent = text;
+  }
+
+  function updateInfoBar(text) {
+    document.getElementById('infoBar').textContent = text;
+  }
+
+  // Close dropdown on outside click
+  document.addEventListener('click', (e) => {
+    const container = document.getElementById('searchContainer');
+    if (container && !container.contains(e.target)) {
+      document.getElementById('searchDropdown').classList.remove('open');
+      document.getElementById('searchInputWrapper').classList.remove('focused');
+    }
+  });
+
+  // Init
+  init();
+</script>
+</body>
+</html>

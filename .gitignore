@@ -14,6 +14,9 @@
 !newspaper-listing/
 !newspaper-listing/**
 
+# Sign-up follow prototype
+!signup-follow-prototype.html
+
 # OS files
 .DS_Store
 **/.DS_Store
