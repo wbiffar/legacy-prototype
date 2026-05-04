@@ -48,7 +48,7 @@ tailwind.config = {
   }
   /* Bleed wrapper — extends the scroll track to the viewport edges so clipping
      only happens at the viewport, not at the parent container's max-width. */
-  .memorial-nav-bleed { margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw); padding-left:max(1rem, calc(50vw - 50%)); padding-right:max(1rem, calc(50vw - 50%)); }
+  .memorial-nav-bleed { display:flex; justify-content:safe center; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw); padding-left:max(1rem, calc(50vw - 50%)); padding-right:max(1rem, calc(50vw - 50%)); }
   @media (min-width: 768px) {
     .memorial-nav-bleed { padding-left:max(2rem, calc(50vw - 50%)); padding-right:max(2rem, calc(50vw - 50%)); }
   }
@@ -97,7 +97,7 @@ tailwind.config = {
   <div class="absolute inset-0 bg-gradient-to-b from-navy-900/85 via-navy-900/75 to-navy-900" aria-hidden="true"></div>
   <!-- Side gradient on desktop so right photo panel still reads -->
 
-  <div class="relative max-w-[1200px] mx-auto px-4 md:px-8 pt-[76px] lg:pt-[84px] pb-12 lg:pb-20">
+  <div class="relative flex flex-col max-w-[1200px] mx-auto px-4 md:px-8 pt-[76px] lg:pt-[84px] pb-12 lg:pb-20">
 
     <!-- Top utility row: Breadcrumb + Follow + Share
          Maps to Figma node 2671:38521 (ListHeaderUtility)
@@ -136,7 +136,7 @@ tailwind.config = {
          Maps to Figma node 2671:38520 (memorial navigation)
          Uses .memorial-nav-bleed to break out of the 1200px container so it
          only clips at the viewport edge, not at the container boundary. -->
-    <nav aria-label="Memorial site filter" class="mb-10 lg:mb-14 overflow-x-auto scrollbar-hide memorial-nav-bleed">
+    <nav aria-label="Memorial site filter" class="order-first mb-6 overflow-x-auto scrollbar-hide memorial-nav-bleed">
       <div class="memorial-nav">
         <a href="sep-11-2001.html" class="memorial-nav-btn">All</a>
         <a href="world-trade-center.html" class="memorial-nav-btn">World Trade Center</a>
