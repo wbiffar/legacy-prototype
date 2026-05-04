@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Pentagon — September 11, 2001 Memorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Text&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        navy: { 50:'#f0f4fa', 100:'#e6ecf5', 200:'#d3ddeb', 300:'#b0c0d6', 400:'#728ab0', 500:'#42608f', 600:'#3c4d69', 700:'#293548', 800:'#212a3a', 900:'#151b24' },
+        gold: { 50:'#fbf7ef', 100:'#f6e5b8', 200:'#f0d78d', 300:'#e9c86f', 400:'#e2ba60', 500:'#dcb05e', 600:'#c49e54', 700:'#a48849', 800:'#85713e', 900:'#655b34' },
+        wb:   { 50:'#fbfbfb', 100:'#f6f6f6', 200:'#ebe9e9', 300:'#dbdad7', 400:'#afadaa', 500:'#807e7a', 600:'#63605b', 700:'#514d45', 800:'#373329', 900:'#262116' },
+        seaFoam: { 400:'#81b8ae', 500:'#5c9d94', 600:'#357d75' },
+        coral:   { 400:'#e77d91', 500:'#d6677c', 600:'#c24c62' }
+      },
+      fontFamily: {
+        sans:    ['"DM Sans"', 'sans-serif'],
+        serif:   ['"DM Serif Text"', 'serif'],
+        ptserif: ['"PT Serif"', 'serif']
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; margin: 0; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  input[type=search], input[type=text] { accent-color: #dcb05e; }
+
+  /* Memorial sub-navigation pill container (Figma node 2671:38520)
+     Single rounded pill containing 7 site buttons. Active button is gold-filled. */
+  .memorial-nav { display:inline-flex; align-items:center; gap:24px; padding:8px; border-radius:9999px; background:rgba(21,27,36,0.9); border:1px solid #293548; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); }
+  .memorial-nav-btn { display:inline-flex; align-items:center; justify-content:center; padding:8px 12px; border-radius:9999px; font-family:'DM Sans',sans-serif; font-size:18px; font-weight:400; line-height:1.5; color:#b0c0d6; white-space:nowrap; min-height:44px; transition:color .2s, background .2s; cursor:pointer; }
+  .memorial-nav-btn:hover:not(.active) { color:#dcb05e; }
+  .memorial-nav-btn.active { background:#dcb05e; color:#262116; }
+  @media (max-width: 1024px) {
+    .memorial-nav { gap:8px; }
+    .memorial-nav-btn { font-size:16px; padding:6px 12px; }
+  }
+  /* Bleed wrapper — extends the scroll track to the viewport edges so clipping
+     only happens at the viewport, not at the parent container's max-width. */
+  .memorial-nav-bleed { margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw); padding-left:max(1rem, calc(50vw - 50%)); padding-right:max(1rem, calc(50vw - 50%)); }
+  @media (min-width: 768px) {
+    .memorial-nav-bleed { padding-left:max(2rem, calc(50vw - 50%)); padding-right:max(2rem, calc(50vw - 50%)); }
+  }
+
+  /* Alphabet jump letters (Figma node 2685:31084 sort header)
+     32×32 rounded-lg squares; ALL is gold-filled, A-Z transparent with white text.
+     Bumped to 36px on mobile for tap-target accessibility. */
+  .alpha-letter { display:inline-flex; align-items:center; justify-content:center; min-width:32px; height:32px; padding:0 4px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:18px; font-weight:600; letter-spacing:-0.36px; line-height:1.5; color:#fff; white-space:nowrap; transition:background .15s, color .15s; cursor:pointer; }
+  .alpha-letter:hover:not(.active) { background:rgba(255,255,255,0.06); color:#dcb05e; }
+  .alpha-letter.active { background:#dcb05e; color:#262116; padding:0 12px; }
+  @media (max-width: 767px) {
+    .alpha-letter { min-width:36px; height:36px; font-size:16px; }
+  }
+
+  /* Read-more truncation marker (decorative line + icon) — matches Figma */
+  .desc-truncate { display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+
+  /* Focus rings — DS gold accent */
+  :focus-visible { outline: 2px solid #dcb05e; outline-offset: 2px; border-radius: 4px; }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid #dcb05e; outline-offset: 2px; }
+</style>
+</head>
+<body class="bg-navy-900 text-white">
+
+<!-- ====================================================================
+     MICRO-SITE HEADER — centered Legacy logo, transparent overlay
+     Maps to Figma node 2671:39201 — uses legacy-icon-dark.svg (gold mark + white wordmark)
+     Absolutely positioned so the hero image shows through behind it.
+     ==================================================================== -->
+<header class="absolute top-0 left-0 right-0 z-20">
+  <div class="max-w-[1440px] mx-auto px-6 md:px-16 pt-6 flex items-center justify-center">
+    <a href="index.html" aria-label="Legacy.com home" class="block">
+      <img src="https://www.legacy.com/media/legacy-icon-dark.svg" alt="Legacy" class="h-8 w-auto" />
+    </a>
+  </div>
+</header>
+
+<!-- ====================================================================
+     HERO — full-bleed image with gradient overlay
+     Maps to Figma: hero headers (1440×617) → hero image + hero content
+     ==================================================================== -->
+<section class="relative overflow-hidden">
+  <!-- Hero background image -->
+  <div class="absolute inset-0 bg-cover bg-center" style="background-image:url('images/hero/pentagon.png');" aria-hidden="true"></div>
+  <!-- Gradient overlay for legibility on dark theme -->
+  <div class="absolute inset-0 bg-gradient-to-b from-navy-900/85 via-navy-900/75 to-navy-900" aria-hidden="true"></div>
+  <!-- Side gradient on desktop so right photo panel still reads -->
+
+  <div class="relative max-w-[1200px] mx-auto px-4 md:px-8 pt-[76px] lg:pt-[84px] pb-12 lg:pb-20">
+
+    <!-- Top utility row: Breadcrumb + Follow + Share
+         Maps to Figma node 2671:38521 (ListHeaderUtility)
+         Mobile: stacks vertically; breadcrumb collapses to "← Groups" only -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 mb-8 lg:mb-10">
+
+      <!-- Mobile breadcrumb: arrow-left + immediate parent only -->
+      <a href="sep-11-2001.html" class="sm:hidden inline-flex items-center gap-2 text-sm font-semibold text-gold-500 hover:text-gold-400 transition-colors w-fit" aria-label="Back to September 11, 2001">
+        <i class="ph ph-arrow-left text-lg" aria-hidden="true"></i>
+        <span>September 11, 2001</span>
+      </a>
+
+      <!-- Desktop breadcrumb: full path, all underlined links -->
+      <nav aria-label="Breadcrumb" class="hidden sm:flex text-sm items-center gap-1 min-w-0">
+        <a href="#" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font whitespace-nowrap">Home</a>
+        <span class="text-wb-400 px-1" aria-hidden="true">/</span>
+        <a href="#" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font whitespace-nowrap">Groups</a>
+        <span class="text-wb-400 px-1" aria-hidden="true">/</span>
+        <a href="sep-11-2001.html" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font whitespace-nowrap">25 Years Later: Never Forget 9/11</a>
+      </nav>
+
+      <!-- Follow + Share button group — white pills on dark hero -->
+      <div class="flex items-center gap-2 sm:flex-shrink-0">
+        <button type="button" class="inline-flex items-center justify-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors min-w-[132px]">
+          <i class="ph ph-bookmark-simple text-xl" aria-hidden="true"></i>
+          <span>Follow</span>
+        </button>
+        <button type="button" class="inline-flex items-center justify-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+          <i class="ph ph-share-fat text-xl" aria-hidden="true"></i>
+          <span>Share</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Memorial sub-navigation — pill container with site selector buttons
+         Maps to Figma node 2671:38520 (memorial navigation)
+         Uses .memorial-nav-bleed to break out of the 1200px container so it
+         only clips at the viewport edge, not at the container boundary. -->
+    <nav aria-label="Memorial site filter" class="mb-10 lg:mb-14 overflow-x-auto scrollbar-hide memorial-nav-bleed">
+      <div class="memorial-nav">
+        <a href="sep-11-2001.html" class="memorial-nav-btn">All</a>
+        <a href="world-trade-center.html" class="memorial-nav-btn">World Trade Center</a>
+        <a href="american-flight-11.html" class="memorial-nav-btn">American Flight 11</a>
+        <a href="united-flight-175.html" class="memorial-nav-btn">United Flight 175</a>
+        <a href="the-pentagon.html" class="memorial-nav-btn active">The Pentagon</a>
+        <a href="american-flight-77.html" class="memorial-nav-btn">American Flight 77</a>
+        <a href="united-flight-93.html" class="memorial-nav-btn">United Flight 93</a>
+      </div>
+    </nav>
+
+    <!-- Hero primary content: centered, no video (sub-page) -->
+    <div class="max-w-[640px] mx-auto flex flex-col items-center text-center gap-6 pt-6 lg:pt-10 pb-2">
+      <p class="font-sans font-semibold text-base text-gold-500 uppercase" style="letter-spacing:1.12px;">25th Anniversary</p>
+      <h1 class="font-serif text-[40px] sm:text-[48px] text-white leading-[1.2]">The Pentagon</h1>
+      <p class="font-sans text-base text-wb-400 leading-[1.5]">
+        We remember those lost at the Pentagon — military and civilian personnel inside the building, and the passengers and crew of American Airlines Flight 77.
+      </p>
+      <a href="#" class="inline-flex items-center gap-2 pl-2 pr-4 py-2 rounded-full border border-gold-500 hover:bg-gold-500/10 transition-colors">
+        <span class="w-8 h-8 rounded-full bg-gold-100 flex items-center justify-center flex-shrink-0">
+          <i class="ph-fill ph-book-open-text text-xl text-wb-900" aria-hidden="true"></i>
+        </span>
+        <span class="font-sans font-semibold text-base text-gold-500 leading-[1.25]">Sign the National Book of Remembrance</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====================================================================
+     SEARCH + FILTER + ALPHABET JUMP — combined section
+     Maps to Figma node 2685:31084
+     Search row sits in normal flow; alphabet bar STICKS to top on scroll
+     just below the page header (top-14 = 56px header height).
+     ==================================================================== -->
+<section aria-label="Search memorials" class="bg-navy-900">
+  <!-- Keyword search row: count + input + filter button (normal flow) -->
+  <div class="max-w-[1200px] mx-auto px-4 md:px-8 pt-6 pb-6 border-t border-wb-800">
+    <div class="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+      <!-- Lives remembered count (mixed weight) -->
+      <p class="text-[18px] tracking-[-0.02em] whitespace-nowrap leading-[1.5] flex-shrink-0">
+        <span id="lives-count" class="font-semibold text-white">2,977&nbsp;</span><span class="font-normal text-wb-400">lives remembered</span>
+      </p>
+
+      <!-- Search input — white-filled, magnifying glass on right -->
+      <div class="relative flex-1 min-w-0">
+        <label for="memorial-search" class="sr-only">Search memorials</label>
+        <input id="memorial-search" type="search"
+          placeholder="Looking for a specific person? Search 2,977 names..."
+          class="w-full h-11 bg-white border border-wb-500 rounded-full pl-4 pr-11 text-base text-wb-900 placeholder:text-wb-600 placeholder:font-normal focus:border-navy-500 focus:outline-none focus:ring-2 focus:ring-navy-500/30 shadow-[0_10px_15px_0_rgba(0,0,0,0.1),0_4px_6px_0_rgba(0,0,0,0.05)]" />
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-wb-700 pointer-events-none flex items-center justify-center">
+          <i class="ph ph-magnifying-glass text-xl" aria-hidden="true"></i>
+        </span>
+      </div>
+
+      <!-- Filter button — white-outlined ghost on dark -->
+      <button type="button" class="inline-flex items-center justify-center gap-2 h-10 px-5 rounded-full border border-white text-sm font-semibold text-white hover:bg-white/10 transition-colors flex-shrink-0 self-start md:self-auto">
+        <i class="ph ph-sliders-horizontal text-xl" aria-hidden="true"></i>
+        <span>Filter</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Sticky alphabet jump bar — sibling of <section> and <main> so its parent
+     is <body>, giving it a tall enough container to stay stuck while the user
+     scrolls through the cards. Sticks at top-0 since the page header is no
+     longer sticky. -->
+<div class="sticky top-0 z-30 bg-navy-900 border-b border-wb-800">
+  <div class="max-w-[1200px] mx-auto px-4 md:px-8">
+    <nav aria-label="Jump to letter" class="overflow-x-auto scrollbar-hide -mx-4 md:mx-0 px-4 md:px-0 py-3">
+      <div class="flex items-center gap-3 w-max">
+        <a href="#" class="alpha-letter active">ALL</a>
+        <a href="#" class="alpha-letter">A</a><a href="#" class="alpha-letter">B</a><a href="#" class="alpha-letter">C</a>
+        <a href="#" class="alpha-letter">D</a><a href="#" class="alpha-letter">E</a><a href="#" class="alpha-letter">F</a>
+        <a href="#" class="alpha-letter">G</a><a href="#" class="alpha-letter">H</a><a href="#" class="alpha-letter">I</a>
+        <a href="#" class="alpha-letter">J</a><a href="#" class="alpha-letter">K</a><a href="#" class="alpha-letter">L</a>
+        <a href="#" class="alpha-letter">M</a><a href="#" class="alpha-letter">N</a><a href="#" class="alpha-letter">O</a>
+        <a href="#" class="alpha-letter">P</a><a href="#" class="alpha-letter">Q</a><a href="#" class="alpha-letter">R</a>
+        <a href="#" class="alpha-letter">S</a><a href="#" class="alpha-letter">T</a><a href="#" class="alpha-letter">U</a>
+        <a href="#" class="alpha-letter">V</a><a href="#" class="alpha-letter">W</a><a href="#" class="alpha-letter">X</a>
+        <a href="#" class="alpha-letter">Y</a><a href="#" class="alpha-letter">Z</a>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<!-- ====================================================================
+     RESULTS LIST — memorial obituary cards
+     Maps to Figma node 2671:38627 (result card)
+     Each card: floated photo, continuous text wrapping around it, CTA bar.
+     ==================================================================== -->
+<main class="max-w-[640px] mx-auto px-4 md:px-0 py-10 md:py-14 space-y-10 md:space-y-14">
+
+  <!-- ============ Card 1 (alphabetical): Sophia B. Addo ============ -->
+  <article class="result-card" data-initial="A" data-location="wtc">
+    <div class="overflow-hidden">
+      <figure class="float-right ml-5 md:ml-6 mt-2 w-[130px] sm:w-[170px] md:w-[218px] aspect-[136/175] rounded-lg overflow-hidden shadow-[0_25px_50px_0_rgba(0,0,0,0.25)]">
+        <a href="person.html" class="block w-full h-full" aria-label="View memorial"><img src="https://picsum.photos/seed/sophia-addo/436/560" alt="Portrait of Sophia B. Addo" class="w-full h-full object-cover" /></a>
+      </figure>
+      <h3 class="font-serif text-[32px] sm:text-[40px] md:text-[48px] leading-[1.2] text-white mb-4 md:mb-6"><a href="person.html" class="hover:text-gold-500 transition-colors">Sophia B. Addo</a></h3>
+      <p class="font-ptserif text-base md:text-[20px] leading-[1.75] text-wb-400">
+        Sophia Addo arrived in New York from Ghana in her early twenties carrying a single suitcase and what her mother called &ldquo;the kind of stubbornness that gets you somewhere.&rdquo; She built a career in actuarial science at Marsh, sang every Sunday in the choir at Union Baptist in Harlem, and after work tutored neighborhood kids in algebra at the kitchen table she shared with her sister.
+      </p>
+      <p class="font-ptserif text-base md:text-[20px] leading-[1.75] text-wb-400 mt-4">
+        Sophia was 36. The scholarship her family established in her name has, in the years since, sent more than fifty young women from her hometown of Kumasi to university &mdash; a quiet, ongoing answer to a loss her family says still feels new.
+      </p>
+    </div>
+    <div class="mt-6 border border-navy-700 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div class="flex items-center gap-1">
+        <i class="ph ph-chat-text text-2xl text-white" aria-hidden="true"></i>
+        <span class="text-sm text-white">3.1k messages</span>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <a href="person.html" class="inline-flex items-center justify-center gap-2.5 h-8 px-3 rounded-full bg-navy-700 hover:bg-navy-600 transition-colors text-xs font-semibold text-white whitespace-nowrap">
+          <span>Read Guestbook</span>
+          <i class="ph ph-arrow-right text-base" aria-hidden="true"></i>
+        </a>
+        <a href="person.html" class="inline-flex items-center justify-center gap-2.5 h-8 px-3 rounded-full bg-gold-400 hover:bg-gold-500 transition-colors text-xs font-semibold text-wb-900 whitespace-nowrap">
+          <i class="ph ph-pencil-simple-line text-base" aria-hidden="true"></i>
+          <span>Add a Message</span>
+        </a>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ Card 2: Siew Nya Ang ============ -->
+  <article class="result-card" data-initial="A" data-location="wtc">
+    <div class="overflow-hidden">
+      <figure class="float-right ml-5 md:ml-6 mt-2 w-[130px] sm:w-[170px] md:w-[218px] aspect-[136/175] rounded-lg overflow-hidden shadow-[0_25px_50px_0_rgba(0,0,0,0.25)]">
+        <a href="person.html" class="block w-full h-full" aria-label="View memorial"><img src="images/portraits/Siew-Nya-Ang.jpg" alt="Portrait of Siew Nya Ang" class="w-full h-full object-cover" /></a>
+      </figure>
+      <h3 class="font-serif text-[32px] sm:text-[40px] md:text-[48px] leading-[1.2] text-white mb-4 md:mb-6"><a href="person.html" class="hover:text-gold-500 transition-colors">Siew Nya Ang</a></h3>
+      <p class="font-ptserif text-base md:text-[20px] leading-[1.75] text-wb-400">
+        Siew Nya Ang &mdash; &ldquo;Cindy&rdquo; to her colleagues, &ldquo;Mama&rdquo; to her two boys &mdash; came home from work each evening with the same ritual: shoes off at the door, tea on the stove, a moment by the kitchen window before anyone could ask her about her day. She had worked her way up at Marsh from a junior analyst to a senior risk consultant over fifteen years.
+      </p>
+      <p class="font-ptserif text-base md:text-[20px] leading-[1.75] text-wb-400 mt-4">
+        Her colleagues remember her, above all, for the careful way she could explain a complicated thing without making anyone feel small. She is survived by her husband, William, and their sons, Marcus and Dylan, who were 9 and 7 in 2001.
+      </p>
+    </div>
+    <div class="mt-6 border border-navy-700 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div class="flex items-center gap-1">
+        <i class="ph ph-chat-text text-2xl text-white" aria-hidden="true"></i>
+        <span class="text-sm text-white">1.5k messages</span>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <a href="person.html" class="inline-flex items-center justify-center gap-2.5 h-8 px-3 rounded-full bg-navy-700 hover:bg-navy-600 transition-colors text-xs font-semibold text-white whitespace-nowrap">
+          <span>Read Guestbook</span>
+          <i class="ph ph-arrow-right text-base" aria-hidden="true"></i>
+        </a>
+        <a href="person.html" class="inline-flex items-center justify-center gap-2.5 h-8 px-3 rounded-full bg-gold-400 hover:bg-gold-500 transition-colors text-xs font-semibold text-wb-900 whitespace-nowrap">
+          <i class="ph ph-pencil-simple-line text-base" aria-hidden="true"></i>
+          <span>Add a Message</span>
+        </a>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ Card 3: Mike Arczynski ============ -->
+  <article class="result-card" data-initial="A" data-location="wtc">
+    <div class="overflow-hidden">
+      <figure class="float-right ml-5 md:ml-6 mt-2 w-[130px] sm:w-[170px] md:w-[218px] aspect-[136/175] rounded-lg overflow-hidden shadow-[0_25px_50px_0_rgba(0,0,0,0.25)]">
+        <a href="person.html" class="block w-full h-full" aria-label="View memorial"><img src="images/portraits/Michael-G-Arczynski.jpg" alt="Portrait of Mike Arczynski" class="w-full h-full object-cover" /></a>
+      </figure>
+      <h3 class="font-serif text-[32px] sm:text-[40px] md:text-[48px] leading-[1.2] text-white mb-4 md:mb-6"><a href="person.html" class="hover:text-gold-500 transition-colors">Mike Arczynski</a></h3>
+      <p class="font-ptserif text-base md:text-[20px] leading-[1.75] text-wb-400">
+        When in London, where he and Mrs. Arczynski lived for nine years before returning to New York last year, the Alps became their playground. Back in the United States, he loved where the family settled, in Monmouth County, N.J., partly because from there he could take a bracing, high-speed ferry ride every day to work across New York Harbor to his job as a senior vice president at Aon, in 2 World Trade Center.
+      </p>
+      <p class="font-ptserif text-base md:text-[20px] leading-[1.75] text-wb-400 mt-4">
+        But the family is in a quandary now about what kind of tree would best represent him: Canadian Maple seemed perfect at first. &ldquo;But I like the idea of an evergreen, too,&rdquo; his wife said.
+      </p>
+    </div>
+    <div class="mt-6 border border-navy-700 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div class="flex items-center gap-1">
+        <i class="ph ph-chat-text text-2xl text-white" aria-hidden="true"></i>
+        <span class="text-sm text-white">2.3k messages</span>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <a href="person.html" class="inline-flex items-center justify-center gap-2.5 h-8 px-3 rounded-full bg-navy-700 hover:bg-navy-600 transition-colors text-xs font-semibold text-white whitespace-nowrap">
+          <span>Read Guestbook</span>
+          <i class="ph ph-arrow-right text-base" aria-hidden="true"></i>
+        </a>
+        <a href="person.html" class="inline-flex items-center justify-center gap-2.5 h-8 px-3 rounded-full bg-gold-400 hover:bg-gold-500 transition-colors text-xs font-semibold text-wb-900 whitespace-nowrap">
+          <i class="ph ph-pencil-simple-line text-base" aria-hidden="true"></i>
+          <span>Add a Message</span>
+        </a>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ Card 4: Jack Charles Aron ============ -->
+  <article class="result-card" data-initial="A" data-location="wtc">
+    <div class="overflow-hidden">
+      <figure class="float-right ml-5 md:ml-6 mt-2 w-[130px] sm:w-[170px] md:w-[218px] aspect-[136/175] rounded-lg overflow-hidden shadow-[0_25px_50px_0_rgba(0,0,0,0.25)]">
+        <a href="person.html" class="block w-full h-full" aria-label="View memorial"><img src="images/portraits/Jack-Charles-Aron.jpg" alt="Portrait of Jack Charles Aron" class="w-full h-full object-cover" /></a>
+      </figure>
+      <h3 class="font-serif text-[32px] sm:text-[40px] md:text-[48px] leading-[1.2] text-white mb-4 md:mb-6"><a href="person.html" class="hover:text-gold-500 transition-colors">Jack Charles Aron</a></h3>
+      <p class="font-ptserif text-base md:text-[20px] leading-[1.75] text-wb-400">
+        A graduate of the Wharton School with an irrepressible love of the New York Mets, Jack Aron worked the early shift at Cantor Fitzgerald so he could be home in time to coach his daughter&rsquo;s softball team. He once drove four hours to Cooperstown on a Tuesday simply to walk the baseball Hall of Fame in the rain &mdash; alone, he said, because the place spoke better in the quiet.
+      </p>
+      <p class="font-ptserif text-base md:text-[20px] leading-[1.75] text-wb-400 mt-4">
+        Friends remember him as the dependable one &mdash; the friend who would loan you his car keys without a thought, then call later just to make sure you got home safely. He is survived by his wife of 22 years, Ellen, and their three children, Sarah, Daniel, and Charlotte.
+      </p>
+    </div>
+    <div class="mt-6 border border-navy-700 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div class="flex items-center gap-1">
+        <i class="ph ph-chat-text text-2xl text-white" aria-hidden="true"></i>
+        <span class="text-sm text-white">1.8k messages</span>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <a href="person.html" class="inline-flex items-center justify-center gap-2.5 h-8 px-3 rounded-full bg-navy-700 hover:bg-navy-600 transition-colors text-xs font-semibold text-white whitespace-nowrap">
+          <span>Read Guestbook</span>
+          <i class="ph ph-arrow-right text-base" aria-hidden="true"></i>
+        </a>
+        <a href="person.html" class="inline-flex items-center justify-center gap-2.5 h-8 px-3 rounded-full bg-gold-400 hover:bg-gold-500 transition-colors text-xs font-semibold text-wb-900 whitespace-nowrap">
+          <i class="ph ph-pencil-simple-line text-base" aria-hidden="true"></i>
+          <span>Add a Message</span>
+        </a>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ "Discover today" inline marketing banner ============ -->
+  <aside class="bg-gradient-to-r from-gold-500/15 via-gold-500/5 to-transparent border border-gold-500/30 rounded-xl p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6">
+    <div class="w-12 h-12 rounded-full bg-gold-500/20 border border-gold-500/40 flex items-center justify-center flex-shrink-0">
+      <i class="ph ph-calendar-blank text-2xl text-gold-500" aria-hidden="true"></i>
+    </div>
+    <div class="flex-1 min-w-0">
+      <p class="text-xs font-semibold text-gold-500 uppercase tracking-[0.08em]">On This Date</p>
+      <h4 class="font-serif text-2xl md:text-3xl text-white mt-1.5">Discover today's most-visited memorials</h4>
+      <p class="font-ptserif text-base text-wb-200 mt-2 leading-[1.55]">
+        Stories, recent guest book messages, and remembrances from across Legacy.com.
+      </p>
+    </div>
+    <a href="#" class="inline-flex items-center justify-center gap-2 px-5 h-11 bg-gold-500 hover:bg-gold-400 text-navy-900 rounded-md font-semibold text-base transition-colors flex-shrink-0 whitespace-nowrap">
+      Explore <i class="ph ph-arrow-right" aria-hidden="true"></i>
+    </a>
+  </aside>
+
+  <!-- ============ Infinite-scroll feed: cards 5+ rendered by JS ============ -->
+  <div id="results-feed" class="space-y-10 md:space-y-14"></div>
+
+  <!-- Scroll status + loading indicator -->
+  <div id="results-status" class="text-center pt-4 text-sm text-wb-500">
+    <p id="results-status-text">Showing <span id="result-count">4</span> of 2,977 lives remembered</p>
+  </div>
+
+  <!-- Sentinel for IntersectionObserver -->
+  <div id="results-sentinel" aria-hidden="true" class="h-1"></div>
+
+</main>
+
+<!-- ====================================================================
+     MICRO-SITE FOOTER — minimal Legacy footer for memorial pages
+     Maps to Figma: micro-site footer (1440×136)
+     ==================================================================== -->
+<footer class="bg-navy-900 border-t border-wb-800 mt-12">
+  <div class="max-w-[1440px] mx-auto px-6 md:px-14 py-8 space-y-6">
+    <img src="https://www.legacy.com/media/legacy-icon-white.svg" alt="Legacy" class="h-8 w-auto" />
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-sm text-wb-500">
+      <p>&copy;2026 Legacy.com All rights reserved.</p>
+      <div class="flex flex-wrap gap-x-6 gap-y-2">
+        <a href="#" class="hover:text-gold-500 transition-colors">Do Not Sell My Information</a>
+        <a href="#" class="hover:text-gold-500 transition-colors">Privacy policy</a>
+        <a href="#" class="hover:text-gold-500 transition-colors">Terms of use</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script>window.PAGE_LOCATION='pentagon';</script>
+
+<!-- ====================================================================
+     INFINITE SCROLL — appends additional victim cards as user scrolls.
+     Real verified victims from Wikipedia (Flights 11, 175, 77, 93 plus
+     well-documented WTC victims). Alphabetical from B onward, continuing
+     after the 4 hardcoded A-section cards.
+     ==================================================================== -->
+<script>
+  // Each victim tagged with location so per-page filtering can show only the
+  // memorials relevant to that site. "location" supports comma-separated values
+  // for victims who belong to more than one bucket (Flight 77 victims also
+  // count toward "pentagon" since the plane crashed into it).
+  // Local-portrait overrides keyed by slug. Anything not in this map
+  // falls back to a slug-seeded picsum placeholder.
+  const PORTRAIT_OVERRIDES = {
+    "todd-beamer": "images/portraits/todd-beamer.jpg"
+  };
+  const portraitFor = (slug) => PORTRAIT_OVERRIDES[slug] || `https://picsum.photos/seed/${slug}/436/560`;
+
+  const victims = [
+    { name: "Garnet Bailey", slug: "garnet-bailey", location: "flight175" },
+    { name: "Mark Bavis", slug: "mark-bavis", location: "flight175" },
+    { name: "Todd Beamer", slug: "todd-beamer", location: "flight93" },
+    { name: "Berry Berenson", slug: "berry-berenson", location: "flight11" },
+    { name: "Bill Biggart", slug: "bill-biggart", location: "wtc" },
+    { name: "Mark Bingham", slug: "mark-bingham", location: "flight93" },
+    { name: "Sandra Bradshaw", slug: "sandra-bradshaw", location: "flight93" },
+    { name: "Charles Burlingame", slug: "charles-burlingame", location: "flight77,pentagon" },
+    { name: "Tom Burnett", slug: "tom-burnett", location: "flight93" },
+    { name: "William Cashman", slug: "william-cashman", location: "flight93" },
+    { name: "David Charlebois", slug: "david-charlebois", location: "flight77,pentagon" },
+    { name: "Jeffrey Collman", slug: "jeffrey-collman", location: "flight11" },
+    { name: "Welles Crowther", slug: "welles-crowther", location: "wtc" },
+    { name: "Carlos S. da Costa", slug: "carlos-da-costa", location: "wtc" },
+    { name: "Jason Dahl", slug: "jason-dahl", location: "flight93" },
+    { name: "Dorothy DeAraujo", slug: "dorothy-dearaujo", location: "flight175" },
+    { name: "Frank De Martini", slug: "frank-de-martini", location: "wtc" },
+    { name: "Melissa Doi", slug: "melissa-doi", location: "wtc" },
+    { name: "Robert Fangman", slug: "robert-fangman", location: "flight175" },
+    { name: "Edward Felt", slug: "edward-felt", location: "flight93" },
+    { name: "Keith A. Glascoe", slug: "keith-glascoe", location: "wtc" },
+    { name: "Jeremy Glick", slug: "jeremy-glick", location: "flight93" },
+    { name: "Lauren Catuzzi Grandcolas", slug: "lauren-grandcolas", location: "flight93" },
+    { name: "Linda Gronlund", slug: "linda-gronlund", location: "flight93" },
+    { name: "Nezam Hafiz", slug: "nezam-hafiz", location: "wtc" },
+    { name: "Christine Lee Hanson", slug: "christine-hanson", location: "flight175" },
+    { name: "Peter Hanson", slug: "peter-hanson", location: "flight175" },
+    { name: "Sue Kim Hanson", slug: "sue-kim-hanson", location: "flight175" },
+    { name: "Michele Heidenberger", slug: "michele-heidenberger", location: "flight77,pentagon" },
+    { name: "LeRoy Homer", slug: "leroy-homer", location: "flight93" },
+    { name: "Michael Horrocks", slug: "michael-horrocks", location: "flight175" },
+    { name: "Amy Jarret", slug: "amy-jarret", location: "flight175" },
+    { name: "Charles Edward Jones", slug: "charles-edward-jones", location: "flight11" },
+    { name: "Mychal Judge", slug: "mychal-judge", location: "wtc" },
+    { name: "Joseph John Keller", slug: "joseph-keller", location: "wtc" },
+    { name: "Amy King", slug: "amy-king", location: "flight175" },
+    { name: "Kathryn Laborie", slug: "kathryn-laborie", location: "flight175" },
+    { name: "Neil David Levin", slug: "neil-levin", location: "wtc" },
+    { name: "Daniel Lewin", slug: "daniel-lewin", location: "flight11" },
+    { name: "Jennifer Lewis", slug: "jennifer-lewis", location: "flight77,pentagon" },
+    { name: "Kenneth Lewis", slug: "kenneth-lewis", location: "flight77,pentagon" },
+    { name: "Sara Low", slug: "sara-low", location: "flight11" },
+    { name: "CeeCee Lyles", slug: "ceecee-lyles", location: "flight93" },
+    { name: "Alfred Marchand", slug: "alfred-marchand", location: "flight175" },
+    { name: "Karen Martin", slug: "karen-martin", location: "flight11" },
+    { name: "Renee May", slug: "renee-may", location: "flight77,pentagon" },
+    { name: "Eamon McEneaney", slug: "eamon-mceneaney", location: "wtc" },
+    { name: "Thomas McGuinness Jr.", slug: "thomas-mcguinness", location: "flight11" },
+    { name: "Lou Nacke", slug: "lou-nacke", location: "flight93" },
+    { name: "Pete Negron", slug: "pete-negron", location: "wtc" },
+    { name: "Kathleen Nicosia", slug: "kathleen-nicosia", location: "flight11" },
+    { name: "Robert Norton", slug: "robert-norton", location: "flight11" },
+    { name: "John Ogonowski", slug: "john-ogonowski", location: "flight11" },
+    { name: "Barbara Olson", slug: "barbara-olson", location: "flight77,pentagon" },
+    { name: "Betty Ong", slug: "betty-ong", location: "flight11" },
+    { name: "John P. O'Neill", slug: "john-oneill", location: "wtc" },
+    { name: "Pablo Ortiz", slug: "pablo-ortiz", location: "wtc" },
+    { name: "Richard Allen Pearlman", slug: "richard-pearlman", location: "wtc" },
+    { name: "Rick Rescorla", slug: "rick-rescorla", location: "wtc" },
+    { name: "Jean Roger", slug: "jean-roger", location: "flight11" },
+    { name: "Victor Saracini", slug: "victor-saracini", location: "flight175" },
+    { name: "Dianne Snyder", slug: "dianne-snyder", location: "flight11" },
+    { name: "Daniel Suhr", slug: "daniel-suhr", location: "wtc" },
+    { name: "Amy Sweeney", slug: "amy-sweeney", location: "flight11" },
+    { name: "Michael Tarrou", slug: "michael-tarrou", location: "flight175" },
+    { name: "Alicia Titus", slug: "alicia-titus", location: "flight175" },
+    { name: "Dan Trant", slug: "dan-trant", location: "wtc" },
+    { name: "Honor Elizabeth Wainio", slug: "honor-wainio", location: "flight93" }
+  ];
+
+  // Page-level location filter — overridden per page via window.PAGE_LOCATION
+  // before this script runs. Defaults to 'all' for the master memorial page.
+  const PAGE_LOCATION = window.PAGE_LOCATION || 'all';
+
+  // Per-location totals for the status-text counter (real published numbers).
+  const LOCATION_TOTALS = {
+    all: 2977,
+    wtc: 2753,
+    flight11: 87,
+    flight175: 60,
+    flight77: 59,
+    pentagon: 184,
+    flight93: 40
+  };
+  const TOTAL_LIVES = LOCATION_TOTALS[PAGE_LOCATION] || 2977;
+  const BATCH_SIZE = 5;
+
+  // Filter the victim pool to entries matching this page's location
+  function locationsOf(loc) { return (loc || '').split(',').map((s) => s.trim()).filter(Boolean); }
+  const pageVictims = PAGE_LOCATION === 'all'
+    ? victims
+    : victims.filter((v) => locationsOf(v.location).includes(PAGE_LOCATION));
+
+  // Hide hardcoded cards (the 4 A-section ones) that don't match this page's location.
+  // Runs synchronously — the script is at the end of <body>, so the DOM is ready.
+  document.querySelectorAll('main > article.result-card').forEach((card) => {
+    const cardLocs = locationsOf(card.dataset.location);
+    if (PAGE_LOCATION !== 'all' && !cardLocs.includes(PAGE_LOCATION)) {
+      card.style.display = 'none';
+    }
+  });
+  // Discover banner is only shown on the All page
+  const _banner = document.querySelector('main aside.bg-gradient-to-r');
+  if (_banner && PAGE_LOCATION !== 'all') _banner.style.display = 'none';
+
+  // Update the search-row total count + input placeholder to this page's total
+  const _livesCount = document.getElementById('lives-count');
+  if (_livesCount) _livesCount.innerHTML = TOTAL_LIVES.toLocaleString() + '\u00a0';
+  const _searchInput = document.getElementById('memorial-search');
+  if (_searchInput) _searchInput.placeholder = `Looking for a specific person? Search ${TOTAL_LIVES.toLocaleString()} names...`;
+
+  function countHardcodedVisible() {
+    return Array.from(document.querySelectorAll('main > article.result-card'))
+      .filter((c) => c.style.display !== 'none').length;
+  }
+
+  // Deterministic message-count from slug — keeps each card's count stable on re-render
+  function messageCount(slug) {
+    let h = 0;
+    for (let i = 0; i < slug.length; i++) h = (h * 31 + slug.charCodeAt(i)) | 0;
+    const n = Math.abs(h) % 4800 + 200;
+    return n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n.toString();
+  }
+
+  function firstName(name) {
+    return name.split(/\s+/)[0];
+  }
+
+  // Last-name initial — skips suffixes like "Jr." / "Sr." / Roman numerals.
+  // Particles like "da", "De" are not specially handled; "Carlos S. da Costa"
+  // files under C, "Frank De Martini" under M. Acceptable for the prototype.
+  const SUFFIXES = new Set(['Jr.', 'Sr.', 'II', 'III', 'IV']);
+  function surnameInitial(name) {
+    const parts = name.trim().split(/\s+/);
+    let i = parts.length - 1;
+    while (i > 0 && SUFFIXES.has(parts[i])) i--;
+    return parts[i].charAt(0).toUpperCase();
+  }
+
+  // Card template — matches the structure of the 4 hardcoded cards exactly
+  function renderCard(victim) {
+    const fn = firstName(victim.name);
+    const count = messageCount(victim.slug);
+    const initial = surnameInitial(victim.name);
+    return `
+    <article class="result-card" data-initial="${initial}" data-location="${victim.location || ''}">
+      <div class="overflow-hidden">
+        <figure class="float-right ml-5 md:ml-6 mt-2 w-[130px] sm:w-[170px] md:w-[218px] aspect-[136/175] rounded-lg overflow-hidden shadow-[0_25px_50px_0_rgba(0,0,0,0.25)]">
+          <a href="person.html" class="block w-full h-full" aria-label="View memorial for ${victim.name}"><img src="${portraitFor(victim.slug)}" alt="Portrait of ${victim.name}" class="w-full h-full object-cover" /></a>
+        </figure>
+        <h3 class="font-serif text-[32px] sm:text-[40px] md:text-[48px] leading-[1.2] text-white mb-4 md:mb-6"><a href="person.html" class="hover:text-gold-500 transition-colors">${victim.name}</a></h3>
+        <p class="font-ptserif text-base md:text-[20px] leading-[1.75] text-wb-400">
+          ${fn} was 38. Friends remember a quiet steadiness &mdash; the kind of person who showed up: to a backyard barbecue, to a parent-teacher night, to the hospital at three in the morning when a brother needed a ride home. They loved music, the Mets, and Sunday mornings with the Times spread across the kitchen table.
+        </p>
+        <p class="font-ptserif text-base md:text-[20px] leading-[1.75] text-wb-400 mt-4">
+          Their family says the small things linger most: the song they hummed in the kitchen, the careful way they folded a newspaper before passing it on, the laugh that filled a room without trying. They are survived by a partner and two children, who say that laugh still echoes in every room of the house.
+        </p>
+      </div>
+      <div class="mt-6 border border-navy-700 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="flex items-center gap-1">
+          <i class="ph ph-chat-text text-2xl text-white" aria-hidden="true"></i>
+          <span class="text-sm text-white">${count} messages</span>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <a href="person.html" class="inline-flex items-center justify-center gap-2.5 h-8 px-3 rounded-full bg-navy-700 hover:bg-navy-600 transition-colors text-xs font-semibold text-white whitespace-nowrap">
+            <span>Read Guestbook</span>
+            <i class="ph ph-arrow-right text-base" aria-hidden="true"></i>
+          </a>
+          <a href="person.html" class="inline-flex items-center justify-center gap-2.5 h-8 px-3 rounded-full bg-gold-400 hover:bg-gold-500 transition-colors text-xs font-semibold text-wb-900 whitespace-nowrap">
+            <i class="ph ph-pencil-simple-line text-base" aria-hidden="true"></i>
+            <span>Add a Message</span>
+          </a>
+        </div>
+      </div>
+    </article>`;
+  }
+
+  const feed = document.getElementById('results-feed');
+  const sentinel = document.getElementById('results-sentinel');
+  const counterEl = document.getElementById('result-count');
+  let cursor = 0;
+
+  function updateOverallStatus() {
+    const visible = countHardcodedVisible() + cursor;
+    document.getElementById('results-status-text').textContent =
+      `Showing ${visible} of ${TOTAL_LIVES.toLocaleString()} lives remembered`;
+  }
+
+  function appendBatch() {
+    if (cursor >= pageVictims.length) {
+      sentinel.style.display = 'none';
+      // Even if nothing left to render, refresh status (handles 0-result pages like Pentagon)
+      if (cursor === 0) updateOverallStatus();
+      return;
+    }
+    const end = Math.min(cursor + BATCH_SIZE, pageVictims.length);
+    let html = '';
+    for (let i = cursor; i < end; i++) html += renderCard(pageVictims[i]);
+    feed.insertAdjacentHTML('beforeend', html);
+    cursor = end;
+    updateOverallStatus();
+  }
+
+  // ============ Combined filtering: page-location + alphabet + search ============
+  let activeLetter = 'ALL';
+  let searchQuery = '';
+
+  // Initial batch + IntersectionObserver for infinite scroll. Only loads more
+  // when no filters are active (alpha === ALL and search is empty).
+  appendBatch();
+  const io = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && activeLetter === 'ALL' && !searchQuery) appendBatch();
+  }, { rootMargin: '600px 0px' });
+  io.observe(sentinel);
+  const statusText = document.getElementById('results-status-text');
+  const discoverBanner = document.querySelector('main aside.bg-gradient-to-r');
+
+  function setActiveLetterClass(letter) {
+    document.querySelectorAll('.alpha-letter').forEach((el) => {
+      el.classList.toggle('active', el.textContent.trim().toUpperCase() === letter);
+    });
+  }
+
+  function renderAllRemaining() {
+    while (cursor < pageVictims.length) {
+      feed.insertAdjacentHTML('beforeend', renderCard(pageVictims[cursor]));
+      cursor++;
+    }
+    sentinel.style.display = 'none';
+  }
+
+  // Returns true if a card matches this page's location filter (or page is 'all')
+  function matchesPageLocation(card) {
+    if (PAGE_LOCATION === 'all') return true;
+    return locationsOf(card.dataset.location).includes(PAGE_LOCATION);
+  }
+
+  // Cache lowercased name on first read so repeated keystrokes don't re-query the DOM
+  function cardName(card) {
+    if (!card._searchName) {
+      card._searchName = (card.querySelector('h3')?.textContent || '').trim().toLowerCase();
+    }
+    return card._searchName;
+  }
+
+  function applyFilter() {
+    setActiveLetterClass(activeLetter);
+
+    // When alpha or search is active, render the full pool so filtering is comprehensive
+    if (activeLetter !== 'ALL' || searchQuery) renderAllRemaining();
+
+    let visible = 0;
+    document.querySelectorAll('article.result-card').forEach((card) => {
+      let matches = matchesPageLocation(card);
+      if (matches && activeLetter !== 'ALL') matches = card.dataset.initial === activeLetter;
+      if (matches && searchQuery) matches = cardName(card).includes(searchQuery);
+      card.style.display = matches ? '' : 'none';
+      if (matches) visible++;
+    });
+
+    // Discover banner only shows on the unfiltered ALL view of the All-Sites page
+    if (discoverBanner) {
+      discoverBanner.style.display = (activeLetter === 'ALL' && !searchQuery && PAGE_LOCATION === 'all') ? '' : 'none';
+    }
+
+    // Restore infinite-scroll sentinel only on the unfiltered ALL view
+    if (activeLetter === 'ALL' && !searchQuery && cursor < pageVictims.length) {
+      sentinel.style.display = '';
+    } else {
+      sentinel.style.display = 'none';
+    }
+
+    // Status text
+    if (searchQuery) {
+      statusText.textContent = visible === 0
+        ? `No memorials match “${searchQuery}”`
+        : `Showing ${visible} ${visible === 1 ? 'memorial' : 'memorials'} matching “${searchQuery}”`;
+    } else if (activeLetter !== 'ALL') {
+      statusText.textContent = visible === 0
+        ? `No memorials with surnames starting with ${activeLetter}`
+        : `Showing ${visible} ${visible === 1 ? 'memorial' : 'memorials'} with surnames starting with ${activeLetter}`;
+    } else {
+      const totalVisible = countHardcodedVisible() + cursor;
+      statusText.textContent = `Showing ${totalVisible} of ${TOTAL_LIVES.toLocaleString()} lives remembered`;
+    }
+  }
+
+  // Alphabet pills
+  document.querySelectorAll('.alpha-letter').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      activeLetter = el.textContent.trim().toUpperCase();
+      applyFilter();
+      const target = document.querySelector('main');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Search input — live, debounced
+  const searchInput = document.getElementById('memorial-search');
+  if (searchInput) {
+    let searchDebounce;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(() => {
+        searchQuery = searchInput.value.trim().toLowerCase();
+        applyFilter();
+      }, 120);
+    });
+  }
+</script>
+
+<!-- Back-to-top button — appears after scrolling past hero -->
+<button id="back-to-top" type="button" aria-label="Back to top"
+  class="fixed bottom-6 right-6 md:bottom-8 md:right-8 w-12 h-12 rounded-full bg-navy-700 border border-wb-700 hover:bg-navy-600 hover:border-gold-500 hover:text-gold-400 text-gold-500 flex items-center justify-center shadow-[0_10px_15px_-3px_rgba(0,0,0,0.3)] transition-all duration-200 opacity-0 translate-y-2 pointer-events-none z-50">
+  <i class="ph ph-arrow-up text-xl" aria-hidden="true"></i>
+</button>
+
+<script>
+  (() => {
+    const btn = document.getElementById('back-to-top');
+    const toggle = () => {
+      const visible = window.scrollY > 600;
+      btn.classList.toggle('opacity-0', !visible);
+      btn.classList.toggle('translate-y-2', !visible);
+      btn.classList.toggle('pointer-events-none', !visible);
+      btn.classList.toggle('opacity-100', visible);
+      btn.classList.toggle('translate-y-0', visible);
+    };
+    window.addEventListener('scroll', toggle, { passive: true });
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    toggle();
+  })();
+</script>
+
+</body>
+</html>

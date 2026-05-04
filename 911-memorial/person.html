@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Todd Beamer — A Legacy Memorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Text&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        navy: { 50:'#f0f4fa', 100:'#e6ecf5', 200:'#d3ddeb', 300:'#b0c0d6', 400:'#728ab0', 500:'#42608f', 600:'#3c4d69', 700:'#293548', 800:'#212a3a', 900:'#151b24' },
+        gold: { 50:'#fbf7ef', 100:'#f6e5b8', 200:'#f0d78d', 300:'#e9c86f', 400:'#e2ba60', 500:'#dcb05e', 600:'#c49e54', 700:'#a48849', 800:'#85713e', 900:'#655b34' },
+        wb:   { 50:'#fbfbfb', 100:'#f6f6f6', 200:'#ebe9e9', 300:'#dbdad7', 400:'#afadaa', 500:'#807e7a', 600:'#63605b', 700:'#514d45', 800:'#373329', 900:'#262116' },
+        seaFoam: { 400:'#81b8ae', 500:'#5c9d94', 600:'#357d75' },
+        coral:   { 400:'#e77d91', 500:'#d6677c', 600:'#c24c62' }
+      },
+      fontFamily: {
+        sans:    ['"DM Sans"', 'sans-serif'],
+        serif:   ['"DM Serif Text"', 'serif'],
+        ptserif: ['"PT Serif"', 'serif']
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; margin: 0; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  input, textarea, select { font-family: inherit; }
+  input[type=search], input[type=text], input[type=email] { accent-color: #dcb05e; }
+
+  /* Form input baseline — used for name, email, relationship dropdown, textarea */
+  .form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #dbdad7;
+    border-radius: 8px;
+    background: #fff;
+    color: #262116;
+    font-size: 16px;
+    line-height: 1.5;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: #42608f;
+    box-shadow: 0 0 0 3px rgba(66,96,143,0.15);
+  }
+  .form-input::placeholder { color: #807e7a; }
+
+  /* Guestbook masonry — CSS columns. Each post avoids breaking inside. */
+  .gb-masonry { column-count: 1; column-gap: 24px; }
+  @media (min-width: 640px) { .gb-masonry { column-count: 2; } }
+  @media (min-width: 1024px) { .gb-masonry { column-count: 3; } }
+  .gb-post {
+    break-inside: avoid;
+    margin-bottom: 24px;
+    display: block;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 600ms ease, transform 600ms ease, box-shadow 200ms ease;
+    will-change: opacity, transform;
+  }
+  .gb-post.gb-visible { opacity: 1; transform: translateY(0); }
+  .gb-post.gb-visible:hover { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+  /* Respect users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .gb-post { opacity: 1; transform: none; transition: box-shadow 200ms ease; }
+  }
+
+  /* Guestbook section: gold radial gradient lead-in, offset 96px below
+     the top of the section, capped at 420px tall, so the top edge is hard
+     and the gradient fades out before the entries below. */
+  #guestbook-section { position: relative; background: #fbf7ef; }
+  #guestbook-section::before {
+    content: '';
+    position: absolute;
+    top: 96px;
+    left: 0;
+    right: 0;
+    height: 420px;
+    background: radial-gradient(ellipse 70% 100% at 50% 0, rgba(226,186,96,0.34), transparent 75%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  #guestbook-section > * { position: relative; z-index: 1; }
+
+  /* Focus rings */
+  :focus-visible { outline: 2px solid #dcb05e; outline-offset: 2px; border-radius: 4px; }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #dcb05e; outline-offset: 2px; }
+</style>
+</head>
+<body class="bg-gold-50 text-wb-900">
+
+<!-- ====================================================================
+     LEGACY HEADER — NavigationCustom 2.0 (Figma node 2692:31903)
+     White bg, full-width, with logo + search + Sign In + Menu.
+     ==================================================================== -->
+<header class="bg-white border-b border-wb-200">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-16 py-4 flex items-center justify-between gap-4 md:gap-6">
+
+    <!-- Left: Legacy logo (light variant — gold mark + dark wordmark) -->
+    <a href="../index.html" aria-label="Legacy.com home" class="flex-shrink-0">
+      <img src="https://www.legacy.com/media/legacy-icon.svg" alt="Legacy" class="h-[38px] w-auto" />
+    </a>
+
+    <!-- Center: Search input — pill-shaped with magnifying glass on right -->
+    <div class="w-full max-w-[420px]">
+      <label class="sr-only" for="legacy-search">Find a loved one</label>
+      <div class="relative">
+        <input id="legacy-search" type="search" placeholder="Find a loved one..."
+          class="w-full h-10 bg-wb-50 border border-wb-500 rounded-full pl-4 pr-10 text-base text-wb-900 placeholder:text-wb-600 focus:border-navy-500 focus:outline-none focus:ring-2 focus:ring-navy-500/30" />
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-wb-700 pointer-events-none flex items-center justify-center">
+          <i class="ph ph-magnifying-glass text-xl" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+
+    <!-- Right: Sign In + Menu -->
+    <div class="flex items-center gap-4 flex-shrink-0">
+      <a href="#" class="inline-flex items-center gap-1 text-sm font-semibold text-wb-900 hover:text-gold-700 transition-colors">
+        <i class="ph ph-user-circle text-2xl" aria-hidden="true"></i>
+        <span class="hidden sm:inline">Sign In</span>
+      </a>
+      <button type="button" class="text-wb-900 hover:text-gold-700 transition-colors" aria-label="Menu">
+        <i class="ph ph-list text-2xl" aria-hidden="true"></i>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+<!-- ====================================================================
+     PERSON HERO — navy/600 bg, portrait left + content right
+     Maps to Figma node 2692:31924 (hero) + 2692:31926 (MyLegacy/About/Header)
+     ==================================================================== -->
+<section class="bg-navy-600 pt-6 pb-10">
+
+  <!-- Top utility row: Breadcrumb + Follow + Share buttons -->
+  <div class="max-w-[1440px] mx-auto px-4 md:px-16 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
+
+    <!-- Mobile breadcrumb: arrow-left + immediate parent only -->
+    <a href="united-flight-93.html" class="sm:hidden inline-flex items-center gap-2 text-sm font-semibold text-gold-500 hover:text-gold-400 transition-colors w-fit" aria-label="Back to United Flight 93">
+      <i class="ph ph-arrow-left text-lg" aria-hidden="true"></i>
+      <span>United Flight 93</span>
+    </a>
+
+    <!-- Desktop breadcrumb -->
+    <nav aria-label="Breadcrumb" class="hidden sm:flex text-sm items-center gap-1 min-w-0 flex-wrap">
+      <a href="../index.html" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font whitespace-nowrap">Home</a>
+      <span class="text-wb-400 px-1" aria-hidden="true">/</span>
+      <a href="#" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font whitespace-nowrap">Groups</a>
+      <span class="text-wb-400 px-1" aria-hidden="true">/</span>
+      <a href="sep-11-2001.html" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font whitespace-nowrap">25 Years Later: Never Forget 9/11</a>
+      <span class="text-wb-400 px-1" aria-hidden="true">/</span>
+      <a href="united-flight-93.html" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font whitespace-nowrap">United Flight 93</a>
+    </nav>
+
+    <!-- Action button group: just Follow + Share -->
+    <div class="flex items-center gap-2 sm:flex-shrink-0">
+      <button type="button" class="inline-flex items-center justify-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors min-w-[132px]">
+        <i class="ph ph-bookmark-simple text-xl" aria-hidden="true"></i>
+        <span>Follow</span>
+      </button>
+      <button type="button" class="inline-flex items-center justify-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+        <i class="ph ph-share-fat text-xl" aria-hidden="true"></i>
+        <span>Share</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Photo + content row: portrait on left, eyebrow/name/date on right -->
+  <div class="max-w-[1440px] mx-auto px-4 md:px-16 pt-4 md:pt-8 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+
+    <!-- Rectangular portrait with offset drop shadow -->
+    <figure class="flex-shrink-0 w-[220px] md:w-[269px] aspect-[269/352] rounded-xl overflow-hidden shadow-[32px_37px_70px_-9px_rgba(0,20,30,0.25)]">
+      <img src="images/portraits/todd-beamer.jpg" alt="Portrait of Todd Beamer" class="w-full h-full object-cover" />
+    </figure>
+
+    <!-- Content stack: eyebrow + name + date -->
+    <div class="md:w-[467px] flex flex-col gap-4 items-center text-center md:items-start md:text-left">
+      <p class="font-sans font-semibold text-base text-gold-400 uppercase" style="letter-spacing:1.12px;">In Memory Of</p>
+      <h1 class="font-serif text-[44px] md:text-[60px] text-navy-50 leading-[1.2]">Todd Beamer</h1>
+      <p class="font-sans text-2xl md:text-[30px] text-gold-400 leading-[1.5]">d. 2001</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====================================================================
+     LIGHT CONTENT (top) — About + Related Memorials
+     Plain gold-50 bg. Hard edge at the bottom where the gradient section starts.
+     ==================================================================== -->
+<section class="bg-gold-50 text-wb-900 pt-8 pb-8">
+  <div class="max-w-[800px] mx-auto px-4 md:px-8 space-y-8">
+
+    <!-- ============ About — white card with shadow (Figma node 2692:31928) ============ -->
+    <article class="bg-white rounded-2xl shadow-[0_10px_15px_0_rgba(0,0,0,0.1),0_4px_6px_0_rgba(0,0,0,0.05)] p-6 md:px-16 md:py-8">
+      <h2 class="font-serif text-2xl text-navy-700 leading-[1.2] mb-8">About Todd Beamer</h2>
+
+      <div class="font-ptserif text-xl text-wb-900 leading-[1.5] space-y-6">
+        <p>Todd Beamer, a Glen Ellyn native who graduated in 1991 from Wheaton College, was a passenger on Flight 93 to San Francisco.</p>
+        <p>An account manager for Oracle Corp., Beamer was heading to a business meeting when his plane went down in rural Pennsylvania. His wife of seven years, Lisa, described Beamer, a business student at Wheaton, as a loving and athletic man.</p>
+        <p>Lisa Beamer said she hadn&rsquo;t been watching TV that morning and was unaware of what was going on until a friend called and asked if Todd was OK. She turned on the TV and saw the crashes, then tried to find out his itinerary. When news broke of the Pennsylvania crash, &ldquo;my heart sank,&rdquo; she said, figuring that his flight would be in that general area by that time.</p>
+        <p>&ldquo;Todd, he had a love of life,&rdquo; Lisa Beamer said of her husband, an avid Bulls and Cubs fan. And &ldquo;he loved being with his family.&rdquo;</p>
+      </div>
+
+      <p class="text-sm text-wb-700 mt-6">Published by The New York Times on Sep. 13, 2001.</p>
+
+      <p class="text-base text-wb-700 mt-4 pt-4">
+        Are you a family member?
+        <a href="#" class="font-semibold text-navy-500 underline underline-offset-4 hover:text-navy-600 transition-colors" style="letter-spacing:-0.02em;">Help us add details to Todd&rsquo;s story</a>.
+      </p>
+    </article>
+
+    <!-- ============ Related Memorial Pages — white card (Figma node 2692:32023) ============ -->
+    <section class="bg-white rounded-2xl shadow-[0_10px_15px_0_rgba(0,0,0,0.1),0_4px_6px_0_rgba(0,0,0,0.05)] p-6 md:px-16 md:py-8">
+      <header class="mb-6">
+        <h2 class="font-serif text-2xl text-navy-700 leading-[1.2] mb-2">Related Memorial Pages</h2>
+        <p class="text-base text-wb-700 leading-[1.5]">Todd is remembered across these pages &mdash; each one connected to a place or moment that was part of his life.</p>
+      </header>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6">
+
+        <!-- Cranbury (top-left) -->
+        <a href="#" class="group flex items-center gap-2 pb-4 border-b border-wb-300 hover:opacity-75 transition-opacity">
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-base text-navy-500 group-hover:text-navy-600 leading-5">Cranbury, New Jersey Obituaries</p>
+            <p class="text-sm text-wb-700 mt-1 leading-[1.2]">Cranbury, NJ</p>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-gold-100 flex items-center justify-center flex-shrink-0">
+            <i class="ph ph-bookmark-simple text-base text-gold-900" aria-hidden="true"></i>
+          </span>
+        </a>
+
+        <!-- Wheaton College (top-right) -->
+        <a href="#" class="group flex items-center gap-2 pb-4 border-b border-wb-300 hover:opacity-75 transition-opacity">
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-base text-navy-500 group-hover:text-navy-600 leading-5">Wheaton College Remembers</p>
+            <p class="text-sm text-wb-700 mt-1 leading-[1.2]">Wheaton, IL</p>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-gold-100 flex items-center justify-center flex-shrink-0">
+            <i class="ph ph-bookmark-simple text-base text-gold-900" aria-hidden="true"></i>
+          </span>
+        </a>
+
+        <!-- Flight 93 (bottom-left) -->
+        <a href="united-flight-93.html" class="group flex items-center gap-2 pb-4 border-b border-wb-300 hover:opacity-75 transition-opacity">
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-base text-navy-500 group-hover:text-navy-600 leading-5">United Airlines Flight 93 Memorial</p>
+            <p class="text-sm text-wb-700 mt-1 leading-[1.2]">Shanksville, PA</p>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-gold-100 flex items-center justify-center flex-shrink-0">
+            <i class="ph ph-bookmark-simple text-base text-gold-900" aria-hidden="true"></i>
+          </span>
+        </a>
+
+        <!-- September 11 (bottom-right) -->
+        <a href="sep-11-2001.html" class="group flex items-center gap-2 pb-4 border-b border-wb-300 hover:opacity-75 transition-opacity">
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-base text-navy-500 group-hover:text-navy-600 leading-5">September 11 Memorial</p>
+            <p class="text-sm text-wb-700 mt-1 leading-[1.2]">United States</p>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-gold-100 flex items-center justify-center flex-shrink-0">
+            <i class="ph ph-bookmark-simple text-base text-gold-900" aria-hidden="true"></i>
+          </span>
+        </a>
+
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ====================================================================
+     ADD A POST + GUEST BOOK — share ONE section so the gold radial
+     gradient acts as both a section break (above Add a Post) AND a
+     lead-in down into the Guest Book entries.
+     Hard top edge: above this section is plain gold-50; gradient kicks in here.
+     Maps to Figma node 2692:32045 (memory wall) + 2697:30960 (Guestbook UI).
+     ==================================================================== -->
+<section id="guestbook-section" class="text-wb-900 pb-16 md:pb-24">
+
+  <!-- ============ Add a Post Form (Figma node 2697:30960) ============
+       Progressive disclosure: textarea + actions visible initially;
+       name + email + relationship reveal on textarea focus/engagement. -->
+  <div class="max-w-[800px] mx-auto px-4 md:px-8 mb-16">
+    <section class="relative bg-white border border-wb-300 rounded-2xl px-6 md:px-16 py-6 shadow-[0_20px_25px_0_rgba(0,0,0,0.1),0_10px_10px_0_rgba(0,0,0,0.04)]" id="add-post-card">
+        <h2 class="font-serif text-2xl text-navy-700 leading-[1.2] mb-4">Add a post in memory of Todd</h2>
+
+        <form id="add-post-form" class="space-y-4">
+
+          <!-- Message textarea (always visible) -->
+          <label class="block">
+            <span class="sr-only">Your message</span>
+            <textarea id="add-post-message" name="message" rows="3" required minlength="10"
+              placeholder="Share a story, memory, or condolences..."
+              class="w-full bg-wb-50 border border-wb-300 rounded-lg px-4 py-3 text-sm text-wb-900 placeholder:text-wb-500 focus:border-navy-500 focus:outline-none focus:ring-2 focus:ring-navy-500/20 resize-y"></textarea>
+          </label>
+
+          <!-- Progressive disclosure block — hidden until user engages -->
+          <div id="add-post-extra" class="hidden space-y-3" aria-hidden="true">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <label class="block">
+                <span class="sr-only">Your name</span>
+                <input type="text" name="name" placeholder="Your name *" class="form-input" />
+              </label>
+              <label class="block">
+                <span class="sr-only">Email address</span>
+                <input type="email" name="email" placeholder="Email address *" class="form-input" />
+              </label>
+            </div>
+            <label class="block">
+              <span class="sr-only">Your relationship to Todd</span>
+              <select name="relationship" class="form-input">
+                <option value="">How did you know Todd? (optional)</option>
+                <option>Family member</option>
+                <option>Friend</option>
+                <option>Colleague</option>
+                <option>Neighbor</option>
+                <option>Classmate</option>
+                <option>Knew of them</option>
+                <option>Other</option>
+              </select>
+            </label>
+          </div>
+
+          <!-- Action row: Add Photos + Light a Candle (left), Add to the Guest Book (right) -->
+          <div class="flex flex-wrap items-center justify-between gap-y-3 gap-x-4">
+            <div class="flex items-center gap-4 flex-wrap">
+              <button type="button" id="attach-photo-btn" class="inline-flex items-center justify-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+                <i class="ph ph-image text-xl" aria-hidden="true"></i>
+                <span>Add Photos</span>
+              </button>
+              <input type="file" id="attach-photo-input" accept="image/*" multiple class="hidden" />
+              <button type="button" id="light-candle-btn" class="inline-flex items-center justify-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors" aria-pressed="false">
+                <i class="ph ph-flame text-xl" aria-hidden="true"></i>
+                <span>Light a Candle</span>
+              </button>
+            </div>
+            <button type="submit" class="inline-flex items-center justify-center gap-2.5 h-10 px-5 bg-gold-400 hover:bg-gold-500 text-wb-900 rounded-full text-sm font-semibold transition-colors">
+              Add to the Guest Book
+            </button>
+          </div>
+        </form>
+      </section>
+  </div>
+  <!-- /Add a Post wrapper -->
+
+  <!-- ============ GUEST BOOK ENTRIES (Figma node 2692:32045) ============
+       Light theme — white cards on the same gold gradient bg as Add a Post,
+       so the gradient acts as a continuous lead-in into the entries. -->
+  <div id="guestbook" class="max-w-[1312px] mx-auto px-4 md:px-8">
+
+    <!-- Section header — DM Serif 30px navy-700, flanked by gold-300 rules -->
+    <div class="flex items-center gap-4 md:gap-6 mb-2">
+      <div class="flex-1 h-px bg-gold-300"></div>
+      <h2 class="font-serif text-2xl md:text-3xl text-navy-700 whitespace-nowrap">Todd&rsquo;s Guest Book</h2>
+      <div class="flex-1 h-px bg-gold-300"></div>
+    </div>
+    <p class="text-base text-wb-700 text-center mb-10">Sign the Guest Book, share photos and add memories that will last forever.</p>
+
+    <!-- Entries count + sort -->
+    <div class="flex items-center justify-between flex-wrap gap-3 mb-6 px-2">
+      <p class="text-base text-wb-900"><span class="font-semibold">1,834</span> Entries</p>
+      <div class="flex items-center gap-2">
+        <label for="gb-sort" class="text-base text-wb-700">Sort by</label>
+        <select id="gb-sort" class="bg-white border border-wb-300 rounded-full pl-4 pr-9 py-2 text-sm font-semibold text-navy-700 focus:border-navy-500 focus:outline-none focus:ring-2 focus:ring-navy-500/20 cursor-pointer">
+          <option>Most Recent</option>
+          <option>Most liked</option>
+          <option>Oldest first</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Masonry of post cards — light theme, white cards (Figma 2692:32076) -->
+    <div class="gb-masonry">
+
+      <!-- 1. Text + candle -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">Eliana Salvucci</p>
+            <p class="text-base text-wb-700 leading-tight">2 hours ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">Todd was a bright light in this world. I will always remember his infectious laugh and kind heart. He will be missed dearly.</p>
+        <div class="px-6 flex items-center gap-4 mb-6">
+          <div class="flex-1 h-px bg-gold-300"></div>
+          <img src="https://picsum.photos/seed/candle-1/192/192" alt="A candle was lit" class="w-24 h-24 rounded-full object-cover border border-wb-300" />
+          <div class="flex-1 h-px bg-gold-300"></div>
+        </div>
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 2. Long text -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">Elowen Quinton</p>
+            <p class="text-base text-wb-700 leading-tight">3 hours ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">Todd was a beacon of light, his laughter echoing in our hearts. A devoted father and cherished friend, he shared his life with warmth, kindness, and unmatched generosity. His memory will live on in every life he touched.</p>
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 3. Photo post -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">Maria Townsend</p>
+            <p class="text-base text-wb-700 leading-tight">1 week ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">Found this in an old box. Wheaton, fall &rsquo;90. Todd&rsquo;s on the right.</p>
+        <img src="https://picsum.photos/seed/wheaton-photo/640/480" alt="Wheaton College campus" class="w-full aspect-[4/3] object-cover mb-6" />
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 4. Text + candle -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">Silas Blackwood</p>
+            <p class="text-base text-wb-700 leading-tight">1 day ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">Todd, your absence is deeply felt today. Your kindness and warmth touched so many lives, and your spirit continues to inspire all who knew you. Lit a candle this morning. Still inspires me, every year. Rest in peace, hero.</p>
+        <div class="px-6 flex items-center gap-4 mb-6">
+          <div class="flex-1 h-px bg-gold-300"></div>
+          <img src="https://picsum.photos/seed/candle-2/192/192" alt="A candle was lit" class="w-24 h-24 rounded-full object-cover border border-wb-300" />
+          <div class="flex-1 h-px bg-gold-300"></div>
+        </div>
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 5. Short text -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">Kevin Suarez</p>
+            <p class="text-base text-wb-700 leading-tight">2 weeks ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">Worked with Todd at Oracle for three years. He had a way of making meetings feel like dinner with friends. We still miss him.</p>
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 6. Quote-style post -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">Carol Beckham</p>
+            <p class="text-base text-wb-700 leading-tight">2 weeks ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="px-6 mb-6">
+          <i class="ph ph-quotes text-3xl text-gold-500 mb-3 inline-block" aria-hidden="true"></i>
+          <p class="font-serif text-2xl leading-[1.3] text-wb-900 mb-3">Let&rsquo;s roll.</p>
+          <p class="font-ptserif text-lg leading-[1.5] text-wb-900">A phrase Todd said that morning. We&rsquo;ve carried it with us ever since.</p>
+        </div>
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 7. Photo post (square) -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">Patricia Mendel</p>
+            <p class="text-base text-wb-700 leading-tight">3 weeks ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">Visited the Flight 93 Memorial in Shanksville last summer. The Wall of Names. Quiet. Bright. Held my breath at his.</p>
+        <img src="https://picsum.photos/seed/flight-93-memorial/640/640" alt="Flight 93 National Memorial" class="w-full aspect-square object-cover mb-6" />
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 8. Short text -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">Daniel Marsh</p>
+            <p class="text-base text-wb-700 leading-tight">1 month ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">Never met Todd. Read about him in third grade. Went into emergency medicine because of it.</p>
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 9. Text + candle -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">Anonymous</p>
+            <p class="text-base text-wb-700 leading-tight">1 month ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">On the anniversary, every year. Thinking of your wife and boys today.</p>
+        <div class="px-6 flex items-center gap-4 mb-6">
+          <div class="flex-1 h-px bg-gold-300"></div>
+          <img src="https://picsum.photos/seed/candle-3/192/192" alt="A candle was lit" class="w-24 h-24 rounded-full object-cover border border-wb-300" />
+          <div class="flex-1 h-px bg-gold-300"></div>
+        </div>
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 10. Photo post (portrait) -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">Rebecca Holt</p>
+            <p class="text-base text-wb-700 leading-tight">2 months ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">Christmas &rsquo;99. The boys still tell this story.</p>
+        <img src="https://picsum.photos/seed/family-photo-todd/640/800" alt="Family photo" class="w-full aspect-[4/5] object-cover mb-6" />
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 11. Short text -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">Coach Tim Walsh</p>
+            <p class="text-base text-wb-700 leading-tight">2 months ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">Coached Todd&rsquo;s little league. He was the kid who&rsquo;d run out the line drives. Doesn&rsquo;t surprise me one bit, what he did that day.</p>
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 12. Long text -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">James Reardon</p>
+            <p class="text-base text-wb-700 leading-tight">3 months ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">Met Todd at Wheaton freshman year. We were roommates. He could always make a slow Tuesday feel like something. I remember the night before our O-chem final he made me close the books at 11 and said, &ldquo;If we don&rsquo;t know it now, we don&rsquo;t know it.&rdquo; Then he beat me at ping-pong until two in the morning. Still think about that.</p>
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 13. Short text -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">Sarah Kahn</p>
+            <p class="text-base text-wb-700 leading-tight">3 months ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">Reading about him with my eight-year-old tonight. We talked about courage. Thank you for making that conversation possible.</p>
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 14. Photo post (wide) -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">David Ainsworth</p>
+            <p class="text-base text-wb-700 leading-tight">4 months ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">Wrigley, &rsquo;98. We went up to the rooftop seats. He insisted. Ten dollars an hour and a long walk for what he called &ldquo;the perfect view.&rdquo; He was right.</p>
+        <img src="https://picsum.photos/seed/cubs-game/640/420" alt="Cubs game memory" class="w-full aspect-[16/10] object-cover mb-6" />
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 15. Long text -->
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">Ellen Reyes</p>
+            <p class="text-base text-wb-700 leading-tight">6 months ago</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">My son was born September 12, 2001. We named him Todd. He&rsquo;s 24 now and he is everything we hoped he&rsquo;d be.</p>
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- Infinite-scroll sentinel + status -->
+    <div id="gb-sentinel" class="text-center mt-10 min-h-[60px]" aria-live="polite">
+      <p id="gb-status" class="text-sm text-wb-700">Loading more memories&hellip;</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====================================================================
+     MICRO-SITE FOOTER
+     ==================================================================== -->
+<footer class="bg-navy-900 border-t border-wb-800">
+  <div class="max-w-[1440px] mx-auto px-6 md:px-14 py-8 space-y-6">
+    <img src="https://www.legacy.com/media/legacy-icon-white.svg" alt="Legacy" class="h-8 w-auto" />
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-sm text-wb-500">
+      <p>&copy;2026 Legacy.com All rights reserved.</p>
+      <div class="flex flex-wrap gap-x-6 gap-y-2">
+        <a href="#" class="hover:text-gold-500 transition-colors">Do Not Sell My Information</a>
+        <a href="#" class="hover:text-gold-500 transition-colors">Privacy policy</a>
+        <a href="#" class="hover:text-gold-500 transition-colors">Terms of use</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ====================================================================
+     GUEST BOOK — fade-in animation + infinite scroll
+     ==================================================================== -->
+<script>
+  (() => {
+    const masonry = document.querySelector('.gb-masonry');
+    const sentinel = document.getElementById('gb-sentinel');
+    const status = document.getElementById('gb-status');
+    if (!masonry || !sentinel) return;
+
+    // ---- Fade-in IntersectionObserver: triggers when a card enters viewport ----
+    const visObs = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('gb-visible');
+          visObs.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -40px 0px', threshold: 0.05 });
+
+    masonry.querySelectorAll('.gb-post').forEach((card) => visObs.observe(card));
+
+    // ---- Sample post pool to power infinite scroll ----
+    const POST_POOL = [
+      { type: 'text',   name: 'Mary Walsh',       when: '7 months ago',  body: 'Worked the desk next to Todd at Oracle. He was the first to ask about your weekend, the last to leave the office. We still set a place for him at our holiday lunch.' },
+      { type: 'candle', name: 'Anonymous',        when: '8 months ago',  body: 'Lit one tonight, like every September.' },
+      { type: 'text',   name: 'Aiden Cosgrove',   when: '9 months ago',  body: 'Coached my kids in soccer. Taught them to lose with a handshake and to win without crowing.' },
+      { type: 'photo',  name: 'Lila Reardon',     when: '10 months ago', body: 'Hometown reunion last fall. So many of us showed up because of him.', photo: 'https://picsum.photos/seed/reunion-1/640/420', photoAlt: 'Hometown reunion', aspect: '16/10' },
+      { type: 'quote',  name: 'Anonymous',        when: '10 months ago', quote: 'You can come and visit me. We&rsquo;ll be okay.', body: 'Words my dad used to say. He learned them from a friend who heard them from Todd.' },
+      { type: 'text',   name: 'Maxwell Thorne',   when: '11 months ago', body: 'Read the 9/11 Commission report cover to cover. Came away with the same feeling: ordinary people who became extraordinary in a moment.' },
+      { type: 'text',   name: 'Genevieve Marsh',  when: '11 months ago', body: 'My grandfather served in WWII. He told me Todd reminded him of the men he served with. I think that&rsquo;s the highest compliment he could give.' },
+      { type: 'candle', name: 'Henry Owen',       when: '1 year ago',    body: 'For Todd, and for the others on Flight 93. Thank you.' },
+      { type: 'text',   name: 'Bridget Hsu',      when: '1 year ago',    body: 'I think about Lisa often. About all the families. We see you. We remember.' },
+      { type: 'photo',  name: 'Owen Pellegrino',  when: '1 year ago',    body: 'Visited Shanksville with my dad. He served in the Marines. He stood at the wall a long time.', photo: 'https://picsum.photos/seed/wall-of-names/640/640', photoAlt: 'Wall of Names at Flight 93 Memorial', aspect: '1/1' },
+      { type: 'text',   name: 'Yvette Brennan',   when: '1 year ago',    body: 'My students read Todd&rsquo;s story every September. We talk about courage. We talk about choice.' },
+      { type: 'text',   name: 'Robert Quinton',   when: '1 year ago',    body: 'Born after 9/11. Grew up hearing the names. Yours stuck with me.' },
+      { type: 'candle', name: 'Anonymous',        when: '1 year ago',    body: '&ldquo;God help me. Jesus help me.&rdquo;' },
+      { type: 'photo',  name: 'Stephen Donnelly', when: '1 year ago',    body: 'Wheaton class of &rsquo;91 reunion. Empty seat at our table, but his name on every program.', photo: 'https://picsum.photos/seed/wheaton-reunion/640/480', photoAlt: 'Wheaton class reunion', aspect: '4/3' },
+      { type: 'text',   name: 'Tessa Walsh',      when: '1 year ago',    body: 'I named my son Beamer. He&rsquo;s six. He knows why.' },
+      { type: 'quote',  name: 'Anonymous',        when: '1 year ago',    quote: 'Are you guys ready? Okay. Let&rsquo;s roll.', body: 'Last words. First words I think of when I need to stand up for something.' },
+      { type: 'text',   name: 'Cyrus Albright',   when: '2 years ago',   body: 'Watched the documentary again last night. Couldn&rsquo;t sleep. Sat in the kitchen drinking tea, thinking of all of you.' },
+      { type: 'text',   name: 'Marigold Stein',   when: '2 years ago',   body: 'My grandkids ask: was he scared? I tell them, yes, and he did it anyway. That&rsquo;s what brave is.' },
+    ];
+
+    // ---- Card template renderers ----
+    function postHead(p) {
+      return `
+        <div class="px-6 flex items-start justify-between gap-3 mb-6">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">${p.name}</p>
+            <p class="text-base text-wb-700 leading-tight">${p.when}</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>`;
+    }
+    function postActions() {
+      return `
+        <div class="px-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div class="flex items-center gap-6">
+            <button class="text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+            </button>
+            <button class="inline-flex items-center gap-2 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Comment</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>`;
+    }
+    function renderPost(p) {
+      let body = '';
+      if (p.type === 'text') {
+        body = `<p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">${p.body}</p>`;
+      } else if (p.type === 'candle') {
+        const seed = (p.name + '-' + p.when).replace(/\s+/g, '-').toLowerCase();
+        body = `
+          <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">${p.body}</p>
+          <div class="px-6 flex items-center gap-4 mb-6">
+            <div class="flex-1 h-px bg-gold-300"></div>
+            <img src="https://picsum.photos/seed/${seed}/192/192" alt="A candle was lit" class="w-24 h-24 rounded-full object-cover border border-wb-300" />
+            <div class="flex-1 h-px bg-gold-300"></div>
+          </div>`;
+      } else if (p.type === 'photo') {
+        body = `
+          <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">${p.body}</p>
+          <img src="${p.photo}" alt="${p.photoAlt}" class="w-full aspect-[${p.aspect}] object-cover mb-6" />`;
+      } else if (p.type === 'quote') {
+        body = `
+          <div class="px-6 mb-6">
+            <i class="ph ph-quotes text-3xl text-gold-500 mb-3 inline-block" aria-hidden="true"></i>
+            <p class="font-serif text-2xl leading-[1.3] text-wb-900 mb-3">${p.quote}</p>
+            <p class="font-ptserif text-lg leading-[1.5] text-wb-900">${p.body}</p>
+          </div>`;
+      }
+      return `<article class="gb-post bg-white border border-wb-300 rounded-2xl py-6">${postHead(p)}${body}${postActions()}</article>`;
+    }
+
+    // ---- Infinite scroll: append a batch when sentinel is visible ----
+    let cursor = 0;
+    const BATCH = 4;
+
+    function appendBatch() {
+      if (cursor >= POST_POOL.length) {
+        scrollObs.disconnect();
+        if (status) status.textContent = 'You’ve reached the end of the Guest Book. Sign yours above.';
+        return;
+      }
+      const slice = POST_POOL.slice(cursor, cursor + BATCH);
+      cursor += BATCH;
+
+      const tpl = document.createElement('template');
+      tpl.innerHTML = slice.map(renderPost).join('');
+      // Cards must be appended INSIDE the masonry so CSS columns flow them correctly
+      Array.from(tpl.content.children).forEach((card) => {
+        masonry.appendChild(card);
+        visObs.observe(card);
+      });
+    }
+
+    const scrollObs = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) appendBatch();
+    }, { rootMargin: '600px 0px' });
+    scrollObs.observe(sentinel);
+  })();
+</script>
+
+<!-- Back-to-top button -->
+<button id="back-to-top" type="button" aria-label="Back to top"
+  class="fixed bottom-6 right-6 md:bottom-8 md:right-8 w-12 h-12 rounded-full bg-navy-700 border border-wb-700 hover:bg-navy-600 hover:border-gold-500 hover:text-gold-400 text-gold-500 flex items-center justify-center shadow-[0_10px_15px_-3px_rgba(0,0,0,0.3)] transition-all duration-200 opacity-0 translate-y-2 pointer-events-none z-50">
+  <i class="ph ph-arrow-up text-xl" aria-hidden="true"></i>
+</button>
+
+<script>
+  // Back-to-top: appears after scrolling
+  (() => {
+    const btn = document.getElementById('back-to-top');
+    const toggle = () => {
+      const visible = window.scrollY > 600;
+      btn.classList.toggle('opacity-0', !visible);
+      btn.classList.toggle('translate-y-2', !visible);
+      btn.classList.toggle('pointer-events-none', !visible);
+      btn.classList.toggle('opacity-100', visible);
+      btn.classList.toggle('translate-y-0', visible);
+    };
+    window.addEventListener('scroll', toggle, { passive: true });
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    toggle();
+  })();
+
+  // Light a Candle toggle (visual only, prototype)
+  (() => {
+    const btn = document.getElementById('light-candle-btn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const pressed = btn.getAttribute('aria-pressed') === 'true';
+      btn.setAttribute('aria-pressed', String(!pressed));
+      btn.classList.toggle('bg-gold-100', !pressed);
+      btn.classList.toggle('text-gold-900', !pressed);
+      btn.classList.toggle('border-gold-500', !pressed);
+      const icon = btn.querySelector('i');
+      const label = btn.querySelector('span');
+      if (icon) icon.classList.toggle('ph-fill', !pressed);
+      if (label) label.textContent = !pressed ? 'Candle lit' : 'Light a Candle';
+    });
+  })();
+
+  // Add Photo trigger — opens file picker; on selection, swaps button label to filename
+  (() => {
+    const btn = document.getElementById('attach-photo-btn');
+    const input = document.getElementById('attach-photo-input');
+    if (!btn || !input) return;
+    btn.addEventListener('click', () => input.click());
+    input.addEventListener('change', () => {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const label = btn.querySelector('span');
+      if (label) label.textContent = file.name.length > 18 ? file.name.slice(0, 18) + '…' : file.name;
+      btn.classList.add('border-gold-500', 'text-gold-700');
+    });
+  })();
+
+  // Progressive disclosure — reveal name/email/relationship on textarea engagement
+  (() => {
+    const textarea = document.getElementById('add-post-message');
+    const extra = document.getElementById('add-post-extra');
+    if (!textarea || !extra) return;
+    let expanded = false;
+    const expand = () => {
+      if (expanded) return;
+      expanded = true;
+      extra.classList.remove('hidden');
+      extra.setAttribute('aria-hidden', 'false');
+      // Make name + email required now that they're visible
+      extra.querySelectorAll('input[name="name"], input[name="email"]').forEach((el) => el.setAttribute('required', ''));
+      // Smooth fade-in
+      extra.style.opacity = '0';
+      requestAnimationFrame(() => {
+        extra.style.transition = 'opacity .25s ease-out';
+        extra.style.opacity = '1';
+      });
+    };
+    textarea.addEventListener('focus', expand);
+    textarea.addEventListener('input', expand);
+    // Engaging the photo or candle button counts as engagement too
+    document.getElementById('attach-photo-btn')?.addEventListener('click', expand);
+    document.getElementById('light-candle-btn')?.addEventListener('click', expand);
+  })();
+
+  // Form submit — prototype only, prevent default and show a toast-like confirmation
+  (() => {
+    const form = document.getElementById('add-post-form');
+    if (!form) return;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // If extra fields aren't visible yet, expand them so the user fills required fields
+      const extra = document.getElementById('add-post-extra');
+      if (extra && extra.classList.contains('hidden')) {
+        extra.classList.remove('hidden');
+        extra.setAttribute('aria-hidden', 'false');
+        extra.querySelectorAll('input[name="name"], input[name="email"]').forEach((el) => el.setAttribute('required', ''));
+        extra.querySelector('input[name="name"]')?.focus();
+        return;
+      }
+      alert('Prototype: your message would be submitted here.');
+    });
+  })();
+</script>
+
+</body>
+</html>

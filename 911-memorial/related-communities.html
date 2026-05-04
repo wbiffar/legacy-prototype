@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Related Communities — Design Exploration (DES-2129)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Text&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        navy: { 600:'#3c4d69', 700:'#293548', 800:'#212a3a', 900:'#151b24' },
+        gold: { 100:'#f6e5b8', 400:'#e2ba60', 500:'#dcb05e', 600:'#c49e54', 900:'#655b34' },
+        wb: { 50:'#fbfbfb', 200:'#ebe9e9', 300:'#dbdad7', 400:'#afadaa', 500:'#807e7a', 600:'#63605b', 700:'#514d45', 800:'#373329', 900:'#262116' }
+      },
+      fontFamily: {
+        sans: ['"DM Sans"', 'sans-serif'],
+        serif: ['"DM Serif Text"', 'serif']
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { background: #0d1117; font-family: 'DM Sans', sans-serif; color: #fff; margin: 0; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Concept tabs */
+  .concept-tab { padding: 10px 20px; border-radius: 999px; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid #3c4d69; background: transparent; color: #afadaa; transition: all 0.2s; white-space: nowrap; }
+  .concept-tab.active { background: #e2ba60; color: #262116; border-color: #e2ba60; }
+  .concept-tab:hover:not(.active) { border-color: #dcb05e; color: #dcb05e; }
+
+  /* Carousel arrows */
+  .carousel-arrow { width: 44px; height: 44px; border-radius: 50%; background: rgba(41,53,72,0.9); border: 1px solid #3c4d69; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
+  .carousel-arrow:hover { background: #3c4d69; border-color: #dcb05e; }
+
+  /* Community card hover */
+  .community-card { transition: border-color 0.2s, transform 0.15s; }
+  .community-card:hover { border-color: #dcb05e; transform: translateY(-2px); }
+
+  /* Drawer animation */
+  .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+  .drawer-panel { position: fixed; bottom: 0; left: 0; right: 0; max-height: 85vh; background: #212a3a; border-top-left-radius: 16px; border-top-right-radius: 16px; z-index: 100; transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.32,0.72,0,1); overflow-y: auto; }
+  .drawer-panel.open { transform: translateY(0); }
+
+  /* Slide-down animation for concept A */
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-slide-down { animation: slideDown 0.4s ease-out; }
+
+  /* Badge pulse */
+  @keyframes pulse-subtle { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+  .badge-trending { animation: pulse-subtle 2s ease-in-out infinite; }
+
+  /* Focus visible for a11y */
+  :focus-visible { outline: 2px solid #dcb05e; outline-offset: 2px; border-radius: 4px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid #dcb05e; outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ====================================================================
+     EXPLORATION HEADER — Navigation between concepts
+     ==================================================================== -->
+<header style="background:#151b24;border-bottom:1px solid #293548;position:sticky;top:0;z-index:80;">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-4">
+    <div class="flex flex-col gap-3">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="font-serif text-xl text-white">Related Communities</h1>
+          <p class="text-sm text-wb-400 mt-1">DES-2129 — Design Exploration</p>
+        </div>
+        <a href="index.html" class="text-sm text-gold-500 hover:text-gold-400 underline">← Back to Memorial</a>
+      </div>
+      <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
+        <button class="concept-tab active" onclick="showConcept('a')">A: Stacked Carousels</button>
+        <button class="concept-tab" onclick="showConcept('b')">B: Sidebar Widgets</button>
+        <button class="concept-tab" onclick="showConcept('c')">C: Inline + Drawer</button>
+        <button class="concept-tab" onclick="showConcept('hybrid')">★ Recommended Hybrid</button>
+        <button class="concept-tab" onclick="showConcept('d')">D: Featured Groups</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<!-- ====================================================================
+     CONCEPT A: STACKED CAROUSELS — Full-width section below hero
+     ==================================================================== -->
+<section id="concept-a" class="animate-slide-down">
+
+  <!-- Simulated hero area (compact) -->
+  <div style="background:linear-gradient(180deg, #151b24 0%, #212a3a 100%);padding:48px 0 24px;text-align:center;">
+    <p class="text-gold-500 text-xs font-semibold tracking-widest uppercase mb-2">The Lives of 9/11</p>
+    <h2 class="font-serif text-3xl md:text-4xl text-white mb-3">25th Anniversary Memorial</h2>
+    <p class="text-wb-400 text-base max-w-xl mx-auto px-4">Their stories live on through those who loved them</p>
+  </div>
+
+  <!-- RELATED COMMUNITIES — Carousels -->
+  <div style="background:#1a2233;border-top:1px solid #293548;border-bottom:1px solid #293548;padding:40px 0;">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-8">
+
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <p class="text-gold-500 text-xs font-semibold tracking-widest uppercase mb-1">Explore</p>
+          <h3 class="font-serif text-xl text-white">Related Communities</h3>
+        </div>
+        <a href="#" class="text-sm text-gold-500 hover:text-gold-400 font-semibold">View All →</a>
+      </div>
+
+      <!-- Carousel 1: By Topic -->
+      <div class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-sm font-semibold text-wb-400 uppercase tracking-wide">First Responder Communities</h4>
+          <div class="flex gap-2">
+            <button class="carousel-arrow" aria-label="Previous" onclick="scrollCarousel('topic-carousel', -1)"><i class="ph ph-caret-left text-sm"></i></button>
+            <button class="carousel-arrow" aria-label="Next" onclick="scrollCarousel('topic-carousel', 1)"><i class="ph ph-caret-right text-sm"></i></button>
+          </div>
+        </div>
+        <div id="topic-carousel" class="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth" role="list">
+          <!-- Cards generated by JS -->
+        </div>
+      </div>
+
+      <!-- Carousel 2: By Geography -->
+      <div class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-sm font-semibold text-wb-400 uppercase tracking-wide">Communities Near New York</h4>
+          <div class="flex gap-2">
+            <button class="carousel-arrow" aria-label="Previous" onclick="scrollCarousel('geo-carousel', -1)"><i class="ph ph-caret-left text-sm"></i></button>
+            <button class="carousel-arrow" aria-label="Next" onclick="scrollCarousel('geo-carousel', 1)"><i class="ph ph-caret-right text-sm"></i></button>
+          </div>
+        </div>
+        <div id="geo-carousel" class="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth" role="list">
+          <!-- Cards generated by JS -->
+        </div>
+      </div>
+
+      <!-- Carousel 3: Trending -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-sm font-semibold text-wb-400 uppercase tracking-wide">
+            <span class="badge-trending inline-block w-2 h-2 rounded-full bg-gold-400 mr-2" aria-hidden="true"></span>
+            Trending Memorial Communities
+          </h4>
+          <div class="flex gap-2">
+            <button class="carousel-arrow" aria-label="Previous" onclick="scrollCarousel('trending-carousel', -1)"><i class="ph ph-caret-left text-sm"></i></button>
+            <button class="carousel-arrow" aria-label="Next" onclick="scrollCarousel('trending-carousel', 1)"><i class="ph ph-caret-right text-sm"></i></button>
+          </div>
+        </div>
+        <div id="trending-carousel" class="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth" role="list">
+          <!-- Cards generated by JS -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Simulated main content placeholder -->
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-12">
+    <div class="flex gap-8">
+      <div class="hidden md:block w-60 flex-shrink-0">
+        <div class="bg-navy-800 border border-wb-800 rounded-lg h-64 flex items-center justify-center text-wb-500 text-sm">Filter Sidebar</div>
+      </div>
+      <div class="flex-1">
+        <div class="bg-navy-800 border border-wb-800 rounded-lg h-96 flex items-center justify-center text-wb-500 text-sm">Memorial Content Area</div>
+      </div>
+      <div class="hidden lg:block w-72 flex-shrink-0">
+        <div class="bg-navy-800 border border-wb-800 rounded-lg h-64 flex items-center justify-center text-wb-500 text-sm">Right Sidebar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Concept description -->
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 pb-12">
+    <div class="bg-navy-800 border border-navy-600 rounded-xl p-6">
+      <h4 class="font-semibold text-gold-500 text-sm uppercase tracking-wide mb-2">Concept A: Stacked Carousels</h4>
+      <p class="text-wb-400 text-sm leading-relaxed mb-3">Full-width section between the hero and main content. Each carousel is labeled by relationship type (topic, geography, trending). Shows 3–4 cards per row on desktop, 1.5 visible on mobile with peek-to-scroll.</p>
+      <div class="flex flex-wrap gap-4 text-xs">
+        <span class="text-green-400">✓ High visibility</span>
+        <span class="text-green-400">✓ Multiple lists visible at once</span>
+        <span class="text-green-400">✓ Proven pattern (Netflix, Facebook)</span>
+        <span class="text-red-400">✗ Pushes main content down</span>
+        <span class="text-red-400">✗ Could feel heavy</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ====================================================================
+     CONCEPT B: SIDEBAR WIDGETS — Right sidebar cards
+     ==================================================================== -->
+<section id="concept-b" style="display:none;">
+
+  <!-- Simulated hero area (compact) -->
+  <div style="background:linear-gradient(180deg, #151b24 0%, #212a3a 100%);padding:24px 0 16px;text-align:center;">
+    <p class="text-gold-500 text-xs font-semibold tracking-widest uppercase mb-1">The Lives of 9/11</p>
+    <h2 class="font-serif text-2xl text-white mb-1">25th Anniversary Memorial</h2>
+    <p class="text-wb-400 text-sm max-w-xl mx-auto px-4">Their stories live on through those who loved them</p>
+  </div>
+
+  <!-- Three-column layout with sidebar widgets -->
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-6">
+    <div class="flex gap-6">
+
+      <!-- Left sidebar placeholder -->
+      <div class="hidden md:block w-52 flex-shrink-0">
+        <div class="bg-navy-800 border border-wb-800 rounded-lg h-48 flex items-center justify-center text-wb-500 text-xs">Filter Sidebar</div>
+      </div>
+
+      <!-- Center content placeholder -->
+      <div class="flex-1 min-w-0">
+        <div class="bg-navy-800 border border-wb-800 rounded-lg h-[420px] flex items-center justify-center text-wb-500 text-sm">Memorial Content Area</div>
+      </div>
+
+      <!-- RIGHT SIDEBAR with Related Communities widgets -->
+      <aside class="hidden lg:block w-72 flex-shrink-0" style="align-self:flex-start;">
+        <h3 class="font-serif text-xl text-white mb-4">Honor Their Memory</h3>
+
+        <!-- Existing: Charity callout (simplified placeholder) -->
+        <div class="bg-navy-800 border border-wb-800 rounded-lg p-4 mb-4 text-center">
+          <p class="text-xs font-semibold text-gold-500 uppercase tracking-wide mb-1">Consider a Donation to</p>
+          <p class="text-sm text-white mb-3">The American Red Cross</p>
+          <button class="bg-gold-400 text-wb-900 text-xs font-semibold px-4 h-8 rounded-full">Make a Donation</button>
+        </div>
+
+        <!-- Existing: Memorial Tree (simplified placeholder) -->
+        <div class="bg-navy-800 border border-wb-800 rounded-lg p-4 mb-4 text-center">
+          <p class="text-base font-semibold text-gold-500 mb-1">Over 3,255 Trees Planted</p>
+          <p class="text-sm text-wb-400 mb-3">Join us in planting trees for the lives lost.</p>
+          <button class="bg-gold-400 text-wb-900 text-xs font-semibold px-4 h-8 rounded-full inline-flex items-center gap-1"><i class="ph-light ph-tree text-base"></i> Plant a Tree</button>
+        </div>
+
+        <!-- ★ NEW: Related Communities Widget -->
+        <div class="bg-navy-800 border border-wb-800 rounded-lg overflow-hidden mb-4" id="sidebar-related">
+          <div class="px-4 pt-4 pb-2 flex items-center justify-between">
+            <h4 class="text-sm font-semibold text-white">Related Communities</h4>
+            <a href="#" class="text-xs text-gold-500 hover:text-gold-400 font-semibold">See All</a>
+          </div>
+          <div id="sidebar-related-list" class="px-2 pb-2">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+
+        <!-- ★ NEW: Nearby Communities Widget -->
+        <div class="bg-navy-800 border border-wb-800 rounded-lg overflow-hidden mb-4" id="sidebar-nearby">
+          <div class="px-4 pt-4 pb-2 flex items-center justify-between">
+            <h4 class="text-sm font-semibold text-white">Nearby Communities</h4>
+            <a href="#" class="text-xs text-gold-500 hover:text-gold-400 font-semibold">See All</a>
+          </div>
+          <div id="sidebar-nearby-list" class="px-2 pb-2">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+
+        <!-- ★ NEW: Popular Communities Widget -->
+        <div class="bg-navy-800 border border-wb-800 rounded-lg overflow-hidden" id="sidebar-popular">
+          <div class="px-4 pt-4 pb-2 flex items-center justify-between">
+            <h4 class="text-sm font-semibold text-white flex items-center gap-2">
+              <span class="badge-trending inline-block w-2 h-2 rounded-full bg-gold-400" aria-hidden="true"></span>
+              Popular
+            </h4>
+            <a href="#" class="text-xs text-gold-500 hover:text-gold-400 font-semibold">See All</a>
+          </div>
+          <div id="sidebar-popular-list" class="px-2 pb-2">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- Concept description -->
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 pb-12">
+    <div class="bg-navy-800 border border-navy-600 rounded-xl p-6">
+      <h4 class="font-semibold text-gold-500 text-sm uppercase tracking-wide mb-2">Concept B: Sidebar Widgets</h4>
+      <p class="text-wb-400 text-sm leading-relaxed mb-3">Compact card widgets stacked in the existing right sidebar (below Charity and Memorial Tree callouts). Each widget shows 3–5 community links with minimal metadata. Leverages existing layout infrastructure with zero disruption to main content.</p>
+      <div class="flex flex-wrap gap-4 text-xs">
+        <span class="text-green-400">✓ Minimal & non-distracting</span>
+        <span class="text-green-400">✓ Leverages existing sidebar</span>
+        <span class="text-green-400">✓ Always visible on desktop</span>
+        <span class="text-red-400">✗ Hidden on mobile</span>
+        <span class="text-red-400">✗ Limited 300px width</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ====================================================================
+     CONCEPT C: INLINE TEASER + EXPANDABLE DRAWER
+     ==================================================================== -->
+<section id="concept-c" style="display:none;">
+
+  <!-- Simulated hero area (compact) -->
+  <div style="background:linear-gradient(180deg, #151b24 0%, #212a3a 100%);padding:48px 0 24px;text-align:center;">
+    <p class="text-gold-500 text-xs font-semibold tracking-widest uppercase mb-2">The Lives of 9/11</p>
+    <h2 class="font-serif text-3xl md:text-4xl text-white mb-3">25th Anniversary Memorial</h2>
+    <p class="text-wb-400 text-base max-w-xl mx-auto px-4">Their stories live on through those who loved them</p>
+  </div>
+
+  <!-- INLINE TEASER -->
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-4">
+    <button onclick="openDrawer()" class="w-full bg-navy-800 hover:bg-navy-700 border border-navy-600 hover:border-gold-600 rounded-xl px-5 py-4 flex items-center justify-between transition-all group cursor-pointer" aria-expanded="false" aria-controls="community-drawer">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-navy-700 border border-navy-600 flex items-center justify-center group-hover:border-gold-600 transition-colors">
+          <i class="ph-light ph-users-three text-lg text-gold-500"></i>
+        </div>
+        <div class="text-left">
+          <p class="text-sm font-semibold text-white">Explore 12 Related Communities</p>
+          <p class="text-xs text-wb-400">First Responders, NYC Area, and more</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 text-gold-500 group-hover:text-gold-400">
+        <span class="text-sm font-semibold hidden sm:inline">Explore</span>
+        <i class="ph ph-caret-right text-sm"></i>
+      </div>
+    </button>
+  </div>
+
+  <!-- Main content placeholder -->
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-8">
+    <div class="flex gap-8">
+      <div class="hidden md:block w-60 flex-shrink-0">
+        <div class="bg-navy-800 border border-wb-800 rounded-lg h-64 flex items-center justify-center text-wb-500 text-sm">Filter Sidebar</div>
+      </div>
+      <div class="flex-1">
+        <div class="bg-navy-800 border border-wb-800 rounded-lg h-96 flex items-center justify-center text-wb-500 text-sm">Memorial Content Area</div>
+      </div>
+      <div class="hidden lg:block w-72 flex-shrink-0">
+        <div class="bg-navy-800 border border-wb-800 rounded-lg h-64 flex items-center justify-center text-wb-500 text-sm">Right Sidebar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Concept description -->
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 pb-12">
+    <div class="bg-navy-800 border border-navy-600 rounded-xl p-6">
+      <h4 class="font-semibold text-gold-500 text-sm uppercase tracking-wide mb-2">Concept C: Inline Teaser + Expandable Drawer</h4>
+      <p class="text-wb-400 text-sm leading-relaxed mb-3">A slim inline teaser banner with minimal footprint on the page. Clicking "Explore" opens a slide-up drawer with tabbed navigation (By Topic, By Location, Popular, For You). Respects the memorial context by making discovery entirely opt-in.</p>
+      <div class="flex flex-wrap gap-4 text-xs">
+        <span class="text-green-400">✓ Minimal page footprint</span>
+        <span class="text-green-400">✓ Opt-in discovery</span>
+        <span class="text-green-400">✓ Tabs organize relationship types</span>
+        <span class="text-green-400">✓ Great on mobile (full-screen)</span>
+        <span class="text-red-400">✗ Lower discoverability</span>
+        <span class="text-red-400">✗ Extra click to see content</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DRAWER (used by Concept C and Hybrid) -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+<div class="drawer-panel" id="community-drawer" role="dialog" aria-label="Related Communities">
+  <!-- Drag handle -->
+  <div class="flex justify-center pt-3 pb-2 cursor-grab" onclick="closeDrawer()">
+    <div class="w-10 h-1 rounded-full bg-wb-500"></div>
+  </div>
+
+  <!-- Drawer header -->
+  <div class="px-5 pb-4 flex items-center justify-between">
+    <h3 class="font-serif text-xl text-white">Related Communities</h3>
+    <button onclick="closeDrawer()" class="w-10 h-10 rounded-full bg-navy-700 flex items-center justify-center text-wb-400 hover:text-white transition-colors" aria-label="Close">
+      <i class="ph ph-x text-lg"></i>
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="px-5 pb-4 flex gap-2 overflow-x-auto scrollbar-hide">
+    <button class="drawer-tab active px-4 py-2 rounded-full text-sm font-semibold bg-gold-400 text-wb-900 whitespace-nowrap" onclick="switchDrawerTab('topic')">By Topic</button>
+    <button class="drawer-tab px-4 py-2 rounded-full text-sm font-semibold bg-navy-700 text-wb-400 whitespace-nowrap hover:text-white transition-colors" onclick="switchDrawerTab('location')">By Location</button>
+    <button class="drawer-tab px-4 py-2 rounded-full text-sm font-semibold bg-navy-700 text-wb-400 whitespace-nowrap hover:text-white transition-colors" onclick="switchDrawerTab('popular')">Popular</button>
+    <button class="drawer-tab px-4 py-2 rounded-full text-sm font-semibold bg-navy-700 text-wb-400 whitespace-nowrap hover:text-white transition-colors" onclick="switchDrawerTab('foryou')">For You</button>
+  </div>
+
+  <!-- Tab content -->
+  <div class="px-5 pb-8">
+    <div id="drawer-tab-topic" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <!-- Generated by JS -->
+    </div>
+    <div id="drawer-tab-location" style="display:none;" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+    <div id="drawer-tab-popular" style="display:none;" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+    <div id="drawer-tab-foryou" style="display:none;" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+  </div>
+</div>
+
+
+<!-- ====================================================================
+     CONCEPT HYBRID: RECOMMENDED — Sidebar + Mobile Teaser
+     ==================================================================== -->
+<section id="concept-hybrid" style="display:none;">
+
+  <!-- Simulated hero area (compact) -->
+  <div style="background:linear-gradient(180deg, #151b24 0%, #212a3a 100%);padding:48px 0 24px;text-align:center;">
+    <p class="text-gold-500 text-xs font-semibold tracking-widest uppercase mb-2">The Lives of 9/11</p>
+    <h2 class="font-serif text-3xl md:text-4xl text-white mb-3">25th Anniversary Memorial</h2>
+    <p class="text-wb-400 text-base max-w-xl mx-auto px-4">Their stories live on through those who loved them</p>
+  </div>
+
+  <!-- MOBILE TEASER (visible only below lg breakpoint) -->
+  <div class="lg:hidden max-w-[1440px] mx-auto px-4 md:px-8 py-4">
+    <button onclick="openDrawer()" class="w-full bg-navy-800 hover:bg-navy-700 border border-navy-600 hover:border-gold-600 rounded-xl px-4 py-3 flex items-center justify-between transition-all group cursor-pointer" aria-expanded="false" aria-controls="community-drawer">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-navy-700 border border-navy-600 flex items-center justify-center group-hover:border-gold-600 transition-colors flex-shrink-0">
+          <i class="ph-light ph-users-three text-lg text-gold-500"></i>
+        </div>
+        <div class="text-left">
+          <p class="text-sm font-semibold text-white">12 Related Communities</p>
+          <p class="text-xs text-wb-400">First Responders, NYC Area, and more</p>
+        </div>
+      </div>
+      <i class="ph ph-caret-right text-sm text-gold-500 flex-shrink-0"></i>
+    </button>
+  </div>
+
+  <!-- Three-column layout -->
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-8">
+    <div class="flex gap-8">
+
+      <!-- Left sidebar placeholder -->
+      <div class="hidden md:block w-60 flex-shrink-0">
+        <div class="bg-navy-800 border border-wb-800 rounded-lg h-64 flex items-center justify-center text-wb-500 text-sm">Filter Sidebar</div>
+      </div>
+
+      <!-- Center content placeholder -->
+      <div class="flex-1 min-w-0">
+        <div class="bg-navy-800 border border-wb-800 rounded-lg h-[600px] flex items-center justify-center text-wb-500 text-sm">Memorial Content Area</div>
+      </div>
+
+      <!-- RIGHT SIDEBAR with all widgets -->
+      <aside class="hidden lg:block w-72 flex-shrink-0" style="align-self:flex-start;position:sticky;top:80px;">
+        <h3 class="font-serif text-xl text-white mb-4">Honor Their Memory</h3>
+
+        <!-- Existing: Charity callout -->
+        <div class="bg-navy-800 border border-wb-800 rounded-lg p-4 mb-4 text-center">
+          <p class="text-xs font-semibold text-gold-500 uppercase tracking-wide mb-1">Consider a Donation to</p>
+          <p class="text-sm text-white mb-3">The American Red Cross</p>
+          <button class="bg-gold-400 text-wb-900 text-xs font-semibold px-4 h-8 rounded-full">Make a Donation</button>
+        </div>
+
+        <!-- Existing: Memorial Tree -->
+        <div class="bg-navy-800 border border-wb-800 rounded-lg p-4 mb-4 text-center">
+          <p class="text-base font-semibold text-gold-500 mb-1">Over 3,255 Trees Planted</p>
+          <p class="text-sm text-wb-400 mb-3">Join us in planting trees for the lives lost.</p>
+          <button class="bg-gold-400 text-wb-900 text-xs font-semibold px-4 h-8 rounded-full inline-flex items-center gap-1"><i class="ph-light ph-tree text-base"></i> Plant a Tree</button>
+        </div>
+
+        <!-- ★ Related Communities -->
+        <div class="bg-navy-800 border border-wb-800 rounded-lg overflow-hidden mb-4">
+          <div class="px-4 pt-4 pb-2 flex items-center justify-between">
+            <h4 class="text-sm font-semibold text-white">Related Communities</h4>
+            <a href="#" class="text-xs text-gold-500 hover:text-gold-400 font-semibold">See All</a>
+          </div>
+          <div id="hybrid-related-list" class="px-2 pb-2"></div>
+        </div>
+
+        <!-- ★ Nearby Communities -->
+        <div class="bg-navy-800 border border-wb-800 rounded-lg overflow-hidden mb-4">
+          <div class="px-4 pt-4 pb-2 flex items-center justify-between">
+            <h4 class="text-sm font-semibold text-white">Nearby Communities</h4>
+            <a href="#" class="text-xs text-gold-500 hover:text-gold-400 font-semibold">See All</a>
+          </div>
+          <div id="hybrid-nearby-list" class="px-2 pb-2"></div>
+        </div>
+
+        <!-- ★ Popular -->
+        <div class="bg-navy-800 border border-wb-800 rounded-lg overflow-hidden">
+          <div class="px-4 pt-4 pb-2 flex items-center justify-between">
+            <h4 class="text-sm font-semibold text-white flex items-center gap-2">
+              <span class="badge-trending inline-block w-2 h-2 rounded-full bg-gold-400" aria-hidden="true"></span>
+              Popular
+            </h4>
+            <a href="#" class="text-xs text-gold-500 hover:text-gold-400 font-semibold">See All</a>
+          </div>
+          <div id="hybrid-popular-list" class="px-2 pb-2"></div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- Concept description -->
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 pb-12">
+    <div class="bg-navy-800 border border-gold-600 rounded-xl p-6">
+      <h4 class="font-semibold text-gold-500 text-sm uppercase tracking-wide mb-2">★ Recommended: Hybrid (B + C)</h4>
+      <p class="text-wb-400 text-sm leading-relaxed mb-3">Sidebar widgets on desktop for always-visible, minimal discovery. On mobile (where the sidebar is hidden), an inline teaser opens a full-screen drawer with tabbed navigation. Best of both worlds: respects the memorial context while ensuring mobile users can still discover communities.</p>
+      <div class="flex flex-wrap gap-4 text-xs">
+        <span class="text-green-400">✓ Minimal on desktop (sidebar)</span>
+        <span class="text-green-400">✓ Full discovery on mobile (drawer)</span>
+        <span class="text-green-400">✓ Multiple lists visible</span>
+        <span class="text-green-400">✓ Extensible for signed-in "For You"</span>
+        <span class="text-green-400">✓ No layout changes needed</span>
+      </div>
+      <p class="text-wb-500 text-xs mt-3 italic">Resize your browser to see the mobile teaser appear below lg (1024px).</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ====================================================================
+     CONCEPT D: FEATURED GROUPS COMPONENT — Existing component, dark-adapted
+     ==================================================================== -->
+<section id="concept-d" style="display:none;">
+
+  <!-- Sub-view toggle -->
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 pt-6 pb-2 flex items-center gap-3">
+    <span class="text-wb-500 text-xs font-semibold uppercase tracking-wide">Placement:</span>
+    <div class="flex gap-1 bg-navy-800 border border-wb-800 rounded-full p-0.5">
+      <button onclick="showDSubview('sidebar')" id="d-toggle-sidebar"
+        class="d-subview-toggle active text-xs font-semibold px-4 py-1.5 rounded-full transition-all">
+        Sidebar
+      </button>
+      <button onclick="showDSubview('inline')" id="d-toggle-inline"
+        class="d-subview-toggle text-xs font-semibold px-4 py-1.5 rounded-full transition-all">
+        Inline
+      </button>
+    </div>
+  </div>
+
+  <!-- Sub-view 1: SIDEBAR placement -->
+  <div id="d-subview-sidebar">
+    <!-- Simulated hero area -->
+    <div style="background:linear-gradient(180deg, #151b24 0%, #212a3a 100%);padding:24px 0 16px;text-align:center;">
+      <p class="text-gold-500 text-xs font-semibold tracking-widest uppercase mb-1">The Lives of 9/11</p>
+      <h2 class="font-serif text-2xl text-white mb-1">25th Anniversary Memorial</h2>
+      <p class="text-wb-400 text-sm max-w-xl mx-auto px-4">Their stories live on through those who loved them</p>
+    </div>
+
+    <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-6">
+      <div class="flex gap-6">
+        <!-- Left sidebar placeholder -->
+        <div class="hidden md:block w-52 flex-shrink-0">
+          <div class="bg-navy-800 border border-wb-800 rounded-lg h-48 flex items-center justify-center text-wb-500 text-xs">Filter Sidebar</div>
+        </div>
+
+        <!-- Center content placeholder -->
+        <div class="flex-1 min-w-0">
+          <div class="bg-navy-800 border border-wb-800 rounded-lg h-[420px] flex items-center justify-center text-wb-500 text-sm">Memorial Content Area</div>
+        </div>
+
+        <!-- RIGHT SIDEBAR with Featured Groups widget -->
+        <aside class="hidden lg:block w-72 flex-shrink-0" style="align-self:flex-start;">
+          <h3 class="font-serif text-xl text-white mb-4">Honor Their Memory</h3>
+
+          <!-- Existing callouts (simplified) -->
+          <div class="bg-navy-800 border border-wb-800 rounded-lg p-4 mb-4 text-center">
+            <p class="text-xs font-semibold text-gold-500 uppercase tracking-wide mb-1">Consider a Donation to</p>
+            <p class="text-sm text-white mb-3">The American Red Cross</p>
+            <button class="bg-gold-400 text-wb-900 text-xs font-semibold px-4 h-8 rounded-full">Make a Donation</button>
+          </div>
+          <div class="bg-navy-800 border border-wb-800 rounded-lg p-4 mb-4 text-center">
+            <p class="text-base font-semibold text-gold-500 mb-1">Over 3,255 Trees Planted</p>
+            <p class="text-sm text-wb-400 mb-3">Join us in planting trees for the lives lost.</p>
+            <button class="bg-gold-400 text-wb-900 text-xs font-semibold px-4 h-8 rounded-full inline-flex items-center gap-1">
+              <i class="ph-light ph-tree text-base"></i> Plant a Tree
+            </button>
+          </div>
+
+          <!-- ★ NEW: Featured Groups component (dark-adapted) -->
+          <div class="bg-navy-800 border border-wb-800 rounded-xl p-4">
+            <div class="mb-4">
+              <h4 class="font-serif text-2xl" style="color:#e8e4dd;line-height:1.2;">Related Communities</h4>
+            </div>
+            <div id="d-sidebar-list" class="flex flex-col gap-0"></div>
+            <div class="pt-3 flex justify-center">
+              <a href="#" class="text-base font-semibold underline" style="color:#dcb05e;">View All Communities</a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sub-view 2: INLINE placement -->
+  <div id="d-subview-inline" style="display:none;">
+    <!-- Simulated hero area -->
+    <div style="background:linear-gradient(180deg, #151b24 0%, #212a3a 100%);padding:24px 0 16px;text-align:center;">
+      <p class="text-gold-500 text-xs font-semibold tracking-widest uppercase mb-1">The Lives of 9/11</p>
+      <h2 class="font-serif text-2xl text-white mb-1">25th Anniversary Memorial</h2>
+      <p class="text-wb-400 text-sm max-w-xl mx-auto px-4">Their stories live on through those who loved them</p>
+    </div>
+
+    <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-6">
+      <!-- Memorial content placeholder -->
+      <div class="bg-navy-800 border border-wb-800 rounded-lg h-40 flex items-center justify-center text-wb-500 text-sm mb-8">Memorial Content Area</div>
+
+      <!-- ★ NEW: Featured Groups inline section (full-width, 2-col) -->
+      <div class="bg-navy-800 border border-wb-800 rounded-xl p-6">
+        <div class="mb-5">
+          <h4 class="font-serif text-3xl" style="color:#e8e4dd;line-height:1.2;">Related Communities</h4>
+        </div>
+        <div id="d-inline-list" class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-x-8"></div>
+        <div class="pt-4 flex justify-center border-t mt-2" style="border-color:#2e3d52;">
+          <a href="#" class="text-base font-semibold underline" style="color:#dcb05e;">View All Communities</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Concept description -->
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 pb-12">
+    <div class="bg-navy-800 border border-navy-600 rounded-xl p-6">
+      <h4 class="font-semibold text-gold-500 text-sm uppercase tracking-wide mb-2">Concept D: Featured Groups (Existing Component)</h4>
+      <p class="text-wb-400 text-sm leading-relaxed mb-3">Reuses the existing "Featured Groups" component from the Search/Listing pages, dark-adapted for the memorial theme. Zero net design debt — users recognize the pattern across the site. The bookmark icon provides a native save affordance, and the badge system (Featured, New, Trending) handles editorial curation naturally. Toggle between Sidebar and Inline placements above.</p>
+      <div class="flex flex-wrap gap-4 text-xs mb-3">
+        <span class="text-green-400">✓ Reuses approved existing component</span>
+        <span class="text-green-400">✓ Consistent UX across listing + memorial pages</span>
+        <span class="text-green-400">✓ Bookmark affordance built in</span>
+        <span class="text-green-400">✓ Badge system handles editorial curation</span>
+        <span class="text-red-400">✗ Sidebar invisible on mobile</span>
+        <span class="text-red-400">✗ Lower discovery pressure than carousels</span>
+      </div>
+      <p class="text-wb-500 text-xs italic">Source: Search/Listing Page Templates · Figma node 8304:208517</p>
+    </div>
+  </div>
+</section>
+
+
+<script>
+// ============================================================
+// COMMUNITY DATA
+// ============================================================
+const COMMUNITIES = {
+  topic: [
+    { name: 'FDNY First Responders', type: 'First Responder', members: 8420, tag: 'Fire Department' },
+    { name: 'NYPD 9/11 Heroes', type: 'First Responder', members: 6115, tag: 'Police' },
+    { name: 'Pentagon First Responders', type: 'First Responder', members: 3890, tag: 'Military' },
+    { name: 'Port Authority Police', type: 'First Responder', members: 2740, tag: 'Police' },
+    { name: 'EMS Workers of 9/11', type: 'First Responder', members: 4210, tag: 'Medical' },
+    { name: 'Flight 93 National Memorial', type: 'Memorial', members: 5670, tag: 'Shanksville, PA' },
+  ],
+  geo: [
+    { name: 'New York City Remembers', type: 'City', members: 15300, tag: 'New York, NY' },
+    { name: 'Northern New Jersey Memorial', type: 'Region', members: 4890, tag: 'New Jersey' },
+    { name: 'Long Island Remembrance', type: 'Region', members: 3210, tag: 'Long Island, NY' },
+    { name: 'Connecticut 9/11 Memorial', type: 'State', members: 2100, tag: 'Connecticut' },
+    { name: 'Westchester County Memorial', type: 'County', members: 1850, tag: 'Westchester, NY' },
+    { name: 'Brooklyn Remembers', type: 'Borough', members: 5430, tag: 'Brooklyn, NY' },
+  ],
+  trending: [
+    { name: 'The Lives of 9/11', type: 'National Memorial', members: 24600, tag: 'Featured', trending: true },
+    { name: 'Veterans Remembrance', type: 'Military', members: 18200, tag: 'National', trending: true },
+    { name: 'Uvalde Community Memorial', type: 'Memorial', members: 9800, tag: 'Uvalde, TX' },
+    { name: 'Pulse Nightclub Memorial', type: 'Memorial', members: 7600, tag: 'Orlando, FL' },
+    { name: 'Oklahoma City Memorial', type: 'Memorial', members: 11400, tag: 'Oklahoma City, OK' },
+    { name: 'Sandy Hook Remembrance', type: 'Memorial', members: 8900, tag: 'Newtown, CT' },
+  ],
+  foryou: [
+    { name: 'Firefighter Families Support', type: 'Support Group', members: 3400, tag: 'Support' },
+    { name: 'WTC Health Program', type: 'Health', members: 5600, tag: 'Health & Wellness' },
+    { name: 'Never Forget: 9/11 Education', type: 'Education', members: 7200, tag: 'Education' },
+    { name: '9/11 Survivors Network', type: 'Survivors', members: 4100, tag: 'Survivors' },
+    { name: 'First Responder PTSD Support', type: 'Mental Health', members: 2900, tag: 'Mental Health' },
+    { name: 'Tribute in Light Community', type: 'Event', members: 6800, tag: 'Annual Event' },
+  ]
+};
+
+// Format member count
+function fmtMembers(n) {
+  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  return n.toString();
+}
+
+// ============================================================
+// CAROUSEL CARD (Concept A)
+// ============================================================
+function carouselCard(c) {
+  return `
+    <a href="#" class="community-card flex-shrink-0 w-[260px] sm:w-[280px] bg-navy-800 border border-wb-800 rounded-xl p-4 block" role="listitem">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="w-10 h-10 rounded-lg bg-navy-700 border border-navy-600 flex items-center justify-center flex-shrink-0">
+          <i class="ph-light ph-users text-lg text-gold-500"></i>
+        </div>
+        <div class="min-w-0">
+          <p class="text-base font-semibold text-white truncate">${c.name}</p>
+          <p class="text-sm text-wb-400">${c.type}</p>
+        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-wb-500"><strong class="text-wb-400">${fmtMembers(c.members)}</strong> members</span>
+        <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full ${c.trending ? 'bg-gold-100 text-gold-900' : 'bg-navy-700 text-wb-400'}">${c.tag}</span>
+      </div>
+    </a>`;
+}
+
+// ============================================================
+// SIDEBAR LIST ITEM (Concept B / Hybrid)
+// ============================================================
+function sidebarItem(c) {
+  return `
+    <a href="#" class="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-navy-700 transition-colors group" style="min-height:44px;">
+      <div class="w-8 h-8 rounded-md bg-navy-700 border border-navy-600 flex items-center justify-center flex-shrink-0 group-hover:border-gold-600 transition-colors">
+        <i class="ph-light ph-users text-sm text-gold-500"></i>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-base font-medium text-white truncate leading-tight">${c.name}</p>
+        <p class="text-sm text-wb-500">${fmtMembers(c.members)} members</p>
+      </div>
+    </a>`;
+}
+
+// ============================================================
+// DRAWER CARD (Concept C)
+// ============================================================
+function drawerCard(c) {
+  return `
+    <a href="#" class="community-card bg-navy-800 border border-wb-800 rounded-xl p-4 block" style="min-height:44px;">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-lg bg-navy-700 border border-navy-600 flex items-center justify-center flex-shrink-0">
+          <i class="ph-light ph-users text-lg text-gold-500"></i>
+        </div>
+        <div class="min-w-0 flex-1">
+          <p class="text-base font-semibold text-white mb-0.5">${c.name}</p>
+          <p class="text-sm text-wb-400 mb-2">${c.type}</p>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-wb-500"><strong class="text-wb-400">${fmtMembers(c.members)}</strong> members</span>
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-navy-700 text-wb-400">${c.tag}</span>
+          </div>
+        </div>
+      </div>
+    </a>`;
+}
+
+// ============================================================
+// FEATURED GROUPS ITEM (Concept D)
+// ============================================================
+function featuredGroupsItem(c) {
+  const badge = c.badge ? `
+    <div style="display:inline-flex;align-items:center;background:#f6e5b8;border-radius:80px;padding:2px 10px;margin-bottom:4px;">
+      <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#85713e;white-space:nowrap;">${c.badge}</span>
+    </div>` : '';
+  return `
+    <div style="border-bottom:1px solid #2e3d52;padding-bottom:16px;margin-bottom:16px;">
+      ${badge}
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div style="flex:1;min-width:0;">
+          <a href="#" style="display:block;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#dcb05e;line-height:1.25;margin-bottom:4px;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${c.name}</a>
+          <p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#9e9a93;margin:0;line-height:1.2;">${c.type}</p>
+        </div>
+        <button aria-label="Bookmark ${c.name}" style="width:32px;height:32px;border-radius:9999px;background:rgba(220,176,94,0.15);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;" onmouseover="this.style.background='rgba(220,176,94,0.25)'" onmouseout="this.style.background='rgba(220,176,94,0.15)'">
+          <i class="ph-light ph-bookmark-simple" style="color:#dcb05e;font-size:16px;"></i>
+        </button>
+      </div>
+    </div>`;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  // Concept A — Carousels
+  document.getElementById('topic-carousel').innerHTML = COMMUNITIES.topic.map(carouselCard).join('');
+  document.getElementById('geo-carousel').innerHTML = COMMUNITIES.geo.map(carouselCard).join('');
+  document.getElementById('trending-carousel').innerHTML = COMMUNITIES.trending.map(carouselCard).join('');
+
+  // Concept B — Sidebar lists
+  document.getElementById('sidebar-related-list').innerHTML = COMMUNITIES.topic.slice(0, 4).map(sidebarItem).join('');
+  document.getElementById('sidebar-nearby-list').innerHTML = COMMUNITIES.geo.slice(0, 3).map(sidebarItem).join('');
+  document.getElementById('sidebar-popular-list').innerHTML = COMMUNITIES.trending.slice(0, 3).map(sidebarItem).join('');
+
+  // Concept C — Drawer tabs
+  document.getElementById('drawer-tab-topic').innerHTML = COMMUNITIES.topic.map(drawerCard).join('');
+  document.getElementById('drawer-tab-location').innerHTML = COMMUNITIES.geo.map(drawerCard).join('');
+  document.getElementById('drawer-tab-popular').innerHTML = COMMUNITIES.trending.map(drawerCard).join('');
+  document.getElementById('drawer-tab-foryou').innerHTML = COMMUNITIES.foryou.map(drawerCard).join('');
+
+  // Hybrid — Sidebar lists (same as B)
+  document.getElementById('hybrid-related-list').innerHTML = COMMUNITIES.topic.slice(0, 4).map(sidebarItem).join('');
+  document.getElementById('hybrid-nearby-list').innerHTML = COMMUNITIES.geo.slice(0, 3).map(sidebarItem).join('');
+  document.getElementById('hybrid-popular-list').innerHTML = COMMUNITIES.trending.slice(0, 3).map(sidebarItem).join('');
+
+  // Concept D — Featured Groups lists
+  const dItems = [
+    { ...COMMUNITIES.topic[0], badge: 'Featured' },
+    { ...COMMUNITIES.geo[0], badge: 'Nearby' },
+    { ...COMMUNITIES.trending[0], badge: 'Trending' },
+    { ...COMMUNITIES.topic[1], badge: null },
+    { ...COMMUNITIES.geo[1], badge: null },
+    { ...COMMUNITIES.trending[2], badge: null },
+  ];
+  document.getElementById('d-sidebar-list').innerHTML = dItems.slice(0, 4).map(featuredGroupsItem).join('');
+  document.getElementById('d-inline-list').innerHTML = dItems.map(featuredGroupsItem).join('');
+}
+
+// ============================================================
+// CONCEPT TABS
+// ============================================================
+function showDSubview(id) {
+  ['sidebar', 'inline'].forEach(v => {
+    const el = document.getElementById('d-subview-' + v);
+    if (el) el.style.display = v === id ? 'block' : 'none';
+  });
+  document.querySelectorAll('.d-subview-toggle').forEach(btn => {
+    const active = btn.id === 'd-toggle-' + id;
+    btn.style.background = active ? '#dcb05e' : 'transparent';
+    btn.style.color = active ? '#1a1400' : '#9e9a93';
+  });
+}
+
+function showConcept(id) {
+  ['a', 'b', 'c', 'hybrid', 'd'].forEach(c => {
+    const el = document.getElementById('concept-' + c);
+    if (el) el.style.display = c === id ? 'block' : 'none';
+  });
+  document.querySelectorAll('.concept-tab').forEach((tab, i) => {
+    const ids = ['a', 'b', 'c', 'hybrid', 'd'];
+    tab.classList.toggle('active', ids[i] === id);
+  });
+  closeDrawer();
+  // Scroll to just below the sticky header
+  const header = document.querySelector('header');
+  const headerBottom = header ? header.getBoundingClientRect().height : 0;
+  window.scrollTo({ top: headerBottom + 10, behavior: 'smooth' });
+}
+
+// ============================================================
+// CAROUSEL SCROLL
+// ============================================================
+function scrollCarousel(id, dir) {
+  const el = document.getElementById(id);
+  if (el) el.scrollBy({ left: dir * 300, behavior: 'smooth' });
+}
+
+// ============================================================
+// DRAWER
+// ============================================================
+function openDrawer() {
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.getElementById('community-drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrawer() {
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.getElementById('community-drawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function switchDrawerTab(tab) {
+  ['topic', 'location', 'popular', 'foryou'].forEach(t => {
+    const el = document.getElementById('drawer-tab-' + t);
+    if (el) el.style.display = t === tab ? 'grid' : 'none';
+  });
+  document.querySelectorAll('.drawer-tab').forEach(btn => {
+    const isActive = btn.textContent.toLowerCase().includes(tab === 'foryou' ? 'for you' : tab);
+    btn.className = `drawer-tab px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${isActive ? 'bg-gold-400 text-wb-900' : 'bg-navy-700 text-wb-400 hover:text-white'}`;
+  });
+}
+
+// Escape key closes drawer
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+// INIT — auto-select concept from ?concept= query param
+document.addEventListener('DOMContentLoaded', () => {
+  render();
+  // Init sub-view toggle styles
+  const subview = new URLSearchParams(window.location.search).get('subview');
+  showDSubview(subview === 'inline' ? 'inline' : 'sidebar');
+  const concept = new URLSearchParams(window.location.search).get('concept');
+  if (concept && ['a', 'b', 'c', 'hybrid', 'd'].includes(concept)) showConcept(concept);
+});
+</script>
+
+</body>
+</html>
