@@ -147,21 +147,21 @@ tailwind.config = {
   <!-- Top utility row: Breadcrumb + Follow + Share buttons -->
   <div class="max-w-[1440px] mx-auto px-4 md:px-16 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
 
-    <!-- Mobile breadcrumb: arrow-left + immediate parent only -->
-    <a href="united-flight-93.html" class="sm:hidden inline-flex items-center gap-2 text-sm font-semibold text-gold-500 hover:text-gold-400 transition-colors w-fit" aria-label="Back to United Flight 93">
+    <!-- Mobile breadcrumb: arrow-left + immediate parent ([Full Name] memorial) -->
+    <a href="#" class="sm:hidden inline-flex items-center gap-2 text-sm font-semibold text-gold-500 hover:text-gold-400 transition-colors w-fit" aria-label="Back to Todd Beamer">
       <i class="ph ph-arrow-left text-lg" aria-hidden="true"></i>
-      <span>United Flight 93</span>
+      <span>Todd Beamer</span>
     </a>
 
-    <!-- Desktop breadcrumb -->
+    <!-- Desktop breadcrumb: Home / [Surname] / [Full Name]
+         Final crumb links to the parent "Todd Beamer Online Memorial" but
+         displays just "Todd Beamer" — the "Online Memorial" suffix is hidden. -->
     <nav aria-label="Breadcrumb" class="hidden sm:flex text-sm items-center gap-1 min-w-0 flex-wrap">
       <a href="../index.html" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font whitespace-nowrap">Home</a>
       <span class="text-wb-400 px-1" aria-hidden="true">/</span>
-      <a href="#" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font whitespace-nowrap">Groups</a>
+      <a href="#" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font whitespace-nowrap">Beamer</a>
       <span class="text-wb-400 px-1" aria-hidden="true">/</span>
-      <a href="sep-11-2001.html" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font whitespace-nowrap">25 Years Later: Never Forget 9/11</a>
-      <span class="text-wb-400 px-1" aria-hidden="true">/</span>
-      <a href="united-flight-93.html" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font whitespace-nowrap">United Flight 93</a>
+      <a href="#" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font whitespace-nowrap">Todd Beamer</a>
     </nav>
 
     <!-- Action button group: just Follow + Share -->
