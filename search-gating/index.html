@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy — Search Results Pagination Gating Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+            serif: ['"DM Serif Text"', 'Georgia', 'serif'],
+          },
+          colors: {
+            navy:    { 50:'#f0f4fa', 100:'#e6ecf5', 200:'#d3ddeb', 300:'#b0c0d6', 400:'#728ab0', 500:'#42608f', 600:'#3c4d69', 700:'#293548', 800:'#212a3a', 900:'#151b24' },
+            gold:    { 50:'#fbf7ef', 100:'#f6e5b8', 200:'#f0d78d', 300:'#e9c86f', 400:'#e2ba60', 500:'#dcb05e', 600:'#c49e54', 700:'#a48849', 800:'#85713e', 900:'#655b34' },
+            wb:      { 50:'#fbfbfb', 100:'#f6f6f6', 200:'#ebe9e9', 300:'#dbdad7', 400:'#afadaa', 500:'#807e7a', 600:'#63605b', 700:'#514d45', 800:'#373329', 900:'#262116' },
+            seafoam: { 50:'#f3faf9', 100:'#ebf2f1', 200:'#cee2de', 300:'#aecec9', 400:'#81b8ae', 500:'#5c9d94', 600:'#357d75', 700:'#216e6a', 800:'#165c58', 900:'#014744' },
+            coral:   { 50:'#fcf1f3', 100:'#fce8ec', 200:'#f7d4da', 300:'#eba9b5', 400:'#e77d91', 500:'#d6677c', 600:'#c24c62', 700:'#993b4d', 800:'#792f3d', 900:'#662833' },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', system-ui, sans-serif; color: #262116; background: #fbf7ef; }
+
+    /* Heading typeface mirrors Figma — DM Serif Text for editorial result names */
+    .font-serif-heading { font-family: 'DM Serif Text', Georgia, serif; font-weight: 400; }
+
+    /* Pill / tag shared appearance */
+    .tag-pill { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:9999px; background:#f6e5b8; color:#655b34; font-size:13px; font-weight:500; line-height:1.4; }
+    .tag-pill i { font-size:14px; color:#a48849; }
+
+    /* Demo state switcher (floating bottom-right) */
+    .demo-switcher {
+      position: fixed; bottom: 16px; right: 16px; z-index: 100;
+      background: rgba(21,27,36,0.92); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+      padding: 10px; display: flex; flex-direction: column; gap: 6px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      font-family: 'DM Sans', sans-serif; max-width: 200px;
+    }
+    .demo-switcher-label { color: rgba(255,255,255,0.45); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px 4px; }
+    .demo-switcher button {
+      padding: 8px 12px; border-radius: 10px; border: 0;
+      background: transparent; color: rgba(255,255,255,0.7);
+      font-size: 13px; font-weight: 500; text-align: left; cursor: pointer;
+      transition: all .15s; display: flex; align-items: center; gap: 8px;
+    }
+    .demo-switcher button:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .demo-switcher button.active { background: #dcb05e; color: #262116; font-weight: 600; }
+    .demo-switcher button .step { font-size: 11px; font-weight: 700; opacity: 0.5; min-width: 14px; }
+    .demo-switcher button.active .step { opacity: 1; }
+    @media (max-width: 640px) {
+      .demo-switcher { bottom: 12px; right: 12px; max-width: 168px; padding: 8px; }
+      .demo-switcher button { font-size: 12px; padding: 7px 10px; }
+    }
+
+    /* Custom focus rings — use gold for visibility */
+    button:focus-visible, a:focus-visible, input:focus-visible {
+      outline: 2px solid #dcb05e; outline-offset: 2px;
+    }
+
+    /* View transitions */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Search input clean styling */
+    .search-input::-webkit-search-cancel-button { display:none; }
+  </style>
+</head>
+<body>
+
+<!-- ====================================================================
+     DEMO STATE SWITCHER — floating helper for stakeholder walkthroughs
+     ==================================================================== -->
+<div class="demo-switcher" role="navigation" aria-label="Demo state switcher">
+  <div class="demo-switcher-label">Demo states</div>
+  <button data-goto="p1" class="active"><span class="step">1</span> Page 1 (gated)</button>
+  <button data-goto="p2"><span class="step">2</span> Page 2 (gated)</button>
+  <button data-goto="create"><span class="step">3</span> Create account</button>
+  <button data-goto="p3"><span class="step">4</span> Page 3 (unlocked)</button>
+</div>
+
+<!-- ====================================================================
+     SHARED HEADER NAVIGATION
+     Used on all search-results views (hidden on Create Account screen)
+     ==================================================================== -->
+<template id="tpl-header">
+  <header class="bg-white border-b border-wb-200 sticky top-0 z-30">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-8 h-14 md:h-[72px] flex items-center justify-between gap-4">
+      <a href="#" aria-label="Legacy.com home" class="flex-shrink-0 flex items-center gap-2">
+        <img src="https://www.legacy.com/media/legacy-icon-dark.svg" alt="" class="h-7 md:h-9 w-auto" />
+        <span class="font-serif-heading text-xl md:text-2xl text-navy-700 leading-none">Legacy</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-1 text-[15px] text-wb-900 font-medium">
+        <a href="#" class="px-4 py-2 hover:text-navy-700 transition-colors">Create</a>
+        <a href="#" class="px-4 py-2 hover:text-navy-700 transition-colors">Find</a>
+        <a href="#" class="px-4 py-2 hover:text-navy-700 transition-colors">Plan</a>
+        <a href="#" class="px-4 py-2 hover:text-navy-700 transition-colors">Support</a>
+      </nav>
+      <div class="flex items-center gap-2 md:gap-3">
+        <a href="#" class="hidden md:inline-flex items-center gap-1.5 text-sm font-medium text-navy-700 px-3 py-2 hover:text-gold-700">
+          <i class="ph ph-gift"></i> Send a Gift
+        </a>
+        <button aria-label="Search" class="w-9 h-9 md:w-10 md:h-10 rounded-full border border-wb-300 flex items-center justify-center text-navy-700 hover:bg-wb-100">
+          <i class="ph ph-magnifying-glass text-lg"></i>
+        </button>
+        <button aria-label="Open menu" class="md:hidden w-9 h-9 rounded-full border border-wb-300 flex items-center justify-center text-navy-700">
+          <i class="ph ph-list text-lg"></i>
+        </button>
+        <a href="#" aria-label="Account" class="hidden md:inline-flex w-10 h-10 rounded-full border border-wb-300 items-center justify-center text-navy-700 hover:bg-wb-100">
+          <i class="ph ph-user"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+</template>
+
+<!-- ====================================================================
+     SHARED SEARCH HERO (with current query)
+     ==================================================================== -->
+<template id="tpl-search-hero">
+  <section class="bg-white border-b border-wb-200">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-16 py-6 md:py-8 flex flex-col items-center gap-4 md:gap-5">
+      <h1 class="font-serif-heading text-[26px] md:text-[34px] leading-tight text-navy-700 text-center">
+        Search Results for &ldquo;Robert Thomas&rdquo;
+      </h1>
+      <div class="w-full max-w-[640px] relative">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-wb-500 pointer-events-none">
+          <i class="ph ph-magnifying-glass text-lg"></i>
+        </span>
+        <input type="search" value="Robert Thomas" class="search-input w-full h-11 md:h-12 pl-11 pr-11 rounded-full bg-wb-50 border border-wb-300 text-[15px] text-wb-900 placeholder:text-wb-500 focus:outline-none focus:border-navy-500 focus:bg-white" />
+        <button aria-label="Clear search" class="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-wb-200 text-wb-700 flex items-center justify-center hover:bg-wb-300">
+          <i class="ph ph-x text-sm"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+</template>
+
+<!-- ====================================================================
+     SHARED LEFT FILTER SIDEBAR
+     ==================================================================== -->
+<template id="tpl-filters">
+  <aside class="hidden lg:block w-[280px] flex-shrink-0">
+    <div class="sticky top-[88px] bg-white border border-wb-200 rounded-2xl p-5">
+      <div class="flex items-center gap-2 mb-5">
+        <i class="ph ph-sliders-horizontal text-xl text-navy-700"></i>
+        <h2 class="text-base font-semibold text-navy-700">Filter By</h2>
+      </div>
+
+      <div class="mb-6">
+        <label for="within-results" class="block text-sm font-medium text-wb-900 mb-2">Search within Your Results</label>
+        <input id="within-results" type="search" placeholder="Search by keyword or refine your search…" class="w-full h-10 px-3 rounded-lg border border-wb-300 text-sm placeholder:text-wb-500 focus:outline-none focus:border-navy-500" />
+      </div>
+
+      <details open class="border-t border-wb-200 py-4">
+        <summary class="flex justify-between items-center cursor-pointer text-sm font-semibold text-wb-900 list-none">
+          Location <i class="ph ph-caret-up text-base text-wb-700 transition-transform"></i>
+        </summary>
+        <div class="mt-3 space-y-2">
+          <select class="w-full h-10 px-3 rounded-lg border border-wb-300 text-sm text-wb-900 bg-white">
+            <option>All Countries</option>
+            <option>United States</option>
+            <option>Canada</option>
+            <option>United Kingdom</option>
+          </select>
+          <select class="w-full h-10 px-3 rounded-lg border border-wb-300 text-sm text-wb-900 bg-white">
+            <option>All States</option>
+            <option>Illinois</option>
+            <option>Texas</option>
+            <option>California</option>
+          </select>
+          <select class="w-full h-10 px-3 rounded-lg border border-wb-300 text-sm text-wb-900 bg-white">
+            <option>All Cities</option>
+            <option>Chicago</option>
+            <option>Houston</option>
+            <option>Los Angeles</option>
+          </select>
+        </div>
+      </details>
+
+      <details open class="border-t border-wb-200 py-4">
+        <summary class="flex justify-between items-center cursor-pointer text-sm font-semibold text-wb-900 list-none">
+          Publish Date <i class="ph ph-caret-up text-base text-wb-700"></i>
+        </summary>
+        <div class="mt-3 space-y-2 text-sm text-wb-900">
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="date" class="accent-navy-700" /> All Time</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="date" class="accent-navy-700" /> Today</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="date" class="accent-navy-700" /> Last Week</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="date" class="accent-navy-700" /> Last Month</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="date" class="accent-navy-700" /> Custom Range</label>
+        </div>
+      </details>
+
+      <details open class="border-t border-wb-200 py-4">
+        <summary class="flex justify-between items-center cursor-pointer text-sm font-semibold text-wb-900 list-none">
+          Age Range <i class="ph ph-caret-up text-base text-wb-700"></i>
+        </summary>
+        <div class="mt-3 space-y-2 text-sm text-wb-900">
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="age" class="accent-navy-700" /> All Ages</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="age" class="accent-navy-700" /> 60 – 80 years old</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="age" class="accent-navy-700" /> 40 – 60 years old</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="age" class="accent-navy-700" /> 20 – 40 years old</label>
+        </div>
+      </details>
+
+      <details class="border-t border-wb-200 py-4">
+        <summary class="flex justify-between items-center cursor-pointer text-sm font-semibold text-wb-900 list-none">
+          Newspaper <i class="ph ph-caret-down text-base text-wb-700"></i>
+        </summary>
+        <div class="mt-3">
+          <select class="w-full h-10 px-3 rounded-lg border border-wb-300 text-sm text-wb-900 bg-white">
+            <option>All Newspapers</option>
+          </select>
+          <a href="#" class="block mt-3 text-sm text-navy-500 hover:underline">See All Newspapers</a>
+        </div>
+      </details>
+
+      <div class="border-t border-wb-200 pt-4 mt-2">
+        <h3 class="text-sm font-semibold text-wb-900 mb-3">Layout</h3>
+        <div class="inline-flex rounded-lg border border-wb-300 overflow-hidden">
+          <button aria-pressed="true" class="w-10 h-10 flex items-center justify-center bg-gold-100 text-gold-900">
+            <i class="ph ph-list text-lg"></i>
+          </button>
+          <button aria-pressed="false" class="w-10 h-10 flex items-center justify-center bg-white text-wb-700 border-l border-wb-300 hover:bg-wb-100">
+            <i class="ph ph-squares-four text-lg"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+</template>
+
+<!-- ====================================================================
+     SHARED RIGHT SIDEBAR (ads / latest news placeholder)
+     ==================================================================== -->
+<template id="tpl-rightbar">
+  <aside class="hidden xl:block w-[300px] flex-shrink-0">
+    <div class="sticky top-[88px] space-y-6">
+      <div class="bg-white border border-wb-200 rounded-2xl overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&q=80" alt="" class="w-full h-[168px] object-cover" />
+      </div>
+      <div class="bg-wb-100 border border-wb-200 rounded-2xl h-[250px] flex flex-col items-center justify-center text-wb-500 text-sm">
+        <span class="text-xs uppercase tracking-wider font-semibold">AD</span>
+      </div>
+    </div>
+  </aside>
+</template>
+
+<!-- ====================================================================
+     SHARED RESULTS TOOLBAR (count + sort)
+     ==================================================================== -->
+<template id="tpl-results-toolbar">
+  <div class="flex items-center justify-between gap-3 mb-4 md:mb-6">
+    <p class="text-[15px] md:text-base text-wb-900 font-semibold">
+      <span data-count>10,000k+ results</span>
+    </p>
+    <div class="flex items-center gap-2 md:gap-3">
+      <span class="hidden sm:inline text-sm text-wb-700">Sort By</span>
+      <select class="h-10 px-3 pr-8 rounded-lg border border-wb-300 text-sm text-wb-900 bg-white">
+        <option>Most Recent</option>
+        <option>Most Relevant</option>
+        <option>Oldest First</option>
+      </select>
+    </div>
+  </div>
+</template>
+
+<!-- ====================================================================
+     SHARED FOOTER
+     ==================================================================== -->
+<template id="tpl-footer">
+  <footer class="bg-navy-900 text-white mt-12 md:mt-16">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-16 py-10 md:py-12">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
+        <div class="col-span-2 md:col-span-1">
+          <img src="https://www.legacy.com/media/legacy-icon-white.svg" alt="Legacy" class="h-8 w-auto mb-4" />
+          <div class="flex items-center gap-3 mt-4">
+            <a href="#" aria-label="Facebook" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20"><i class="ph ph-facebook-logo"></i></a>
+            <a href="#" aria-label="X" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20"><i class="ph ph-x-logo"></i></a>
+            <a href="#" aria-label="Instagram" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20"><i class="ph ph-instagram-logo"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold mb-3">Services</h4>
+          <ul class="space-y-2 text-sm text-wb-300">
+            <li><a href="#" class="hover:text-gold-500">Create &amp; Publish an obituary</a></li>
+            <li><a href="#" class="hover:text-gold-500">Plan a funeral or estate</a></li>
+            <li><a href="#" class="hover:text-gold-500">Send a Sympathy Gift</a></li>
+          </ul>
+          <h4 class="text-sm font-semibold mt-6 mb-3">About Us</h4>
+          <ul class="space-y-2 text-sm text-wb-300">
+            <li><a href="#" class="hover:text-gold-500">Our Mission</a></li>
+            <li><a href="#" class="hover:text-gold-500">Company News</a></li>
+            <li><a href="#" class="hover:text-gold-500">Leadership</a></li>
+            <li><a href="#" class="hover:text-gold-500">Careers</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold mb-3">Find obituaries</h4>
+          <ul class="space-y-2 text-sm text-wb-300">
+            <li><a href="#" class="hover:text-gold-500">Find obituary for a specific person</a></li>
+            <li><a href="#" class="hover:text-gold-500">Browse by Location</a></li>
+            <li><a href="#" class="hover:text-gold-500">Browse by Newspaper</a></li>
+            <li><a href="#" class="hover:text-gold-500">Browse by School</a></li>
+            <li><a href="#" class="hover:text-gold-500">Celebrity Obituaries</a></li>
+            <li><a href="#" class="hover:text-gold-500">Military Obituaries</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold mb-3">Legacy for Business</h4>
+          <ul class="space-y-2 text-sm text-wb-300">
+            <li><a href="#" class="hover:text-gold-500">Newspapers &amp; Media Outlets</a></li>
+            <li><a href="#" class="hover:text-gold-500">Data Providers</a></li>
+            <li><a href="#" class="hover:text-gold-500">Hospice Providers</a></li>
+            <li><a href="#" class="hover:text-gold-500">Longterm Care Facilities</a></li>
+            <li><a href="#" class="hover:text-gold-500">Retailers</a></li>
+            <li><a href="#" class="hover:text-gold-500">Advertise with us</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-white/10 mt-10 pt-6 text-xs text-wb-400">© 2026 Legacy.com. All rights reserved.</div>
+    </div>
+  </footer>
+</template>
+
+<!-- ====================================================================
+     VIEW 1 + 2 — Search results pages (GATED — only 2 pages accessible)
+     We render two distinct views so the demo switcher can show each page.
+     Page 1 shows pagination `[1] 2 🔒 Create Account`
+     Page 2 shows pagination ` 1 [2] 🔒 Create Account`
+     Both end with the gold gating CTA card above the pagination strip.
+     ==================================================================== -->
+<main class="view active" data-view="p1"></main>
+<main class="view" data-view="p2"></main>
+
+<!-- ====================================================================
+     VIEW 3 — Create Account
+     Card centered on cream page. No header / footer (focus screen).
+     ==================================================================== -->
+<main class="view" data-view="create">
+  <section class="min-h-screen bg-gold-50 flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-[440px] bg-white border border-wb-200 rounded-3xl shadow-[0_25px_60px_-20px_rgba(38,33,22,0.2)] p-8 md:p-10">
+      <div class="flex flex-col items-center mb-6">
+        <img src="https://www.legacy.com/media/legacy-icon-dark.svg" alt="" class="h-10 md:h-12 w-auto" />
+        <span class="font-serif-heading text-2xl md:text-3xl text-navy-700 leading-none mt-2 mb-6">Legacy</span>
+        <h1 class="font-serif-heading text-[22px] md:text-[26px] text-navy-700 font-bold">Create Your Account</h1>
+      </div>
+
+      <form class="space-y-4" novalidate onsubmit="event.preventDefault(); signIn(); goTo(returnToView);">
+        <label class="block">
+          <span class="sr-only">Email address</span>
+          <input type="email" placeholder="Email address*" class="w-full h-12 px-4 rounded-xl border border-wb-300 text-[15px] text-wb-900 placeholder:text-wb-500 focus:outline-none focus:border-navy-500" />
+        </label>
+        <label class="block relative">
+          <span class="sr-only">Password</span>
+          <input type="password" placeholder="Password*" class="w-full h-12 px-4 pr-12 rounded-xl border border-wb-300 text-[15px] text-wb-900 placeholder:text-wb-500 focus:outline-none focus:border-navy-500" />
+          <button type="button" aria-label="Show password" class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center text-wb-500 hover:text-wb-700" onclick="const i=this.parentElement.querySelector('input'); i.type=i.type==='password'?'text':'password';">
+            <i class="ph ph-eye-slash text-lg"></i>
+          </button>
+        </label>
+
+        <label class="flex items-start gap-3 cursor-pointer pt-1">
+          <input type="checkbox" checked class="peer sr-only" />
+          <span class="relative flex-shrink-0 mt-0.5 w-5 h-5 rounded-md bg-gold-500 border-2 border-gold-500 flex items-center justify-center text-white transition-colors peer-[:not(:checked)]:bg-white">
+            <svg class="w-3.5 h-3.5 peer-[:not(:checked)]:hidden" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 10 9 14 15 6" /></svg>
+          </span>
+          <span class="text-sm text-wb-900 leading-snug">Email me updates about Legacy and pages I&rsquo;ve followed.</span>
+        </label>
+
+        <button type="submit" class="w-full h-12 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-[15px] font-semibold transition-colors">Continue</button>
+
+        <p class="text-center text-sm text-wb-900 pt-1">
+          Already have an account? <a href="#" class="text-navy-500 underline font-semibold hover:text-navy-700">Log in</a>
+        </p>
+
+        <div class="flex items-center gap-3 py-2 text-xs text-wb-500">
+          <span class="flex-1 h-px bg-wb-300"></span>
+          <span>OR</span>
+          <span class="flex-1 h-px bg-wb-300"></span>
+        </div>
+
+        <button type="button" class="w-full h-12 rounded-full border border-wb-300 hover:bg-wb-100 text-[15px] font-semibold text-wb-900 flex items-center justify-center gap-2 transition-colors">
+          <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path fill="#4285F4" d="M19.6 10.23c0-.68-.06-1.34-.18-1.96H10v3.71h5.39a4.6 4.6 0 0 1-2 3.02v2.5h3.23c1.89-1.74 2.98-4.3 2.98-7.27Z"/><path fill="#34A853" d="M10 20c2.7 0 4.97-.9 6.62-2.43l-3.23-2.51c-.9.6-2.04.95-3.39.95-2.6 0-4.81-1.76-5.6-4.12H1.07v2.59A10 10 0 0 0 10 20Z"/><path fill="#FBBC05" d="M4.4 11.89A6 6 0 0 1 4.08 10c0-.66.12-1.3.32-1.89V5.52H1.07a10 10 0 0 0 0 8.96l3.33-2.59Z"/><path fill="#EA4335" d="M10 3.98c1.47 0 2.78.5 3.81 1.49l2.86-2.86C14.96 1 12.7 0 10 0A10 10 0 0 0 1.07 5.52L4.4 8.11C5.2 5.75 7.4 3.98 10 3.98Z"/></svg>
+          Continue with Google
+        </button>
+        <button type="button" class="w-full h-12 rounded-full border border-wb-300 hover:bg-wb-100 text-[15px] font-semibold text-wb-900 flex items-center justify-center gap-2 transition-colors">
+          <i class="ph-fill ph-apple-logo text-xl text-wb-900" style="margin-top:-2px;"></i>
+          Continue with Apple
+        </button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<!-- ====================================================================
+     VIEW 4 — Page 3 unlocked (after account creation)
+     ==================================================================== -->
+<main class="view" data-view="p3"></main>
+
+<!-- ====================================================================
+     JAVASCRIPT — view rendering, state navigation, sample result data
+     ==================================================================== -->
+<script>
+  // ─────────────────────────────────────────────────────────────────────
+  // Sample result data
+  // We render a compact "page" of results (representative, not literal 50)
+  // so the user can scroll the page to reach the pagination gate.
+  // Each page uses a slightly different cohort to feel realistic.
+  // ─────────────────────────────────────────────────────────────────────
+
+  const PORTRAITS = {
+    senior_male_1: 'https://images.unsplash.com/photo-1545167622-3a6ac756afa4?w=400&h=400&fit=crop&q=80',
+    senior_male_2: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?w=400&h=400&fit=crop&q=80',
+    middle_male:   'https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=400&h=400&fit=crop&q=80',
+    young_male:    'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop&q=80',
+    senior_female: 'https://images.unsplash.com/photo-1581824283135-0666cf353f35?w=400&h=400&fit=crop&q=80',
+    middle_female: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&q=80',
+  };
+
+  const FEATURED_PAGE_1 = [
+    {
+      name: 'Robert Thomas A.', dates: '1950 – 2025', portrait: PORTRAITS.senior_male_1,
+      desc: 'Robert Thomas A, an emerging voice in contemporary fiction, is known for his innovative storytelling and deep character exploration. He crafted novels that …',
+      tags: ['Chicago, Illinois', 'Photo Gallery', 'Gifts', 'Eternal Heritage Collection Memorial'],
+    },
+    {
+      name: 'Robert Thomas B.', dates: '1942 – 2025', portrait: PORTRAITS.senior_male_2,
+      desc: 'Robert Thomas B, 83, a celebrated playwright and screenwriter, passed away on July 22, 2025. His works are celebrated for their emotional depth and social …',
+      tags: ['Playwright\'s Corner', 'Perspectives in Performance', 'Cinematic Chronicles'],
+    },
+  ];
+
+  const FEATURED_PAGE_2 = [
+    {
+      name: 'Zachary Scott', dates: '1960 – 2025', portrait: PORTRAITS.middle_male,
+      desc: 'Zachary Scott, 65, is an acclaimed historian focused on social movements, whose research highlights the lessons of the past for future generations.',
+      tags: ['Historian\'s Highlight', 'Cultural Studies Review', 'Legacy of Change'],
+    },
+    {
+      name: 'Victoria Lee Jr.', dates: '1980 – 2025', portrait: PORTRAITS.middle_female,
+      desc: 'Victoria Lee, 45, is a passionate advocate for digital education, promoting the integration of technology in learning across various platforms.',
+      tags: ['Digital Learning Review', 'EdTech Innovations', 'Future Educators'],
+    },
+  ];
+
+  const FEATURED_PAGE_3 = [
+    {
+      name: 'Eleanor Whitfield', dates: '1938 – 2025', portrait: PORTRAITS.senior_female,
+      desc: 'Eleanor Whitfield, 87, a beloved community organizer and lifelong educator, dedicated her life to expanding library access in underserved neighborhoods.',
+      tags: ['Community Leadership', 'Education', 'Volunteer Service'],
+    },
+    {
+      name: 'Isaac Thompson', dates: '1965 – 2025', portrait: PORTRAITS.middle_male,
+      desc: 'Isaac Thompson, 55, is an up-and-coming playwright whose works delve into contemporary issues, blending humor and drama to engage audiences.',
+      tags: ['Playwright\'s Corner', 'Theater Highlights', 'Stage & Slogans', 'Dramatic Expressions'],
+    },
+  ];
+
+  // Pool of additional "Robert Thomas" results — rendered with the same
+  // featured layout (portrait + description + tags) as the top two cards.
+  // Each page slices a different cohort from this pool via `compactSeed`.
+  const RESULT_POOL = [
+    {
+      name: 'Robert Thomas', dates: '1947 – 2025', portrait: PORTRAITS.senior_male_1,
+      desc: 'Robert Thomas, 78, a beloved father and longtime engineer at Boeing, passed peacefully surrounded by family. His warmth and quiet wisdom touched everyone he met.',
+      tags: ['Greene Co., Tennessee', 'Veteran Tribute', 'Photo Gallery'],
+    },
+    {
+      name: 'Robert Scott Thomas', dates: '1961 – 2025', portrait: PORTRAITS.middle_male,
+      desc: 'Robert Scott Thomas, 64, served his community for over three decades as a high school principal. Known for his championship of arts education and student-led initiatives.',
+      tags: ['Willoughby Lake Co., Ohio', 'Educator\'s Legacy', 'Community Service'],
+    },
+    {
+      name: 'Robert James Thomas', dates: '1955 – 2025', portrait: PORTRAITS.senior_male_2,
+      desc: 'Robert James Thomas, 70, a master carpenter and union organizer, leaves behind a legacy of fine craftsmanship and tireless advocacy for working families in Sudbury.',
+      tags: ['Sudbury, Canada', 'Craftsmanship', 'Labour Heritage'],
+    },
+    {
+      name: 'Robert L. Thomas', dates: '1939 – 2025', portrait: PORTRAITS.senior_male_1,
+      desc: 'Robert L. Thomas, 86, a celebrated Pacific Northwest photographer, spent decades documenting the changing face of San Francisco. His prints hang in museums across the country.',
+      tags: ['San Francisco, CA', 'Photo Gallery', 'Arts & Culture'],
+    },
+    {
+      name: 'Robert E. Thomas', dates: '1952 – 2025', portrait: PORTRAITS.middle_male,
+      desc: 'Robert E. Thomas, 73, dedicated his life to coastal conservation as a marine biologist in Tampa Bay. His research shaped policy and inspired a generation of scientists.',
+      tags: ['Tampa, FL', 'Science & Research', 'Eternal Heritage Collection'],
+    },
+    {
+      name: 'Robert Daniel Thomas', dates: '1944 – 2025', portrait: PORTRAITS.senior_male_2,
+      desc: 'Robert Daniel Thomas, 81, a longtime jazz pianist who performed at venues across the Northeast, brought joy to audiences for nearly six decades. He never lost his love for the music.',
+      tags: ['Albany, NY', 'Music & Performance', 'Photo Gallery'],
+    },
+    {
+      name: 'Robert M. Thomas', dates: '1950 – 2025', portrait: PORTRAITS.senior_male_1,
+      desc: 'Robert M. Thomas, 75, a retired firefighter and youth basketball coach in Portland, was a steady presence in his neighborhood. He was happiest with his grandchildren around him.',
+      tags: ['Portland, OR', 'Service & Sacrifice', 'Family Stories'],
+    },
+    {
+      name: 'Robert P. Thomas', dates: '1958 – 2025', portrait: PORTRAITS.middle_male,
+      desc: 'Robert P. Thomas, 67, an architect whose work shaped Boston\'s waterfront, was known for blending modern design with the city\'s historic character. He mentored dozens of young designers.',
+      tags: ['Boston, MA', 'Career Highlights', 'Design & Architecture'],
+    },
+    {
+      name: 'Robert C. Thomas', dates: '1936 – 2025', portrait: PORTRAITS.senior_male_2,
+      desc: 'Robert C. Thomas, 89, a longtime rancher and pillar of the Phoenix faith community, raised five children with his beloved wife of 62 years. His door was always open.',
+      tags: ['Phoenix, AZ', 'Faith & Community', 'Family Stories'],
+    },
+    {
+      name: 'Robert W. Thomas', dates: '1942 – 2025', portrait: PORTRAITS.senior_male_1,
+      desc: 'Robert W. Thomas, 83, a decorated Navy veteran and small-business owner in Atlanta, served two tours overseas before returning home to build a beloved local hardware store.',
+      tags: ['Atlanta, GA', 'Veteran Tribute', 'Career Highlights'],
+    },
+  ];
+
+  // Rotate the pool per page so each page shows a different cohort.
+  function buildExtraResults(seed = 0) {
+    const n = RESULT_POOL.length;
+    return Array.from({ length: n }, (_, i) => RESULT_POOL[(i + seed) % n]);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Helpers — DOM rendering
+  // ─────────────────────────────────────────────────────────────────────
+  function tpl(id) {
+    return document.getElementById(id).content.cloneNode(true);
+  }
+
+  function tagPillsHtml(tags) {
+    return tags.map(t => `<span class="tag-pill"><i class="ph ph-tag"></i>${t}</span>`).join('');
+  }
+
+  function featuredCardHtml(r) {
+    return `
+      <article class="bg-white border border-wb-200 rounded-2xl p-5 md:p-6 flex flex-col md:flex-row gap-5 md:gap-6">
+        <div class="flex-1 order-2 md:order-1 min-w-0">
+          <h3 class="font-serif-heading text-[26px] md:text-[30px] text-navy-700 leading-tight mb-1">${r.name}</h3>
+          <p class="text-sm text-wb-500 mb-3">${r.dates}</p>
+          <p class="text-[15px] text-wb-900 leading-relaxed mb-4">${r.desc}
+            <a href="#" class="text-navy-500 underline whitespace-nowrap" onclick="event.preventDefault()">Visit Free Legacy Page</a>
+          </p>
+          <p class="text-sm font-semibold text-wb-900 mb-2">Read their memorials</p>
+          <div class="flex flex-wrap gap-2">${tagPillsHtml(r.tags)}</div>
+        </div>
+        <div class="order-1 md:order-2 flex-shrink-0">
+          <div class="w-full md:w-[200px] aspect-square md:aspect-[1/1] rounded-xl overflow-hidden bg-wb-200">
+            <img src="${r.portrait}" alt="" class="w-full h-full object-cover" loading="lazy" />
+          </div>
+        </div>
+      </article>`;
+  }
+
+  function inlineCtaBannerHtml() {
+    return `
+      <article class="bg-navy-700 text-white rounded-2xl p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-4">
+        <i class="ph ph-flower-tulip text-3xl text-gold-500 flex-shrink-0"></i>
+        <p class="flex-1 text-[15px] leading-snug">Whether you need help writing an obituary, or are ready to publish, we&rsquo;re here to help.</p>
+        <button class="h-10 px-5 rounded-full bg-white text-navy-700 text-sm font-semibold hover:bg-wb-100 flex-shrink-0">Create an Obituary</button>
+      </article>`;
+  }
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Pagination renderers
+  // ─────────────────────────────────────────────────────────────────────
+  function gatedPaginationHtml(currentPage) {
+    // Maps to Figma node 9890:56241 — single joined pill button group with
+    // navy/100 highlight on current page, gold/300 border, drop-shadow.
+    // Third cell reads "Pages 3 – 100" (locked range), not "Create Account".
+    const pageCell = (n, active) => `
+      <button onclick="goTo('p${n}')" aria-current="${active ? 'page' : 'false'}"
+        class="${active ? 'bg-navy-100 text-navy-700' : 'bg-white text-wb-500 hover:bg-wb-100'} w-12 h-10 border-r border-wb-300 flex items-center justify-center text-sm font-medium">
+        ${n}
+      </button>`;
+    const lockedCell = `
+      <span aria-disabled="true"
+        class="bg-white text-wb-500 h-10 flex items-center justify-center px-4 text-sm font-medium cursor-not-allowed select-none">
+        <i class="ph-fill ph-lock-key text-base text-wb-500 mr-1"></i> Pages 3 &ndash; 100
+      </span>`;
+    return `
+      <div class="bg-gold-100 rounded-2xl pt-3 pb-4 px-3 max-w-[480px] mx-auto flex flex-col items-center gap-4">
+        <div class="w-full flex flex-col items-center gap-2 text-center">
+          <i class="ph-fill ph-lock-key text-2xl text-navy-700"></i>
+          <p class="font-serif-heading text-[18px] leading-[1.1] text-navy-700">Create a free account to unlock all search results.</p>
+          <button onclick="requestSignIn()" class="mt-1 h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold">Create an Account</button>
+        </div>
+        <div class="inline-flex border border-gold-300 rounded overflow-hidden shadow-md">
+          ${pageCell(1, currentPage === 1)}
+          ${pageCell(2, currentPage === 2)}
+          ${lockedCell}
+        </div>
+        <p class="text-center text-base text-wb-700">Already have an account? <a href="#" onclick="event.preventDefault(); requestSignIn()" class="text-navy-500 underline font-semibold">Sign In</a></p>
+      </div>
+    `;
+  }
+
+  function unlockedPaginationHtml(currentPage = 3) {
+    // Maps to Figma node 9904:61404 — single joined pill, 40x40 cells,
+    // navy/100 highlight on current page, no shadow.
+    const pageCell = (n, active) => `
+      <button onclick="goTo('p${n}')" aria-current="${active ? 'page' : 'false'}"
+        class="${active ? 'bg-navy-100 text-navy-700' : 'bg-white text-wb-500 hover:bg-wb-100'} w-10 h-10 border-r border-wb-300 flex items-center justify-center text-sm font-medium">
+        ${n}
+      </button>`;
+    const ellipsisCell = `
+      <span class="bg-white text-wb-500 w-10 h-10 border-r border-wb-300 flex items-center justify-center text-sm font-medium select-none">…</span>`;
+    const lastCell = `
+      <button onclick="goTo('p3')"
+        class="bg-white text-wb-500 hover:bg-wb-100 w-10 h-10 border-r border-wb-300 flex items-center justify-center text-sm font-medium">
+        100
+      </button>`;
+    const prev = `
+      <button onclick="goTo('p${Math.max(1, currentPage - 1)}')" aria-label="Previous page"
+        class="bg-white hover:bg-wb-100 w-10 h-10 border-r border-wb-300 flex items-center justify-center text-wb-500">
+        <i class="ph ph-caret-left text-xs"></i>
+      </button>`;
+    const next = `
+      <button onclick="goTo('p${currentPage + 1}')" aria-label="Next page"
+        class="bg-white hover:bg-wb-100 w-10 h-10 flex items-center justify-center text-wb-500">
+        <i class="ph ph-caret-right text-xs"></i>
+      </button>`;
+    return `
+      <nav aria-label="Pagination" class="flex flex-col items-center gap-4 py-4">
+        <div class="inline-flex border border-wb-300 rounded overflow-hidden">
+          ${prev}
+          ${pageCell(1, currentPage === 1)}
+          ${pageCell(2, currentPage === 2)}
+          ${pageCell(3, currentPage === 3)}
+          ${ellipsisCell}
+          ${lastCell}
+          ${next}
+        </div>
+        <p class="text-base text-wb-900 text-center">Showing ${(currentPage - 1) * 50 + 1} &ndash; ${currentPage * 50} of 10,000+ Results</p>
+      </nav>
+    `;
+  }
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Browse-by-category band (under pagination) — shared
+  // ─────────────────────────────────────────────────────────────────────
+  function browseCategoryHtml() {
+    const items = [
+      { icon: 'ph-graduation-cap',     label: 'High School' },
+      { icon: 'ph-book-open',          label: 'College' },
+      { icon: 'ph-house',              label: 'Funeral Home' },
+      { icon: 'ph-map-pin',            label: 'Location' },
+      { icon: 'ph-newspaper',          label: 'Newspaper' },
+      { icon: 'ph-star',               label: 'Celebrities' },
+    ];
+    return `
+      <section class="mt-10 md:mt-12">
+        <h2 class="font-serif-heading text-[22px] md:text-[26px] text-navy-700 mb-1">Browse obituaries by category</h2>
+        <p class="text-sm md:text-[15px] text-wb-700 mb-5">Find the people you care about in the communities that matter to you.</p>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          ${items.map(i => `
+            <a href="#" onclick="event.preventDefault()" class="bg-white border border-wb-200 rounded-xl px-4 py-4 flex items-center gap-3 hover:border-navy-700 transition-colors">
+              <i class="ph ${i.icon} text-2xl text-gold-700"></i>
+              <span class="text-[15px] font-medium text-wb-900">${i.label}</span>
+            </a>`).join('')}
+        </div>
+      </section>
+    `;
+  }
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Page builders — assemble a results view
+  // ─────────────────────────────────────────────────────────────────────
+  function renderResultsView(viewEl, opts) {
+    const { page, featured, compactSeed, isUnlocked } = opts;
+    viewEl.innerHTML = '';
+    viewEl.appendChild(tpl('tpl-header'));
+    viewEl.appendChild(tpl('tpl-search-hero'));
+
+    const container = document.createElement('div');
+    container.className = 'max-w-[1440px] mx-auto px-4 md:px-8 py-6 md:py-8';
+    container.innerHTML = `
+      <div class="flex gap-6 lg:gap-8">
+        <div data-slot="filters"></div>
+        <div class="flex-1 min-w-0">
+          <div data-slot="toolbar"></div>
+          <div data-slot="results" class="space-y-5 md:space-y-6"></div>
+          <div data-slot="pagination" class="mt-8 md:mt-10"></div>
+        </div>
+        <div data-slot="rightbar"></div>
+      </div>
+      <div data-slot="browse"></div>
+    `;
+    container.querySelector('[data-slot="filters"]').appendChild(tpl('tpl-filters'));
+    container.querySelector('[data-slot="rightbar"]').appendChild(tpl('tpl-rightbar'));
+    container.querySelector('[data-slot="toolbar"]').appendChild(tpl('tpl-results-toolbar'));
+
+    // Build the results column — all cards use the featured layout
+    const resultsCol = container.querySelector('[data-slot="results"]');
+    let html = '';
+    featured.forEach(r => { html += featuredCardHtml(r); });
+    const extra = buildExtraResults(compactSeed);
+    extra.slice(0, 3).forEach(r => { html += featuredCardHtml(r); });
+    html += inlineCtaBannerHtml();
+    extra.slice(3).forEach(r => { html += featuredCardHtml(r); });
+    resultsCol.innerHTML = html;
+
+    // Pagination
+    container.querySelector('[data-slot="pagination"]').innerHTML =
+      isUnlocked ? unlockedPaginationHtml(page) : gatedPaginationHtml(page);
+
+    // Browse band
+    container.querySelector('[data-slot="browse"]').appendChild(
+      document.createRange().createContextualFragment(browseCategoryHtml())
+    );
+
+    viewEl.appendChild(container);
+    viewEl.appendChild(tpl('tpl-footer'));
+  }
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Signin state + view navigation
+  // After signup, every results page should use the unlocked pagination
+  // (no gate card, joined-pill pagination with full page range).
+  // ─────────────────────────────────────────────────────────────────────
+  let isSignedIn = false;
+  let returnToView = 'p3'; // where to send the user after Continue on Create
+
+  function renderAll() {
+    const seeds = { p1: 0, p2: 2, p3: 4 };
+    const featured = { p1: FEATURED_PAGE_1, p2: FEATURED_PAGE_2, p3: FEATURED_PAGE_3 };
+    [1, 2, 3].forEach(n => {
+      const v = document.querySelector(`.view[data-view="p${n}"]`);
+      renderResultsView(v, {
+        page: n,
+        featured: featured[`p${n}`],
+        compactSeed: seeds[`p${n}`],
+        isUnlocked: isSignedIn || n === 3,
+      });
+    });
+  }
+
+  function signIn() {
+    isSignedIn = true;
+    renderAll();
+  }
+
+  // Called from inline "Create an Account" / "Sign In" triggers on gated pages.
+  // Captures where the user came from so Continue can return them there.
+  function requestSignIn() {
+    const cur = document.querySelector('.view.active')?.dataset.view;
+    if (cur === 'p1' || cur === 'p2' || cur === 'p3') returnToView = cur;
+    goTo('create');
+  }
+  window.requestSignIn = requestSignIn;
+
+  function goTo(viewName) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelector(`.view[data-view="${viewName}"]`).classList.add('active');
+    document.querySelectorAll('.demo-switcher button').forEach(b => {
+      b.classList.toggle('active', b.dataset.goto === viewName);
+    });
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+  window.goTo = goTo;
+  window.signIn = signIn;
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Initial render
+  // ─────────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    renderAll();
+
+    // Wire demo switcher — also normalizes signin state per demo step.
+    // Demo-driven create resets returnToView so Continue lands on the
+    // canonical next step (p3), not a leftover value from an earlier flow.
+    document.querySelectorAll('.demo-switcher button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.goto;
+        const wasSignedIn = isSignedIn;
+        if (target === 'p1' || target === 'p2' || target === 'create') {
+          isSignedIn = false;
+        } else if (target === 'p3') {
+          isSignedIn = true;
+        }
+        if (target === 'create' || target === 'p3') returnToView = 'p3';
+        if (isSignedIn !== wasSignedIn) renderAll();
+        goTo(target);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

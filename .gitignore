@@ -13,6 +13,8 @@
 !911-memorial/**
 !newspaper-listing/
 !newspaper-listing/**
+!search-gating/
+!search-gating/**
 
 # Sign-up follow prototype
 !signup-follow-prototype.html
