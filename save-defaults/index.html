@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy — Saved Defaults Prototype (DES-2186)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+            serif: ['"DM Serif Text"', 'Georgia', 'serif'],
+          },
+          colors: {
+            navy:    { 50:'#f0f4fa', 100:'#e6ecf5', 200:'#d3ddeb', 300:'#b0c0d6', 400:'#728ab0', 500:'#42608f', 600:'#3c4d69', 700:'#293548', 800:'#212a3a', 900:'#151b24' },
+            gold:    { 50:'#fbf7ef', 100:'#f6e5b8', 200:'#f0d78d', 300:'#e9c86f', 400:'#e2ba60', 500:'#dcb05e', 600:'#c49e54', 700:'#a48849', 800:'#85713e', 900:'#655b34' },
+            wb:      { 50:'#fbfbfb', 100:'#f6f6f6', 200:'#ebe9e9', 300:'#dbdad7', 400:'#afadaa', 500:'#807e7a', 600:'#63605b', 700:'#514d45', 800:'#373329', 900:'#262116' },
+            seafoam: { 50:'#f3faf9', 100:'#ebf2f1', 200:'#cee2de', 300:'#aecec9', 400:'#81b8ae', 500:'#5c9d94', 600:'#357d75', 700:'#216e6a', 800:'#165c58', 900:'#014744' },
+            coral:   { 50:'#fcf1f3', 100:'#fce8ec', 200:'#f7d4da', 300:'#eba9b5', 400:'#e77d91', 500:'#d6677c', 600:'#c24c62', 700:'#993b4d', 800:'#792f3d', 900:'#662833' },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', system-ui, sans-serif; color: #262116; background: #fbf7ef; }
+
+    .font-serif-heading { font-family: 'DM Serif Text', Georgia, serif; font-weight: 400; }
+
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid #dcb05e; outline-offset: 2px;
+    }
+
+    /* Save-defaults status row — five visual treatments, toggled via data-state */
+    .save-row { display: none; }
+    [data-state="save-triggered"][data-signed-in="false"] .save-row[data-show="save-triggered-out"],
+    [data-state="save-triggered"][data-signed-in="true"]  .save-row[data-show="save-triggered-in"],
+    [data-state="applied"]      .save-row[data-show="applied"],
+    [data-state="default-off"]  .save-row[data-show="default-off"],
+    [data-state="changed"]      .save-row[data-show="changed"] { display: flex; }
+
+    /* Modal overlay */
+    .modal-overlay { display: none; }
+    [data-state="prompt-modal"] .modal-overlay { display: flex; }
+
+    /* Header swap based on sign-in */
+    [data-signed-in="true"]  .when-signed-out { display: none !important; }
+    [data-signed-in="false"] .when-signed-in  { display: none !important; }
+
+    /* Result list adjusts to current filter context */
+    [data-state="no-filters"]      .result-card-filtered,
+    [data-state="default-off"]     .result-card-filtered { display: none !important; }
+    [data-state="save-triggered"]  .result-card-unfiltered,
+    [data-state="prompt-modal"]    .result-card-unfiltered,
+    [data-state="applied"]         .result-card-unfiltered,
+    [data-state="changed"]         .result-card-unfiltered { display: none !important; }
+
+    /* Demo state switcher */
+    .demo-switcher {
+      position: fixed; bottom: 16px; right: 16px; z-index: 80;
+      background: rgba(21,27,36,0.92); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+      padding: 10px; display: flex; flex-direction: column; gap: 4px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      font-family: 'DM Sans', sans-serif; max-width: 220px;
+    }
+    .demo-switcher-label { color: rgba(255,255,255,0.45); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px 4px; }
+    .demo-switcher button {
+      padding: 7px 10px; border-radius: 10px; border: 0;
+      background: transparent; color: rgba(255,255,255,0.7);
+      font-size: 12.5px; font-weight: 500; text-align: left; cursor: pointer;
+      transition: all .15s; display: flex; align-items: center; gap: 8px;
+    }
+    .demo-switcher button:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .demo-switcher button.active { background: #dcb05e; color: #262116; font-weight: 600; }
+    .demo-switcher button .step { font-size: 10.5px; font-weight: 700; opacity: 0.5; min-width: 14px; }
+    .demo-switcher button.active .step { opacity: 1; }
+    .demo-switcher .divider { height: 1px; background: rgba(255,255,255,0.12); margin: 6px 4px; }
+    .demo-switcher .auth-toggle { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; color: rgba(255,255,255,0.7); font-size: 12px; }
+    .demo-switcher .auth-toggle label { cursor: pointer; }
+    .demo-switcher .auth-toggle .pill {
+      width: 38px; height: 22px; border-radius: 11px; background: rgba(255,255,255,0.15);
+      position: relative; transition: background .15s;
+    }
+    .demo-switcher .auth-toggle .pill::after {
+      content: ""; position: absolute; top: 2px; left: 2px;
+      width: 18px; height: 18px; border-radius: 50%; background: #fff;
+      transition: transform .15s;
+    }
+    [data-signed-in="true"] .demo-switcher .auth-toggle .pill { background: #5c9d94; }
+    [data-signed-in="true"] .demo-switcher .auth-toggle .pill::after { transform: translateX(16px); }
+    @media (max-width: 360px) { .demo-switcher { display: none; } }
+    @media print { .demo-switcher { display: none; } }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(8px);
+      background: #262116; color: #fff; padding: 12px 20px; border-radius: 9999px;
+      font-size: 14px; font-weight: 500; z-index: 90; opacity: 0; pointer-events: none;
+      transition: all .25s ease;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast i { color: #dcb05e; font-size: 18px; }
+    @media (max-width: 640px) {
+      .toast { bottom: 88px; max-width: calc(100vw - 32px); }
+    }
+
+    /* Mobile filter drawer */
+    .mobile-filter-drawer {
+      position: fixed; inset: 0; z-index: 70;
+      background: rgba(21,27,36,0.55); display: none;
+    }
+    .mobile-filter-drawer.open { display: block; }
+    .mobile-filter-drawer .panel {
+      position: absolute; top: 0; left: 0; bottom: 0; width: min(360px, 88vw);
+      background: #fff; overflow-y: auto;
+      box-shadow: 16px 0 40px rgba(0,0,0,0.18);
+    }
+
+    /* Modal becomes bottom sheet on mobile */
+    @media (max-width: 640px) {
+      .modal-card { border-radius: 24px 24px 0 0 !important; align-self: flex-end !important; max-width: 100% !important; width: 100% !important; }
+      .modal-overlay { align-items: flex-end !important; }
+    }
+  </style>
+</head>
+<body data-state="no-filters" data-signed-in="false">
+
+<!-- ====================================================================
+     DEMO SWITCHER (floating, bottom-right)
+     ==================================================================== -->
+<div class="demo-switcher" role="navigation" aria-label="Demo state switcher">
+  <div class="demo-switcher-label">Saved Defaults States</div>
+  <button data-goto="no-filters"     class="active"><span class="step">1</span> No filters (signed out)</button>
+  <button data-goto="save-triggered"><span class="step">2</span> Filters + save CTA</button>
+  <button data-goto="prompt-modal"  ><span class="step">3</span> Sign-in modal</button>
+  <button data-goto="applied"       ><span class="step">4</span> Saved default applied</button>
+  <button data-goto="default-off"   ><span class="step">5</span> Default off</button>
+  <button data-goto="changed"       ><span class="step">6</span> Changed</button>
+  <div class="divider"></div>
+  <label class="auth-toggle">
+    <span>Signed in</span>
+    <span class="pill" aria-hidden="true"></span>
+    <input type="checkbox" id="auth-toggle" class="sr-only" />
+  </label>
+</div>
+
+<!-- ====================================================================
+     HEADER (NavigationCustom 2.0 — desktop default variant)
+     ==================================================================== -->
+<header class="bg-white border-b border-wb-300 sticky top-0 z-30">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-3 md:py-4 flex items-center gap-3 md:gap-6">
+    <a href="../" aria-label="Legacy.com home" class="flex-shrink-0 flex items-center gap-2">
+      <img src="https://www.legacy.com/media/legacy-icon-dark.svg" alt="" class="h-7 md:h-9 w-auto" />
+      <span class="font-serif-heading text-xl md:text-2xl text-navy-700 leading-none">Legacy</span>
+    </a>
+    <div class="flex-1 max-w-[480px] mx-auto hidden sm:block">
+      <div class="relative">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-wb-500 pointer-events-none">
+          <i class="ph ph-magnifying-glass text-lg"></i>
+        </span>
+        <input type="search" placeholder="Find a loved one…" aria-label="Find a loved one" class="w-full h-11 pl-11 pr-4 rounded-full bg-white border border-wb-300 text-[15px] text-wb-900 placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
+      </div>
+    </div>
+    <nav class="hidden lg:flex items-center gap-1 text-[15px] text-wb-900 font-semibold">
+      <a href="#" class="px-3 py-2 hover:text-navy-700">Create</a>
+      <a href="#" class="px-3 py-2 hover:text-navy-700">Find</a>
+      <a href="#" class="px-3 py-2 hover:text-navy-700">Plan</a>
+      <a href="#" class="px-3 py-2 hover:text-navy-700">Support</a>
+    </nav>
+    <div class="flex items-center gap-2 md:gap-3 ml-auto">
+      <a href="#" class="hidden md:inline-flex items-center gap-1.5 text-[15px] font-semibold text-wb-900 px-3 py-2 hover:text-navy-700">
+        <i class="ph ph-gift"></i> Send a Gift
+      </a>
+      <!-- Signed out -->
+      <a href="#" id="sign-in-link" class="when-signed-out inline-flex items-center gap-1.5 text-[15px] font-semibold text-wb-900 px-3 py-2 hover:text-navy-700">
+        <i class="ph ph-user"></i> Sign In
+      </a>
+      <!-- Signed in -->
+      <div class="when-signed-in inline-flex items-center gap-2 px-2 py-1">
+        <span class="text-[15px] font-semibold text-wb-900 hidden sm:inline">Hi, John</span>
+        <span class="w-9 h-9 rounded-full bg-gold-100 text-gold-900 flex items-center justify-center text-sm font-semibold border border-gold-300" aria-hidden="true">J</span>
+      </div>
+      <button aria-label="Open menu" class="lg:hidden w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900">
+        <i class="ph ph-list text-xl"></i>
+      </button>
+    </div>
+  </div>
+  <!-- Mobile search row -->
+  <div class="sm:hidden border-t border-wb-200 px-4 py-3">
+    <div class="relative">
+      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-wb-500 pointer-events-none">
+        <i class="ph ph-magnifying-glass text-lg"></i>
+      </span>
+      <input type="search" placeholder="Find a loved one…" aria-label="Find a loved one" class="w-full h-11 pl-11 pr-4 rounded-full bg-white border border-wb-300 text-[15px] placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
+    </div>
+  </div>
+</header>
+
+<!-- ====================================================================
+     NAVY PROMO BANNER
+     ==================================================================== -->
+<div class="bg-navy-700 text-white">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-3 flex items-center justify-center gap-3 text-sm md:text-[15px] text-center">
+    <span class="font-semibold uppercase tracking-wider text-gold-400 text-xs md:text-[13px]">Breaking News</span>
+    <span class="hidden sm:inline text-white/85">Flood in Texas Kills 95.</span>
+    <a href="#" class="font-semibold text-gold-400 hover:text-gold-300 underline underline-offset-2">Visit our Memorial</a>
+  </div>
+</div>
+
+<!-- ====================================================================
+     BREADCRUMB ROW
+     ==================================================================== -->
+<div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 pt-4 md:pt-6 pb-2 flex items-center justify-between gap-3">
+  <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-sm text-wb-700">
+    <a href="#" class="hover:text-navy-700">First page</a>
+    <i class="ph ph-caret-right text-xs text-wb-400" aria-hidden="true"></i>
+    <span class="text-wb-900 font-medium">Chicagoland Obituaries</span>
+  </nav>
+  <div class="flex items-center gap-2">
+    <button class="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-gold-100 text-gold-900 text-sm font-semibold border border-gold-200 hover:bg-gold-200 transition-colors">
+      <i class="ph ph-heart text-base"></i>
+      <span class="hidden sm:inline">Follow this page</span>
+      <span class="sm:hidden">Follow</span>
+    </button>
+    <button aria-label="Share this page" class="w-10 h-10 rounded-full border border-wb-300 bg-white flex items-center justify-center text-wb-900 hover:bg-wb-100">
+      <i class="ph ph-share-network"></i>
+    </button>
+    <button aria-label="More options" class="w-10 h-10 rounded-full border border-wb-300 bg-white flex items-center justify-center text-wb-900 hover:bg-wb-100">
+      <i class="ph ph-dots-three"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ====================================================================
+     HERO
+     ==================================================================== -->
+<section class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 pt-4 pb-8 md:pt-6 md:pb-10 text-center">
+  <h1 class="font-serif-heading text-4xl sm:text-5xl md:text-6xl text-wb-900 leading-tight mb-3 md:mb-4">Chicagoland Obituaries</h1>
+  <p class="text-base md:text-lg text-wb-700 max-w-[720px] mx-auto leading-relaxed">
+    Browse remembrances from Chicago and the surrounding suburbs. View, follow, and pay tribute to neighbors, friends, and loved ones whose stories shaped the region.
+  </p>
+</section>
+
+<!-- ====================================================================
+     TODAY'S FEATURED OBITUARIES (carousel) + FEATURED GROUPS (right rail)
+     ==================================================================== -->
+<section class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 pb-8 md:pb-10">
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+    <div>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl md:text-2xl font-semibold text-wb-900">Today's Featured Obituaries</h2>
+        <div class="hidden sm:flex items-center gap-2">
+          <button aria-label="Previous" class="w-10 h-10 rounded-full border border-wb-300 bg-white flex items-center justify-center text-wb-700 hover:bg-wb-100">
+            <i class="ph ph-caret-left"></i>
+          </button>
+          <button aria-label="Next" class="w-10 h-10 rounded-full border border-wb-300 bg-white flex items-center justify-center text-wb-700 hover:bg-wb-100">
+            <i class="ph ph-caret-right"></i>
+          </button>
+        </div>
+      </div>
+      <div class="overflow-x-auto -mx-4 px-4 sm:overflow-visible sm:mx-0 sm:px-0">
+        <div class="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          <article class="flex-shrink-0 w-[200px] sm:w-auto bg-white border border-wb-200 rounded-xl overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1559963110-71b394e7494d?w=400&q=80" alt="" class="w-full h-[160px] object-cover" />
+            <div class="p-3 md:p-4">
+              <h3 class="font-serif-heading text-lg leading-snug text-wb-900">Gordon Goodwin</h3>
+              <p class="text-xs text-wb-500 mt-1">1944 — 2026</p>
+              <p class="text-sm text-wb-700 mt-2 line-clamp-2">Big Phat Band bandleader and pianist.</p>
+            </div>
+          </article>
+          <article class="flex-shrink-0 w-[200px] sm:w-auto bg-white border border-wb-200 rounded-xl overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80" alt="" class="w-full h-[160px] object-cover" />
+            <div class="p-3 md:p-4">
+              <h3 class="font-serif-heading text-lg leading-snug text-wb-900">Sophia Klanecky</h3>
+              <p class="text-xs text-wb-500 mt-1">1953 — 2026</p>
+              <p class="text-sm text-wb-700 mt-2 line-clamp-2">Confessions of a Shopaholic author.</p>
+            </div>
+          </article>
+          <article class="flex-shrink-0 w-[200px] sm:w-auto bg-white border border-wb-200 rounded-xl overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" alt="" class="w-full h-[160px] object-cover" />
+            <div class="p-3 md:p-4">
+              <h3 class="font-serif-heading text-lg leading-snug text-wb-900">Rod Paige</h3>
+              <p class="text-xs text-wb-500 mt-1">1933 — 2026</p>
+              <p class="text-sm text-wb-700 mt-2 line-clamp-2">Former U.S. Secretary of Education.</p>
+            </div>
+          </article>
+          <article class="flex-shrink-0 w-[200px] sm:w-auto bg-white border border-wb-200 rounded-xl overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1542178243-bc20204b769f?w=400&q=80" alt="" class="w-full h-[160px] object-cover" />
+            <div class="p-3 md:p-4">
+              <h3 class="font-serif-heading text-lg leading-snug text-wb-900">Jeff Garcia</h3>
+              <p class="text-xs text-wb-500 mt-1">1949 — 2026</p>
+              <p class="text-sm text-wb-700 mt-2 line-clamp-2">Voice of Buzz in Jimmy Neutron Boy Genius.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+    <aside class="bg-white border border-wb-200 rounded-xl p-5 self-start">
+      <h2 class="text-base font-semibold text-wb-900 mb-4">Featured Groups</h2>
+      <ul class="space-y-3">
+        <li>
+          <a href="#" class="flex items-start justify-between gap-3 py-2 group">
+            <div>
+              <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-gold-900 bg-gold-100 px-2 py-0.5 rounded-full mb-1">
+                <i class="ph-fill ph-star text-[11px] text-gold-700"></i> Featured Family
+              </span>
+              <p class="font-semibold text-wb-900 group-hover:text-navy-700">Heart Disease Awareness</p>
+              <p class="text-xs text-wb-500 mt-0.5">United States</p>
+            </div>
+            <i class="ph ph-caret-right text-wb-400 mt-2 flex-shrink-0"></i>
+          </a>
+        </li>
+        <li class="border-t border-wb-200 pt-3">
+          <a href="#" class="flex items-start justify-between gap-3 py-2 group">
+            <div>
+              <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-coral-700 bg-coral-50 px-2 py-0.5 rounded-full mb-1">
+                <i class="ph-fill ph-flag text-[11px]"></i> Tragedy
+              </span>
+              <p class="font-semibold text-wb-900 group-hover:text-navy-700">Texas Flood Memorial</p>
+              <p class="text-xs text-wb-500 mt-0.5">Houston, TX</p>
+            </div>
+            <i class="ph ph-caret-right text-wb-400 mt-2 flex-shrink-0"></i>
+          </a>
+        </li>
+        <li class="border-t border-wb-200 pt-3">
+          <a href="#" class="flex items-start justify-between gap-3 py-2 group">
+            <div>
+              <p class="font-semibold text-wb-900 group-hover:text-navy-700">Northwestern University</p>
+              <p class="text-xs text-wb-500 mt-0.5">Chicago, IL</p>
+            </div>
+            <i class="ph ph-caret-right text-wb-400 mt-2 flex-shrink-0"></i>
+          </a>
+        </li>
+      </ul>
+      <a href="#" class="block text-center text-sm font-semibold text-navy-500 hover:text-navy-700 underline mt-4 pt-4 border-t border-wb-200">View All Groups</a>
+    </aside>
+  </div>
+</section>
+
+<!-- ====================================================================
+     "VIEW ALL CHICAGOLAND OBITUARIES" — main results section
+     ==================================================================== -->
+<section class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 pb-16">
+  <h2 class="font-serif-heading text-2xl md:text-3xl text-wb-900 mb-4 md:mb-6">View All Chicagoland Obituaries</h2>
+
+  <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] xl:grid-cols-[260px_1fr_300px] gap-6 lg:gap-8">
+
+    <!-- =================== FILTER SIDEBAR =================== -->
+    <aside class="hidden lg:block">
+      <div class="sticky top-[88px] bg-white border border-wb-200 rounded-xl p-5 self-start">
+        <div class="flex items-center gap-2 mb-4 pb-3 border-b border-wb-200">
+          <i class="ph ph-sliders-horizontal text-xl text-navy-700"></i>
+          <h3 class="text-base font-semibold text-navy-700">Filter By</h3>
+        </div>
+
+        <div class="mb-5">
+          <label for="within-results-d" class="block text-sm font-semibold text-wb-900 mb-2">Search in Your Results</label>
+          <input id="within-results-d" type="search" placeholder='Type a name or descriptor to refine your results, e.g. “Sophia Patel” / Location: NY' class="w-full h-11 px-3 rounded-lg border border-wb-300 text-sm placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
+        </div>
+
+        <div class="border-t border-wb-200 py-4">
+          <h4 class="text-sm font-semibold text-wb-900 mb-3">Publish Date</h4>
+          <div class="space-y-2 text-sm text-wb-900">
+            <label class="flex items-center gap-2 cursor-pointer min-h-[36px]"><input type="radio" name="date" value="all"        class="accent-navy-700 trigger-filter" checked /> All Time</label>
+            <label class="flex items-center gap-2 cursor-pointer min-h-[36px]"><input type="radio" name="date" value="today"      class="accent-navy-700 trigger-filter" /> Today</label>
+            <label class="flex items-center gap-2 cursor-pointer min-h-[36px]"><input type="radio" name="date" value="last-week"  class="accent-navy-700 trigger-filter" /> Last Week</label>
+            <label class="flex items-center gap-2 cursor-pointer min-h-[36px]"><input type="radio" name="date" value="last-month" class="accent-navy-700 trigger-filter" /> Last Month</label>
+            <label class="flex items-center gap-2 cursor-pointer min-h-[36px]"><input type="radio" name="date" value="custom"     class="accent-navy-700 trigger-filter" /> Custom Range</label>
+          </div>
+        </div>
+
+        <div class="border-t border-wb-200 py-4">
+          <h4 class="text-sm font-semibold text-wb-900 mb-3">Age Range</h4>
+          <div class="space-y-2 text-sm text-wb-900">
+            <label class="flex items-center gap-2 cursor-pointer min-h-[36px]"><input type="radio" name="age" value="all"   class="accent-navy-700 trigger-filter" checked /> All ages</label>
+            <label class="flex items-center gap-2 cursor-pointer min-h-[36px]"><input type="radio" name="age" value="50-69" class="accent-navy-700 trigger-filter" /> 50 – 69 years old</label>
+            <label class="flex items-center gap-2 cursor-pointer min-h-[36px]"><input type="radio" name="age" value="71-80" class="accent-navy-700 trigger-filter" /> 71 – 80 years old</label>
+            <label class="flex items-center gap-2 cursor-pointer min-h-[36px]"><input type="radio" name="age" value="81-90" class="accent-navy-700 trigger-filter" /> 81 – 90 years old</label>
+            <label class="flex items-center gap-2 cursor-pointer min-h-[36px]"><input type="radio" name="age" value="91+"   class="accent-navy-700 trigger-filter" /> Above 90 years old</label>
+          </div>
+        </div>
+
+        <div class="border-t border-wb-200 py-4">
+          <h4 class="text-sm font-semibold text-wb-900 mb-3">Schools</h4>
+          <select class="w-full h-11 px-3 rounded-lg border border-wb-300 text-sm text-wb-900 bg-white mb-3 trigger-filter">
+            <option>Search for a high school or college</option>
+            <option>Northwestern University</option>
+            <option>University of Chicago</option>
+            <option>Loyola University</option>
+          </select>
+          <div class="space-y-2 text-sm text-wb-900">
+            <label class="flex items-center gap-2 cursor-pointer min-h-[36px]"><input type="radio" name="schools" value="all" class="accent-navy-700 trigger-filter" checked /> All Schools</label>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- =================== RESULTS COLUMN =================== -->
+    <div>
+      <!-- TOOLBAR: count + sort + view-type + mobile filter button -->
+      <div class="flex items-center justify-between gap-3 flex-wrap mb-4">
+        <div class="flex items-center gap-3">
+          <button id="open-filters-mobile" class="lg:hidden inline-flex items-center gap-2 h-11 px-4 rounded-full border border-wb-300 bg-white text-sm font-semibold text-wb-900 hover:bg-wb-100">
+            <i class="ph ph-sliders-horizontal"></i> Filter By
+          </button>
+          <p id="result-count" class="text-base font-semibold text-wb-900">33,954 Results</p>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <span class="hidden sm:inline text-sm text-wb-700">Sort By</span>
+          <select id="sort-select" class="trigger-filter h-11 pl-3 pr-9 rounded-lg border border-wb-300 text-sm text-wb-900 bg-white">
+            <option value="recent">Most Recent</option>
+            <option value="relevant">Most Relevant</option>
+            <option value="oldest">Oldest First</option>
+          </select>
+          <div class="hidden sm:inline-flex rounded-lg border border-wb-300 overflow-hidden" role="group" aria-label="View type">
+            <button id="view-list" class="trigger-view w-11 h-11 flex items-center justify-center bg-gold-100 text-gold-900" aria-pressed="true" data-view="list">
+              <i class="ph ph-rows text-lg"></i>
+            </button>
+            <button id="view-grid" class="trigger-view w-11 h-11 flex items-center justify-center bg-white text-wb-700 border-l border-wb-300 hover:bg-wb-100" aria-pressed="false" data-view="grid">
+              <i class="ph ph-squares-four text-lg"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- =================== SAVE-DEFAULTS STATUS ROWS =================== -->
+      <!-- State 2 (signed out): solid gold/700 border, transparent bg on page, navy "Save as Default" → opens modal -->
+      <div class="save-row" data-show="save-triggered-out" role="region" aria-label="Save defaults invitation">
+        <div class="w-full border border-gold-700 rounded-lg p-4 mb-5 flex items-start sm:items-center gap-3 sm:gap-4 flex-col sm:flex-row">
+          <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center" aria-hidden="true">
+            <i class="ph-fill ph-star text-[18px]"></i>
+          </span>
+          <div class="flex-1 min-w-0">
+            <p class="text-base font-semibold text-navy-700 leading-tight">Start every visit with these filters?</p>
+            <p class="text-base text-wb-700 leading-tight mt-1">Save as your default for Chicagoland Obituaries.</p>
+          </div>
+          <button data-action="save-default" class="flex-shrink-0 inline-flex items-center justify-center gap-2 h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold transition-colors w-full sm:w-auto">
+            <i class="ph ph-star"></i> Save as Default
+          </button>
+        </div>
+      </div>
+
+      <!-- State 2 (signed in): same shell, saves immediately -->
+      <div class="save-row" data-show="save-triggered-in" role="region" aria-label="Save defaults invitation">
+        <div class="w-full border border-gold-700 rounded-lg p-4 mb-5 flex items-start sm:items-center gap-3 sm:gap-4 flex-col sm:flex-row">
+          <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center" aria-hidden="true">
+            <i class="ph-fill ph-star text-[18px]"></i>
+          </span>
+          <div class="flex-1 min-w-0">
+            <p class="text-base font-semibold text-navy-700 leading-tight">Start every visit with these filters?</p>
+            <p class="text-base text-wb-700 leading-tight mt-1">Save as your default for Chicagoland Obituaries.</p>
+          </div>
+          <button data-action="save-default-direct" class="flex-shrink-0 inline-flex items-center justify-center gap-2 h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold transition-colors w-full sm:w-auto">
+            <i class="ph ph-star"></i> Save as Default
+          </button>
+        </div>
+      </div>
+
+      <!-- State 4: applied — solid gold/700 border, transparent bg, star icon, warmBlack/700 text, "Turn off" underlined in warmBlack/700 -->
+      <div class="save-row" data-show="applied" role="region" aria-label="Saved default applied">
+        <div class="w-full border border-gold-700 rounded-lg px-4 sm:px-8 py-3 mb-5 flex items-center gap-3 justify-between flex-wrap">
+          <div class="flex items-center gap-2 min-w-0 flex-1">
+            <i class="ph ph-star text-[22px] text-gold-700 flex-shrink-0" aria-hidden="true"></i>
+            <p class="text-base text-wb-700 leading-tight">Your saved default is applied.</p>
+          </div>
+          <button data-action="turn-off" class="text-base font-semibold text-wb-700 hover:text-wb-900 underline decoration-from-font underline-offset-2 px-2 py-1 min-h-[44px] sm:min-h-0">Turn off</button>
+        </div>
+      </div>
+
+      <!-- State 5: default off — white bg, DASHED gold/700 border, navy/500 "Turn on" -->
+      <div class="save-row" data-show="default-off" role="region" aria-label="Default off">
+        <div class="w-full bg-white border border-dashed border-gold-700 rounded-lg px-4 sm:px-8 py-3 mb-5 flex items-center gap-3 justify-between flex-wrap">
+          <div class="flex items-center gap-2 min-w-0 flex-1">
+            <i class="ph ph-star text-[22px] text-gold-700 flex-shrink-0" aria-hidden="true"></i>
+            <p class="text-base text-wb-700 leading-tight">Default is off. It will return next time you visit.</p>
+          </div>
+          <button data-action="turn-on" class="text-base font-semibold text-navy-500 hover:text-navy-700 underline decoration-from-font underline-offset-2 px-2 py-1 min-h-[44px] sm:min-h-0">Turn on</button>
+        </div>
+      </div>
+
+      <!-- State 6: changed — solid gold/100 (surface/gold-container) bg, no border, Reset link + Save Changes navy button -->
+      <div class="save-row" data-show="changed" role="region" aria-label="Default modified">
+        <div class="w-full bg-gold-100 rounded-lg p-4 mb-5 flex items-center gap-3 justify-between flex-wrap">
+          <div class="flex items-center gap-2 min-w-0 flex-1">
+            <i class="ph ph-star text-[22px] text-gold-700 flex-shrink-0" aria-hidden="true"></i>
+            <p class="text-base text-wb-700 leading-tight">You've changed filters. Reset, or save as your default?</p>
+          </div>
+          <div class="flex items-center gap-3 ml-auto">
+            <button data-action="reset-changes" class="text-base font-semibold text-navy-500 hover:text-navy-700 underline decoration-from-font underline-offset-2 px-2 py-1 min-h-[44px] sm:min-h-0">Reset</button>
+            <button data-action="save-changes" class="inline-flex items-center justify-center h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold transition-colors">Save Changes</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- =================== RESULT CARDS =================== -->
+      <div id="results-list" class="space-y-4 md:space-y-5">
+        <!-- Unfiltered results (state: no-filters / default-off) -->
+        <article class="result-card-unfiltered bg-white border border-wb-200 rounded-xl p-4 md:p-5 flex flex-col sm:flex-row gap-4">
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&q=80" alt="" class="w-full sm:w-[180px] md:w-[200px] h-[180px] sm:h-[200px] object-cover rounded-lg flex-shrink-0" />
+          <div class="flex-1 min-w-0">
+            <h3 class="font-serif-heading text-2xl text-wb-900">Robert Thomas</h3>
+            <p class="text-sm text-wb-500 mb-2">1945 — 2026</p>
+            <p class="text-[15px] text-wb-700 leading-relaxed line-clamp-3">Robert Thomas, 65, an emerging voice in contemporary fiction, is known for his immersive storytelling and deep character exploration. He centered everyday people in extraordinary circumstances.</p>
+            <p class="text-xs uppercase tracking-wider text-wb-500 mt-3 mb-1.5 font-semibold">Read this contribution:</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold"><i class="ph ph-tag"></i> Legacy</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">Daily Gazette</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">The Daily Bugle</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">The Herald</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="result-card-unfiltered bg-white border border-wb-200 rounded-xl p-4 md:p-5 flex flex-col sm:flex-row gap-4">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80" alt="" class="w-full sm:w-[180px] md:w-[200px] h-[180px] sm:h-[200px] object-cover rounded-lg flex-shrink-0" />
+          <div class="flex-1 min-w-0">
+            <h3 class="font-serif-heading text-2xl text-wb-900">Sophia Patel</h3>
+            <p class="text-sm text-wb-500 mb-2">1955 — 2025</p>
+            <p class="text-[15px] text-wb-700 leading-relaxed line-clamp-3">Sophia Patel, 67, is a renowned environmental activist and author. Her writings emphasize sustainability and the importance of protecting our planet's resources for future generations.</p>
+            <p class="text-xs uppercase tracking-wider text-wb-500 mt-3 mb-1.5 font-semibold">Explore her impact:</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold"><i class="ph ph-tag"></i> The Newspaper Times</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">The Daily Tribune</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="result-card-unfiltered bg-white border border-wb-200 rounded-xl p-4 md:p-5 flex flex-col sm:flex-row gap-4">
+          <img src="https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=400&q=80" alt="" class="w-full sm:w-[180px] md:w-[200px] h-[180px] sm:h-[200px] object-cover rounded-lg flex-shrink-0" />
+          <div class="flex-1 min-w-0">
+            <h3 class="font-serif-heading text-2xl text-wb-900">James Wong</h3>
+            <p class="text-sm text-wb-500 mb-2">1948 — 2026</p>
+            <p class="text-[15px] text-wb-700 leading-relaxed line-clamp-3">James Wong, 77, was a celebrated cardiothoracic surgeon at Northwestern Memorial Hospital who pioneered minimally invasive techniques and mentored a generation of physicians.</p>
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold"><i class="ph ph-tag"></i> Chicago Tribune</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">Crain's Chicago</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Filtered results (state: save-triggered / applied / changed) -->
+        <article class="result-card-filtered bg-white border border-wb-200 rounded-xl p-4 md:p-5 flex flex-col sm:flex-row gap-4">
+          <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80" alt="" class="w-full sm:w-[180px] md:w-[200px] h-[180px] sm:h-[200px] object-cover rounded-lg flex-shrink-0" />
+          <div class="flex-1 min-w-0">
+            <h3 class="font-serif-heading text-2xl text-wb-900">Emma Wilson</h3>
+            <p class="text-sm text-wb-500 mb-2">1944 — 2026</p>
+            <p class="text-[15px] text-wb-700 leading-relaxed line-clamp-3">Emma Wilson, 81, is a celebrated chef and author, whose culinary creations emphasize farm-to-table dining and global flavors.</p>
+            <p class="text-xs uppercase tracking-wider text-wb-500 mt-3 mb-1.5 font-semibold">Taste her recipes:</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold"><i class="ph ph-tag"></i> Gourmet Guide</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">Culinary Chronicles</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">Chef's Notebook</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">Foodie Magazine</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="result-card-filtered bg-white border border-wb-200 rounded-xl p-4 md:p-5 flex flex-col sm:flex-row gap-4">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80" alt="" class="w-full sm:w-[180px] md:w-[200px] h-[180px] sm:h-[200px] object-cover rounded-lg flex-shrink-0" />
+          <div class="flex-1 min-w-0">
+            <h3 class="font-serif-heading text-2xl text-wb-900">Noah Johnson</h3>
+            <p class="text-sm text-wb-500 mb-2">1945 — 2026</p>
+            <p class="text-[15px] text-wb-700 leading-relaxed line-clamp-3">Noah Johnson, 80, is an influential sculptor whose monumental works challenge perceptions of space and structure in urban environments.</p>
+            <p class="text-xs uppercase tracking-wider text-wb-500 mt-3 mb-1.5 font-semibold">Visit his installations:</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold"><i class="ph ph-tag"></i> Sculpture Today</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">Arts &amp; Architecture</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">Masterpiece Review</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="result-card-filtered bg-white border border-wb-200 rounded-xl p-4 md:p-5 flex flex-col sm:flex-row gap-4">
+          <img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&q=80" alt="" class="w-full sm:w-[180px] md:w-[200px] h-[180px] sm:h-[200px] object-cover rounded-lg flex-shrink-0" />
+          <div class="flex-1 min-w-0">
+            <h3 class="font-serif-heading text-2xl text-wb-900">Olivia Smith</h3>
+            <p class="text-sm text-wb-500 mb-2">1942 — 2026</p>
+            <p class="text-[15px] text-wb-700 leading-relaxed line-clamp-3">Olivia Smith, 83, was a tireless community organizer whose decades of neighborhood advocacy shaped the South Side's public spaces.</p>
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold"><i class="ph ph-tag"></i> Hyde Park Herald</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="result-card-filtered bg-white border border-wb-200 rounded-xl p-4 md:p-5 flex flex-col sm:flex-row gap-4">
+          <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&q=80" alt="" class="w-full sm:w-[180px] md:w-[200px] h-[180px] sm:h-[200px] object-cover rounded-lg flex-shrink-0" />
+          <div class="flex-1 min-w-0">
+            <h3 class="font-serif-heading text-2xl text-wb-900">Liam Taylor</h3>
+            <p class="text-sm text-wb-500 mb-2">1944 — 2026</p>
+            <p class="text-[15px] text-wb-700 leading-relaxed line-clamp-3">Liam Taylor, 82, is a distinguished anthropologist whose research focuses on cultural diversity and human rights issues across the globe.</p>
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold"><i class="ph ph-tag"></i> Anthro Journal</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">Cultural Insights</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">Global Perspective</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="result-card-filtered bg-white border border-wb-200 rounded-xl p-4 md:p-5 flex flex-col sm:flex-row gap-4">
+          <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80" alt="" class="w-full sm:w-[180px] md:w-[200px] h-[180px] sm:h-[200px] object-cover rounded-lg flex-shrink-0" />
+          <div class="flex-1 min-w-0">
+            <h3 class="font-serif-heading text-2xl text-wb-900">Ava Brown</h3>
+            <p class="text-sm text-wb-500 mb-2">1947 — 2026</p>
+            <p class="text-[15px] text-wb-700 leading-relaxed line-clamp-3">Ava Brown, 79, is a rising star in the indie music scene known for her soul-stirring lyrics and unique sound that blends various genres.</p>
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold"><i class="ph ph-tag"></i> Music Spotlight</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">Soundcheck</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold">Artist Showcase</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Create Obituary CTA band -->
+      <div class="mt-8 bg-navy-700 text-white rounded-xl px-4 md:px-6 py-4 md:py-5 flex items-center justify-between gap-3 md:gap-6 flex-wrap">
+        <div class="flex-1 min-w-[220px]">
+          <p class="text-sm md:text-base font-semibold leading-tight">Whether you need help writing an obituary, or are ready to publish, <a href="#" class="text-gold-400 underline">we can help.</a></p>
+        </div>
+        <a href="#" class="inline-flex items-center gap-2 h-11 px-5 rounded-full bg-white text-navy-700 text-sm font-semibold hover:bg-gold-100 transition-colors">
+          <i class="ph ph-plus-circle"></i> Create an Obituary
+        </a>
+      </div>
+    </div>
+
+    <!-- =================== AD COLUMN (xl only) =================== -->
+    <aside class="hidden xl:block">
+      <div class="sticky top-[88px] space-y-6 self-start">
+        <div class="bg-white border border-wb-200 rounded-xl overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&q=80" alt="" class="w-full h-[200px] object-cover" />
+          <div class="p-4">
+            <p class="text-xs uppercase tracking-wider text-wb-500 font-semibold mb-2">Sponsored</p>
+            <p class="text-sm font-semibold text-wb-900 leading-snug">Helping families plan ahead with confidence.</p>
+          </div>
+        </div>
+        <div class="bg-wb-100 border border-wb-200 rounded-xl h-[250px] flex flex-col items-center justify-center text-wb-500">
+          <span class="text-xs uppercase tracking-wider font-semibold">AD</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ====================================================================
+     FOOTER (compact)
+     ==================================================================== -->
+<footer class="bg-navy-900 text-white">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-10">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
+      <div class="col-span-2 md:col-span-1">
+        <img src="https://www.legacy.com/media/legacy-icon-white.svg" alt="Legacy" class="h-8 w-auto" />
+        <p class="text-xs text-wb-300 mt-4">© 2026 Legacy.com. All rights reserved.</p>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3">Services</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Create &amp; Publish</a></li>
+          <li><a href="#" class="hover:text-gold-500">Plan a funeral</a></li>
+          <li><a href="#" class="hover:text-gold-500">Send a Gift</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3">Find</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">By Location</a></li>
+          <li><a href="#" class="hover:text-gold-500">By Newspaper</a></li>
+          <li><a href="#" class="hover:text-gold-500">By School</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3">About</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Our Mission</a></li>
+          <li><a href="#" class="hover:text-gold-500">Careers</a></li>
+          <li><a href="#" class="hover:text-gold-500">Press</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ====================================================================
+     MODAL — "Save your default search" (state 3) · Figma node 9934:86090
+     ==================================================================== -->
+<div class="modal-overlay fixed inset-0 z-[60] bg-[rgba(21,27,36,0.55)] backdrop-blur-[2px] items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-card w-full max-w-[544px] bg-white border border-wb-300 rounded-[20px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] p-8 relative flex flex-col items-center gap-8">
+    <button id="modal-close" aria-label="Close" class="absolute top-4 right-4 w-9 h-9 rounded-full text-wb-500 hover:text-wb-900 hover:bg-wb-100 flex items-center justify-center">
+      <i class="ph ph-x text-xl"></i>
+    </button>
+    <span class="inline-flex items-center gap-1 px-3 py-0.5 rounded-md bg-gold-100 text-[14px] text-gold-900">
+      <i class="ph-fill ph-star text-[14px] text-gold-700"></i> Saved Defaults
+    </span>
+    <div class="flex flex-col items-center gap-8 w-full">
+      <div class="flex flex-col items-center gap-2 text-center max-w-[480px]">
+        <h2 id="modal-title" class="font-serif-heading text-[30px] text-navy-700 leading-[1.2]">Save your default search</h2>
+        <p class="text-sm text-wb-700 leading-[1.5]">Sign in to save your preferred filters, sort, and layout for this page.<br />We'll apply them automatically every time you return.</p>
+      </div>
+      <ul class="flex flex-col gap-3 w-full max-w-[480px]">
+        <li class="flex items-start gap-2">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gold-100 flex items-center justify-center" aria-hidden="true">
+            <i class="ph-bold ph-check text-[12px] text-gold-700"></i>
+          </span>
+          <span class="text-sm font-bold text-wb-700 leading-[1.5]">Start every visit with the filters you actually use.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gold-100 flex items-center justify-center" aria-hidden="true">
+            <i class="ph-bold ph-check text-[12px] text-gold-700"></i>
+          </span>
+          <span class="text-sm font-bold text-wb-700 leading-[1.5]">Different defaults per location, newspaper, or search.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gold-100 flex items-center justify-center" aria-hidden="true">
+            <i class="ph-bold ph-check text-[12px] text-gold-700"></i>
+          </span>
+          <span class="text-sm font-bold text-wb-700 leading-[1.5]">Reset to your default anytime, or change it from your account.</span>
+        </li>
+      </ul>
+    </div>
+    <div class="flex flex-col-reverse sm:flex-row gap-4 sm:items-center sm:justify-end w-full">
+      <button id="modal-maybe-later" class="inline-flex items-center justify-center px-5 py-3 rounded-full border border-navy-700 bg-white text-navy-700 text-base font-semibold tracking-[-0.32px] hover:bg-wb-50 transition-colors">Maybe Later</button>
+      <button id="modal-sign-in" class="inline-flex items-center justify-center px-5 py-3 rounded-full bg-gold-400 hover:bg-gold-500 text-wb-900 text-base font-semibold tracking-[-0.32px] transition-colors">Sign In or Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     MOBILE FILTER DRAWER
+     ==================================================================== -->
+<div id="mobile-filters" class="mobile-filter-drawer">
+  <div class="panel">
+    <div class="p-5 border-b border-wb-200 flex items-center justify-between">
+      <h3 class="text-base font-semibold text-navy-700 flex items-center gap-2"><i class="ph ph-sliders-horizontal text-xl"></i> Filter By</h3>
+      <button id="close-filters-mobile" aria-label="Close filters" class="w-10 h-10 rounded-full hover:bg-wb-100 flex items-center justify-center text-wb-700"><i class="ph ph-x text-lg"></i></button>
+    </div>
+    <div class="p-5 space-y-5">
+      <div>
+        <label for="within-results-m" class="block text-sm font-semibold text-wb-900 mb-2">Search in Your Results</label>
+        <input id="within-results-m" type="search" placeholder="Refine your results…" class="w-full h-11 px-3 rounded-lg border border-wb-300 text-sm placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold text-wb-900 mb-3">Publish Date</h4>
+        <div class="space-y-2 text-sm text-wb-900">
+          <label class="flex items-center gap-2 cursor-pointer min-h-[44px]"><input type="radio" name="date-m" value="all"        class="accent-navy-700 trigger-filter" checked /> All Time</label>
+          <label class="flex items-center gap-2 cursor-pointer min-h-[44px]"><input type="radio" name="date-m" value="today"      class="accent-navy-700 trigger-filter" /> Today</label>
+          <label class="flex items-center gap-2 cursor-pointer min-h-[44px]"><input type="radio" name="date-m" value="last-week"  class="accent-navy-700 trigger-filter" /> Last Week</label>
+          <label class="flex items-center gap-2 cursor-pointer min-h-[44px]"><input type="radio" name="date-m" value="last-month" class="accent-navy-700 trigger-filter" /> Last Month</label>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold text-wb-900 mb-3">Age Range</h4>
+        <div class="space-y-2 text-sm text-wb-900">
+          <label class="flex items-center gap-2 cursor-pointer min-h-[44px]"><input type="radio" name="age-m" value="all"   class="accent-navy-700 trigger-filter" checked /> All ages</label>
+          <label class="flex items-center gap-2 cursor-pointer min-h-[44px]"><input type="radio" name="age-m" value="71-80" class="accent-navy-700 trigger-filter" /> 71 – 80 years old</label>
+          <label class="flex items-center gap-2 cursor-pointer min-h-[44px]"><input type="radio" name="age-m" value="81-90" class="accent-navy-700 trigger-filter" /> 81 – 90 years old</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     TOAST
+     ==================================================================== -->
+<div id="toast" class="toast" role="status" aria-live="polite">
+  <i class="ph-fill ph-check-circle"></i>
+  <span id="toast-text">Saved</span>
+</div>
+
+<!-- ====================================================================
+     JAVASCRIPT — state machine + interactions
+     ==================================================================== -->
+<script>
+(() => {
+  const body = document.body;
+
+  // ─────────────────────────────────────────────────────────────────────
+  // UI presets — what filter/sort/view selections each state implies
+  // ─────────────────────────────────────────────────────────────────────
+  // INITIAL — no filters, sort by recent, list view
+  const PRESET_INITIAL = { date: 'all', age: 'all', schools: 'all', sort: 'recent', view: 'list' };
+  // DEFAULT — what the user has saved as their default for this page
+  const PRESET_DEFAULT = { date: 'today', age: '71-80', schools: 'all', sort: 'recent', view: 'list' };
+  // CHANGED — a modified state (different age + sort) used by the demo
+  const PRESET_CHANGED = { date: 'today', age: '81-90', schools: 'all', sort: 'oldest', view: 'list' };
+
+  let suppressTrigger = false;
+
+  const setRadio = (name, value) => {
+    document.querySelectorAll(`input[type="radio"][name="${name}"]`).forEach(r => {
+      r.checked = (r.value === value);
+    });
+  };
+  const setView = (view) => {
+    document.querySelectorAll('.trigger-view').forEach(b => {
+      const active = (b.dataset.view === view);
+      b.setAttribute('aria-pressed', active ? 'true' : 'false');
+      b.classList.toggle('bg-gold-100', active);
+      b.classList.toggle('text-gold-900', active);
+      b.classList.toggle('bg-white', !active);
+      b.classList.toggle('text-wb-700', !active);
+    });
+  };
+  const applyPreset = (p) => {
+    suppressTrigger = true;
+    setRadio('date', p.date);
+    setRadio('age', p.age);
+    setRadio('schools', p.schools);
+    // mobile drawer mirrors (best-effort)
+    setRadio('date-m', p.date);
+    setRadio('age-m', p.age);
+    const sort = document.getElementById('sort-select');
+    if (sort) sort.value = p.sort;
+    setView(p.view);
+    suppressTrigger = false;
+  };
+
+  const setState = (s) => {
+    body.setAttribute('data-state', s);
+    document.querySelectorAll('[data-goto]').forEach(b => b.classList.toggle('active', b.dataset.goto === s));
+    syncResultCount();
+    // Modal focus management
+    if (s === 'prompt-modal') {
+      setTimeout(() => document.getElementById('modal-sign-in')?.focus(), 50);
+    }
+  };
+  const setSignedIn = (yes) => {
+    body.setAttribute('data-signed-in', yes ? 'true' : 'false');
+    document.getElementById('auth-toggle').checked = yes;
+  };
+  const syncResultCount = () => {
+    const s = body.getAttribute('data-state');
+    const el = document.getElementById('result-count');
+    if (!el) return;
+    if (s === 'no-filters' || s === 'default-off') el.textContent = '33,954 Results';
+    else if (s === 'changed') el.textContent = '23 Results';
+    else el.textContent = '5 Results';
+  };
+  const showToast = (text) => {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-text').textContent = text;
+    t.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => t.classList.remove('show'), 3000);
+  };
+
+  // Demo switcher — jumps to a state AND syncs the underlying UI to that state's preset
+  document.querySelectorAll('[data-goto]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.goto;
+      if (['applied', 'default-off', 'changed'].includes(target)) setSignedIn(true);
+      if (['no-filters', 'save-triggered', 'prompt-modal'].includes(target)) setSignedIn(false);
+
+      // Sync UI selections to match what the state represents
+      if (target === 'no-filters' || target === 'default-off') applyPreset(PRESET_INITIAL);
+      else if (target === 'applied') applyPreset(PRESET_DEFAULT);
+      else if (target === 'save-triggered' || target === 'prompt-modal') applyPreset(PRESET_DEFAULT);
+      else if (target === 'changed') applyPreset(PRESET_CHANGED);
+
+      setState(target);
+    });
+  });
+
+  // Auth toggle
+  document.getElementById('auth-toggle').addEventListener('change', (e) => {
+    setSignedIn(e.target.checked);
+    const s = body.getAttribute('data-state');
+    if (!e.target.checked && ['applied','default-off','changed'].includes(s)) {
+      applyPreset(PRESET_INITIAL);
+      setState('no-filters');
+    }
+  });
+
+  // Filter / sort / view triggers → state transitions
+  const fireTrigger = () => {
+    if (suppressTrigger) return;
+    const s = body.getAttribute('data-state');
+    if (s === 'applied') { setState('changed'); return; }
+    if (s === 'no-filters' || s === 'default-off') setState('save-triggered');
+    syncResultCount();
+  };
+
+  document.querySelectorAll('.trigger-filter').forEach(el => el.addEventListener('change', fireTrigger));
+  document.querySelectorAll('.trigger-view').forEach(btn => {
+    btn.addEventListener('click', () => { setView(btn.dataset.view); fireTrigger(); });
+  });
+
+  // Status row actions — also reset the underlying UI to match the new state
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('[data-action]');
+    if (!a) return;
+    const action = a.dataset.action;
+    if (action === 'save-default') {
+      setState('prompt-modal');
+    } else if (action === 'save-default-direct') {
+      // Filters stay where they are (they're being saved). State just flips to applied.
+      setState('applied');
+      showToast('Default saved');
+    } else if (action === 'turn-off') {
+      // Revert ALL filter, sort, and view selections to the initial blank-page state
+      applyPreset(PRESET_INITIAL);
+      setState('default-off');
+      showToast('Default turned off');
+    } else if (action === 'turn-on') {
+      // Re-apply the saved default
+      applyPreset(PRESET_DEFAULT);
+      setState('applied');
+      showToast('Default turned on');
+    } else if (action === 'reset-changes') {
+      // Discard modifications, restore the saved default
+      applyPreset(PRESET_DEFAULT);
+      setState('applied');
+      showToast('Filters reset to your default');
+    } else if (action === 'save-changes') {
+      // Keep current selections, promote them to "the default"
+      setState('applied');
+      showToast('Default updated');
+    }
+  });
+
+  // Modal actions
+  const closeModal = () => {
+    setState('save-triggered');
+  };
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('modal-maybe-later').addEventListener('click', closeModal);
+  document.querySelector('.modal-overlay').addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal-overlay')) closeModal();
+  });
+  document.getElementById('modal-sign-in').addEventListener('click', () => {
+    setSignedIn(true);
+    setState('applied');
+    showToast('Welcome — default saved');
+  });
+
+  // Header sign-in link → opens prompt modal
+  document.getElementById('sign-in-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    setState('prompt-modal');
+  });
+
+  // Mobile filter drawer
+  const drawer = document.getElementById('mobile-filters');
+  document.getElementById('open-filters-mobile').addEventListener('click', () => drawer.classList.add('open'));
+  document.getElementById('close-filters-mobile').addEventListener('click', () => drawer.classList.remove('open'));
+  drawer.addEventListener('click', (e) => {
+    if (e.target === drawer) drawer.classList.remove('open');
+  });
+
+  // Keyboard: Esc closes modal / drawer
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (body.getAttribute('data-state') === 'prompt-modal') closeModal();
+      drawer.classList.remove('open');
+    }
+  });
+
+  // Initial count
+  syncResultCount();
+})();
+</script>
+
+</body>
+</html>
