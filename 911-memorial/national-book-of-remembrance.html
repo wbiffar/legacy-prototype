@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>National Book of Remembrance — September 11, 2001</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Text&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        navy: { 50:'#f0f4fa', 100:'#e6ecf5', 200:'#d3ddeb', 300:'#b0c0d6', 400:'#728ab0', 500:'#42608f', 600:'#3c4d69', 700:'#293548', 800:'#212a3a', 900:'#151b24' },
+        gold: { 50:'#fbf7ef', 100:'#f6e5b8', 200:'#f0d78d', 300:'#e9c86f', 400:'#e2ba60', 500:'#dcb05e', 600:'#c49e54', 700:'#a48849', 800:'#85713e', 900:'#655b34' },
+        wb:   { 50:'#fbfbfb', 100:'#f6f6f6', 200:'#ebe9e9', 300:'#dbdad7', 400:'#afadaa', 500:'#807e7a', 600:'#63605b', 700:'#514d45', 800:'#373329', 900:'#262116' },
+        seaFoam: { 400:'#81b8ae', 500:'#5c9d94', 600:'#357d75' },
+        coral:   { 400:'#e77d91', 500:'#d6677c', 600:'#c24c62' }
+      },
+      fontFamily: {
+        sans:    ['"DM Sans"', 'sans-serif'],
+        serif:   ['"DM Serif Text"', 'serif'],
+        ptserif: ['"PT Serif"', 'serif'],
+        bodoni:  ['"Bodoni Moda"', 'serif']
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; margin: 0; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  input, textarea, select { font-family: inherit; }
+  input[type=search], input[type=text], input[type=email] { accent-color: #dcb05e; }
+
+  /* Memory wall masonry — CSS columns; each post avoids breaking inside. */
+  .gb-masonry { column-count: 1; column-gap: 24px; }
+  @media (min-width: 640px) { .gb-masonry { column-count: 2; } }
+  @media (min-width: 1024px) { .gb-masonry { column-count: 3; } }
+  .gb-post {
+    break-inside: avoid;
+    margin-bottom: 24px;
+    display: block;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 600ms ease, transform 600ms ease, box-shadow 200ms ease;
+    will-change: opacity, transform;
+  }
+  .gb-post.gb-visible { opacity: 1; transform: translateY(0); }
+  .gb-post.gb-visible:hover { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+  @media (prefers-reduced-motion: reduce) {
+    .gb-post { opacity: 1; transform: none; transition: box-shadow 200ms ease; }
+  }
+
+  /* Centered modal (Leave a Message, List of Signees) */
+  .nbr-modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+    background: rgba(21, 27, 36, 0.55);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .nbr-modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .nbr-modal {
+    background: #fff; border-radius: 16px;
+    width: 100%; max-width: 640px; max-height: 90vh;
+    display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    transform: translateY(10px) scale(0.99);
+    transition: transform 0.25s ease;
+  }
+  .nbr-modal-overlay.open .nbr-modal { transform: none; }
+  .nbr-form-label { display: block; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: #262116; margin-bottom: 8px; }
+  .nbr-input, .nbr-textarea {
+    width: 100%; background: #fbfbfb; border: 1px solid #dbdad7; border-radius: 8px;
+    padding: 12px 16px; font-family: 'DM Sans', sans-serif; font-size: 15px; color: #262116;
+    outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .nbr-input::placeholder, .nbr-textarea::placeholder { color: #807e7a; }
+  .nbr-input:focus, .nbr-textarea:focus { border-color: #42608f; box-shadow: 0 0 0 3px rgba(66,96,143,0.15); }
+  .nbr-textarea { resize: vertical; min-height: 120px; }
+  .nbr-modal-wide { max-width: 800px; }
+
+  /* Signee A-Z filter (light theme) */
+  .sg-letter {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 28px; height: 28px; padding: 0 4px; border-radius: 6px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    color: #514d45; white-space: nowrap; cursor: pointer; border: 0; background: transparent;
+    transition: background 0.15s, color 0.15s;
+  }
+  .sg-letter:hover:not(.active) { background: #f6f6f6; color: #a48849; }
+  .sg-letter.active { background: #dcb05e; color: #262116; padding: 0 10px; }
+  .sg-letter:disabled { color: #dbdad7; cursor: default; }
+
+  /* Signee row */
+  .sg-row {
+    display: flex; align-items: center; gap: 12px; width: 100%;
+    padding: 10px 8px; border-radius: 10px; text-align: left;
+    background: none; border: 0; cursor: pointer; transition: background 0.15s;
+  }
+  .sg-row:hover { background: #fbf7ef; }
+  .sg-avatar {
+    width: 44px; height: 44px; border-radius: 9999px; flex-shrink: 0;
+    background: #f6e5b8; color: #293548;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
+  }
+
+  /* Focus rings — DS gold accent */
+  :focus-visible { outline: 2px solid #dcb05e; outline-offset: 2px; border-radius: 4px; }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid #dcb05e; outline-offset: 2px; }
+</style>
+</head>
+<body class="bg-gold-50 text-wb-900">
+
+<!-- ====================================================================
+     LEGACY HEADER — NavigationCustom 2.0 (Figma node 2692:31903)
+     White bg, full-width, with logo + search + Sign In + Menu.
+     Ported from person.html for consistency.
+     ==================================================================== -->
+<header class="bg-white border-b border-wb-200">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-16 py-4">
+
+    <!-- Top row: logo · (desktop search) · Sign In + menu -->
+    <div class="flex items-center justify-between gap-4 md:gap-6">
+
+      <!-- Left: Legacy logo (light variant — gold mark + dark wordmark) -->
+      <a href="#" aria-label="Legacy.com home" class="flex-shrink-0">
+        <img src="https://www.legacy.com/media/legacy-icon.svg" alt="Legacy" class="h-[38px] w-auto" />
+      </a>
+
+      <!-- Center: Search input — desktop only (mobile shows it on its own row below) -->
+      <div class="hidden md:block w-full max-w-[420px]">
+        <label class="sr-only" for="legacy-search">Find a loved one</label>
+        <div class="relative">
+          <input id="legacy-search" type="search" placeholder="Find a loved one..."
+            class="w-full h-10 bg-wb-50 border border-wb-500 rounded-full pl-4 pr-10 text-base text-wb-900 placeholder:text-wb-600 focus:border-navy-500 focus:outline-none focus:ring-2 focus:ring-navy-500/30" />
+          <span class="absolute right-3 top-1/2 -translate-y-1/2 text-wb-700 pointer-events-none flex items-center justify-center">
+            <i class="ph ph-magnifying-glass text-xl" aria-hidden="true"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- Right: Sign In + Menu -->
+      <div class="flex items-center gap-4 flex-shrink-0">
+        <a href="#" class="inline-flex items-center gap-1 text-sm font-semibold text-wb-900 hover:text-gold-700 transition-colors">
+          <i class="ph ph-user-circle text-2xl" aria-hidden="true"></i>
+          <span class="hidden sm:inline">Sign In</span>
+        </a>
+        <button type="button" class="text-wb-900 hover:text-gold-700 transition-colors" aria-label="Menu">
+          <i class="ph ph-list text-2xl" aria-hidden="true"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile search — full-width row below (hidden on desktop) -->
+    <div class="md:hidden mt-3">
+      <label class="sr-only" for="legacy-search-mobile">Find a loved one</label>
+      <div class="relative">
+        <input id="legacy-search-mobile" type="search" placeholder="Find a loved one..."
+          class="w-full h-10 bg-wb-50 border border-wb-500 rounded-full pl-4 pr-10 text-base text-wb-900 placeholder:text-wb-600 focus:border-navy-500 focus:outline-none focus:ring-2 focus:ring-navy-500/30" />
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-wb-700 pointer-events-none flex items-center justify-center">
+          <i class="ph ph-magnifying-glass text-xl" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<!-- ====================================================================
+     PAGE CONTENT — sections added incrementally
+     §2 Breadcrumb + Follow/Share · §3 Hero · §4 Entries bar + Memory wall
+     §5 Leave a Message modal · §6 List of Signees modal · §7 Sticky nav · §8 Footer
+     ==================================================================== -->
+<main>
+
+  <!-- ====================================================================
+       §7 — Sticky nav bar (Figma node 2752:44693 "scrolled - sticky nav")
+       Slides in once the entries bar scrolls above the viewport.
+       ==================================================================== -->
+  <div id="sticky-nav" class="fixed top-0 left-0 right-0 z-40 bg-white border-b border-wb-200 shadow-[0_4px_12px_rgba(0,0,0,0.06)] -translate-y-full transition-transform duration-300 ease-out">
+    <div class="max-w-[1312px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between gap-3 md:gap-4">
+      <p class="text-sm md:text-base text-wb-900 whitespace-nowrap flex-shrink-0 hidden sm:block"><span class="font-semibold">30,214</span> entries</p>
+      <button type="button" onclick="openLeaveMessage()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 h-10 px-4 md:px-6 bg-gold-500 hover:bg-gold-600 text-navy-900 rounded-full font-semibold text-sm md:text-base transition-colors whitespace-nowrap">
+        <i class="ph ph-pencil-simple-line text-lg" aria-hidden="true"></i>
+        <span class="truncate">Sign the National Book of Remembrance</span>
+      </button>
+      <button type="button" onclick="openSigneeSearch()" class="inline-flex items-center gap-2 h-10 px-4 md:px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors flex-shrink-0">
+        <i class="ph ph-list-magnifying-glass text-xl" aria-hidden="true"></i>
+        <span class="hidden md:inline">List of Signees</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       §2 — Breadcrumb + Follow/Share (Figma node 2746:48323 ListHeaderUtility)
+       Light theme: "← Home" back link on the left, Follow/Share on the right.
+       ==================================================================== -->
+  <div class="max-w-[1200px] mx-auto px-4 md:px-8 pt-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
+
+      <!-- Breadcrumb: arrow-left + Home -->
+      <a href="https://curtis.legacy.com/9-11" class="inline-flex items-center gap-2 text-sm font-semibold text-navy-500 hover:text-navy-600 transition-colors w-fit">
+        <i class="ph ph-arrow-left text-lg" aria-hidden="true"></i>
+        <span class="underline underline-offset-4 decoration-from-font">Home</span>
+      </a>
+
+      <!-- Follow + Share — white pills on the cream bg -->
+      <div class="flex items-center gap-2 sm:flex-shrink-0">
+        <button type="button" class="inline-flex items-center justify-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors min-w-[132px]">
+          <i class="ph ph-bookmark-simple text-xl" aria-hidden="true"></i>
+          <span>Follow</span>
+        </button>
+        <button type="button" class="inline-flex items-center justify-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+          <i class="ph ph-share-fat text-xl" aria-hidden="true"></i>
+          <span>Share</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       §3 — Hero (Figma node 2746:48320 hero)
+       Light/cream bg, centered: eyebrow, serif title, subtitle, search link, Sign CTA.
+       ==================================================================== -->
+  <section class="max-w-[1200px] mx-auto px-4 md:px-8 text-center pt-10 md:pt-12 pb-12 md:pb-16">
+    <p class="font-sans font-semibold text-sm md:text-base text-gold-700 uppercase" style="letter-spacing:1.12px;">September 11, 2001</p>
+    <h1 class="font-bodoni font-normal text-[40px] sm:text-[56px] md:text-[72px] text-navy-700 leading-[1.05] tracking-tight mt-4">National Book of Remembrance</h1>
+    <p class="max-w-[600px] mx-auto font-sans text-base md:text-lg text-wb-700 leading-[1.5] mt-6">
+      Since September 11, 2001, over 30,000 messages have been written here &mdash; to the people we lost, and to each other. Read them. Add yours.
+    </p>
+    <!-- Desktop: inline link · Mobile: OR divider + link -->
+    <p class="hidden md:block mt-4">
+      <a href="index.html" class="font-sans text-base text-navy-500 hover:text-navy-600 underline underline-offset-4 decoration-from-font">or search for an individual&rsquo;s guest book.</a>
+    </p>
+    <div class="md:hidden mt-6 max-w-[400px] mx-auto">
+      <div class="flex items-center gap-4">
+        <div class="flex-1 h-px bg-wb-300"></div>
+        <span class="text-xs font-semibold uppercase tracking-[1.2px] text-wb-500">Or</span>
+        <div class="flex-1 h-px bg-wb-300"></div>
+      </div>
+      <p class="mt-4">
+        <a href="index.html" class="font-sans text-base text-navy-500 hover:text-navy-600 underline underline-offset-4 decoration-from-font">Search for an individual&rsquo;s guest book.</a>
+      </p>
+    </div>
+    <div class="mt-8">
+      <button type="button" onclick="openLeaveMessage()" class="inline-flex items-center justify-center gap-2 h-12 px-6 bg-gold-500 hover:bg-gold-600 text-navy-900 rounded-full font-semibold text-base transition-colors">
+        <i class="ph ph-pencil-simple-line text-xl" aria-hidden="true"></i>
+        <span>Sign the National Book of Remembrance</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       §4 — Entries bar + Memory wall masonry (Figma node 2746:48397 memory wall)
+       Count + divider rule + List of Signees button, then a 3-column masonry
+       of guest-book entry cards. Cards are JS-generated into .gb-masonry.
+       ==================================================================== -->
+  <section aria-label="Memory wall" class="max-w-[1312px] mx-auto px-4 md:px-8 pb-16 md:pb-24">
+
+    <!-- Entries bar -->
+    <div id="entries-bar" class="flex items-center gap-4 md:gap-6 mb-8 md:mb-10">
+      <p class="text-base text-wb-900 whitespace-nowrap flex-shrink-0"><span id="entries-count" class="font-semibold">30,214</span> entries</p>
+      <div class="flex-1 h-px bg-gold-300"></div>
+      <button type="button" onclick="openSigneeSearch()" class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors flex-shrink-0">
+        <i class="ph ph-list-magnifying-glass text-xl" aria-hidden="true"></i>
+        <span class="hidden xs:inline sm:inline">List of Signees</span>
+      </button>
+    </div>
+
+    <!-- Masonry of entry cards (populated by JS) -->
+    <div id="memory-wall" class="gb-masonry"></div>
+
+  </section>
+
+</main>
+
+<!-- ====================================================================
+     §8 — MICRO-SITE FOOTER (matches memorial pages / person.html)
+     ==================================================================== -->
+<footer class="bg-navy-900 border-t border-wb-800">
+  <div class="max-w-[1440px] mx-auto px-6 md:px-14 py-8 space-y-6">
+    <img src="https://www.legacy.com/media/legacy-icon-white.svg" alt="Legacy" class="h-8 w-auto" />
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-sm text-wb-500">
+      <p>&copy;2026 Legacy.com All rights reserved.</p>
+      <div class="flex flex-wrap gap-x-6 gap-y-2">
+        <a href="#" class="hover:text-gold-500 transition-colors">Do Not Sell My Information</a>
+        <a href="#" class="hover:text-gold-500 transition-colors">Privacy policy</a>
+        <a href="#" class="hover:text-gold-500 transition-colors">Terms of use</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ====================================================================
+     MEMORY WALL FEED — sample entries rendered into the masonry.
+     Static sample + generated variety so search/scroll feel real.
+     ==================================================================== -->
+<script>
+  (() => {
+    // Sample national-book entries. type: 'text' | 'photo' | 'candle' | 'caption'
+    const SEED = [
+      { name:'Eliana Salvucci', ago:'2 hours ago', likes:18, msg:'To everyone who lost someone that day — you are not alone. We carry them together, every September and every ordinary morning in between.' },
+      { name:'Anya Petrova', ago:'3 hours ago', likes:24, type:'photo', photo:'memorial-wall', msg:'Visited the memorial wall again this year. Ran my fingers over the names. We will never forget.', caption:'The names go on further than the eye can follow.' },
+      { name:'Miles Rutledge', ago:'1 day ago', likes:9, msg:'I had the pleasure of working with so many of the people remembered here. Dedicated, funny, kind. The world is quieter without them.' },
+      { name:'Jasper Hawthorne', ago:'2 hours ago', likes:31, type:'candle', msg:'Lit a candle this morning, as I have every year since. The light is small, but it is steady — like the way we keep remembering.' },
+      { name:'Evelyn Hayes', ago:'1 day ago', likes:12, msg:'Twenty-five years. My children have grown up hearing the stories. Now they tell them too.' },
+      { name:'Holden Blackwood', ago:'1 day ago', likes:7, msg:'For the first responders who ran toward the danger: thank you will never be enough, but thank you.' },
+      { name:'Luna Lovelace', ago:'3 hours ago', likes:15, type:'photo', photo:'roses', msg:'Three white roses, one for each member of our family who served that day. Forever in our hearts.' },
+      { name:'Johnathan Dankenheimer', ago:'1 day ago', likes:5, msg:'I was a teenager in 2001. I am a father now. I tell my kids about the helpers, the strangers who carried strangers down the stairs.' },
+      { name:'Seraphina Wilde', ago:'4 hours ago', likes:21, msg:'Her warmth touched countless lives, leaving an enduring legacy. Her memory will forever be etched in our hearts.' },
+      { name:'Silas Blackwood', ago:'3 hours ago', likes:8, msg:'Reading these messages, I am reminded how much love survives. To those we lost: you are still teaching us how to be kind.' },
+      { name:'Hazel Rutherford', ago:'4 hours ago', likes:13, msg:'A memory lives on through the countless hearts she touched with her kindness and her unforgettable laugh.' },
+      { name:'Willow Abernathy', ago:'4 hours ago', likes:6, msg:'Your absence is deeply felt today. Your kindness and warmth touched so many lives. May your spirit shine on.' },
+      { name:'Theodore Marsh', ago:'5 hours ago', likes:11, type:'photo', photo:'memorial-pools', msg:'Brought my daughter to the reflecting pools for the first time. She asked who they were. I said: people we promised to remember.' },
+      { name:'Cordelia Vance', ago:'6 hours ago', likes:4, msg:'For the passengers and crew who said goodbye over the phone and still found the courage to act — we honor you.' },
+      { name:'Beatrix Holloway', ago:'7 hours ago', likes:17, type:'candle', msg:'A candle for the ones whose names I never knew, and for the families who have carried this for so long.' },
+      { name:'Atticus Crowe', ago:'8 hours ago', likes:3, msg:'I read a few names aloud every September 11th. It is the least I can do, and somehow it is everything.' },
+      { name:'Genevieve Ashford', ago:'9 hours ago', likes:14, msg:'To my colleague and friend — your desk is still how I picture that floor. Bright, busy, full of you.' },
+      { name:'Rufus Pendleton', ago:'10 hours ago', likes:2, msg:'Never forget. Not the loss, and not the way this country held each other in the days after.' },
+      { name:'Ottoline Frost', ago:'12 hours ago', likes:9, type:'photo', photo:'flag', msg:'We flew the flag at half-staff this morning. The neighbors did too. Quiet street, full hearts.' },
+      { name:'Barnaby Sinclair', ago:'14 hours ago', likes:5, msg:'Thinking of all the families today, and of the children who grew up with only photographs. You are remembered.' },
+      { name:'Marguerite Ellery', ago:'1 day ago', likes:8, msg:'She taught fourth grade two blocks away. Her former students still write here. That is a legacy.' },
+      { name:'Percival Hawkes', ago:'1 day ago', likes:6, msg:'For everyone reading this who is still hurting: it is okay. Grief is just love with nowhere to go. Put some of it here.' },
+      { name:'Clementine Ross', ago:'2 days ago', likes:19, type:'candle', msg:'Lit a candle for my brother. Twenty-five years and I still reach for the phone to call him on his birthday.' },
+      { name:'Augustus Beale', ago:'2 days ago', likes:7, msg:'I drove a fire truck for thirty years. We lost so many brothers that day. I sign this book for all of them.' },
+    ];
+
+    const PHOTOS = {
+      'memorial-wall':'https://picsum.photos/seed/nbr-wall/640/520',
+      'roses':'https://picsum.photos/seed/nbr-roses/640/440',
+      'memorial-pools':'https://picsum.photos/seed/nbr-pools/640/420',
+      'flag':'https://picsum.photos/seed/nbr-flag/640/460',
+    };
+
+    function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function renderCard(e){
+      const photo = e.type === 'photo' && e.photo
+        ? `<img src="${PHOTOS[e.photo]}" alt="A photo shared in remembrance" class="w-full object-cover" loading="lazy" />`
+        : '';
+      const caption = e.caption
+        ? `<p class="px-6 py-4 bg-gold-50 font-ptserif text-base italic leading-[1.5] text-wb-700">${esc(e.caption)}</p>`
+        : '';
+      const candle = e.type === 'candle'
+        ? `<div class="px-6 flex items-center gap-4 mb-6">
+             <div class="flex-1 h-px bg-gold-300"></div>
+             <span class="w-20 h-20 rounded-full bg-gold-100 border border-gold-300 flex items-center justify-center flex-shrink-0">
+               <i class="ph-fill ph-flame text-4xl text-gold-600" aria-hidden="true"></i>
+             </span>
+             <div class="flex-1 h-px bg-gold-300"></div>
+           </div>`
+        : '';
+      return `
+      <article class="gb-post bg-white border border-wb-300 rounded-2xl overflow-hidden">
+        <div class="px-6 pt-6 flex items-start justify-between gap-3 mb-4">
+          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 min-w-0">
+            <p class="text-base font-bold text-wb-900 leading-tight">${esc(e.name)}</p>
+            <p class="text-sm text-wb-700 leading-tight">${esc(e.ago)}</p>
+          </div>
+          <button class="text-wb-900 hover:text-navy-700 -m-2 p-2 flex-shrink-0" aria-label="More options">
+            <i class="ph ph-dots-three text-2xl" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="px-6 font-ptserif text-lg leading-[1.5] text-wb-900 mb-6">${esc(e.msg)}</p>
+        ${candle}
+        ${photo}
+        ${caption}
+        <div class="px-6 py-5 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-5">
+            <button class="inline-flex items-center gap-1.5 text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like">
+              <i class="ph ph-heart text-2xl" aria-hidden="true"></i>
+              <span class="text-base">${e.likes}</span>
+            </button>
+            <button class="inline-flex items-center gap-1.5 text-wb-900 hover:text-navy-700 transition-colors">
+              <i class="ph ph-chat-circle text-2xl" aria-hidden="true"></i>
+              <span class="text-base">Reply</span>
+            </button>
+          </div>
+          <button class="inline-flex items-center gap-2 h-10 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+            <i class="ph ph-share-fat text-lg" aria-hidden="true"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </article>`;
+    }
+
+    const wall = document.getElementById('memory-wall');
+    if (wall) {
+      wall.innerHTML = SEED.map(renderCard).join('');
+      // Reveal on scroll
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('gb-visible'); io.unobserve(en.target); } });
+      }, { rootMargin: '0px 0px -10% 0px' });
+      wall.querySelectorAll('.gb-post').forEach((p) => io.observe(p));
+    }
+  })();
+</script>
+
+
+<!-- ====================================================================
+     §5 — LEAVE A MESSAGE MODAL (Figma node 2746:59795)
+     Composer: Your Name, message textarea, Add Photos + Light a Candle,
+     Cancel + Add Your Message. Opens from any "Sign" CTA.
+     ==================================================================== -->
+<div id="leave-msg-overlay" class="nbr-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="leave-msg-title" aria-hidden="true">
+  <div class="nbr-modal" onclick="event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-4 px-6 md:px-8 pt-6 md:pt-8">
+      <div>
+        <h2 id="leave-msg-title" class="font-serif text-[24px] md:text-[28px] text-navy-700 leading-[1.2]">Leave a message</h2>
+        <p class="font-sans text-sm text-wb-700 leading-[1.5] mt-2 max-w-[440px]">A memory, a letter, a few words. Your post will live in the National Book of Remembrance forever.</p>
+      </div>
+      <button type="button" onclick="closeLeaveMessage()" aria-label="Close" class="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full border border-wb-300 text-wb-900 hover:bg-wb-100 transition-colors">
+        <i class="ph ph-x text-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <!-- Body (scrollable) -->
+    <form id="leave-msg-form" class="flex-1 overflow-y-auto px-6 md:px-8 py-6 space-y-5">
+      <div>
+        <label class="nbr-form-label" for="lm-name">Your Name</label>
+        <input id="lm-name" name="name" type="text" class="nbr-input" placeholder="Your full name" />
+      </div>
+      <div>
+        <label class="nbr-form-label" for="lm-message">Your message</label>
+        <textarea id="lm-message" name="message" rows="4" class="nbr-textarea" placeholder="There is no wrong way to say what you feel. A memory. A story. Condolences. They&rsquo;re all welcome additions&hellip;"></textarea>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <button type="button" class="inline-flex items-center justify-center gap-2 h-11 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+          <i class="ph ph-image text-xl" aria-hidden="true"></i>
+          <span>Add Photos</span>
+        </button>
+        <button type="button" class="inline-flex items-center justify-center gap-2 h-11 px-5 bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors">
+          <i class="ph ph-flame text-xl" aria-hidden="true"></i>
+          <span>Light a Candle</span>
+        </button>
+      </div>
+    </form>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between gap-4 px-6 md:px-8 py-5 border-t border-wb-200">
+      <button type="button" onclick="closeLeaveMessage()" class="inline-flex items-center justify-center h-11 px-6 bg-white border border-wb-300 rounded-full text-sm font-semibold text-wb-900 hover:bg-wb-100 transition-colors">Cancel</button>
+      <button type="button" onclick="closeLeaveMessage()" class="inline-flex items-center justify-center gap-2 h-11 px-6 bg-gold-500 hover:bg-gold-600 text-navy-900 rounded-full text-sm font-semibold transition-colors">
+        <span>Add Your Message</span>
+        <i class="ph ph-arrow-right text-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function openLeaveMessage() {
+    const o = document.getElementById('leave-msg-overlay');
+    o.classList.add('open'); o.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('lm-name')?.focus(), 60);
+  }
+  function closeLeaveMessage() {
+    const o = document.getElementById('leave-msg-overlay');
+    o.classList.remove('open'); o.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('leave-msg-overlay').addEventListener('click', closeLeaveMessage);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('leave-msg-overlay').classList.contains('open')) closeLeaveMessage();
+  });
+</script>
+
+<!-- ====================================================================
+     §6 — LIST OF SIGNEES MODAL — "All who have signed" (Figma 2746:59850)
+     Search + A-Z filter + alphabetically grouped signee rows; clicking a
+     signee swaps to their message. Opens from "List of Signees" + hero link.
+     ==================================================================== -->
+<div id="signee-overlay" class="nbr-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="signee-title" aria-hidden="true">
+  <div class="nbr-modal nbr-modal-wide" onclick="event.stopPropagation()">
+
+    <!-- LIST VIEW -->
+    <div id="signee-list-view" class="flex flex-col min-h-0 flex-1">
+      <!-- Header -->
+      <div class="flex items-start justify-between gap-4 px-6 md:px-8 pt-6 md:pt-8">
+        <div>
+          <h2 id="signee-title" class="font-serif text-[24px] md:text-[28px] text-navy-700 leading-[1.2]">All who have signed</h2>
+          <p class="font-sans text-sm text-wb-700 leading-[1.5] mt-2">Search for a signee, tap their name and view what they wrote.</p>
+        </div>
+        <button type="button" onclick="closeSigneeSearch()" aria-label="Close" class="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full border border-wb-300 text-wb-900 hover:bg-wb-100 transition-colors">
+          <i class="ph ph-x text-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+      <!-- Search + A-Z -->
+      <div class="px-6 md:px-8 pt-5 pb-4 space-y-3 border-b border-wb-200">
+        <div class="relative">
+          <label for="signee-search" class="sr-only">Search for a signee</label>
+          <input id="signee-search" type="search" placeholder="Search for a signee..."
+            class="w-full h-11 bg-wb-50 border border-wb-300 rounded-full pl-4 pr-11 text-sm text-wb-900 placeholder:text-wb-500 focus:border-navy-500 focus:outline-none focus:ring-2 focus:ring-navy-500/20" />
+          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-wb-700 pointer-events-none"><i class="ph ph-magnifying-glass text-lg" aria-hidden="true"></i></span>
+        </div>
+        <nav aria-label="Jump to letter" class="overflow-x-auto scrollbar-hide -mx-1">
+          <div id="signee-alpha" class="flex items-center gap-1 w-max px-1"></div>
+        </nav>
+      </div>
+      <!-- Grouped list (scrollable) -->
+      <div id="signee-list" class="flex-1 overflow-y-auto px-6 md:px-8 py-4"></div>
+    </div>
+
+    <!-- DETAIL VIEW (a single signee's message) -->
+    <div id="signee-detail-view" class="hidden flex flex-col min-h-0 flex-1">
+      <div class="flex items-center justify-between gap-4 px-6 md:px-8 pt-6 md:pt-8">
+        <button type="button" onclick="signeeBackToList()" class="inline-flex items-center gap-2 text-sm font-semibold text-navy-500 hover:text-navy-600 transition-colors">
+          <i class="ph ph-arrow-left text-lg" aria-hidden="true"></i><span>All signees</span>
+        </button>
+        <button type="button" onclick="closeSigneeSearch()" aria-label="Close" class="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full border border-wb-300 text-wb-900 hover:bg-wb-100 transition-colors">
+          <i class="ph ph-x text-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div id="signee-detail" class="flex-1 overflow-y-auto px-6 md:px-8 py-6"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  (() => {
+    const FIRST = ['Roger','Jennifer','Amy','Erik','Ben','Timothy','Luis','Chip','Anthony','John','Margaret','Walter','Rebecca','Carlton','Eliana','Anya','Miles','Jasper','Evelyn','Holden','Luna','Seraphina','Hazel','Willow','Theodore','Cordelia','Beatrix','Atticus','Genevieve','Rufus','Ottoline','Barnaby','Marguerite','Percival','Clementine','Augustus','Nadia','Omar','Priya','Quentin'];
+    const LAST = ['Adams','Aiken','Alston','Andrews','Arnold','Atwood','Alvarez','Anderson','Antony','Aston','Avery','Bauer','Bean','Black','Bunker','Brennan','Caldwell','Cho','Donovan','Espinoza','Foster','Gallagher','Hayes','Iverson','Jensen','Keller','Lovelace','Marsh','Novak','O’Neil','Petrova','Quinn','Rutherford','Salvucci','Thorne','Underwood','Vance','Wilde','Xu','Young','Zimmerman'];
+    const MSGS = [
+      'Your absence is deeply felt, especially today. Your kindness and warmth touched so many lives, and your memory continues to inspire us. You were a true friend and colleague. May your spirit shine on.',
+      'I think of you every September, and on the ordinary days too. Thank you for the laughter you left behind.',
+      'We never met, but I read your story and I will carry it with me. You are not forgotten.',
+      'To the family — your loved one made the world brighter. That light is still here, in all of us who remember.',
+      'Twenty-five years on, and the love has not dimmed. Rest easy. We are still here, still remembering.',
+      'You ran toward the danger so that others could run home. There are no words. Only gratitude.',
+      'I lit a candle for you this morning. The flame was small, but it was steady, like the way we keep you with us.'
+    ];
+    function dateFor(i){ const days=['10','11','12','14','15','21','29']; const yrs=['2001','2002','2009','2013','2026']; return `Sep ${days[i%days.length]}, ${yrs[(i*3)%yrs.length]}`; }
+    function initials(n){ return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+    function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    // Build a deterministic signee set sorted by last name
+    const SIGNEES = [];
+    for (let i=0;i<54;i++){
+      const f=FIRST[i%FIRST.length], l=LAST[(i*7+3)%LAST.length];
+      const name=`${f} ${l}`;
+      SIGNEES.push({ name, last:l, date:dateFor(i), likes:(i*5%30)+3, msg:MSGS[i%MSGS.length] });
+    }
+    SIGNEES.sort((a,b)=> a.last.localeCompare(b.last) || a.name.localeCompare(b.name));
+
+    const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    let activeLetter='ALL', query='';
+
+    const listEl = document.getElementById('signee-list');
+    const alphaEl = document.getElementById('signee-alpha');
+    const searchEl = document.getElementById('signee-search');
+
+    function presentLetters(){ const set=new Set(SIGNEES.map(s=>s.last[0].toUpperCase())); return set; }
+
+    function renderAlpha(){
+      const present = presentLetters();
+      let html = `<button type="button" class="sg-letter ${activeLetter==='ALL'?'active':''}" onclick="signeeSetLetter('ALL')">ALL</button>`;
+      html += ALPHA.map(L=>`<button type="button" class="sg-letter ${activeLetter===L?'active':''}" ${present.has(L)?'':'disabled'} onclick="signeeSetLetter('${L}')">${L}</button>`).join('');
+      alphaEl.innerHTML = html;
+    }
+
+    function filtered(){
+      return SIGNEES.filter(s=>{
+        if (activeLetter!=='ALL' && s.last[0].toUpperCase()!==activeLetter) return false;
+        if (query && !s.name.toLowerCase().includes(query)) return false;
+        return true;
+      });
+    }
+
+    function rowHtml(s, idx){
+      return `<button type="button" class="sg-row" onclick="signeeShow(${idx})">
+        <span class="sg-avatar">${initials(s.name)}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block text-base font-bold text-navy-700 leading-tight truncate">${esc(s.name)}</span>
+          <span class="block text-sm text-wb-700 leading-tight mt-0.5">${esc(s.date)}</span>
+        </span>
+        <i class="ph ph-caret-right text-lg text-wb-500 flex-shrink-0" aria-hidden="true"></i>
+      </button>`;
+    }
+
+    function renderList(){
+      const rows = filtered();
+      if (!rows.length){
+        listEl.innerHTML = `<div class="text-center py-16">
+          <i class="ph ph-magnifying-glass text-4xl text-wb-400" aria-hidden="true"></i>
+          <p class="font-serif text-xl text-navy-700 mt-4">No signees found</p>
+          <p class="text-sm text-wb-700 mt-1">Try a different name or letter.</p>
+        </div>`;
+        return;
+      }
+      // group by last-name initial
+      const groups = {};
+      rows.forEach(s=>{ const k=s.last[0].toUpperCase(); (groups[k]=groups[k]||[]).push(s); });
+      let html='';
+      Object.keys(groups).sort().forEach(letter=>{
+        const g=groups[letter];
+        html += `<div class="mb-6">
+          <div class="flex items-center justify-between mb-1">
+            <p class="font-serif text-xl text-navy-700">${letter}</p>
+            <p class="text-xs text-wb-500">${g.length} ${g.length===1?'Signee':'Signees'}</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1">
+            ${g.map(s=>rowHtml(s, SIGNEES.indexOf(s))).join('')}
+          </div>
+        </div>`;
+      });
+      listEl.innerHTML = html;
+    }
+
+    window.signeeSetLetter = (L)=>{ activeLetter=L; renderAlpha(); renderList(); };
+    window.signeeShow = (idx)=>{
+      const s=SIGNEES[idx];
+      document.getElementById('signee-detail').innerHTML = `
+        <p class="font-sans text-xs font-bold uppercase text-gold-700 tracking-[1.2px]">A message from</p>
+        <div class="flex items-start justify-between gap-3 mt-2">
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="sg-avatar">${initials(s.name)}</span>
+            <span class="min-w-0">
+              <span class="block font-serif text-2xl text-navy-700 leading-tight">${esc(s.name)}</span>
+              <span class="block text-sm text-wb-700 mt-0.5">${esc(s.date)}</span>
+            </span>
+          </div>
+        </div>
+        <p class="font-ptserif text-lg leading-[1.6] text-wb-900 mt-5">${esc(s.msg)}</p>
+        <div class="flex items-center gap-6 mt-6 pt-5 border-t border-wb-200">
+          <button class="inline-flex items-center gap-1.5 text-wb-900 hover:text-coral-500 transition-colors" aria-label="Like"><i class="ph ph-heart text-2xl"></i><span class="text-base">${s.likes}</span></button>
+          <button class="inline-flex items-center gap-1.5 text-wb-900 hover:text-navy-700 transition-colors"><i class="ph ph-chat-circle text-2xl"></i><span class="text-base">Reply</span></button>
+          <button class="inline-flex items-center gap-2 h-10 px-5 ml-auto bg-white border border-navy-700 rounded-full text-sm font-semibold text-navy-700 hover:bg-wb-100 transition-colors"><i class="ph ph-share-fat text-lg"></i><span>Share</span></button>
+        </div>`;
+      document.getElementById('signee-list-view').classList.add('hidden');
+      document.getElementById('signee-detail-view').classList.remove('hidden');
+    };
+    window.signeeBackToList = ()=>{
+      document.getElementById('signee-detail-view').classList.add('hidden');
+      document.getElementById('signee-list-view').classList.remove('hidden');
+    };
+
+    window.openSigneeSearch = ()=>{
+      const o=document.getElementById('signee-overlay');
+      signeeBackToList();
+      o.classList.add('open'); o.setAttribute('aria-hidden','false');
+      document.body.style.overflow='hidden';
+      renderAlpha(); renderList();
+      setTimeout(()=>searchEl?.focus(), 60);
+    };
+    window.closeSigneeSearch = ()=>{
+      const o=document.getElementById('signee-overlay');
+      o.classList.remove('open'); o.setAttribute('aria-hidden','true');
+      document.body.style.overflow='';
+    };
+
+    searchEl.addEventListener('input', ()=>{ query=searchEl.value.trim().toLowerCase(); renderList(); });
+    document.getElementById('signee-overlay').addEventListener('click', closeSigneeSearch);
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && document.getElementById('signee-overlay').classList.contains('open')) closeSigneeSearch(); });
+  })();
+</script>
+
+<script>
+  // §7 — Reveal the sticky nav once the entries bar scrolls above the viewport.
+  (() => {
+    const nav = document.getElementById('sticky-nav');
+    const entriesBar = document.getElementById('entries-bar');
+    if (!nav || !entriesBar) return;
+    const show = () => nav.classList.remove('-translate-y-full');
+    const hide = () => nav.classList.add('-translate-y-full');
+    const io = new IntersectionObserver(([e]) => {
+      // entries bar above the top edge → show sticky nav
+      if (e.boundingClientRect.top < 0 && !e.isIntersecting) show(); else hide();
+    }, { threshold: 0, rootMargin: '0px 0px 0px 0px' });
+    io.observe(entriesBar);
+  })();
+</script>
+
+</body>
+</html>
