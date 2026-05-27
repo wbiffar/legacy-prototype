@@ -488,45 +488,59 @@ tailwind.config = {
 </main>
 
 <!-- ====================================================================
-     SEARCH BY NAME END-CAP — bottom CTA before the footer
-     Maps to Figma node 2911:33216 (end cap, 995×512)
-     Two-column on desktop (search left + NBR card right), stacks on mobile.
+     "ADD YOUR VOICE" END-CAP — two paths before the footer:
+     National Book of Remembrance (write for all) OR Individual Guestbook.
      ==================================================================== -->
-<section aria-label="Search memorials by name" class="bg-navy-900 border-t border-wb-800 pt-12 md:pt-16 pb-12 md:pb-16">
-  <div class="max-w-[1200px] mx-auto px-4 md:px-8 flex flex-col md:flex-row md:items-start md:justify-between gap-10 md:gap-16">
+<section aria-label="Add your voice to the memorial" class="bg-navy-900 border-t border-wb-800 pt-16 md:pt-20 pb-16 md:pb-20">
+  <div class="max-w-[1100px] mx-auto px-4 md:px-8 text-center">
 
-    <div class="max-w-[480px] flex-1 min-w-0">
-      <p class="font-sans text-xs font-bold uppercase text-gold-500 tracking-[1.2px]">Find a Tribute</p>
-      <h2 class="font-bodoni font-medium text-[40px] sm:text-[48px] md:text-[56px] text-white leading-[1.05] tracking-tight mt-3">Search by Name</h2>
-      <p class="text-base text-gold-500 mt-3 leading-[1.5]">
-        To view a tribute or sign the guest book for a specific person, search by first or last name below.
-      </p>
-      <div class="relative mt-6">
-        <label for="end-cap-search" class="sr-only">Enter a name</label>
-        <input id="end-cap-search" type="search" placeholder="Enter a name..."
-          class="w-full h-12 bg-white border border-wb-300 rounded-full pl-5 pr-12 text-base text-wb-900 placeholder:text-wb-500 focus:border-navy-500 focus:outline-none shadow-[0_10px_15px_-3px_rgba(0,0,0,0.2)]" />
-        <i class="ph ph-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-xl text-wb-700 pointer-events-none" aria-hidden="true"></i>
+    <p class="font-sans text-sm font-semibold uppercase text-gold-500" style="letter-spacing:0.2em;">Share Your Remembrance</p>
+    <h2 class="font-bodoni font-medium text-[40px] sm:text-[52px] md:text-[64px] text-gold-50 leading-[1.05] tracking-tight mt-4">Add your voice to the memorial</h2>
+    <p class="max-w-[640px] mx-auto font-sans text-base md:text-lg text-wb-400 leading-[1.5] mt-5">
+      Leave a message, story, or condolence &mdash; for someone you knew, or for all who were lost.
+    </p>
+
+    <!-- Two-path card -->
+    <div class="mt-10 md:mt-12 bg-navy-800 rounded-3xl px-6 md:px-12 py-10 md:py-12">
+      <div class="flex flex-col md:flex-row items-stretch gap-8 md:gap-12">
+
+        <!-- National Book of Remembrance -->
+        <div class="flex-1 flex flex-col items-start text-left">
+          <span class="w-14 h-14 rounded-full bg-navy-900 flex items-center justify-center flex-shrink-0">
+            <i class="ph ph-book-open text-2xl text-gold-500" aria-hidden="true"></i>
+          </span>
+          <p class="font-sans text-xs font-semibold uppercase text-navy-300 mt-6" style="letter-spacing:0.1em;">National Book of Remembrance</p>
+          <h3 class="font-bodoni font-medium text-[28px] md:text-[32px] text-gold-50 leading-[1.15] mt-2">Write for all who were lost</h3>
+          <p class="font-sans text-base text-wb-400 leading-[1.55] mt-3">A shared space to express your thoughts and condolences for all 2,977 lives lost on September 11, 2001.</p>
+          <a href="national-book-of-remembrance.html" class="inline-flex items-center gap-2 mt-6 text-base font-semibold text-gold-500 hover:text-gold-400 transition-colors">Sign the Book <i class="ph ph-arrow-right text-lg" aria-hidden="true"></i></a>
+        </div>
+
+        <!-- OR divider -->
+        <div aria-hidden="true" class="flex md:flex-col items-center gap-3 md:gap-0">
+          <span class="flex-1 h-px md:h-auto md:w-px bg-navy-700"></span>
+          <span class="px-1 md:py-3 text-xs font-semibold tracking-wider text-wb-500">OR</span>
+          <span class="flex-1 h-px md:h-auto md:w-px bg-navy-700"></span>
+        </div>
+
+        <!-- Individual Guestbook -->
+        <div class="flex-1 flex flex-col items-start text-left">
+          <span class="w-14 h-14 rounded-full bg-navy-900 flex items-center justify-center flex-shrink-0">
+            <i class="ph ph-user-list text-2xl text-gold-500" aria-hidden="true"></i>
+          </span>
+          <p class="font-sans text-xs font-semibold uppercase text-navy-300 mt-6" style="letter-spacing:0.1em;">Individual Guestbook</p>
+          <h3 class="font-bodoni font-medium text-[28px] md:text-[32px] text-gold-50 leading-[1.15] mt-2">Honor someone by name</h3>
+          <p class="font-sans text-base text-wb-400 leading-[1.55] mt-3">Find a tribute page for a specific person and leave a personal message, share a memory, or offer your condolences.</p>
+          <a href="index.html" class="inline-flex items-center gap-2 mt-6 text-base font-semibold text-gold-500 hover:text-gold-400 transition-colors">Find a Guestbook <i class="ph ph-arrow-right text-lg" aria-hidden="true"></i></a>
+        </div>
+
       </div>
-      <p class="font-ptserif italic text-sm text-wb-400 mt-6 leading-[1.55]">
-        Guest book entries may include words and photographs. All entries are free and reviewed for appropriate content.
-      </p>
-      <p class="text-sm text-wb-400 mt-4 leading-[1.55]">
-        If you have information about someone not included on this site, <a href="#" class="text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font">click here</a>.
-      </p>
     </div>
 
-    <aside class="bg-navy-800 border border-navy-700 rounded-2xl p-6 md:p-7 md:w-[280px] flex-shrink-0 text-center self-start">
-      <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center mx-auto">
-        <i class="ph ph-book-open text-2xl text-navy-900" aria-hidden="true"></i>
-      </div>
-      <h3 class="font-serif text-[22px] text-white leading-[1.2] mt-4">National Book of Remembrance</h3>
-      <p class="text-sm text-wb-300 mt-3 leading-[1.55]">
-        Share your thoughts and condolences for all of those lost on September 11, 2001.
-      </p>
-      <a href="national-book-of-remembrance.html" class="mt-5 inline-flex items-center justify-center px-5 h-10 bg-gold-500 hover:bg-gold-400 text-navy-900 rounded-full font-semibold text-sm transition-colors">
-        Sign The Book
-      </a>
-    </aside>
+    <!-- Footer row -->
+    <div class="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm text-left">
+      <p class="text-navy-300">Your words become part of a living memorial&mdash;read by families, friends and future generations.</p>
+      <p class="text-gold-500 font-semibold whitespace-nowrap">&bull; 2,977 lives remembered</p>
+    </div>
 
   </div>
 </section>
