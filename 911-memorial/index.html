@@ -148,13 +148,10 @@ tailwind.config = {
   .filter-seg-btn.active { background: #e2ba60; color: #262116; }
 
   /* Location drawer — mobile "View All" sub-nav (Figma node 2911:34151) */
-  .loc-group { padding: 14px 0; }
-  .loc-group-label { display: flex; align-items: center; gap: 8px; color: #728ab0; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-  .loc-items { margin-left: 7px; border-left: 2px solid #3c4d69; padding-left: 18px; }
-  .loc-item { display: flex; align-items: baseline; gap: 8px; padding: 10px 0; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 16px; text-decoration: none; transition: color 0.15s; }
+  .loc-items { display: flex; flex-direction: column; }
+  .loc-item { padding: 14px 0; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 16px; text-decoration: none; transition: color 0.15s; }
   .loc-item:hover { color: #dcb05e; }
   .loc-item.active { color: #dcb05e; font-weight: 600; }
-  .loc-item .loc-count { color: #728ab0; font-size: 13px; font-weight: 400; white-space: nowrap; }
 </style>
 </head>
 <body class="bg-navy-900 text-white">
@@ -457,6 +454,61 @@ tailwind.config = {
       </div>
     </div>
   </article>
+
+  <!-- ============ Inline Groups: Other 9/11 Memorials (Figma node 2911:32947) ============ -->
+  <aside id="other-memorials-block" aria-labelledby="other-memorials-heading" class="flex flex-col gap-12">
+    <div class="flex flex-col gap-6">
+      <h3 id="other-memorials-heading" class="font-serif text-2xl text-navy-400 leading-[1.2]">Other 9/11 Memorials</h3>
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+      <li class="border-b border-navy-700 pb-4 flex flex-col justify-end gap-2">
+        <div class="flex items-center gap-2">
+          <div class="flex-1 min-w-0 flex flex-col gap-1">
+            <a href="world-trade-center.html" class="font-sans font-semibold text-base text-gold-500 hover:text-gold-400 transition-colors leading-[20px]">World Trade Center</a>
+            <span class="font-sans text-sm text-wb-400 leading-[1.2]">New York, NY</span>
+          </div>
+          <button type="button" aria-label="Follow World Trade Center" class="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 hover:bg-wb-200 transition-colors">
+            <i class="ph ph-bookmark-simple text-base text-navy-900" aria-hidden="true"></i>
+          </button>
+        </div>
+      </li>
+      <li class="border-b border-navy-700 pb-4 flex flex-col justify-end gap-2">
+        <div class="flex items-center gap-2">
+          <div class="flex-1 min-w-0 flex flex-col gap-1">
+            <a href="the-pentagon.html" class="font-sans font-semibold text-base text-gold-500 hover:text-gold-400 transition-colors leading-[20px]">The Pentagon</a>
+            <span class="font-sans text-sm text-wb-400 leading-[1.2]">Arlington, VA</span>
+          </div>
+          <button type="button" aria-label="Follow The Pentagon" class="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 hover:bg-wb-200 transition-colors">
+            <i class="ph ph-bookmark-simple text-base text-navy-900" aria-hidden="true"></i>
+          </button>
+        </div>
+      </li>
+      <li class="border-b border-navy-700 pb-4 flex flex-col justify-end gap-2">
+        <div class="flex items-center gap-2">
+          <div class="flex-1 min-w-0 flex flex-col gap-1">
+            <a href="united-flight-93.html" class="font-sans font-semibold text-base text-gold-500 hover:text-gold-400 transition-colors leading-[20px]">United Airlines Flight 93</a>
+            <span class="font-sans text-sm text-wb-400 leading-[1.2]">Shanksville, PA</span>
+          </div>
+          <button type="button" aria-label="Follow United Airlines Flight 93" class="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 hover:bg-wb-200 transition-colors">
+            <i class="ph ph-bookmark-simple text-base text-navy-900" aria-hidden="true"></i>
+          </button>
+        </div>
+      </li>
+      <li class="border-b border-navy-700 pb-4 flex flex-col justify-end gap-2">
+        <span class="self-start inline-flex items-center h-5 px-2.5 rounded-full bg-gold-100 text-[12px] font-semibold text-gold-800 leading-[1.5]">New</span>
+        <div class="flex items-center gap-2">
+          <div class="flex-1 min-w-0 flex flex-col gap-1">
+            <a href="#" class="font-sans font-semibold text-base text-gold-500 hover:text-gold-400 transition-colors leading-[20px]">9/11 First Responders</a>
+            <span class="font-sans text-sm text-wb-400 leading-[1.2]">United States</span>
+          </div>
+          <button type="button" aria-label="Follow 9/11 First Responders" class="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 hover:bg-wb-200 transition-colors">
+            <i class="ph ph-bookmark-simple text-base text-navy-900" aria-hidden="true"></i>
+          </button>
+        </div>
+      </li>
+      </ul>
+    </div>
+    <a href="#" class="self-center inline-flex items-center gap-1 text-base font-semibold text-gold-500 hover:text-gold-400 underline underline-offset-4 decoration-from-font transition-colors">View All Memorials</a>
+  </aside>
 
   <!-- ============ Inline NBR Callout (Figma node 2911:32845) ============ -->
   <aside id="nbr-inline-callout" class="bg-navy-800 border border-navy-700 rounded-2xl p-6 md:p-8 flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
@@ -785,11 +837,36 @@ tailwind.config = {
     }
   }
 
+  // Always show inline groups. Position after the 8th visible card when
+  // available; otherwise after the last visible card; otherwise at the end
+  // of the results feed.
+  function positionInlineGroups() {
+    const block = document.getElementById('other-memorials-block');
+    if (!block) return;
+    block.style.display = '';
+    const visible = [];
+    document.querySelectorAll('main article.result-card').forEach((c) => {
+      if (c.style.display !== 'none') visible.push(c);
+    });
+    if (visible.length === 0) {
+      // Place block after the status message so it never precedes it
+      const status = document.getElementById('results-status');
+      if (status && status.nextSibling !== block) {
+        status.parentNode.insertBefore(block, status.nextSibling);
+      }
+      return;
+    }
+    const target = visible[Math.min(7, visible.length - 1)];
+    if (target.nextElementSibling !== block) {
+      target.parentNode.insertBefore(block, target.nextSibling);
+    }
+  }
+
   function appendBatch() {
     if (cursor >= pageVictims.length) {
       sentinel.style.display = 'none';
       // Even if nothing left to render, refresh status (handles 0-result pages like Pentagon)
-      if (cursor === 0) { updateOverallStatus(); positionNbrCallout(); }
+      if (cursor === 0) { updateOverallStatus(); positionNbrCallout(); positionInlineGroups(); }
       return;
     }
     const end = Math.min(cursor + BATCH_SIZE, pageVictims.length);
@@ -799,6 +876,7 @@ tailwind.config = {
     cursor = end;
     updateOverallStatus();
     positionNbrCallout();
+    positionInlineGroups();
   }
 
   // ============ Combined filtering: page-location + alphabet + search ============
@@ -857,8 +935,9 @@ tailwind.config = {
       if (matches) visible++;
     });
 
-    // Re-anchor the NBR callout after the 4th visible card
+    // Re-anchor the NBR callout and inline groups
     positionNbrCallout();
+    positionInlineGroups();
 
     // Restore infinite-scroll sentinel only on the unfiltered ALL view
     if (activeLetter === 'ALL' && !searchQuery && cursor < pageVictims.length) {
@@ -963,13 +1042,13 @@ tailwind.config = {
         <i class="ph ph-caret-down text-base" aria-hidden="true"></i>
       </button>
       <div class="mt-3">
-        <label class="filter-row"><input type="checkbox" checked> All</label>
-        <label class="filter-row"><input type="checkbox"> World Trade Center</label>
-        <label class="filter-row"><input type="checkbox"> The Pentagon</label>
-        <label class="filter-row"><input type="checkbox"> United Airlines Flight 93</label>
-        <label class="filter-row"><input type="checkbox"> United Airlines Flight 77</label>
-        <label class="filter-row"><input type="checkbox"> American Airlines Flight 11</label>
-        <label class="filter-row"><input type="checkbox"> United Airlines Flight 175</label>
+        <label class="filter-row"><input type="radio" name="loc-filter" data-filter-all checked> All</label>
+        <label class="filter-row"><input type="checkbox" data-filter-option> World Trade Center</label>
+        <label class="filter-row"><input type="checkbox" data-filter-option> The Pentagon</label>
+        <label class="filter-row"><input type="checkbox" data-filter-option> United Airlines Flight 93</label>
+        <label class="filter-row"><input type="checkbox" data-filter-option> United Airlines Flight 77</label>
+        <label class="filter-row"><input type="checkbox" data-filter-option> American Airlines Flight 11</label>
+        <label class="filter-row"><input type="checkbox" data-filter-option> United Airlines Flight 175</label>
       </div>
     </section>
 
@@ -1036,39 +1115,18 @@ tailwind.config = {
 <div id="location-drawer-overlay" class="filter-drawer-overlay" onclick="closeLocationDrawer()" aria-hidden="true"></div>
 <aside id="location-drawer" class="filter-drawer" role="dialog" aria-modal="true" aria-labelledby="location-drawer-title" aria-hidden="true">
   <header class="flex items-center justify-between px-6 py-5 border-b border-navy-700 flex-shrink-0">
-    <h2 id="location-drawer-title" class="font-serif text-[24px] font-normal text-white">All 9/11 Locations</h2>
+    <h2 id="location-drawer-title" class="font-serif text-[24px] font-normal text-white">9/11 Locations</h2>
     <button type="button" onclick="closeLocationDrawer()" aria-label="Close locations"
       class="w-9 h-9 flex items-center justify-center rounded-full text-white hover:bg-white/10 transition-colors">
       <i class="ph ph-x text-xl" aria-hidden="true"></i>
     </button>
   </header>
   <div class="flex-1 overflow-y-auto px-6 py-4">
-    <div class="loc-group">
-      <p class="loc-group-label"><i class="ph ph-map-pin text-base" aria-hidden="true"></i> All Locations</p>
-      <div class="loc-items">
-        <a href="index.html" class="loc-item active">September 11, 2001 <span class="loc-count">&middot; 2,977 lives</span></a>
-      </div>
-    </div>
-    <div class="loc-group">
-      <p class="loc-group-label"><i class="ph ph-map-pin text-base" aria-hidden="true"></i> New York City, NY</p>
-      <div class="loc-items">
-        <a href="world-trade-center.html" class="loc-item">World Trade Center <span class="loc-count">&middot; 2,016 lives</span></a>
-        <a href="american-flight-11.html" class="loc-item">American Airlines Flight 11 <span class="loc-count">&middot; 87 lives</span></a>
-        <a href="united-flight-175.html" class="loc-item">United Airlines Flight 175 <span class="loc-count">&middot; 60 lives</span></a>
-      </div>
-    </div>
-    <div class="loc-group">
-      <p class="loc-group-label"><i class="ph ph-map-pin text-base" aria-hidden="true"></i> Arlington, VA</p>
-      <div class="loc-items">
-        <a href="the-pentagon.html" class="loc-item">The Pentagon <span class="loc-count">&middot; 184 lives</span></a>
-        <a href="american-flight-77.html" class="loc-item">American Airlines Flight 77 <span class="loc-count">&middot; 59 lives</span></a>
-      </div>
-    </div>
-    <div class="loc-group">
-      <p class="loc-group-label"><i class="ph ph-map-pin text-base" aria-hidden="true"></i> Shanksville, PA</p>
-      <div class="loc-items">
-        <a href="united-flight-93.html" class="loc-item">United Airlines Flight 93 <span class="loc-count">&middot; 40 lives</span></a>
-      </div>
+    <div class="loc-items">
+        <a href="index.html" class="loc-item active">September 11, 2001</a>
+        <a href="world-trade-center.html" class="loc-item">World Trade Center</a>
+        <a href="the-pentagon.html" class="loc-item">The Pentagon</a>
+        <a href="united-flight-93.html" class="loc-item">United Flight 93</a>
     </div>
   </div>
 </aside>
@@ -1127,6 +1185,25 @@ tailwind.config = {
     o.classList.remove('open'); o.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
   }
+  // Filter drawer: "All" radio + sibling checkboxes mutual exclusivity
+  document.querySelectorAll('[data-filter-all]').forEach((allInput) => {
+    const section = allInput.closest('.filter-section');
+    if (!section) return;
+    const options = section.querySelectorAll('[data-filter-option]');
+    allInput.addEventListener('change', () => {
+      if (allInput.checked) options.forEach((o) => { o.checked = false; });
+    });
+    options.forEach((opt) => {
+      opt.addEventListener('change', () => {
+        if (opt.checked) {
+          allInput.checked = false;
+        } else if (![...options].some((o) => o.checked)) {
+          allInput.checked = true;
+        }
+      });
+    });
+  });
+
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (document.getElementById('filter-drawer').classList.contains('open')) closeFilterDrawer();
