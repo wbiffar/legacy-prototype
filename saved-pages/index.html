@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy — Your Saved Pages (DES-2195)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+            serif: ['"DM Serif Text"', 'Georgia', 'serif'],
+          },
+          colors: {
+            navy:    { 50:'#f0f4fa', 100:'#e6ecf5', 200:'#d3ddeb', 300:'#b0c0d6', 400:'#728ab0', 500:'#42608f', 600:'#3c4d69', 700:'#293548', 800:'#212a3a', 900:'#151b24' },
+            gold:    { 50:'#fbf7ef', 100:'#f6e5b8', 200:'#f0d78d', 300:'#e9c86f', 400:'#e2ba60', 500:'#dcb05e', 600:'#c49e54', 700:'#a48849', 800:'#85713e', 900:'#655b34' },
+            wb:      { 50:'#fbfbfb', 100:'#f6f6f6', 200:'#ebe9e9', 300:'#dbdad7', 400:'#afadaa', 500:'#807e7a', 600:'#63605b', 700:'#514d45', 800:'#373329', 900:'#262116' },
+            seafoam: { 50:'#f3faf9', 100:'#ebf2f1', 200:'#cee2de', 300:'#aecec9', 400:'#81b8ae', 500:'#5c9d94', 600:'#357d75', 700:'#216e6a', 800:'#165c58', 900:'#014744' },
+            coral:   { 50:'#fcf1f3', 100:'#fce8ec', 200:'#f7d4da', 300:'#eba9b5', 400:'#e77d91', 500:'#d6677c', 600:'#c24c62', 700:'#993b4d', 800:'#792f3d', 900:'#662833' },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', system-ui, sans-serif; color: #262116; background: #fbf7ef; }
+    .font-serif-heading { font-family: 'DM Serif Text', Georgia, serif; font-weight: 400; }
+
+    button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+      outline: 2px solid #dcb05e; outline-offset: 2px;
+    }
+
+    /* ---- Sheet / modal scaffolding ---- */
+    .sheet-overlay {
+      position: fixed; inset: 0; z-index: 60;
+      background: rgba(21,27,36,0.80); backdrop-filter: blur(2px);
+      display: none; align-items: center; justify-content: center; padding: 24px;
+    }
+    .sheet-overlay.open { display: flex; }
+    .sheet-card {
+      background: #fff; width: 100%; max-width: 512px;
+      border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      position: relative; animation: pop .18s ease;
+    }
+    @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+
+    /* Bottom-sheet behaviour on mobile */
+    @media (max-width: 639px) {
+      .sheet-overlay { align-items: flex-end; padding: 0; }
+      .sheet-card { max-width: 100%; border-radius: 20px 20px 0 0; animation: slideup .22s ease; }
+      @keyframes slideup { from { transform: translateY(100%); } to { transform: none; } }
+    }
+
+    /* Custom toggle switch */
+    .switch { position: relative; width: 52px; height: 30px; flex-shrink: 0; cursor: pointer; }
+    .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+    .switch .track { position: absolute; inset: 0; border-radius: 9999px; background: #dbdad7; transition: background .18s; }
+    .switch .knob { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.25); transition: transform .18s; }
+    .switch input:checked + .track { background: #216e6a; }
+    .switch input:checked + .track + .knob { transform: translateX(22px); }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(8px);
+      background: #262116; color: #fff; padding: 12px 16px 12px 20px; border-radius: 9999px;
+      font-size: 14px; font-weight: 500; z-index: 90; opacity: 0; pointer-events: none;
+      transition: all .25s ease; display: flex; align-items: center; gap: 14px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+    .toast .lead { display: flex; align-items: center; gap: 10px; }
+    .toast i.ph-check-circle { color: #81b8ae; font-size: 18px; }
+    .toast button { color: #dcb05e; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+    @media (max-width: 639px) { .toast { bottom: 16px; width: calc(100vw - 24px); justify-content: space-between; } }
+
+    /* Mobile account accordion */
+    .acct-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
+    .acct-panel > div { overflow: hidden; }
+    [data-acct-open="true"] .acct-panel { grid-template-rows: 1fr; }
+    [data-acct-open="true"] .acct-chevron { transform: rotate(180deg); }
+    .acct-chevron { transition: transform .25s ease; }
+
+    @media print { .reset-demo { display: none; } }
+  </style>
+</head>
+<body>
+
+<!-- ====================================================================
+     HEADER — NavigationCustom 2.0 (signed in)
+     ==================================================================== -->
+<header class="bg-white border-b border-wb-300 sticky top-0 z-30">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-3 md:py-4 flex items-center gap-3 md:gap-6">
+    <a href="../" aria-label="Legacy.com home" class="flex-shrink-0 flex items-center gap-2">
+      <img src="https://www.legacy.com/media/legacy-icon-dark.svg" alt="" class="h-7 md:h-9 w-auto" />
+      <span class="font-serif-heading text-xl md:text-2xl text-navy-700 leading-none">Legacy</span>
+    </a>
+    <div class="flex-1 max-w-[480px] mx-auto hidden lg:block">
+      <div class="relative">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-wb-500 pointer-events-none"><i class="ph ph-magnifying-glass text-lg"></i></span>
+        <input type="search" placeholder="Find a loved one…" aria-label="Find a loved one" class="w-full h-11 pl-11 pr-4 rounded-full bg-white border border-wb-300 text-[15px] text-wb-900 placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
+      </div>
+    </div>
+    <div class="flex items-center gap-2 md:gap-3 ml-auto">
+      <!-- Desktop: signed-in identity -->
+      <div class="hidden lg:inline-flex items-center gap-2 px-2 py-1">
+        <span class="w-9 h-9 rounded-full bg-gold-100 text-gold-900 flex items-center justify-center text-sm font-semibold border border-gold-300" aria-hidden="true">J</span>
+        <span class="text-[15px] font-semibold text-wb-900">Hi, John</span>
+      </div>
+      <!-- Mobile: account icon + hamburger -->
+      <button aria-label="Your account" class="lg:hidden w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900"><i class="ph ph-user-circle text-xl"></i></button>
+      <button aria-label="Open menu" class="lg:hidden w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900"><i class="ph ph-list text-xl"></i></button>
+    </div>
+  </div>
+  <!-- Desktop nav bar -->
+  <nav class="hidden lg:block border-t border-wb-200">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-center gap-8 text-[15px] font-semibold text-wb-900 h-12">
+      <a href="#" class="hover:text-navy-700">Create &amp; Publish</a>
+      <a href="#" class="hover:text-navy-700">Browse Obituaries</a>
+      <a href="#" class="hover:text-navy-700">Plan Ahead</a>
+      <a href="#" class="hover:text-navy-700">Get Support</a>
+      <a href="#" class="hover:text-navy-700">Send a Gift</a>
+    </div>
+  </nav>
+</header>
+
+<!-- ====================================================================
+     MAIN
+     ==================================================================== -->
+<main class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-6 md:py-10">
+  <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8 lg:gap-12">
+
+    <!-- =================== LEFT: My Account =================== -->
+    <!-- Desktop sidebar -->
+    <aside class="hidden lg:block">
+      <nav class="sticky top-[140px] bg-gold-50 border border-wb-200 rounded-xl p-6" aria-label="My Account">
+        <h2 class="font-serif-heading text-2xl text-wb-900 leading-none">My Account</h2>
+        <p class="text-sm text-gold-800 mt-2">Welcome back, John</p>
+        <ul class="mt-5 space-y-3 text-[15px]">
+          <li><a href="#" aria-current="page" class="font-bold text-wb-900">Your Saved Pages</a></li>
+          <li><a href="#" class="text-wb-700 hover:text-navy-700">Account Settings</a></li>
+        </ul>
+        <a href="#" class="inline-block mt-5 text-sm font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2">Sign out</a>
+      </nav>
+    </aside>
+
+    <!-- Mobile accordion -->
+    <div class="lg:hidden" data-acct-open="false" id="acct-accordion">
+      <button class="w-full bg-gold-50 border border-wb-200 rounded-xl p-5 flex items-start justify-between gap-3 text-left" aria-expanded="false" aria-controls="acct-links" id="acct-toggle">
+        <span class="min-w-0">
+          <span class="block font-serif-heading text-2xl text-wb-900 leading-none">My Account</span>
+          <span class="block text-sm text-gold-800 mt-2 break-words">Welcome back,<br />johndoe@example.com</span>
+        </span>
+        <i class="ph ph-caret-down text-xl text-wb-700 acct-chevron flex-shrink-0 mt-1" aria-hidden="true"></i>
+      </button>
+      <div class="acct-panel" id="acct-links">
+        <div>
+          <ul class="px-5 pt-4 pb-1 space-y-3 text-[15px]">
+            <li><a href="#" aria-current="page" class="font-bold text-wb-900">Your Saved Pages</a></li>
+            <li><a href="#" class="text-wb-700">Account Settings</a></li>
+            <li><a href="#" class="text-navy-500 font-semibold underline underline-offset-2">Sign out</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== RIGHT: Saved Pages =================== -->
+    <div class="max-w-[640px]">
+      <header class="mb-6 md:mb-8 mt-6 lg:mt-0">
+        <h1 class="font-serif-heading text-4xl md:text-5xl text-wb-900 leading-tight">Your Saved Pages</h1>
+        <p class="text-base md:text-lg text-wb-700 mt-2 leading-relaxed">Pages and memorials you've saved. Tap <span class="font-semibold tracking-widest">•••</span> to manage updates or remove a page.</p>
+      </header>
+
+      <div id="sections" class="space-y-5 md:space-y-6">
+
+        <!-- ============ PEOPLE ============ -->
+        <section class="bg-white border border-wb-200 rounded-xl" data-section="people">
+          <div class="flex items-center justify-between px-5 md:px-6 py-4 border-b border-wb-200">
+            <h2 class="flex items-center gap-2.5 text-base font-semibold text-wb-900"><i class="ph ph-user text-xl text-navy-700"></i> <span class="uppercase tracking-[0.14em]">People</span></h2>
+            <span class="text-sm text-wb-500" data-count>4 people</span>
+          </div>
+          <ul class="divide-y divide-wb-200" data-list>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5"
+                data-type="person" data-name="Douglas Michael Jones" data-updates="on"
+                data-avatar="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&q=80">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&q=80" alt="" class="w-14 h-14 rounded-full object-cover border border-wb-200 flex-shrink-0" />
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">Douglas Michael Jones</a>
+              <button class="more-btn" aria-label="More options for Douglas Michael Jones"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5"
+                data-type="person" data-name="Dr. Jennifer Annetta Thompson-McFarlen" data-updates="on"
+                data-avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&q=80">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&q=80" alt="" class="w-14 h-14 rounded-full object-cover border border-wb-200 flex-shrink-0" />
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">Dr. Jennifer Annetta Thompson-McFarlen</a>
+              <button class="more-btn" aria-label="More options for Dr. Jennifer Annetta Thompson-McFarlen"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5"
+                data-type="person" data-name="Rajesh Kumar Patel" data-updates="off"
+                data-avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=80">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=80" alt="" class="w-14 h-14 rounded-full object-cover border border-wb-200 flex-shrink-0" />
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">Rajesh Kumar Patel</a>
+              <button class="more-btn" aria-label="More options for Rajesh Kumar Patel"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5"
+                data-type="person" data-name="Fatima El-Mansour" data-updates="on"
+                data-avatar="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=160&q=80">
+              <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=160&q=80" alt="" class="w-14 h-14 rounded-full object-cover border border-wb-200 flex-shrink-0" />
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">Fatima El-Mansour</a>
+              <button class="more-btn" aria-label="More options for Fatima El-Mansour"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+          </ul>
+          <div class="px-5 md:px-6 py-4 flex justify-center border-t border-wb-200">
+            <a href="#" class="find-btn">Find People <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </section>
+
+        <!-- ============ PLACES ============ -->
+        <section class="bg-white border border-wb-200 rounded-xl" data-section="places">
+          <div class="flex items-center justify-between px-5 md:px-6 py-4 border-b border-wb-200">
+            <h2 class="flex items-center gap-2.5 text-base font-semibold text-wb-900"><i class="ph ph-map-pin text-xl text-navy-700"></i> <span class="uppercase tracking-[0.14em]">Places</span></h2>
+            <span class="text-sm text-wb-500" data-count>3 places</span>
+          </div>
+          <ul class="divide-y divide-wb-200" data-list>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5" data-type="place" data-name="Chicago, IL">
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">Chicago, IL</a>
+              <button class="more-btn" aria-label="More options for Chicago, IL"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5" data-type="place" data-name="San Francisco, CA">
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">San Francisco, CA</a>
+              <button class="more-btn" aria-label="More options for San Francisco, CA"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5" data-type="place" data-name="New York, NY">
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">New York, NY</a>
+              <button class="more-btn" aria-label="More options for New York, NY"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+          </ul>
+          <div class="px-5 md:px-6 py-4 flex justify-center border-t border-wb-200">
+            <a href="#" class="find-btn">Find More Places <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </section>
+
+        <!-- ============ MEMORIALS ============ -->
+        <section class="bg-white border border-wb-200 rounded-xl" data-section="memorials">
+          <div class="flex items-center justify-between px-5 md:px-6 py-4 border-b border-wb-200">
+            <h2 class="flex items-center gap-2.5 text-base font-semibold text-wb-900"><i class="ph ph-heart text-xl text-navy-700"></i> <span class="uppercase tracking-[0.14em]">Memorials</span></h2>
+            <span class="text-sm text-wb-500" data-count>4 memorials</span>
+          </div>
+          <ul class="divide-y divide-wb-200" data-list>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5" data-type="memorial" data-name="September 11, 2001">
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">September 11, 2001</a>
+              <button class="more-btn" aria-label="More options for September 11, 2001"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5" data-type="memorial" data-name="Newbury Park High School Obituaries">
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">Newbury Park High School Obituaries</a>
+              <button class="more-btn" aria-label="More options for Newbury Park High School Obituaries"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5" data-type="memorial" data-name="Northwestern University Obituaries">
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">Northwestern University Obituaries</a>
+              <button class="more-btn" aria-label="More options for Northwestern University Obituaries"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5" data-type="memorial" data-name="Lives Touched by Alzheimer's">
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">Lives Touched by Alzheimer's</a>
+              <button class="more-btn" aria-label="More options for Lives Touched by Alzheimer's"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+          </ul>
+          <div class="px-5 md:px-6 py-4 flex justify-center border-t border-wb-200">
+            <a href="#" class="find-btn">Find Memorials <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </section>
+
+        <!-- ============ NEWSPAPERS ============ -->
+        <section class="bg-white border border-wb-200 rounded-xl" data-section="newspapers">
+          <div class="flex items-center justify-between px-5 md:px-6 py-4 border-b border-wb-200">
+            <h2 class="flex items-center gap-2.5 text-base font-semibold text-wb-900"><i class="ph ph-newspaper text-xl text-navy-700"></i> <span class="uppercase tracking-[0.14em]">Newspapers</span></h2>
+            <span class="text-sm text-wb-500" data-count>2 newspapers</span>
+          </div>
+          <ul class="divide-y divide-wb-200" data-list>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5" data-type="newspaper" data-name="Chicago Sun-Times">
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">Chicago Sun-Times</a>
+              <button class="more-btn" aria-label="More options for Chicago Sun-Times"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5" data-type="newspaper" data-name="The Sacramento Bee">
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">The Sacramento Bee</a>
+              <button class="more-btn" aria-label="More options for The Sacramento Bee"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+          </ul>
+          <div class="px-5 md:px-6 py-4 flex justify-center border-t border-wb-200">
+            <a href="#" class="find-btn">Find Newspapers <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </section>
+
+        <!-- ============ SAVED SEARCHES ============ -->
+        <section class="bg-white border border-wb-200 rounded-xl" data-section="searches">
+          <div class="flex items-center justify-between px-5 md:px-6 py-4 border-b border-wb-200">
+            <h2 class="flex items-center gap-2.5 text-base font-semibold text-wb-900"><i class="ph ph-magnifying-glass text-xl text-navy-700"></i> <span class="uppercase tracking-[0.14em]">Saved Searches</span></h2>
+            <span class="text-sm text-wb-500" data-count>3 searches</span>
+          </div>
+          <ul class="divide-y divide-wb-200" data-list>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5" data-type="search" data-name="“O'Brien”">
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">“O'Brien”</a>
+              <button class="more-btn" aria-label="More options for the search O'Brien"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5" data-type="search" data-name="“Jeff Rosenstock”">
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">“Jeff Rosenstock”</a>
+              <button class="more-btn" aria-label="More options for the search Jeff Rosenstock"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+            <li class="saved-item flex items-center gap-3 px-5 md:px-6 py-3.5" data-type="search" data-name="“Rosenstock”">
+              <a href="#" class="flex-1 min-w-0 text-[15px] font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 truncate">“Rosenstock”</a>
+              <button class="more-btn" aria-label="More options for the search Rosenstock"><i class="ph ph-dots-three" aria-hidden="true"></i></button>
+            </li>
+          </ul>
+          <div class="px-5 md:px-6 py-4 flex justify-center border-t border-wb-200">
+            <a href="#" class="find-btn">Find People <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ====================================================================
+     HELP CENTER BAND
+     ==================================================================== -->
+<section class="bg-seafoam-100 border-t border-seafoam-200">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-10">
+    <h2 class="font-serif-heading text-2xl text-wb-900">Legacy Help Center</h2>
+    <p class="text-base text-wb-700 mt-1">Need additional help? The Legacy Support Team is available Monday through Friday, 7am–7pm CT.</p>
+    <div class="flex flex-col sm:flex-row gap-6 sm:gap-12 mt-5">
+      <div class="flex items-center gap-3">
+        <span class="w-11 h-11 rounded-full bg-seafoam-200 text-seafoam-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-phone text-xl"></i></span>
+        <span><span class="block text-xs uppercase tracking-wider text-wb-500 font-semibold">Call us</span><a href="tel:8007298809" class="text-base font-semibold text-navy-700">800-729-8809</a></span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="w-11 h-11 rounded-full bg-seafoam-200 text-seafoam-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-envelope-simple text-xl"></i></span>
+        <span><span class="block text-xs uppercase tracking-wider text-wb-500 font-semibold">Email us</span><a href="mailto:obituaries@legacy.com" class="text-base font-semibold text-navy-700">obituaries@legacy.com</a></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     FOOTER
+     ==================================================================== -->
+<footer class="bg-navy-900 text-white">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-10">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
+      <div class="col-span-2 md:col-span-1">
+        <img src="https://www.legacy.com/media/legacy-icon-white.svg" alt="Legacy" class="h-8 w-auto" />
+        <div class="flex gap-3 mt-4 text-wb-300">
+          <a href="#" aria-label="Facebook" class="hover:text-gold-500"><i class="ph-fill ph-facebook-logo text-xl"></i></a>
+          <a href="#" aria-label="YouTube" class="hover:text-gold-500"><i class="ph-fill ph-youtube-logo text-xl"></i></a>
+        </div>
+        <p class="text-xs text-wb-300 mt-4">© 2026 Legacy.com. All rights reserved.</p>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Services</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Create &amp; Publish an obituary</a></li>
+          <li><a href="#" class="hover:text-gold-500">Plan a funeral or estate</a></li>
+          <li><a href="#" class="hover:text-gold-500">Send a Sympathy Gift</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Find obituaries</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Browse by Name</a></li>
+          <li><a href="#" class="hover:text-gold-500">Browse by Newspaper</a></li>
+          <li><a href="#" class="hover:text-gold-500">Browse by Location</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Help &amp; Support</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">24/7 Publishing Support</a></li>
+          <li><a href="#" class="hover:text-gold-500">How to write an obituary</a></li>
+          <li><a href="#" class="hover:text-gold-500">FAQs</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ====================================================================
+     MORE OPTIONS MODAL  (Figma: 4773:160356 / 4770:159449 / 4774:162505)
+     ==================================================================== -->
+<div class="sheet-overlay" id="options-overlay" role="dialog" aria-modal="true" aria-labelledby="opt-title">
+  <div class="sheet-card pb-6">
+    <!-- Header -->
+    <div class="flex items-center gap-3 p-5 md:p-6">
+      <img id="opt-avatar" src="" alt="" class="w-14 h-14 rounded-full object-cover border border-wb-200 flex-shrink-0 hidden" />
+      <h2 id="opt-title" class="flex-1 min-w-0 font-serif-heading text-xl md:text-2xl text-wb-900 leading-tight pr-10">Page name</h2>
+      <button data-close class="absolute top-4 right-4 w-9 h-9 rounded-full border border-wb-300 text-wb-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph ph-x text-lg"></i></button>
+    </div>
+    <div class="border-t border-wb-200"></div>
+
+    <!-- Share -->
+    <button class="action-row w-full flex items-center gap-4 px-5 md:px-6 py-4 text-left hover:bg-wb-50" data-action="share">
+      <span class="w-10 h-10 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-share-fat text-lg" aria-hidden="true"></i></span>
+      <span class="flex-1 min-w-0">
+        <span class="block text-base font-semibold text-wb-900 leading-tight">Share this page</span>
+        <span class="block text-sm text-wb-600 mt-0.5">Invite others to visit this page</span>
+      </span>
+      <i class="ph ph-caret-right text-wb-400 flex-shrink-0" aria-hidden="true"></i>
+    </button>
+
+    <!-- Email updates (person only) -->
+    <div id="opt-updates-wrap">
+      <div class="border-t border-wb-200 mx-5 md:mx-6"></div>
+      <label class="flex items-center gap-4 px-5 md:px-6 py-4 cursor-pointer hover:bg-wb-50">
+        <span class="w-10 h-10 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-bell text-lg" aria-hidden="true"></i></span>
+        <span class="flex-1 min-w-0">
+          <span class="block text-base font-semibold text-wb-900 leading-tight">Email updates</span>
+          <span class="block text-sm text-wb-600 mt-0.5" id="opt-updates-sub">On • Receive updates for this page</span>
+        </span>
+        <span class="switch"><input type="checkbox" id="opt-toggle" role="switch" aria-label="Email updates" /><span class="track"></span><span class="knob"></span></span>
+      </label>
+    </div>
+
+    <!-- Remove -->
+    <div class="border-t border-wb-200 mx-5 md:mx-6"></div>
+    <button class="action-row w-full flex items-center gap-4 px-5 md:px-6 py-4 text-left hover:bg-coral-50" data-action="remove">
+      <span class="w-10 h-10 rounded-full bg-coral-100 text-coral-600 flex items-center justify-center flex-shrink-0"><i class="ph ph-minus-circle text-lg" aria-hidden="true"></i></span>
+      <span class="flex-1 min-w-0">
+        <span class="block text-base font-semibold text-coral-700 leading-tight">Remove from saved pages</span>
+        <span class="block text-sm text-wb-600 mt-0.5">This page will be removed from your list</span>
+      </span>
+      <i class="ph ph-caret-right text-wb-400 flex-shrink-0" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SHARE SHEET
+     ==================================================================== -->
+<div class="sheet-overlay" id="share-overlay" role="dialog" aria-modal="true" aria-labelledby="share-title">
+  <div class="sheet-card p-5 md:p-6">
+    <button data-close class="absolute top-4 right-4 w-9 h-9 rounded-full border border-wb-300 text-wb-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph ph-x text-lg"></i></button>
+    <button data-back class="absolute top-4 left-4 w-9 h-9 rounded-full text-wb-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back to options"><i class="ph ph-arrow-left text-lg"></i></button>
+    <h2 id="share-title" class="font-serif-heading text-xl md:text-2xl text-wb-900 text-center pt-1">Share this page</h2>
+    <p class="text-sm text-wb-600 text-center mt-1" id="share-sub">Invite others to visit this page</p>
+
+    <div class="grid grid-cols-4 gap-2 mt-6">
+      <button class="share-channel" data-channel="Email"><span class="ico bg-navy-100 text-navy-700"><i class="ph ph-envelope-simple"></i></span>Email</button>
+      <button class="share-channel" data-channel="Text message"><span class="ico bg-navy-100 text-navy-700"><i class="ph ph-chat-circle"></i></span>Message</button>
+      <button class="share-channel" data-channel="Facebook"><span class="ico bg-navy-100 text-navy-700"><i class="ph ph-facebook-logo"></i></span>Facebook</button>
+      <button class="share-channel" data-channel="more apps"><span class="ico bg-navy-100 text-navy-700"><i class="ph ph-dots-three-outline"></i></span>More</button>
+    </div>
+
+    <div class="mt-6">
+      <label class="block text-sm font-semibold text-wb-900 mb-2">Page link</label>
+      <div class="flex items-center gap-2">
+        <input id="share-link" type="text" readonly value="https://www.legacy.com/saved/page" class="flex-1 h-12 px-3 rounded-lg border border-wb-300 bg-wb-50 text-sm text-wb-700 focus:outline-none focus:border-navy-500" />
+        <button id="copy-link" class="h-12 px-4 rounded-lg bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold inline-flex items-center gap-2 flex-shrink-0"><i class="ph ph-copy"></i> Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     CONFIRM REMOVE MODAL  (Figma: 4774:161074 / 4774:161842)
+     ==================================================================== -->
+<div class="sheet-overlay" id="remove-overlay" role="alertdialog" aria-modal="true" aria-labelledby="rm-title" aria-describedby="rm-body">
+  <div class="sheet-card p-6 md:p-8">
+    <h2 id="rm-title" class="font-serif-heading text-2xl text-wb-900 leading-tight pr-2">Are you sure you want to remove this page?</h2>
+    <p id="rm-body" class="text-base text-wb-700 mt-3 leading-relaxed">You can always save it again if you change your mind.</p>
+    <div class="flex flex-row gap-3 mt-6">
+      <button id="rm-confirm" class="flex-1 h-12 rounded-full bg-coral-700 hover:bg-coral-800 text-white text-base font-semibold">Remove</button>
+      <button data-close class="flex-1 h-12 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     TOAST
+     ==================================================================== -->
+<div id="toast" class="toast" role="status" aria-live="polite">
+  <span class="lead"><i class="ph-fill ph-check-circle"></i> <span id="toast-text">Done</span></span>
+  <button id="toast-action" type="button" class="hidden">Undo</button>
+</div>
+
+<!-- Reset demo helper -->
+<button class="reset-demo fixed bottom-4 right-4 z-40 h-10 px-4 rounded-full bg-navy-900/90 text-white text-xs font-semibold inline-flex items-center gap-2 shadow-lg hover:bg-navy-900" id="reset-demo">
+  <i class="ph ph-arrow-counter-clockwise"></i> Reset demo
+</button>
+
+<!-- Shared button styles -->
+<style>
+  .more-btn { width: 36px; height: 36px; border-radius: 9999px; border: 1px solid #dbdad7; background: #fff; color: #514d45; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; transition: background .15s; }
+  .more-btn:hover { background: #f6f6f6; }
+  .find-btn { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 9999px; border: 1px solid #b0c0d6; background: #fff; color: #293548; font-size: 14px; font-weight: 600; transition: all .15s; }
+  .find-btn:hover { background: #f0f4fa; }
+  .share-channel { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #514d45; }
+  .share-channel .ico { width: 52px; height: 52px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-size: 22px; transition: filter .15s; }
+  .share-channel:hover .ico { filter: brightness(.95); }
+</style>
+
+<!-- ====================================================================
+     SCRIPT
+     ==================================================================== -->
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  // ----- snapshot for reset -----
+  const sectionsRoot = $('#sections');
+  const pristine = sectionsRoot.innerHTML;
+
+  // ----- modal/sheet helpers -----
+  let activeItem = null;            // the <li> currently being acted on
+  let lastFocus = null;
+
+  const overlays = {
+    options: $('#options-overlay'),
+    share:   $('#share-overlay'),
+    remove:  $('#remove-overlay'),
+  };
+
+  function openOverlay(o) {
+    lastFocus = document.activeElement;
+    o.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    const f = o.querySelector('button, [href], input, [tabindex]');
+    if (f) f.focus();
+  }
+  function closeAll() {
+    Object.values(overlays).forEach(o => o.classList.remove('open'));
+    document.body.style.overflow = '';
+    if (lastFocus) lastFocus.focus();
+  }
+
+  // ----- copy helpers -----
+  const TYPE_LABEL = { person:'page', place:'page', memorial:'memorial', newspaper:'page', search:'search' };
+
+  function populateOptions(item) {
+    const type = item.dataset.type;
+    const name = item.dataset.name;
+    const isPerson = type === 'person';
+
+    $('#opt-title').textContent = name;
+
+    const avatar = $('#opt-avatar');
+    if (isPerson && item.dataset.avatar) {
+      avatar.src = item.dataset.avatar; avatar.classList.remove('hidden');
+    } else {
+      avatar.classList.add('hidden'); avatar.removeAttribute('src');
+    }
+
+    // Email-updates row only for people
+    const wrap = $('#opt-updates-wrap');
+    if (isPerson) {
+      wrap.classList.remove('hidden');
+      const on = item.dataset.updates !== 'off';
+      $('#opt-toggle').checked = on;
+      $('#opt-updates-sub').textContent = on
+        ? 'On • Receive updates for this page'
+        : 'Off • You won’t receive updates';
+    } else {
+      wrap.classList.add('hidden');
+    }
+  }
+
+  // ----- open the More options sheet -----
+  $$('.more-btn').forEach(btn => {}); // no-op; delegated below
+  sectionsRoot.addEventListener('click', (e) => {
+    const btn = e.target.closest('.more-btn');
+    if (!btn) return;
+    activeItem = btn.closest('.saved-item');
+    populateOptions(activeItem);
+    openOverlay(overlays.options);
+  });
+
+  // ----- toggle email updates (persist back onto the item) -----
+  $('#opt-toggle').addEventListener('change', (e) => {
+    if (!activeItem) return;
+    const on = e.target.checked;
+    activeItem.dataset.updates = on ? 'on' : 'off';
+    $('#opt-updates-sub').textContent = on
+      ? 'On • Receive updates for this page'
+      : 'Off • You won’t receive updates';
+    toast(on ? 'Email updates turned on' : 'Email updates turned off');
+  });
+
+  // ----- action rows in the options sheet -----
+  overlays.options.addEventListener('click', (e) => {
+    const action = e.target.closest('[data-action]');
+    if (!action) return;
+    if (action.dataset.action === 'share') openShare();
+    if (action.dataset.action === 'remove') openRemove();
+  });
+
+  // ----- SHARE -----
+  function openShare() {
+    overlays.options.classList.remove('open');
+    $('#share-sub').textContent = activeItem
+      ? 'Invite others to visit ' + (activeItem.dataset.type === 'person' ? activeItem.dataset.name : 'this page')
+      : 'Invite others to visit this page';
+    openOverlay(overlays.share);
+  }
+  $('#copy-link').addEventListener('click', async () => {
+    const v = $('#share-link').value;
+    try { await navigator.clipboard.writeText(v); } catch (_) {}
+    closeAll();
+    toast('Link copied to clipboard');
+  });
+  $$('.share-channel').forEach(b => b.addEventListener('click', () => {
+    const ch = b.dataset.channel;
+    closeAll();
+    toast('Opening ' + ch + '…');
+  }));
+
+  // ----- REMOVE -----
+  function openRemove() {
+    overlays.options.classList.remove('open');
+    const type = activeItem.dataset.type;
+    const name = activeItem.dataset.name;
+    if (type === 'person') {
+      $('#rm-title').textContent = 'Are you sure you want to remove ' + name + '?';
+      $('#rm-body').textContent = 'You’ll no longer receive updates about this page. You can always save it again if you change your mind.';
+    } else {
+      $('#rm-title').textContent = 'Remove ' + name + ' from your saved pages?';
+      $('#rm-body').textContent = 'You can always save it again if you change your mind.';
+    }
+    openOverlay(overlays.remove);
+  }
+
+  $('#rm-confirm').addEventListener('click', () => {
+    if (!activeItem) return;
+    const section = activeItem.closest('section');
+    const name = activeItem.dataset.name;
+    const removed = activeItem;
+    const list = removed.closest('[data-list]');
+    const nextSibling = removed.nextElementSibling;
+
+    removed.remove();
+    updateCount(section);
+    closeAll();
+
+    // Toast with Undo
+    toast('Removed from saved pages', () => {
+      if (nextSibling) list.insertBefore(removed, nextSibling);
+      else list.appendChild(removed);
+      updateCount(section);
+      toast('Restored to saved pages');
+    });
+  });
+
+  function updateCount(section) {
+    const n = $$('.saved-item', section).length;
+    const type = section.dataset.section;
+    const nouns = { people:['person','people'], places:['place','places'], memorials:['memorial','memorials'], newspapers:['newspaper','newspapers'], searches:['search','searches'] };
+    const [s, p] = nouns[type] || ['item','items'];
+    $('[data-count]', section).textContent = n + ' ' + (n === 1 ? s : p);
+    // Empty state
+    let empty = $('.empty-row', section);
+    if (n === 0 && !empty) {
+      empty = document.createElement('li');
+      empty.className = 'empty-row px-5 md:px-6 py-5 text-sm text-wb-500 italic';
+      empty.textContent = 'Nothing saved here yet.';
+      $('[data-list]', section).appendChild(empty);
+    } else if (n > 0 && empty) {
+      empty.remove();
+    }
+  }
+
+  // ----- close handlers -----
+  $$('[data-close]').forEach(b => b.addEventListener('click', closeAll));
+  $('[data-back]')?.addEventListener('click', () => {
+    overlays.share.classList.remove('open');
+    populateOptions(activeItem);
+    openOverlay(overlays.options);
+  });
+  Object.values(overlays).forEach(o => o.addEventListener('mousedown', (e) => {
+    if (e.target === o) closeAll();
+  }));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAll();
+  });
+
+  // ----- toast -----
+  const toastEl = $('#toast'), toastText = $('#toast-text'), toastAction = $('#toast-action');
+  let toastTimer = null;
+  function toast(msg, undoFn) {
+    clearTimeout(toastTimer);
+    toastText.textContent = msg;
+    if (undoFn) {
+      toastAction.classList.remove('hidden');
+      toastAction.onclick = () => { clearTimeout(toastTimer); toastEl.classList.remove('show'); undoFn(); };
+    } else {
+      toastAction.classList.add('hidden');
+      toastAction.onclick = null;
+    }
+    toastEl.classList.add('show');
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), undoFn ? 6000 : 2600);
+  }
+
+  // ----- mobile account accordion -----
+  const acct = $('#acct-accordion'), acctToggle = $('#acct-toggle');
+  acctToggle.addEventListener('click', () => {
+    const open = acct.dataset.acctOpen === 'true';
+    acct.dataset.acctOpen = (!open).toString();
+    acctToggle.setAttribute('aria-expanded', (!open).toString());
+  });
+
+  // ----- reset demo -----
+  $('#reset-demo').addEventListener('click', () => {
+    sectionsRoot.innerHTML = pristine;
+    activeItem = null;
+    toast('Demo reset');
+  });
+})();
+</script>
+</body>
+</html>

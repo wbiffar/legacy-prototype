@@ -17,6 +17,8 @@
 !search-gating/**
 !save-defaults/
 !save-defaults/**
+!saved-pages/
+!saved-pages/**
 
 # Sign-up follow prototype
 !signup-follow-prototype.html
