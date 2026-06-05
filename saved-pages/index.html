@@ -348,9 +348,9 @@
 <!-- Demo scenario switcher -->
 <div class="demo-switcher" role="group" aria-label="Demo scenarios">
   <span class="demo-switcher-label">Demo scenario</span>
+  <button data-scenario="full" class="active"><i class="ph ph-stack"></i> Full library</button>
+  <button data-scenario="new-user"><i class="ph ph-user-circle-plus"></i> New user · 1 saved</button>
   <button data-scenario="zero"><i class="ph ph-tray"></i> Zero state · nothing saved</button>
-  <button data-scenario="new-user" class="active"><i class="ph ph-user-circle-plus"></i> New user · 1 saved</button>
-  <button data-scenario="full"><i class="ph ph-stack"></i> Full library</button>
 </div>
 
 <!-- Shared button styles -->
@@ -742,7 +742,7 @@
   }));
 
   // ===== INIT =====
-  loadScenario('new-user');
+  loadScenario('full');
 })();
 </script>
 </body>
