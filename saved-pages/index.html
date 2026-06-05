@@ -510,23 +510,27 @@
 
   function zeroStateHTML(){
     const value = (icon, head, body) =>
-      '<div class="flex flex-col items-center text-center w-[160px] md:w-[200px]">' +
+      '<div class="flex flex-col items-center text-center gap-3 w-[140px] md:w-[180px]">' +
         '<span class="w-16 h-16 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ' + icon + ' text-3xl" aria-hidden="true"></i></span>' +
-        '<h3 class="text-base font-bold text-navy-700 mt-4">' + head + '</h3>' +
-        '<p class="text-sm text-wb-700 mt-1 leading-snug">' + body + '</p>' +
+        '<div class="flex flex-col gap-2">' +
+          '<h3 class="text-base font-semibold text-navy-700">' + head + '</h3>' +
+          '<p class="text-sm text-wb-700 leading-snug">' + body + '</p>' +
+        '</div>' +
       '</div>';
     const pill = (key, label) =>
       '<button class="zero-pill" data-add="' + key + '"><i class="ph ph-magnifying-glass" aria-hidden="true"></i> ' + label + '</button>';
-    return '<div class="rounded-xl border border-dashed border-wb-300 bg-gradient-to-b from-white to-gold-50 px-5 md:px-8 py-8 md:py-10">' +
-      '<div class="text-center max-w-[520px] mx-auto">' +
+    // Card is solid white with a dashed border; the warm gradient belongs ONLY to the
+    // value-props band (gold/50 at the bottom fading up to white), per Figma 4824:13323.
+    return '<div class="rounded-2xl border border-dashed border-wb-300 bg-white px-3 md:px-4 py-6 flex flex-col items-center gap-4">' +
+      '<div class="text-center max-w-[520px]">' +
         '<h2 class="text-2xl font-bold text-wb-900">Keep what matters most</h2>' +
         '<p class="text-base text-wb-700 mt-1">Saving does two things at once</p>' +
       '</div>' +
-      '<div class="flex justify-center gap-10 md:gap-16 mt-8">' +
+      '<div class="w-full rounded-2xl pb-4 bg-gradient-to-t from-gold-50 from-[11.333%] to-white flex items-start justify-center gap-6">' +
         value('ph-bookmark-simple', 'It’s saved here', 'Every page you save lives in this tab. Easy to access.') +
         value('ph-bell', 'Get updates', 'Get emails when there’s updates. Toggle anytime.') +
       '</div>' +
-      '<div class="flex flex-wrap justify-center gap-2.5 mt-8">' +
+      '<div class="flex flex-wrap justify-center gap-2.5">' +
         pill('people', 'Find a Person') +
         pill('memorials', 'Find Memorials') +
         pill('places', 'Find Places') +
