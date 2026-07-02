@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legacy — Suggested Locations to Follow (DES-2175)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        navy: { 50:'#f0f4fa', 100:'#e6ecf5', 200:'#d3ddeb', 300:'#b0c0d6', 400:'#728ab0', 500:'#42608f', 600:'#3c4d69', 700:'#293548', 800:'#212a3a', 900:'#151b24' },
+        gold: { 50:'#fbf7ef', 100:'#f6e5b8', 200:'#f0d78d', 300:'#e9c86f', 400:'#e2ba60', 500:'#dcb05e', 600:'#c49e54', 700:'#a48849', 800:'#85713e', 900:'#655b34' },
+        wb:   { 50:'#fbfbfb', 100:'#f6f6f6', 200:'#ebe9e9', 300:'#dbdad7', 400:'#afadaa', 500:'#807e7a', 600:'#63605b', 700:'#514d45', 800:'#373329', 900:'#262116' },
+        seaFoam: { 100:'#ebf2f1', 400:'#81b8ae', 500:'#5c9d94', 600:'#357d75' }
+      },
+      fontFamily: {
+        sans:  ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        serif: ['"DM Serif Text"', 'serif']
+      }
+    }
+  }
+}
+</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; margin: 0; color: #262116; background: #e9e6e0; }
+
+  :root {
+    --navy700:#293548; --navy500:#42608f; --gold400:#e2ba60; --gold500:#dcb05e;
+    --gold100:#f6e5b8; --gold50:#fbf7ef; --wb300:#dbdad7; --wb400:#afadaa; --wb900:#262116;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar { display:none; }
+  .scrollbar-hide { -ms-overflow-style:none; scrollbar-width:none; }
+
+  /* Hero warm gradient — light cream (Figma: gold/400 glow fading to page gold/50) */
+  .hero-grad { background: linear-gradient(180deg, #faefd4 0%, #fbf7ef 58%); }
+
+  /* Full-bleed suggested-follows / success band (Figma: saturated gold strip with a
+     top border + upward pointer, edge-to-edge, content constrained). */
+  .band-gold { background: linear-gradient(180deg, #f1dca3 0%, #f7e8c6 100%); border-top: 1.5px solid #e4c274; }
+
+  /* ── Custom gold checkbox (Figma DES-2175) ── */
+  .cbx { width:20px; height:20px; border-radius:4px; border:1.5px solid var(--wb300); background:#fff;
+         display:inline-flex; align-items:center; justify-content:center; flex:none; transition:background .15s, border-color .15s; }
+  .cbx svg { opacity:0; transition:opacity .15s; }
+  .loc input:checked + .cbx { background:var(--gold400); border-color:var(--gold400); }
+  .loc input:checked + .cbx svg { opacity:1; }
+  .loc input:focus-visible + .cbx { outline:2px solid var(--navy500); outline-offset:2px; }
+
+  /* ── Push-down reveal animation (grid-rows trick = auto height) ── */
+  .revealer { display:grid; grid-template-rows:0fr; opacity:0;
+              transition: grid-template-rows .45s cubic-bezier(.4,0,.2,1), opacity .3s ease; }
+  .revealer.open { grid-template-rows:1fr; opacity:1; }
+  .revealer > .revealer-inner { overflow:hidden; min-height:0; }
+
+  /* Upward speech-bubble pointer — points UP at the Following button and sits on the
+     band's top border (bordered triangle: 1px gold outline + gold fill). */
+  .tail-up { position:relative; width:22px; height:11px; }
+  .tail-up::before, .tail-up::after { content:''; position:absolute; bottom:0; width:0; height:0;
+    border-left-color:transparent; border-right-color:transparent; border-left-style:solid; border-right-style:solid; }
+  .tail-up::before { left:0;  border-left-width:11px; border-right-width:11px; border-bottom:11px solid #e4c274; }
+  .tail-up::after  { left:1px; border-left-width:10px; border-right-width:10px; border-bottom:10px solid #f1dca3; }
+
+  /* Focus states (WCAG 2.1 AA) */
+  a:focus-visible, button:focus-visible, input:focus-visible { outline:2px solid var(--navy500); outline-offset:2px; }
+
+  /* Modal */
+  .modal-backdrop { transition: opacity .25s ease; }
+  .modal-card { transition: transform .3s cubic-bezier(.2,.8,.25,1), opacity .25s ease; }
+  .modal-hidden .modal-card { transform: translateY(16px) scale(.98); opacity:0; }
+  .modal-hidden { opacity:0; pointer-events:none; }
+
+  /* Toast */
+  .toast { transition: transform .3s ease, opacity .3s ease; }
+  .toast-hidden { transform: translateY(140%); opacity:0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .revealer, .modal-card, .modal-backdrop, .toast { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ PROTOTYPE CONTROL BAR (not part of the product) ══════════ -->
+<div class="sticky top-0 z-50 bg-navy-900 text-white">
+  <div class="max-w-[1280px] mx-auto px-4 py-2.5 flex flex-wrap items-center gap-x-4 gap-y-2">
+    <span class="text-[11px] font-semibold tracking-[0.14em] uppercase text-navy-300">DES-2175 · Suggested locations to follow</span>
+    <div class="flex items-center gap-1 bg-white/10 rounded-full p-1 ml-auto" role="tablist" aria-label="Choose a user scenario">
+      <button id="tab-auth"  role="tab" aria-selected="true"  class="persona-tab px-3.5 py-1.5 rounded-full text-[13px] font-semibold min-h-[36px]">Signed in</button>
+      <button id="tab-soft"  role="tab" aria-selected="false" class="persona-tab px-3.5 py-1.5 rounded-full text-[13px] font-semibold min-h-[36px]">Signed out</button>
+    </div>
+    <button id="resetBtn" class="flex items-center gap-1.5 text-[13px] font-semibold text-navy-300 hover:text-white transition-colors min-h-[36px] px-2">
+      <i class="ph ph-arrow-counter-clockwise text-base"></i> Reset
+    </button>
+  </div>
+</div>
+
+<!-- ══════════ THE PAGE ══════════ -->
+<div class="bg-white shadow-2xl max-w-[1280px] mx-auto min-h-screen">
+
+  <!-- ── Header / Navigation (NavigationCustom 2.0) ── -->
+  <header class="bg-white border-b border-wb-300 sticky top-[49px] z-30">
+    <!-- Top bar -->
+    <div class="px-4 md:px-6 py-4 flex items-center gap-3">
+      <!-- Logo -->
+      <a href="../index.html" class="flex items-center gap-2 shrink-0" aria-label="Legacy home">
+        <img src="https://www.legacy.com/media/icon.svg" alt="" class="w-8 h-8 md:w-9 md:h-9" onerror="this.style.display='none'">
+        <span class="font-serif text-2xl md:text-3xl text-wb-900 leading-none">Legacy</span>
+      </a>
+      <!-- Search (desktop centered) -->
+      <div class="hidden md:flex flex-1 justify-center px-6">
+        <label class="relative w-full max-w-[420px]">
+          <span class="sr-only">Search obituaries</span>
+          <input type="search" placeholder="Find a loved one…"
+                 class="w-full rounded-full border border-wb-300 bg-white pl-4 pr-11 py-2.5 text-base text-wb-900 placeholder:text-wb-400">
+          <i class="ph ph-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-wb-500 text-lg"></i>
+        </label>
+      </div>
+      <!-- Account + hamburger -->
+      <div class="flex items-center gap-4 ml-auto md:ml-0 shrink-0">
+        <button id="accountBtn" class="flex items-center gap-2 text-base font-semibold text-wb-900 min-h-[44px]">
+          <i class="ph ph-user-circle text-2xl"></i>
+          <span id="accountLabel">Hi, John</span>
+        </button>
+        <button class="md:hidden text-wb-900 min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Open menu">
+          <i class="ph ph-list text-2xl"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Search (mobile row) -->
+    <div class="md:hidden px-4 pb-4">
+      <label class="relative block">
+        <span class="sr-only">Search obituaries</span>
+        <input type="search" placeholder="Find a loved one…"
+               class="w-full rounded-full border border-wb-300 bg-white pl-4 pr-11 py-2.5 text-base text-wb-900 placeholder:text-wb-400">
+        <i class="ph ph-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-wb-500 text-lg"></i>
+      </label>
+    </div>
+    <!-- Nav bar (desktop) -->
+    <nav class="hidden md:block border-t border-wb-200">
+      <ul class="flex items-center justify-center gap-8 py-3 text-base font-semibold text-wb-900">
+        <li><a href="#" class="hover:text-navy-700">Create &amp; Publish</a></li>
+        <li><a href="#" class="hover:text-navy-700">Browse Obituaries</a></li>
+        <li><a href="#" class="hover:text-navy-700">Plan Ahead</a></li>
+        <li><a href="#" class="hover:text-navy-700">Get Support</a></li>
+        <li><a href="#" class="hover:text-navy-700">Send a Gift</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ── Breaking-news banner ── -->
+  <div class="bg-navy-900 text-white">
+    <div class="px-4 md:px-6 py-3.5 flex items-center gap-3 justify-center">
+      <button class="text-navy-300 hover:text-white shrink-0" aria-label="Previous"><i class="ph ph-caret-left text-lg"></i></button>
+      <p class="text-center text-sm md:text-base">
+        <span class="font-bold">Breaking News: Flood in Texas kills 120</span>
+        <a href="#" class="text-gold-500 font-bold ml-2 inline-flex items-center gap-1 whitespace-nowrap">Visit our Memorial <i class="ph ph-arrow-right"></i></a>
+      </p>
+      <button class="text-navy-300 hover:text-white shrink-0" aria-label="Next"><i class="ph ph-caret-right text-lg"></i></button>
+    </div>
+  </div>
+
+  <!-- ── Hero ── -->
+  <section class="hero-grad">
+    <div class="max-w-[1152px] mx-auto px-4 md:px-6 pt-5 md:pt-6">
+
+      <!-- Breadcrumb + Follow/Share row -->
+      <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <!-- Breadcrumb -->
+        <nav aria-label="Breadcrumb" class="text-base font-semibold">
+          <span class="hidden md:inline text-navy-500">
+            <a href="#" class="underline">First page</a>
+            <span class="text-wb-500 mx-1">/</span>
+            <a href="#" class="text-wb-500">⋯</a>
+            <span class="text-wb-500 mx-1">/</span>
+            <a href="#" class="underline">Immediate parent</a>
+          </span>
+          <a href="#" class="md:hidden inline-flex items-center gap-2 text-navy-500 underline">
+            <i class="ph ph-arrow-left"></i> Immediate Parent
+          </a>
+        </nav>
+
+        <!-- Follow + Share -->
+        <div class="flex items-start gap-3">
+          <div class="flex-1 md:flex-none flex flex-col items-center">
+            <button id="followBtn"
+                    class="w-full inline-flex items-center justify-center gap-2 bg-gold-400 hover:bg-gold-500 text-wb-900 font-semibold text-base rounded-full px-6 min-h-[44px] transition-colors">
+              <i id="followIcon" class="ph ph-bookmark-simple text-lg"></i>
+              <span id="followLabel">Follow</span>
+            </button>
+            <!-- Pointer points UP at the Following button, resting on the band below -->
+            <div id="caretWrap" class="hidden mt-2 -mb-px" aria-hidden="true"><div class="tail-up"></div></div>
+          </div>
+          <button class="shrink-0 w-11 h-11 rounded-full border border-navy-700 bg-white text-navy-700 flex items-center justify-center hover:bg-navy-50 transition-colors self-start" aria-label="Share">
+            <i class="ph ph-share-network text-lg"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- /constrained breadcrumb + follow row -->
+
+    <!-- ═══ Suggested-follows WIDGET — full-bleed gold band, animates in ═══ -->
+    <div id="widget" class="revealer">
+      <div class="revealer-inner">
+        <div class="band-gold">
+          <div class="max-w-[1152px] mx-auto px-4 md:px-6 py-4 md:flex md:items-center md:justify-between md:gap-6">
+
+            <!-- Label stacked above the suggestions (extra room for long city names) -->
+            <div class="md:flex-1 md:min-w-0">
+              <p class="text-sm font-semibold uppercase tracking-[0.08em] text-wb-900 mb-2 md:mb-3">Follow nearby locations</p>
+              <div id="locList" class="grid grid-cols-2 gap-x-4 gap-y-1 md:flex md:flex-wrap md:gap-x-6 md:gap-y-2"></div>
+            </div>
+
+            <!-- divider (mobile) -->
+            <hr class="border-0 h-px bg-gold-400/60 my-4 md:hidden">
+
+            <!-- Actions -->
+            <div class="flex items-center justify-between md:justify-end gap-4 md:gap-5 shrink-0">
+              <button id="noThanksBtn" class="order-1 md:order-2 text-base font-semibold text-navy-500 hover:underline min-h-[44px] px-1">No Thanks</button>
+              <button id="followSelectedBtn"
+                      class="order-2 md:order-1 inline-flex items-center justify-center bg-white border-[1.5px] border-navy-700 text-navy-700 font-semibold text-base rounded-full px-5 min-h-[44px] transition-colors hover:bg-navy-50 disabled:border-wb-300 disabled:text-wb-400 disabled:bg-white disabled:cursor-not-allowed disabled:hover:bg-white">
+                Follow Selected (<span id="selCount">4</span>)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SUCCESS banner — full-bleed gold band, replaces widget ═══ -->
+    <div id="successBanner" class="revealer">
+      <div class="revealer-inner">
+        <div class="band-gold">
+          <div class="max-w-[1152px] mx-auto px-4 md:px-6 py-5 md:flex md:items-center md:justify-between md:gap-6 text-center md:text-left">
+            <div>
+              <h2 class="font-serif text-2xl text-navy-700 leading-tight">You're following <span id="successCount">4</span> locations</h2>
+              <p id="successList" class="text-base text-wb-700 mt-1">Evanston, IL · Oak Park, IL · Cicero, IL · Skokie, IL</p>
+            </div>
+            <button id="dismissBtn" class="mt-3 md:mt-0 text-base font-semibold text-navy-500 hover:underline min-h-[44px] shrink-0">Dismiss</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div class="max-w-[1152px] mx-auto px-4 md:px-6">
+      <div class="text-center pt-8 pb-8 md:pb-10 max-w-[720px] mx-auto">
+        <h1 class="font-serif text-4xl md:text-5xl text-navy-700 leading-[1.1]">Chicagoland Obituaries</h1>
+        <p class="text-base md:text-lg text-wb-700 mt-4">Description copy that is specific to Chicagoland obituaries goes here. Or it doesn't have to if we decide there is nothing to say. This can be toggled on/off.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Body content (gets pushed down by the widget) ── -->
+  <main class="bg-gold-50">
+    <div class="max-w-[1152px] mx-auto px-4 md:px-6 py-8 md:py-10 grid lg:grid-cols-[1fr_300px] gap-8 lg:gap-10">
+
+      <!-- Featured obituaries -->
+      <section>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-serif text-2xl md:text-3xl text-navy-700">Today's Featured Obituaries</h2>
+          <div class="hidden md:flex gap-2">
+            <button class="w-9 h-9 rounded-full border border-wb-300 bg-white text-wb-600 flex items-center justify-center" aria-label="Previous"><i class="ph ph-caret-left"></i></button>
+            <button class="w-9 h-9 rounded-full border border-wb-300 bg-white text-wb-600 flex items-center justify-center" aria-label="Next"><i class="ph ph-caret-right"></i></button>
+          </div>
+        </div>
+        <div id="obitGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+        <h2 class="font-serif text-2xl md:text-3xl text-navy-700 mt-10 mb-4">View All Chicagoland Obituaries</h2>
+        <div class="rounded-lg border border-wb-300 bg-white p-4 md:p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-wb-200">
+            <span class="text-base font-semibold text-wb-900">33,954 Results</span>
+            <label class="flex items-center gap-2 text-sm text-wb-700">Sort By
+              <span class="inline-flex items-center gap-2 rounded-md border border-wb-300 bg-white px-3 py-2 font-semibold text-wb-900">Most Recent <i class="ph ph-caret-down text-xs"></i></span>
+            </label>
+          </div>
+          <ul id="resultsList" class="divide-y divide-wb-200"></ul>
+        </div>
+      </section>
+
+      <!-- Featured groups -->
+      <aside class="order-first lg:order-none">
+        <h2 class="font-serif text-2xl text-navy-700 mb-4">Featured Groups</h2>
+        <ul class="space-y-4">
+          <li class="pb-4 border-b border-wb-200 flex items-start justify-between gap-3">
+            <div>
+              <span class="inline-block text-[11px] font-semibold uppercase tracking-wide text-gold-800 bg-gold-100 rounded-full px-2 py-0.5 mb-1.5">Featured Charity</span>
+              <p class="text-base font-semibold text-navy-500">Heart Disease Awareness</p>
+              <p class="text-sm text-wb-600">United States</p>
+            </div>
+            <button class="w-9 h-9 rounded-full border border-wb-300 text-wb-600 flex items-center justify-center shrink-0" aria-label="Save group"><i class="ph ph-bookmark-simple"></i></button>
+          </li>
+          <li class="pb-4 border-b border-wb-200 flex items-start justify-between gap-3">
+            <div>
+              <span class="inline-block text-[11px] font-semibold uppercase tracking-wide text-seaFoam-600 bg-seaFoam-100 rounded-full px-2 py-0.5 mb-1.5">New</span>
+              <p class="text-base font-semibold text-navy-500">Texas Flood Memorial</p>
+              <p class="text-sm text-wb-600">Houston, TX</p>
+            </div>
+            <button class="w-9 h-9 rounded-full border border-wb-300 text-wb-600 flex items-center justify-center shrink-0" aria-label="Save group"><i class="ph ph-bookmark-simple"></i></button>
+          </li>
+          <li class="pb-4 border-b border-wb-200 flex items-start justify-between gap-3">
+            <div>
+              <p class="text-base font-semibold text-navy-500">Northwestern University</p>
+              <p class="text-sm text-wb-600">Chicago, IL</p>
+            </div>
+            <button class="w-9 h-9 rounded-full border border-wb-300 text-wb-600 flex items-center justify-center shrink-0" aria-label="Save group"><i class="ph ph-bookmark-simple"></i></button>
+          </li>
+        </ul>
+        <div class="text-center mt-4">
+          <a href="#" class="text-base font-semibold text-navy-500 underline">View All Groups</a>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<!-- ══════════ SOFT-FOLLOW MODAL ══════════ -->
+<div id="modal" class="modal-hidden fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4">
+  <div id="modalBackdrop" class="modal-backdrop absolute inset-0 bg-navy-900/60"></div>
+  <div class="modal-card relative w-full sm:max-w-[520px] bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl p-6 sm:p-8 max-h-[92vh] overflow-y-auto">
+    <button id="modalClose" class="absolute top-4 right-4 w-10 h-10 rounded-full border border-wb-300 text-wb-600 flex items-center justify-center hover:bg-wb-100" aria-label="Close">
+      <i class="ph ph-x text-lg"></i>
+    </button>
+
+    <!-- Step 1: capture email -->
+    <div id="modalStep1" class="text-center pt-4">
+      <h2 class="font-serif text-2xl text-navy-700 leading-tight">Never miss a notice</h2>
+      <p class="text-base text-wb-700 mt-2 max-w-[380px] mx-auto">Get email updates whenever there's something new on <span class="font-bold text-wb-900">Chicagoland Obituaries</span>.</p>
+      <div class="text-left mt-6">
+        <label for="emailInput" class="block text-sm font-semibold text-wb-900 mb-1.5">Your Email Address</label>
+        <input id="emailInput" type="email" inputmode="email" autocomplete="email" placeholder="your@email.com"
+               class="w-full rounded-lg border border-wb-300 bg-white px-4 py-3 text-base text-wb-900 placeholder:text-wb-400">
+        <p id="emailError" class="hidden text-sm text-[#c24c62] mt-1.5">Please enter a valid email address.</p>
+      </div>
+      <button id="continueBtn" class="w-full mt-5 bg-navy-700 hover:bg-navy-800 text-white font-semibold text-base rounded-full py-3 min-h-[48px] transition-colors">Continue</button>
+      <p class="text-base text-wb-700 mt-4">Already have an account? <a href="#" id="signInLink1" class="font-bold text-navy-500 underline">Sign In</a></p>
+      <hr class="border-0 h-px bg-wb-200 mt-6">
+      <p class="text-sm text-wb-500 mt-4">By following, you agree to our <a href="#" class="text-navy-500 underline">Terms of Use</a> and <a href="#" class="text-navy-500 underline">Privacy Policy</a>.</p>
+    </div>
+
+    <!-- Step 2: success + create account -->
+    <div id="modalStep2" class="hidden text-center pt-4">
+      <h2 class="font-serif text-2xl text-navy-700 leading-tight">You're all set!</h2>
+      <p class="text-base text-wb-700 mt-2 max-w-[400px] mx-auto">You'll get email alerts when new notices and tributes are published for <span class="font-bold text-wb-900">Chicagoland</span> at <span id="confirmEmail" class="font-bold text-wb-900">you@email.com</span>.</p>
+
+      <div class="flex items-center gap-3 my-6">
+        <span class="h-px bg-gold-400 flex-1"></span>
+        <span class="text-sm font-semibold uppercase tracking-[0.1em] text-gold-700">Want more?</span>
+        <span class="h-px bg-gold-400 flex-1"></span>
+      </div>
+
+      <p class="text-base text-wb-700 max-w-[400px] mx-auto">Create an account to manage all your follows, set notification preferences, and more.</p>
+      <button id="createAccountBtn" class="w-full mt-5 bg-white border-[1.5px] border-navy-700 text-navy-700 hover:bg-navy-50 font-semibold text-base rounded-full py-3 min-h-[48px] transition-colors">Create an Account</button>
+      <p class="text-base text-wb-700 mt-4">Already have an account? <a href="#" id="signInLink2" class="font-bold text-navy-500 underline">Sign In</a></p>
+      <button id="maybeLaterBtn" class="mt-4 text-base font-semibold text-navy-500 hover:underline min-h-[44px]">Maybe Later</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TOAST ══════════ -->
+<div id="toast" class="toast toast-hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-[70] bg-navy-900 text-white text-sm font-semibold rounded-full px-5 py-3 shadow-xl flex items-center gap-2">
+  <i class="ph ph-check-circle text-seaFoam-400 text-lg"></i>
+  <span id="toastMsg">Done</span>
+</div>
+
+<script>
+/* ══════════════ Data ══════════════ */
+const LOCATIONS = ['Evanston, IL', 'Oak Park, IL', 'Cicero, IL', 'Skokie, IL'];
+
+const OBITS = [
+  { name:'Gordon Goodwin', years:'1954–2025', note:'Big Phat Band bandleader and pianist.', c:'#6b7a99' },
+  { name:'Sophia Kinsella', years:'1969–2025', note:'Confessions of a Shopaholic author.',   c:'#8a6d8f' },
+  { name:'Rod Paige',       years:'1933–2025', note:'Former U.S. Secretary of Education.',    c:'#5c9d94' },
+  { name:'Jeff Garcia',     years:'1975–2025', note:'Voice of Sheen in Jimmy Neutron.',       c:'#c2904a' }
+];
+
+const RESULTS = [
+  { name:'Joan O\'Brien',   years:'1941–2025', note:'Beloved teacher and grandmother of six.' },
+  { name:'Marcus Webb',     years:'1958–2025', note:'Longtime Chicago firefighter.' },
+  { name:'Eleanor Cruz',    years:'1936–2025', note:'Devoted volunteer at St. Mary\'s.' }
+];
+
+/* ══════════════ State ══════════════ */
+let persona = 'auth';           // 'auth' | 'soft'
+let following = false;          // following the main page?
+let selected = new Set([0,1,2,3]);
+
+/* ══════════════ Elements ══════════════ */
+const $ = id => document.getElementById(id);
+const followBtn = $('followBtn'), followLabel = $('followLabel'), followIcon = $('followIcon');
+const widget = $('widget'), successBanner = $('successBanner'), caretWrap = $('caretWrap');
+const locList = $('locList'), selCount = $('selCount'), followSelectedBtn = $('followSelectedBtn');
+const modal = $('modal');
+
+/* ══════════════ Build lists ══════════════ */
+function renderLocations() {
+  locList.innerHTML = LOCATIONS.map((loc, i) => `
+    <label class="loc flex items-center gap-2.5 py-2 min-h-[44px] md:min-h-0 md:py-1 cursor-pointer">
+      <input type="checkbox" class="sr-only" data-i="${i}" ${selected.has(i) ? 'checked' : ''}>
+      <span class="cbx">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2l2.2 2.3 4.8-5" stroke="#262116" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="text-base text-wb-900 select-none">${loc}</span>
+    </label>`).join('');
+  locList.querySelectorAll('input').forEach(cb => cb.addEventListener('change', onToggle));
+}
+
+function renderObits() {
+  $('obitGrid').innerHTML = OBITS.map(o => `
+    <article class="rounded-lg border border-wb-300 bg-white overflow-hidden">
+      <div class="aspect-[4/5] flex items-center justify-center text-white text-3xl font-serif" style="background:linear-gradient(160deg, ${o.c}, ${o.c}cc)">${o.name.split(' ').map(n=>n[0]).join('')}</div>
+      <div class="p-3 text-center">
+        <p class="font-serif text-lg text-wb-900 leading-tight">${o.name}</p>
+        <p class="text-sm text-gold-700 mt-0.5">${o.years}</p>
+        <p class="text-sm text-wb-600 mt-1">${o.note}</p>
+      </div>
+    </article>`).join('');
+}
+
+function renderResults() {
+  $('resultsList').innerHTML = RESULTS.map(r => `
+    <li class="flex items-center gap-3 py-3">
+      <div class="w-12 h-12 rounded-full bg-navy-100 text-navy-700 font-serif flex items-center justify-center shrink-0">${r.name.split(' ').map(n=>n[0]).join('')}</div>
+      <div>
+        <p class="text-base font-semibold text-navy-500">${r.name}</p>
+        <p class="text-sm text-wb-600">${r.years} · ${r.note}</p>
+      </div>
+    </li>`).join('');
+}
+
+/* ══════════════ Widget logic ══════════════ */
+function onToggle(e) {
+  const i = +e.target.dataset.i;
+  e.target.checked ? selected.add(i) : selected.delete(i);
+  updateCount();
+}
+function updateCount() {
+  const n = selected.size;
+  selCount.textContent = n;
+  followSelectedBtn.disabled = n === 0;
+}
+
+/* Caret stays visible whenever the widget OR the success band is open */
+function updateCaret() {
+  const show = widget.classList.contains('open') || successBanner.classList.contains('open');
+  caretWrap.classList.toggle('hidden', !show);
+}
+function openWidget() {
+  successBanner.classList.remove('open');
+  widget.classList.add('open');
+  updateCaret();
+}
+function closeWidget() {
+  widget.classList.remove('open');
+  updateCaret();
+}
+/* Prepare a fresh set of suggestions, then reveal the widget (push-down) */
+function revealSuggestions() {
+  selected = new Set([0,1,2,3]);
+  renderLocations();
+  updateCount();
+  openWidget();
+}
+
+/* ══════════════ Follow button ══════════════ */
+function setFollowState(isFollowing) {
+  following = isFollowing;
+  followLabel.textContent = isFollowing ? 'Following' : 'Follow';
+  followIcon.className = (isFollowing ? 'ph-fill ph-bookmark-simple' : 'ph ph-bookmark-simple') + ' text-lg';
+}
+
+followBtn.addEventListener('click', () => {
+  if (persona === 'auth') {
+    if (!following) {
+      // Authenticated: follow immediately + animate widget in (push content down)
+      setFollowState(true);
+      revealSuggestions();
+    } else {
+      // Already following → unfollow the page. Keep any displayed
+      // suggestions/success band visible (per spec).
+      setFollowState(false);
+    }
+  } else {
+    // Signed out: open soft-follow modal
+    openModal();
+  }
+});
+
+/* No Thanks → reverse animation, widget goes away (still following main page) */
+$('noThanksBtn').addEventListener('click', closeWidget);
+
+/* Follow Selected → collapse widget, reveal success banner in its place */
+followSelectedBtn.addEventListener('click', () => {
+  if (selected.size === 0) return;
+  const chosen = [...selected].sort().map(i => LOCATIONS[i]);
+  $('successCount').textContent = chosen.length;
+  $('successList').textContent = chosen.join(' · ');
+  closeWidget();
+  setTimeout(() => { successBanner.classList.add('open'); updateCaret(); }, 220);
+});
+
+/* Dismiss → collapse success banner */
+$('dismissBtn').addEventListener('click', () => { successBanner.classList.remove('open'); updateCaret(); });
+
+/* ══════════════ Soft-follow modal ══════════════ */
+let atSuccessStep = false;   // true once the user has soft-followed (step 2 showing)
+
+function openModal() {
+  atSuccessStep = false;
+  $('modalStep1').classList.remove('hidden');
+  $('modalStep2').classList.add('hidden');
+  $('emailError').classList.add('hidden');
+  modal.classList.remove('modal-hidden');
+  setTimeout(() => $('emailInput').focus(), 120);
+}
+/* Closing the modal after a successful soft-follow reveals the same suggested-
+   locations widget the authenticated flow gets (push-down animation). */
+function closeModal() {
+  const reveal = atSuccessStep;
+  atSuccessStep = false;
+  modal.classList.add('modal-hidden');
+  if (reveal) setTimeout(revealSuggestions, 260);
+}
+
+$('modalClose').addEventListener('click', closeModal);
+$('modalBackdrop').addEventListener('click', closeModal);
+$('maybeLaterBtn').addEventListener('click', closeModal);
+
+$('continueBtn').addEventListener('click', () => {
+  const val = $('emailInput').value.trim();
+  const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+  if (!valid) { $('emailError').classList.remove('hidden'); $('emailInput').focus(); return; }
+  $('confirmEmail').textContent = val;
+  setFollowState(true);                       // now following the page
+  atSuccessStep = true;
+  $('modalStep1').classList.add('hidden');
+  $('modalStep2').classList.remove('hidden');
+});
+
+/* Create account / Sign in navigate away — no widget reveal */
+$('createAccountBtn').addEventListener('click', () => { atSuccessStep = false; closeModal(); showToast('Taking you to account creation…'); });
+[$('signInLink1'), $('signInLink2')].forEach(el => el.addEventListener('click', e => { e.preventDefault(); atSuccessStep = false; closeModal(); showToast('Taking you to sign in…'); }));
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.classList.contains('modal-hidden')) closeModal(); });
+
+/* ══════════════ Toast ══════════════ */
+let toastTimer;
+function showToast(msg) {
+  $('toastMsg').textContent = msg;
+  $('toast').classList.remove('toast-hidden');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $('toast').classList.add('toast-hidden'), 2600);
+}
+
+/* ══════════════ Persona + reset ══════════════ */
+function setPersona(p) {
+  persona = p;
+  $('tab-auth').setAttribute('aria-selected', p === 'auth');
+  $('tab-soft').setAttribute('aria-selected', p === 'soft');
+  document.querySelectorAll('.persona-tab').forEach(t => {
+    const on = t.getAttribute('aria-selected') === 'true';
+    t.classList.toggle('bg-white', on);
+    t.classList.toggle('text-navy-900', on);
+    t.classList.toggle('text-navy-300', !on);
+  });
+  $('accountLabel').textContent = p === 'auth' ? 'Hi, John' : 'Sign In';
+  reset();
+}
+$('tab-auth').addEventListener('click', () => setPersona('auth'));
+$('tab-soft').addEventListener('click', () => setPersona('soft'));
+
+function reset() {
+  atSuccessStep = false;
+  setFollowState(false);
+  selected = new Set([0,1,2,3]);
+  renderLocations();
+  updateCount();
+  widget.classList.remove('open');
+  successBanner.classList.remove('open');
+  updateCaret();
+  closeModal();
+  $('emailInput').value = '';
+}
+$('resetBtn').addEventListener('click', reset);
+
+/* ══════════════ Init ══════════════ */
+renderObits();
+renderResults();
+setPersona('auth');
+</script>
+</body>
+</html>

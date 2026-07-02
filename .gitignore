@@ -19,6 +19,8 @@
 !save-defaults/**
 !saved-pages/
 !saved-pages/**
+!follow-nearby/
+!follow-nearby/**
 
 # Sign-up follow prototype
 !signup-follow-prototype.html
