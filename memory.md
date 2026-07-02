@@ -88,3 +88,22 @@ Each entry should include:
 ### Read design-system.md BEFORE every build — no exceptions
 - **What went wrong:** Built 5 HTML files for Figma capture using wrong font (Georgia instead of DM Sans), wrong colors (arbitrary hex instead of DS tokens), wrong heading colors, wrong link colors, wrong page background, and wrong button colors. Had to be corrected twice.
 - **What to do instead:** Before writing ANY code — HTML, CSS, components, prototypes, Figma Plugin API calls — read design-system.md FIRST. This is not optional. Map every color to a semantic token, use DM Sans, use the 4px spacing scale, use DS shadow values. If the task is "recreate a page," the recreation must use DS tokens, not values eyeballed from the live site.
+
+---
+
+## 2026-07-02 — Suggested Locations to Follow (DES-2175)
+
+### Display headings use DM Serif Text — it IS a DS token
+- **Clarification:** The earlier "Georgia instead of DM Sans" correction was about using a *random* serif. The design system's big display/hero headings (page titles, modal titles, the "You're following N locations" banner) legitimately use **DM Serif Text** — Figma exposes it as `font-serif-semibold` variants (e.g. `text-5xl/font-serif-semibold`, `text-2xl/font-serif-semibold`). DM Sans is for all body/UI text. So: serif = DM Serif Text (never Georgia), sans = DM Sans.
+
+### Don't name a custom CSS class `.collapse` when loading Tailwind CDN
+- **What went wrong:** Named the push-down animation class `.collapse`. Tailwind ships a `.collapse` utility (`visibility: collapse`) which won the cascade and set `visibility:collapse` on the container — it inherits to all descendants, so the widget expanded to full height but every child was invisible. Wasted a debug cycle.
+- **What to do instead:** When using the Tailwind CDN build, never reuse a Tailwind utility name for a custom class (`collapse`, `container`, `hidden`, `block`, `grid`, etc.). Prefix custom classes (e.g. `.revealer`, `.js-collapse`). Symptom to recognize: element has layout height but content is invisible → check computed `visibility` for `collapse`.
+
+### Edge-to-edge Figma sections must be built full-bleed, not as inset cards
+- **What went wrong:** Built the suggested-follows widget and its success banner as inset, rounded, margin'd cards inside the constrained container. In Figma both are **full-bleed horizontal gold bands** — background spans the entire page width edge-to-edge, only the *content* is constrained to the container width.
+- **What to do instead:** When a Figma frame's background/fill extends to the frame edges (check for a background shape/vector that spans the full frame, e.g. "Vector 1" at negative x offset wider than the content), build it full-bleed: put the background on a full-width wrapper and nest a `max-w-[...] mx-auto px-...` element inside for the content. Don't wrap it in a rounded card with side margins.
+
+### The "suggested follows" feature appears after ANY successful follow — including soft-follow
+- **What went wrong:** Only showed the nearby-locations widget in the authenticated flow. Assumed soft-follow (email capture) ended at the success modal.
+- **What to do instead:** The suggested-locations-to-follow prompt is triggered by *successfully following the page*, regardless of auth method. In the soft-follow flow the frame order is Follow → email modal → "You're all set!" modal → **Suggested Follows widget** → Suggested Follows Success. After the soft-follow success modal is dismissed, animate the same widget in (the user is now following via email).
