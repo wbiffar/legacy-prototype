@@ -391,6 +391,7 @@ const RESULTS = [
 let persona = 'auth';           // 'auth' | 'soft'
 let following = false;          // following the main page?
 let selected = new Set([0,1,2,3]);
+let suggestionsShown = false;   // one-time offer — don't re-prompt on re-follow
 
 /* ══════════════ Elements ══════════════ */
 const $ = id => document.getElementById(id);
@@ -461,8 +462,11 @@ function closeWidget() {
   widget.classList.remove('open');
   updateCaret();
 }
-/* Prepare a fresh set of suggestions, then reveal the widget (push-down) */
+/* Prepare a fresh set of suggestions, then reveal the widget (push-down).
+   One-time offer: once shown, re-following the page won't prompt again. */
 function revealSuggestions() {
+  if (suggestionsShown) return;
+  suggestionsShown = true;
   selected = new Set([0,1,2,3]);
   renderLocations();
   updateCount();
@@ -578,6 +582,7 @@ $('tab-soft').addEventListener('click', () => setPersona('soft'));
 
 function reset() {
   atSuccessStep = false;
+  suggestionsShown = false;
   setFollowState(false);
   selected = new Set([0,1,2,3]);
   renderLocations();
