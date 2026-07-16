@@ -67,14 +67,23 @@
 
     /* Demo state switcher */
     .demo-switcher {
-      position: fixed; bottom: 16px; right: 16px; z-index: 80;
+      position: fixed; bottom: 16px; right: 16px; z-index: 40;
       background: rgba(21,27,36,0.92); backdrop-filter: blur(8px);
       border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
       padding: 10px; display: flex; flex-direction: column; gap: 4px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.35);
       font-family: 'DM Sans', sans-serif; max-width: 220px;
     }
-    .demo-switcher-label { color: rgba(255,255,255,0.45); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px 4px; }
+    .demo-switcher button.demo-switcher-toggle {
+      justify-content: space-between; width: 100%;
+      color: rgba(255,255,255,0.55); font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 4px 8px;
+    }
+    .demo-switcher button.demo-switcher-toggle:hover { color: #fff; }
+    .demo-switcher-toggle .caret { font-size: 13px; transition: transform .2s; opacity: 0.7; }
+    .demo-switcher.collapsed .demo-switcher-toggle .caret { transform: rotate(180deg); }
+    .demo-switcher-body { display: flex; flex-direction: column; gap: 4px; }
+    .demo-switcher.collapsed .demo-switcher-body { display: none; }
     .demo-switcher button {
       padding: 7px 10px; border-radius: 10px; border: 0;
       background: transparent; color: rgba(255,255,255,0.7);
@@ -99,7 +108,17 @@
     }
     [data-signed-in="true"] .demo-switcher .auth-toggle .pill { background: #5c9d94; }
     [data-signed-in="true"] .demo-switcher .auth-toggle .pill::after { transform: translateX(16px); }
-    @media (max-width: 360px) { .demo-switcher { display: none; } }
+    /* Independent "on" state for the interrupt-mode toggle */
+    .demo-switcher .auth-toggle .pill.on { background: #dcb05e; }
+    .demo-switcher .auth-toggle .pill.on::after { transform: translateX(16px); }
+    @media (max-width: 640px) {
+      .demo-switcher {
+        left: 0; right: 0; bottom: 0; max-width: 100%;
+        border-radius: 16px 16px 0 0;
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+        max-height: 72vh; overflow-y: auto;
+      }
+    }
     @media print { .demo-switcher { display: none; } }
 
     /* Toast */
@@ -141,20 +160,31 @@
 <!-- ====================================================================
      DEMO SWITCHER (floating, bottom-right)
      ==================================================================== -->
-<div class="demo-switcher" role="navigation" aria-label="Demo state switcher">
-  <div class="demo-switcher-label">Saved Defaults States</div>
-  <button data-goto="no-filters"     class="active"><span class="step">1</span> No filters (signed out)</button>
-  <button data-goto="save-triggered"><span class="step">2</span> Filters + save CTA</button>
-  <button data-goto="prompt-modal"  ><span class="step">3</span> Sign-in modal</button>
-  <button data-goto="applied"       ><span class="step">4</span> Saved default applied</button>
-  <button data-goto="default-off"   ><span class="step">5</span> Default off</button>
-  <button data-goto="changed"       ><span class="step">6</span> Changed</button>
-  <div class="divider"></div>
-  <label class="auth-toggle">
-    <span>Signed in</span>
-    <span class="pill" aria-hidden="true"></span>
-    <input type="checkbox" id="auth-toggle" class="sr-only" />
-  </label>
+<div class="demo-switcher" id="demo-switcher" role="navigation" aria-label="Demo state switcher">
+  <button class="demo-switcher-toggle" id="demo-switcher-toggle" aria-expanded="true" aria-controls="demo-switcher-body">
+    <span>Saved Defaults States</span>
+    <i class="ph ph-caret-down caret" aria-hidden="true"></i>
+  </button>
+  <div class="demo-switcher-body" id="demo-switcher-body">
+    <button data-goto="no-filters"     class="active"><span class="step">1</span> No filters (signed out)</button>
+    <button data-goto="save-triggered"><span class="step">2</span> Filters + save CTA</button>
+    <button data-goto="prompt-modal"  ><span class="step">3</span> Sign-in modal</button>
+    <button data-goto="applied"       ><span class="step">4</span> Saved default applied</button>
+    <button data-goto="default-off"   ><span class="step">5</span> Default off</button>
+    <button data-goto="changed"       ><span class="step">6</span> Changed</button>
+    <div class="divider"></div>
+    <label class="auth-toggle">
+      <span>Signed in</span>
+      <span class="pill" aria-hidden="true"></span>
+      <input type="checkbox" id="auth-toggle" class="sr-only" />
+    </label>
+    <label class="auth-toggle">
+      <span>Interrupt on filter</span>
+      <span class="pill" id="interrupt-pill" aria-hidden="true"></span>
+      <input type="checkbox" id="interrupt-toggle" class="sr-only" />
+    </label>
+    <p style="color:rgba(255,255,255,0.4);font-size:10.5px;line-height:1.35;padding:2px 8px 4px;">When on, the first filter/sort change opens the save modal immediately (once per session).</p>
+  </div>
 </div>
 
 <!-- ====================================================================
@@ -694,7 +724,9 @@
 <!-- ====================================================================
      MODAL — "Save your default search" (state 3) · Figma node 9934:86090
      ==================================================================== -->
-<div class="modal-overlay fixed inset-0 z-[60] bg-[rgba(21,27,36,0.55)] backdrop-blur-[2px] items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+<!-- z-[80] intentionally sits ABOVE the mobile filter drawer (z-70): the interrupt
+     modal must stack over an open filter panel per the stakeholder demo brief. -->
+<div class="modal-overlay fixed inset-0 z-[80] bg-[rgba(21,27,36,0.55)] backdrop-blur-[2px] items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="modal-title">
   <div class="modal-card w-full max-w-[544px] bg-white border border-wb-300 rounded-[20px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] p-8 relative flex flex-col items-center gap-8">
     <button id="modal-close" aria-label="Close" class="absolute top-4 right-4 w-9 h-9 rounded-full text-wb-500 hover:text-wb-900 hover:bg-wb-100 flex items-center justify-center">
       <i class="ph ph-x text-xl"></i>
@@ -705,7 +737,8 @@
     <div class="flex flex-col items-center gap-8 w-full">
       <div class="flex flex-col items-center gap-2 text-center max-w-[480px]">
         <h2 id="modal-title" class="font-serif-heading text-[30px] text-navy-700 leading-[1.2]">Save your default search</h2>
-        <p class="text-sm text-wb-700 leading-[1.5]">Sign in to save your preferred filters, sort, and layout for this page.<br />We'll apply them automatically every time you return.</p>
+        <p class="when-signed-out text-sm text-wb-700 leading-[1.5]">Sign in to save your preferred filters, sort, and layout for this page.<br />We'll apply them automatically every time you return.</p>
+        <p class="when-signed-in text-sm text-wb-700 leading-[1.5]">Save the filters, sort, and layout you just chose for this page.<br />We'll apply them automatically every time you return.</p>
       </div>
       <ul class="flex flex-col gap-3 w-full max-w-[480px]">
         <li class="flex items-start gap-2">
@@ -730,7 +763,8 @@
     </div>
     <div class="flex flex-col-reverse sm:flex-row gap-4 sm:items-center sm:justify-end w-full">
       <button id="modal-maybe-later" class="inline-flex items-center justify-center px-5 py-3 rounded-full border border-navy-700 bg-white text-navy-700 text-base font-semibold tracking-[-0.32px] hover:bg-wb-50 transition-colors">Maybe Later</button>
-      <button id="modal-sign-in" class="inline-flex items-center justify-center px-5 py-3 rounded-full bg-gold-400 hover:bg-gold-500 text-wb-900 text-base font-semibold tracking-[-0.32px] transition-colors">Sign In or Create Account</button>
+      <button id="modal-sign-in" class="when-signed-out inline-flex items-center justify-center px-5 py-3 rounded-full bg-gold-400 hover:bg-gold-500 text-wb-900 text-base font-semibold tracking-[-0.32px] transition-colors">Sign In or Create Account</button>
+      <button id="modal-save-direct" class="when-signed-in inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-gold-400 hover:bg-gold-500 text-wb-900 text-base font-semibold tracking-[-0.32px] transition-colors"><i class="ph ph-star"></i> Save as Default</button>
     </div>
   </div>
 </div>
@@ -797,6 +831,16 @@
 
   let suppressTrigger = false;
 
+  // ─────────────────────────────────────────────────────────────────────
+  // Interrupt mode — stakeholder variant (feature/modal-trigger-on-filter-engagement)
+  // When on, the FIRST filter/sort/view engagement this session opens the
+  // save modal immediately as an interrupt, rather than only surfacing the
+  // inline banner. Additive: the inline placements still exist underneath.
+  // ─────────────────────────────────────────────────────────────────────
+  let interruptMode = false;   // toggled from the demo switcher
+  let interruptFired = false;  // once-per-session guard
+  let stateBeforeModal = 'save-triggered'; // where to return on dismiss
+
   const setRadio = (name, value) => {
     document.querySelectorAll(`input[type="radio"][name="${name}"]`).forEach(r => {
       r.checked = (r.value === value);
@@ -830,9 +874,13 @@
     body.setAttribute('data-state', s);
     document.querySelectorAll('[data-goto]').forEach(b => b.classList.toggle('active', b.dataset.goto === s));
     syncResultCount();
-    // Modal focus management
+    // Modal focus management — focus whichever primary CTA is visible for this auth state
     if (s === 'prompt-modal') {
-      setTimeout(() => document.getElementById('modal-sign-in')?.focus(), 50);
+      setTimeout(() => {
+        const signedIn = body.getAttribute('data-signed-in') === 'true';
+        const primary = signedIn ? document.getElementById('modal-save-direct') : document.getElementById('modal-sign-in');
+        primary?.focus();
+      }, 50);
     }
   };
   const setSignedIn = (yes) => {
@@ -855,10 +903,30 @@
     showToast._t = setTimeout(() => t.classList.remove('show'), 3000);
   };
 
+  // Demo switcher collapse — defaults collapsed on mobile so the tool never
+  // covers the prototype (it also sits below the modal/drawer z-index).
+  const switcherEl = document.getElementById('demo-switcher');
+  const switcherToggle = document.getElementById('demo-switcher-toggle');
+  const setSwitcherCollapsed = (collapsed) => {
+    switcherEl.classList.toggle('collapsed', collapsed);
+    switcherToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  };
+  switcherToggle.addEventListener('click', () => {
+    setSwitcherCollapsed(!switcherEl.classList.contains('collapsed'));
+  });
+  // Default collapsed on mobile, expanded on desktop — track the breakpoint so
+  // it self-corrects on resize (and isn't left wrong by a load-time race).
+  const mqMobile = window.matchMedia('(max-width: 640px)');
+  const applyDefaultCollapse = (e) => setSwitcherCollapsed(e.matches);
+  mqMobile.addEventListener('change', applyDefaultCollapse);
+  applyDefaultCollapse(mqMobile);
+
   // Demo switcher — jumps to a state AND syncs the underlying UI to that state's preset
   document.querySelectorAll('[data-goto]').forEach(btn => {
     btn.addEventListener('click', () => {
       const target = btn.dataset.goto;
+      // Re-arm the once-per-session interrupt when returning to a fresh start.
+      if (target === 'no-filters') interruptFired = false;
       if (['applied', 'default-off', 'changed'].includes(target)) setSignedIn(true);
       if (['no-filters', 'save-triggered', 'prompt-modal'].includes(target)) setSignedIn(false);
 
@@ -870,6 +938,15 @@
 
       setState(target);
     });
+  });
+
+  // Interrupt-mode toggle (demo switcher)
+  const interruptToggle = document.getElementById('interrupt-toggle');
+  const interruptPill = document.getElementById('interrupt-pill');
+  interruptToggle.addEventListener('change', (e) => {
+    interruptMode = e.target.checked;
+    interruptPill.classList.toggle('on', interruptMode);
+    interruptFired = false; // arm it fresh whenever the mode is flipped
   });
 
   // Auth toggle
@@ -886,8 +963,21 @@
   const fireTrigger = () => {
     if (suppressTrigger) return;
     const s = body.getAttribute('data-state');
+    // A signed-in user WITH a default applied is just modifying it — keep the
+    // lighter-weight inline "changed" banner, don't interrupt.
     if (s === 'applied') { setState('changed'); return; }
-    if (s === 'no-filters' || s === 'default-off') setState('save-triggered');
+    if (s === 'no-filters' || s === 'default-off') {
+      // The filter still applies underneath — the interrupt only overlays the ask.
+      setState('save-triggered');
+      syncResultCount();
+      // Interrupt: fire the save modal immediately, once per session.
+      if (interruptMode && !interruptFired) {
+        interruptFired = true;
+        stateBeforeModal = 'save-triggered';
+        setState('prompt-modal');
+      }
+      return;
+    }
     syncResultCount();
   };
 
@@ -931,7 +1021,10 @@
 
   // Modal actions
   const closeModal = () => {
-    setState('save-triggered');
+    // Dismissing the interrupt drops the user onto the inline banner (the
+    // existing placement), so the ask persists without blocking them.
+    setState(stateBeforeModal);
+    stateBeforeModal = 'save-triggered';
   };
   document.getElementById('modal-close').addEventListener('click', closeModal);
   document.getElementById('modal-maybe-later').addEventListener('click', closeModal);
@@ -942,6 +1035,11 @@
     setSignedIn(true);
     setState('applied');
     showToast('Welcome — default saved');
+  });
+  // Signed-in interrupt: save directly, no auth step.
+  document.getElementById('modal-save-direct').addEventListener('click', () => {
+    setState('applied');
+    showToast('Default saved');
   });
 
   // Header sign-in link → opens prompt modal
