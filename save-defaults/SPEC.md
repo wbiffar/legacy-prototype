@@ -421,4 +421,32 @@ Funnel of interest: `invitation_shown → cta_clicked → (modal_signed_in or cr
 
 ---
 
-*Last updated: 2026-05-19 · Maintained by Design until eng kickoff.*
+## 15. Variant: Interrupt-on-engagement modal (stakeholder test)
+
+> **Branch:** `feature/modal-trigger-on-filter-engagement` · **Status:** exploratory — for adoption testing, not yet approved.
+
+Stakeholders asked for a more aggressive adoption play: instead of *only* surfacing the inline invitation banner (§4.2, `save-triggered`), fire the **Save-your-default modal immediately** the moment a user engages any filter/sort/view control. This variant is **additive** — the inline banner placements from §4 still exist and behave identically; the interrupt overlays *on top* of that same `save-triggered` transition.
+
+### 15.1 Behavior
+
+- **Trigger:** the first filter/sort/view engagement in a session, while the user has **no active default** (`no-filters` or `default-off` → `save-triggered`). The filter still applies underneath — the interrupt overlays the ask, it does not block the user's actual selection (result count updates as normal).
+- **Frequency:** **once per session.** After the modal is shown once, subsequent filter changes fall through to the existing inline banner only — no repeat interrupts. This is the single most important guardrail: repeat-firing on every filter change reads as a dark pattern and will suppress, not lift, adoption.
+- **Signed-out:** modal primary CTA is **Sign In or Create Account** (identical to §4.3).
+- **Signed-in (no default yet):** modal primary CTA is **Save as Default** — saves directly, no auth step, then `applied` + "Default saved" toast.
+- **Dismiss** (Maybe Later / Esc / X / click-outside): closes the modal and drops the user onto the **inline banner** for that state, so the ask persists non-intrusively.
+- **Mobile — modal stacks over the open filter drawer.** Per stakeholder request, on mobile the interrupt fires even when the "Filter By" drawer is open, and the modal renders *above* the drawer (modal `z-80` > drawer `z-70`) rather than waiting for the drawer to close. ⚠️ **This is a demo-only behavior to show the requested pattern, not a design recommendation** — a modal interrupting a user mid-way through an open filter panel is a double-interrupt and a known usability liability, especially for our older-skewing audience. If this direction is pursued, the modal should instead wait until the drawer is dismissed (or the drawer should close first). Flagged here so the stacking isn't mistaken for an endorsed pattern.
+- **Not interrupted:** a signed-in user who already has a default applied and is *modifying* it (`applied` → `changed`) keeps the lighter inline "Reset / Save Changes" banner. They already adopted; interrupting them adds friction with no adoption upside.
+
+### 15.2 Prototype
+
+Toggle **"Interrupt on filter"** in the demo switcher (bottom-right of [index.html](./index.html)) to arm the behavior; it defaults **off** so the approved inline-only experience is the baseline. Jumping to "No filters" re-arms the once-per-session interrupt for repeat testing.
+
+### 15.3 Open questions for this variant
+
+1. **Session definition:** is "once per session" per tab, per browser session, or capped to N-per-user-per-week? Recommend per session with a server-side per-user cooldown so a dismisser isn't re-hit on every visit.
+2. **A11y:** an unrequested modal steals focus mid-task. Must return focus to the triggering control on dismiss, and should respect `prefers-reduced-motion`. Given our older-skewing audience, validate with users before shipping — an interrupt is higher-risk here than on a general-audience site.
+3. **Measurement:** add `saved_default_interrupt_shown` / `saved_default_interrupt_dismissed` events distinct from the inline `invitation_shown` funnel (§9) so the two patterns can be compared cleanly.
+
+---
+
+*Last updated: 2026-07-16 · Maintained by Design until eng kickoff.*
