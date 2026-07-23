@@ -1,0 +1,285 @@
+/* ============================================================
+   Legacy Design System — Colors & Type
+   Source: Figma "Legacy DS • Core"
+   ============================================================ */
+
+/* DM Serif Text + DM Sans — local (brand upload). PT Serif / PT Mono from Google. */
+@font-face {
+  font-family: 'DM Serif Text';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/DMSerifText-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'DM Serif Text';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/DMSerifText-Italic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url('fonts/DMSans-VariableFont_opsz_wght.ttf') format('truetype-variations');
+}
+@font-face {
+  font-family: 'DM Sans';
+  font-style: italic;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url('fonts/DMSans-Italic-VariableFont_opsz_wght.ttf') format('truetype-variations');
+}
+@import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=PT+Mono&display=swap');
+
+:root {
+  /* ---------- NAVY (primary brand palette) ---------- */
+  --navy-100: #E6ECF5;
+  --navy-200: #D3DDEB;
+  --navy-300: #B0C0D6;
+  --navy-400: #728AB0;
+  --navy-500: #42608F;   /* Text link */
+  --navy-600: #3C4D69;
+  --navy-700: #293548;   /* Brand blue — logo, titles, links */
+  --navy-800: #212A3A;
+  --navy-900: #151B24;
+
+  /* ---------- GOLD (accent palette) ---------- */
+  --gold-50:  #FBF7EF;   /* page background warmth */
+  --gold-100: #F6E5B8;
+  --gold-200: #F0D78D;
+  --gold-300: #E9C86F;
+  --gold-400: #E2BA60;
+  --gold-500: #DCB05E;   /* Secondary brand color — logo mark */
+  --gold-600: #C49E54;
+  --gold-700: #A48849;   /* Accent on light surfaces */
+  --gold-800: #85713E;
+  --gold-900: #655B34;   /* Text on gold pills */
+
+  /* ---------- WARM BLACK (neutrals) ---------- */
+  --warm-black-100: #F6F6F6;
+  --warm-black-200: #EBE9E9;
+  --warm-black-300: #DBDAD7;  /* most used border */
+  --warm-black-400: #AFADAA;
+  --warm-black-500: #807E7A;
+  --warm-black-600: #63605B;
+  --warm-black-700: #514D45;
+  --warm-black-800: #373329;
+  --warm-black-900: #262116;  /* body text */
+
+  /* ---------- CORAL (destructive) ---------- */
+  --coral-100: #FCE8EC;
+  --coral-200: #F7D4DA;
+  --coral-300: #EBA9B5;
+  --coral-400: #E77D91;
+  --coral-500: #D6677C;
+  --coral-600: #C24C62;   /* Error / Delete */
+  --coral-700: #993B4D;
+  --coral-800: #792F3D;
+  --coral-900: #662833;
+
+  /* ---------- SEA FOAM (success / callouts) ---------- */
+  --seafoam-100: #EBF2F1;
+  --seafoam-200: #CEE2DE;
+  --seafoam-300: #AECEC9;
+  --seafoam-400: #81B8AE;
+  --seafoam-500: #5C9D94;
+  --seafoam-600: #357D75;
+  --seafoam-700: #216E6A;   /* Success */
+  --seafoam-800: #165C58;
+  --seafoam-900: #014744;
+
+  /* ---------- SEMANTIC TOKENS (light theme) ---------- */
+  --text-primary:         var(--warm-black-900);   /* body */
+  --text-secondary:       var(--warm-black-500);   /* labels, metadata */
+  --text-heading:         var(--navy-700);         /* headings */
+  --text-link:            var(--navy-500);         /* links */
+  --text-on-pill:         var(--gold-900);         /* text on gold pills */
+  --text-on-accent:       #FFFFFF;
+  --text-inverse:         #FFFFFF;
+
+  --surface-page:         var(--gold-50);          /* default page bg (warm) */
+  --surface-page-white:   #FFFFFF;
+  --surface-card:         #FFFFFF;
+  --surface-container:    #FFFFFF;
+  --surface-pill:         var(--gold-100);
+  --surface-gold-container: var(--gold-100);
+  --surface-newspaper:    #FFFFFF;
+
+  --border-default:       var(--warm-black-300);
+  --accent-gold:          var(--gold-700);         /* primary accent — light */
+  --accent-partner:       #000000;
+
+  /* Status */
+  --status-success:       var(--seafoam-700);
+  --status-success-bg:    var(--seafoam-100);
+  --status-error:         var(--coral-600);
+  --status-error-bg:      var(--coral-100);
+
+  /* ---------- TYPOGRAPHY ---------- */
+  --font-sans:    "DM Sans", Verdana, system-ui, -apple-system, sans-serif;
+  --font-serif-display: "DM Serif Text", Georgia, "Times New Roman", serif;
+  --font-serif-body:    "PT Serif", Georgia, "Times New Roman", serif;
+  --font-mono:    "PT Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Type scale (px) */
+  --text-xs:   12px;
+  --text-sm:   14px;
+  --text-base: 16px;   /* body default; do not go below */
+  --text-lg:   18px;
+  --text-xl:   20px;
+  --text-2xl:  24px;
+  --text-3xl:  30px;
+  --text-4xl:  36px;
+  --text-5xl:  48px;
+  --text-6xl:  60px;
+  --text-7xl:  72px;
+  --text-8xl:  112px;
+
+  /* Line-heights */
+  --lh-tight: 1.0;
+  --lh-snug:  1.2;
+  --lh-body:  1.5;
+  --lh-loose: 1.7;
+
+  /* ---------- SPACING (Tailwind-compatible) ---------- */
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ---------- RADII ---------- */
+  --radius-sm:   4px;   /* .rounded */
+  --radius-md:   6px;   /* .rounded-md */
+  --radius-lg:   8px;   /* .rounded-lg */
+  --radius-xl:   12px;  /* .rounded-xl */
+  --radius-2xl:  16px;  /* .rounded-2xl */
+  --radius-3xl:  24px;  /* .rounded-3xl */
+  --radius-full: 9999px;
+
+  /* ---------- BORDERS ---------- */
+  --border-1: 1px;
+  --border-2: 2px;
+  --border-4: 4px;
+  --border-8: 8px;
+
+  /* ---------- SHADOWS (Tailwind parity) ---------- */
+  --shadow-sm:  0 1px 2px rgba(0,0,0,0.05);
+  --shadow:     0 1px 3px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md:  0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+  --shadow-lg:  0 10px 15px rgba(0,0,0,0.10), 0 4px 6px rgba(0,0,0,0.05);
+  --shadow-xl:  0 20px 25px rgba(0,0,0,0.10), 0 10px 10px rgba(0,0,0,0.04);
+  --shadow-2xl: 0 25px 50px rgba(0,0,0,0.25);
+
+  /* ---------- MOTION ---------- */
+  --ease-out:  cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 120ms;
+  --dur-med:  200ms;
+  --dur-slow: 320ms;
+}
+
+/* ---------- DARK THEME (authoritative token overrides) ---------- */
+[data-theme="dark"] {
+  --text-primary:     #FFFFFF;
+  --text-secondary:   var(--warm-black-700);
+  --text-heading:     #A77B3D;
+  --text-link:        var(--gold-500);
+  --text-on-pill:     var(--gold-900);
+  --text-on-accent:   var(--warm-black-900);
+  --text-inverse:     #FFFFFF;
+
+  --surface-page:     var(--navy-900);
+  --surface-card:     var(--navy-800);
+  --surface-container:#FFFFFF;
+  --surface-pill:     var(--gold-100);
+  --surface-gold-container: var(--navy-800);
+  --border-default:   var(--warm-black-800);
+  --accent-gold:      var(--gold-500);
+}
+
+/* ============================================================
+   SEMANTIC BASE STYLES
+   ============================================================ */
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--lh-body);
+  color: var(--text-primary);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif-display);
+  font-weight: 400;           /* DM Serif Text is a single weight */
+  color: var(--text-heading);
+  line-height: var(--lh-tight);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+h1 { font-size: var(--text-6xl); }   /* 60 */
+h2 { font-size: var(--text-5xl); }   /* 48 */
+h3 { font-size: var(--text-4xl); }   /* 36 */
+h4 { font-size: var(--text-3xl); }   /* 30 */
+h5 { font-size: var(--text-2xl); line-height: var(--lh-snug); }
+h6 { font-size: var(--text-xl);  line-height: var(--lh-snug); }
+
+p { margin: 0 0 var(--space-4); color: var(--text-primary); }
+
+a {
+  color: var(--text-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+a:hover { color: var(--navy-700); }
+
+small, .meta {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+code, pre, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+}
+
+/* Editorial body (obituaries, long-form) */
+.prose-editorial {
+  font-family: var(--font-serif-body);
+  font-size: var(--text-lg);
+  line-height: var(--lh-loose);
+  color: var(--text-primary);
+}
+.prose-editorial p { margin-bottom: 1em; }
+
+/* Display utilities */
+.display-xl  { font-family: var(--font-serif-display); font-size: var(--text-8xl); line-height: var(--lh-tight); color: var(--text-heading); }
+.display-lg  { font-family: var(--font-serif-display); font-size: 72px; line-height: var(--lh-tight); color: var(--text-heading); }
+.display-md  { font-family: var(--font-serif-display); font-size: var(--text-6xl); line-height: var(--lh-tight); color: var(--text-heading); }
+
+/* Eyebrow / label */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--warm-black-600);
+}
