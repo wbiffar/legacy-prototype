@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy — Obituary Page Template</title>
+  <!-- Legacy Design System: tokens, fonts, base type -->
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <!-- Line icons (regular = unfilled, per DS iconography) -->
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { overflow-x: hidden; }
+    img { display: block; max-width: 100%; }
+
+    :focus-visible { outline: 2px solid var(--gold-700); outline-offset: 2px; }
+
+    /* ---------- Buttons (DS components-buttons.html) ---------- */
+    .btn { font-family: var(--font-sans); font-weight: 500; display: inline-flex; align-items: center;
+      justify-content: center; gap: 8px; border-radius: var(--radius-full); border: 1px solid transparent;
+      cursor: pointer; text-decoration: none; transition: all var(--dur-fast) var(--ease-out);
+      height: 48px; padding: 0 20px; font-size: 16px; white-space: nowrap; }
+    .btn-sm { height: 40px; padding: 0 16px; font-size: 14px; }
+    .btn-primary { background: var(--navy-700); color: #fff; }
+    .btn-primary:hover { background: var(--navy-800); }
+    .btn-gold { background: var(--gold-500); color: var(--warm-black-900); }
+    .btn-gold:hover { background: var(--gold-400); }
+    .btn-white { background: #fff; color: var(--navy-700); border-color: var(--navy-700); }
+    .btn-white:hover { background: var(--gold-50); }
+    .btn-green { background: var(--seafoam-700); color: #fff; }
+    .btn-green:hover { background: var(--seafoam-800); }
+    .btn-white-on-dark { background: transparent; color: #fff; border-color: rgba(255,255,255,0.6); }
+    .btn-white-on-dark:hover { background: rgba(255,255,255,0.12); }
+    .btn-ghost { background: transparent; color: var(--navy-700); }
+    .btn-ghost:hover { background: var(--warm-black-100); }
+    .link { color: var(--text-link); font-family: var(--font-sans); font-weight: 500; font-size: 14px;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+    .link:hover { color: var(--navy-700); text-decoration: underline; }
+
+    .eye { font-family: var(--font-sans); font-weight: 700; font-size: 13px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--gold-700); margin: 0; }
+
+    /* ---------- Shell / layout ---------- */
+    .wrap { max-width: 1440px; margin: 0 auto; }
+    .pad { padding-left: clamp(16px, 5vw, 64px); padding-right: clamp(16px, 5vw, 64px); }
+
+    /* ---------- Nav ---------- */
+    .nav-top { background: #fff; border-bottom: 1px solid var(--warm-black-200); }
+    .nav-linkbar { background: #FBFBFB; border-bottom: 1px solid var(--warm-black-200); }
+    .nav-main { display: flex; align-items: center; gap: 24px; height: 72px; }
+    .nav-logo img { height: 30px; width: auto; }
+    .nav-search { flex: 1; max-width: 420px; margin: 0 auto; height: 40px; border: 1px solid var(--warm-black-300);
+      border-radius: var(--radius-full); display: flex; align-items: center; padding: 0 16px; gap: 8px;
+      color: var(--warm-black-400); background: #fff; }
+    .nav-search input { border: 0; background: transparent; outline: none; width: 100%; font-family: var(--font-sans);
+      font-size: 15px; color: var(--warm-black-900); }
+    .nav-tools { margin-left: auto; display: flex; align-items: center; gap: 16px; color: var(--warm-black-900); }
+    .nav-tools .signin { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-sans);
+      font-weight: 600; font-size: 15px; background: none; border: 0; cursor: pointer; color: inherit; min-height: 44px; }
+    .icon-btn { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center;
+      background: none; border: 0; cursor: pointer; color: var(--warm-black-900); font-size: 24px; }
+    .nav-links { display: flex; justify-content: center; align-items: center; gap: 40px; height: 45px; }
+    .nav-links a { color: var(--warm-black-900); text-decoration: none; font-family: var(--font-sans);
+      font-weight: 500; font-size: 14px; }
+    .nav-links a:hover { color: var(--navy-700); }
+    .nav-search-mobile { display: none; padding: 0 clamp(16px,5vw,64px) 12px; background: #fff; border-bottom: 1px solid var(--warm-black-200); }
+
+    /* ---------- Linkback + breadcrumb ---------- */
+    .linkback { height: 72px; background: #fff; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--warm-black-200); }
+    .linkback .left { display: flex; align-items: center; gap: 12px; font-family: var(--font-sans); font-weight: 700;
+      font-size: 16px; letter-spacing: -0.01em; color: var(--warm-black-900); }
+    .linkback .ic { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--gold-700);
+      color: var(--gold-700); display: inline-flex; align-items: center; justify-content: center; font-size: 18px; }
+    .bc { padding-top: 16px; padding-bottom: 16px; font-family: var(--font-sans); font-size: 14px;
+      color: var(--warm-black-600); display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .bc a { color: var(--navy-500); text-decoration: none; }
+    .bc .sep { color: var(--warm-black-400); }
+
+    /* ---------- Stage: each section is its own panel on the cream page ---------- */
+    .stage2 { max-width: 1080px; margin: 0 auto; padding: 0 clamp(16px,4vw,24px) 64px;
+      display: flex; flex-direction: column; gap: 24px; }
+    @media (min-width: 768px){ .stage2 { gap: 32px; } }
+
+    /* Full-bleed hero image band, flush under the nav, with breadcrumb overlaid */
+    .hero-band { position: relative; z-index: 0; width: 100%; height: 260px;
+      background: url('assets/hero-band.png') center/cover no-repeat; }
+    @media (max-width: 640px){ .hero-band { height: 220px; } }
+    .bc-overlay { max-width: 1080px; margin: 0 auto; padding: 20px clamp(16px,4vw,24px);
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: var(--font-sans); font-size: 14px; }
+    .bc-overlay a { color: var(--gold-200); text-decoration: none; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+    .bc-overlay a:hover { color: #fff; text-decoration: underline; }
+    .bc-overlay .sep { color: rgba(255,255,255,0.75); text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+    .bc-overlay .current { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+
+    /* Hero block on the cream page: overlapping portrait + name + CTAs */
+    .hero2 { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
+
+    /* Portrait overlaps the band so its top sits 72px below the nav (band height − offset) */
+    .portrait { width: 202px; height: 280px; border-radius: 16px; overflow: hidden; background: var(--gold-100);
+      box-shadow: var(--shadow-xl); margin-top: -188px; }
+    .portrait img { width: 100%; height: 100%; object-fit: cover; }
+    @media (max-width: 640px){ .portrait { width: 160px; height: 222px; margin-top: -148px; } }
+
+    .name { font-family: var(--font-serif-display); font-size: clamp(30px, 6vw, 44px); color: #000;
+      line-height: 1.15; text-align: center; margin: 24px 0 0; letter-spacing: -0.01em; }
+    .dates { font-family: var(--font-sans); font-size: 18px; color: var(--gold-700); text-align: center; margin: 8px 0 0; }
+    .cta-row { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+    /* White section card — capped at 960 and centered */
+    .panel { background: #fff; border-radius: 20px; border: 1px solid var(--border-default);
+      box-shadow: 0 4px 6px 0 rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.10); padding: 32px 64px;
+      width: 100%; max-width: 960px; margin-left: auto; margin-right: auto; }
+    @media (max-width: 640px){ .panel { border-radius: 16px; padding: 24px 16px; } }
+
+    /* Sections keep full stage width; some constrain their own inner content */
+    .section { width: 100%; }
+    .section-narrow, .narrow { max-width: 960px; margin-left: auto; margin-right: auto; width: 100%; }
+    .sec-title { font-family: var(--font-serif-display); font-size: clamp(24px, 4vw, 30px);
+      color: var(--navy-700); line-height: 1.2; margin: 0; }
+    .center { text-align: center; }
+
+    /* Events */
+    .events-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+    .events-head h3 { font-family: var(--font-serif-display); font-weight: 400; font-size: clamp(22px,3.5vw,28px);
+      color: var(--navy-700); margin: 0; letter-spacing: -0.01em; }
+    .ev-track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+      background-color: var(--warm-black-100);
+      background-image: radial-gradient(var(--warm-black-300) 1.2px, transparent 1.3px); background-size: 16px 16px;
+      border-radius: 16px; padding: 4px; }
+    .ev-track::-webkit-scrollbar { height: 8px; }
+    .ev-track::-webkit-scrollbar-thumb { background: transparent; border-radius: 9999px; transition: background .3s; }
+    .ev-track.is-scrolling::-webkit-scrollbar-thumb, .ev-track:hover::-webkit-scrollbar-thumb { background: var(--warm-black-300); }
+    .ev-card { flex: 0 0 320px; max-width: 320px; scroll-snap-align: start; border: 1px solid var(--warm-black-300);
+      border-radius: 16px; background: #fff; display: flex; flex-direction: column; overflow: hidden; }
+    @media (max-width: 440px){ .ev-card { flex-basis: 86%; max-width: 86%; } }
+    .ev-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; flex: 1; }
+    .ev-ttl { font-family: var(--font-sans); font-weight: 700; font-size: 20px; color: var(--warm-black-900); margin: 0; letter-spacing: -0.01em; }
+    .ev-line { display: flex; gap: 12px; }
+    .ev-line > i { font-size: 20px; color: var(--warm-black-500); margin-top: 2px; flex-shrink: 0; }
+    .ev-strong { font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--warm-black-900); margin: 0; }
+    .ev-muted { font-size: 14px; color: var(--warm-black-700); margin: 2px 0; }
+    .ev-line a.link { font-size: 14px; }
+    .ev-foot { display: flex; gap: 12px; padding: 16px; border-top: 1px solid var(--warm-black-200); }
+    .ev-foot .btn { flex: 1; padding: 0 12px; }
+    .provider-bar { margin-top: 16px; border: 1px solid var(--warm-black-300); border-radius: 16px; padding: 16px 20px;
+      background: var(--gold-50); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .provider-bar p { margin: 0; font-size: 15px; color: var(--warm-black-700); }
+    .empty-state { border: 1px dashed var(--warm-black-300); border-radius: 16px; padding: 32px; text-align: center; color: var(--warm-black-600); }
+    .empty-state .badge { width: 56px; height: 56px; border-radius: 50%; background: var(--gold-100); color: var(--gold-800);
+      display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 12px; }
+
+    /* Obituary prose */
+    /* Obituary: centered body column (title + video are exempt from the 640 cap) */
+    .obit-body { max-width: 640px; margin: 0 auto; }
+    .prose { font-family: var(--font-serif-body); font-size: 16px; line-height: 1.6; color: var(--warm-black-900); }
+    .prose p { margin: 0 0 1em; }
+    .prose a, .obit-line a { color: var(--navy-500); text-underline-offset: 2px; }
+    .published { font-family: var(--font-sans); font-size: 13px; color: var(--warm-black-600); margin-top: 4px; }
+    .obit-line { font-family: var(--font-serif-body); font-size: 16px; line-height: 1.6; color: var(--warm-black-900); margin: 24px 0 0; }
+
+    /* Inline photos */
+    .photo-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .photo-row .p { border-radius: 16px; overflow: hidden; height: 204px; }
+    .photo-row .p img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-row .p-1 { width: 148px; } .photo-row .p-2 { width: 300px; } .photo-row .p-3 { width: 220px; }
+    .photo-row .add { width: 134px; height: 204px; border-radius: 16px; border: 2px dashed var(--warm-black-400);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+      color: var(--warm-black-700); font-family: var(--font-sans); font-size: 15px; background: none; cursor: pointer; }
+    .photo-row .add i { font-size: 32px; color: var(--warm-black-500); }
+
+    /* Charity / plant callout */
+    .plant { font-family: var(--font-serif-body); font-size: 20px; color: var(--warm-black-900); }
+    .charity-card { border: 1px solid var(--warm-black-300); border-radius: 16px; padding: 16px 20px; background: var(--gold-50);
+      display: flex; align-items: center; gap: 16px; }
+    .charity-card + .charity-card { margin-top: 12px; }
+    .charity-card .ic { width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center;
+      justify-content: center; flex-shrink: 0; font-size: 22px; }
+    .charity-card .grow { flex: 1; min-width: 0; }
+    .charity-card .nm { font-family: var(--font-sans); font-weight: 600; color: var(--warm-black-900); }
+
+    /* Video */
+    .video { position: relative; width: 100%; border-radius: 16px; overflow: hidden; aspect-ratio: 16/9; border: 0; cursor: pointer; padding: 0; }
+    .video img { width: 100%; height: 100%; object-fit: cover; }
+    .video .veil { position: absolute; inset: 0; background: rgba(41,53,72,0.35); display: flex; align-items: center; justify-content: center; }
+    .video .play { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.92); display: flex;
+      align-items: center; justify-content: center; color: var(--navy-700); font-size: 26px; }
+    .video .cap { position: absolute; left: 16px; bottom: 12px; color: #fff; font-family: var(--font-sans); font-size: 14px; font-weight: 600; }
+
+    /* Book callout */
+    .book { max-width: 960px; display: grid; grid-template-columns: 320px 1fr; border: 1px solid var(--warm-black-300);
+      border-radius: 16px; overflow: hidden; background: #fff;
+      box-shadow: 0 4px 6px 0 rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.10); }
+    @media (max-width: 720px){ .book { grid-template-columns: 1fr; } }
+    .book .cover { background: var(--navy-700); padding: 24px; display: flex; align-items: center; justify-content: center; }
+    .book .cover img { max-height: 300px; width: auto; border-radius: 4px; box-shadow: var(--shadow-lg); }
+    .book .pane { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+    .book .who { font-family: var(--font-serif-display); font-size: 24px; color: #000; margin: 8px 0 16px; }
+    .book .btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .book .desc { font-size: 18px; color: var(--warm-black-900); margin: 0; line-height: 1.5; }
+    .book .divider { height: 1px; background: var(--warm-black-200); margin: 0 -24px; }
+    .book .share-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .book .share-row .grow { flex: 1; min-width: 180px; }
+    .book .share-row .ttl { font-family: var(--font-sans); font-weight: 700; font-size: 18px; color: var(--warm-black-900); margin: 0 0 4px; }
+    .book .share-row .sub { font-size: 15px; color: var(--warm-black-700); margin: 0; line-height: 1.5; }
+
+    /* Guestbook */
+    .gb-ui { border: 1px solid var(--warm-black-300); border-radius: 16px; padding: 20px; background: var(--gold-50);
+      display: flex; flex-direction: column; gap: 16px; }
+    .gb-input { min-height: 48px; background: #fff; border: 1px solid var(--warm-black-300); border-radius: var(--radius-full);
+      display: flex; align-items: center; padding: 0 20px; gap: 10px; color: var(--warm-black-400); }
+    .gb-input input { border: 0; background: transparent; outline: none; width: 100%; font-family: var(--font-sans); font-size: 15px; }
+    .gb-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .gb-actions .left { display: flex; gap: 12px; flex-wrap: wrap; }
+    .gb-tiny { min-height: 40px; padding: 0 16px; border-radius: var(--radius-full); background: #fff;
+      border: 1px solid var(--warm-black-300); font-family: var(--font-sans); font-size: 14px; color: var(--warm-black-800);
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+    /* Add-a-post card (sits above the guestbook header) */
+    .gb-add { background: #fff; border: 1px solid var(--border-default); border-radius: 20px;
+      box-shadow: 0 4px 6px 0 rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.10);
+      padding: 24px; max-width: 960px; margin: 0 auto 32px; display: flex; flex-direction: column; gap: 16px; }
+    .gb-add h3 { font-family: var(--font-serif-display); font-size: 22px; color: var(--navy-700); margin: 0; }
+    /* Expandable engagement region */
+    .gb-more { display: none; flex-direction: column; gap: 16px; }
+    .gb-add[data-expanded="true"] .gb-more { display: flex; }
+    .gb-textarea { position: relative; border: 1px solid var(--warm-black-300); border-radius: 16px; background: #fff; padding: 12px 16px; display: flex; gap: 10px; }
+    .gb-textarea > i { color: var(--warm-black-500); margin-top: 2px; }
+    .gb-textarea textarea { border: 0; outline: none; resize: vertical; width: 100%; min-height: 84px; font-family: var(--font-sans); font-size: 15px; color: var(--warm-black-900); background: transparent; }
+    .gb-textarea .mic { position: absolute; right: 12px; bottom: 10px; margin: 0; }
+    .gb-agree { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--warm-black-700); cursor: pointer; }
+    .gb-agree input { width: 18px; height: 18px; accent-color: var(--gold-500); flex-shrink: 0; }
+    .gb-note { background: var(--gold-50); border-radius: 12px; padding: 12px 16px; font-size: 13px; color: var(--warm-black-600); line-height: 1.5; }
+    .gb-candles { display: none; flex-wrap: wrap; gap: 12px; }
+    .gb-add[data-candles="true"] .gb-candles { display: flex; }
+    .gb-candle { width: 56px; height: 56px; border-radius: 50%; border: 2px solid transparent; display: inline-flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; font-size: 22px; flex-shrink: 0; }
+    .gb-candle.sel { border-color: var(--gold-600); box-shadow: 0 0 0 2px var(--gold-200); }
+    .gb-add[data-candles="true"] .js-light-candle { background: var(--navy-700); color: #fff; border-color: var(--navy-700); }
+    .gb-head { text-align: center; }
+    .gb-rule-row { display: flex; align-items: center; gap: 20px; justify-content: center; }
+    .gb-rule { flex: 1; height: 1px; background: var(--gold-300); }
+    .gb-count { font-family: var(--font-sans); font-weight: 700; color: var(--warm-black-900); }
+    .gb-empty { display: flex; align-items: center; gap: 24px; justify-content: center; padding: 24px 0; }
+    .gb-empty .badge { width: 96px; height: 96px; border-radius: 50%; background: var(--seafoam-200); color: var(--seafoam-700);
+      display: inline-flex; align-items: center; justify-content: center; font-size: 40px; }
+    .gb-empty .msg { max-width: 226px; font-size: 18px; color: var(--warm-black-500); line-height: 1.5; text-align: left; }
+    .gb-masonry { column-gap: 16px; column-count: 1; }
+    @media (min-width: 640px){ .gb-masonry { column-count: 2; } }
+    @media (min-width: 1024px){ .gb-masonry { column-count: 3; } }
+    .gb-post { break-inside: avoid; margin-bottom: 16px; border: 1px solid var(--warm-black-200); border-radius: 16px;
+      padding: 16px; background: #fff; transition: box-shadow .2s var(--ease-out); }
+    .gb-post:hover { box-shadow: 0 4px 6px 0 rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.10); }
+    .gb-post .who { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .gb-post .av { width: 40px; height: 40px; border-radius: 50%; color: #fff; display: inline-flex; align-items: center;
+      justify-content: center; font-family: var(--font-sans); font-weight: 600; font-size: 14px; flex-shrink: 0; }
+    .gb-post .nm { font-family: var(--font-sans); font-weight: 600; font-size: 14px; color: var(--warm-black-900); }
+    .gb-post .tm { font-size: 12px; color: var(--warm-black-500); }
+    .gb-post .msg { font-family: var(--font-serif-body); font-size: 16px; line-height: 1.6; color: var(--warm-black-900); margin: 0; }
+    .gb-post .media { border-radius: 12px; overflow: hidden; height: 150px; margin-bottom: 12px; }
+    .gb-post .media img { width: 100%; height: 100%; object-fit: cover; }
+    .gb-post .candle { height: 120px; background: var(--gold-100); display: flex; align-items: center; justify-content: center;
+      color: var(--gold-800); font-size: 40px; border-radius: 12px; margin-bottom: 12px; }
+    .gb-post .likes { display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; color: var(--warm-black-500); font-size: 14px; }
+
+    /* Remembrance Pages */
+    .rem-title-row { display: flex; align-items: center; gap: 10px; }
+    .rem-badge { font-family: var(--font-sans); font-size: 13px; font-weight: 600; background: var(--gold-100);
+      color: var(--gold-900); border-radius: 9999px; padding: 2px 10px; }
+    .rem-sub { color: var(--warm-black-700); margin: 8px 0 0; max-width: 640px; font-size: 15px; }
+    .rem-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px; }
+    @media (max-width: 640px){ .rem-grid { grid-template-columns: 1fr; } }
+    .rem-item { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 16px 0; border-bottom: 1px solid var(--warm-black-200); text-decoration: none; }
+    .rem-item .lbl { font-family: var(--font-sans); font-weight: 600; font-size: 16px; color: var(--navy-500); margin: 0; line-height: 1.3; }
+    .rem-item:hover .lbl { color: var(--navy-700); }
+    .rem-item .loc { font-size: 13px; color: var(--warm-black-600); margin: 2px 0 0; }
+    .rem-item .go { width: 40px; height: 40px; border-radius: 9999px; border: 1px solid var(--warm-black-300);
+      display: inline-flex; align-items: center; justify-content: center; color: var(--navy-700); flex-shrink: 0; font-size: 18px; }
+    .rem-item:hover .go { background: var(--gold-50); }
+    .rem-toggle { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 24px auto 0;
+      background: none; border: 0; cursor: pointer; font-family: var(--font-sans); font-weight: 600; font-size: 14px; color: var(--navy-700); }
+    .rem-toggle i { font-size: 18px; }
+
+    /* Events track: Firefox scrollbar hidden until scrolling/hover */
+    .ev-track { scrollbar-width: none; }
+    .ev-track.is-scrolling, .ev-track:hover { scrollbar-width: thin; scrollbar-color: var(--warm-black-300) transparent; }
+
+    /* Gallery — full-bleed band, scroll-linked drift, hover zoom */
+    #sec-gallery { padding-top: 16px; padding-bottom: 16px; }
+    .gallery-full { position: relative; left: 50%; right: 50%; width: 100vw; margin-left: -50vw; margin-right: -50vw; overflow: hidden; }
+    .gallery-row { display: flex; gap: 16px; padding: 0 24px; width: max-content; will-change: transform; }
+    .gallery-row .g { flex: 0 0 auto; height: 300px; border-radius: 16px; overflow: hidden; }
+    .gallery-row .g img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease-out); }
+    .gallery-row .g:hover img { transform: scale(1.06); }
+    @media (max-width: 640px){ .gallery-row .g { height: 220px; } }
+
+    /* Sympathy advice (DS list style) */
+    .advice { max-width: 960px; background: var(--gold-50); border-radius: 20px; padding: clamp(24px,4vw,32px) clamp(20px,4vw,40px);
+      display: flex; flex-direction: column; gap: 24px; align-items: center; }
+    .advice .item { width: 100%; max-width: 640px; border-bottom: 1px solid var(--warm-black-300); padding-bottom: 24px; }
+    .advice .item.last { border-bottom: 0; padding-bottom: 0; }
+    .advice .sponsored { font-family: var(--font-sans); font-size: 12px; color: var(--warm-black-500); letter-spacing: 0.06em;
+      text-transform: uppercase; margin: 0 0 8px; }
+    .advice .h { font-family: var(--font-serif-display); font-size: 24px; color: var(--navy-700); margin: 0 0 12px; line-height: 1.2; }
+    .advice .p { font-size: 18px; color: var(--warm-black-700); margin: 0; line-height: 1.5; }
+
+    /* Support */
+    .support-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+    .support-grid { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+    .support-grid::-webkit-scrollbar { height: 8px; }
+    .support-grid::-webkit-scrollbar-thumb { background: transparent; border-radius: 9999px; transition: background .3s; }
+    .support-grid.is-scrolling::-webkit-scrollbar-thumb, .support-grid:hover::-webkit-scrollbar-thumb { background: var(--warm-black-300); }
+    .support-grid.is-scrolling, .support-grid:hover { scrollbar-width: thin; scrollbar-color: var(--warm-black-300) transparent; }
+    .support-card { flex: 0 0 288px; max-width: 288px; scroll-snap-align: start; border: 1px solid var(--warm-black-300); border-radius: 16px;
+      padding: 20px; background: #fff; display: flex; flex-direction: column; gap: 10px; min-height: 210px; text-decoration: none; }
+    .support-card .sc-ic { width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center;
+      justify-content: center; color: #fff; font-size: 22px; }
+    .support-card h3 { font-family: var(--font-sans); font-weight: 700; font-size: 16px; color: var(--warm-black-900);
+      line-height: 1.25; margin: 0; letter-spacing: -0.01em; }
+    .support-card p { font-size: 13px; color: var(--warm-black-600); line-height: 1.5; margin: 0; flex: 1; }
+    .support-card .sc-arrow { color: var(--warm-black-900); font-size: 20px; }
+    .arrows { display: flex; gap: 8px; }
+    .arrows button { width: 40px; height: 40px; border-radius: 9999px; border: 1px solid var(--warm-black-300);
+      background: #fff; display: inline-flex; align-items: center; justify-content: center; color: var(--warm-black-700);
+      cursor: pointer; font-size: 18px; }
+
+    /* Footer */
+    .footer { background: var(--navy-900); color: #E6ECF5; padding: 48px 0 32px; }
+    .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr; gap: 40px; }
+    @media (max-width: 900px){ .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 520px){ .footer-grid { grid-template-columns: 1fr; } }
+    .footer .brand .logo img { height: 26px; margin-bottom: 16px; }
+    .footer .brand .copy { font-size: 13px; color: #9BA7BC; line-height: 1.6; max-width: 280px; }
+    .footer .social { display: flex; gap: 12px; margin-top: 16px; }
+    .footer .social a { width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
+      display: inline-flex; align-items: center; justify-content: center; color: #E6ECF5; font-size: 18px; }
+    .footer .col h4 { font-family: var(--font-sans); font-weight: 700; font-size: 13px; color: #fff; margin: 0 0 12px; }
+    .footer .col a { display: block; font-size: 13px; color: #B0BED3; text-decoration: none; margin-bottom: 8px; line-height: 1.4; }
+    .footer .col a:hover { color: #fff; }
+    .footer-bar { background: #0F1723; color: #8A97AC; font-size: 13px; padding: 16px 0; }
+    .footer-bar .row { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .footer-bar a { color: #8A97AC; text-decoration: none; } .footer-bar a:hover { color: #fff; }
+
+    /* Ads */
+    .ad-slot { display: flex; justify-content: center; padding: 16px clamp(16px,5vw,64px); }
+    .ad-box { width: 100%; max-width: 728px; height: 90px; border: 1px dashed var(--warm-black-300); border-radius: 8px;
+      background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--warm-black-400); }
+    .ad-box .lbl { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; }
+
+    /* Sticky mobile CTA */
+    #stickyCta { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; display: none; gap: 12px;
+      background: #fff; border-top: 1px solid var(--warm-black-300); padding: 10px clamp(16px,5vw,24px) calc(10px + env(safe-area-inset-bottom));
+      box-shadow: 0 -6px 20px rgba(0,0,0,0.08); }
+    body.sticky-on #stickyCta { display: flex; }
+    @media (min-width: 768px){ body.sticky-on #stickyCta { display: none; } }
+    #stickyCta .btn { flex: 1; }
+
+    /* Modals */
+    .modal-overlay { position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center;
+      background: rgba(21,27,36,0.55); padding: 16px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: #fff; border-radius: 16px; width: 100%; max-width: 620px; box-shadow: var(--shadow-2xl); }
+    .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 24px; border-bottom: 1px solid var(--warm-black-200); }
+    .modal-head h2 { font-family: var(--font-serif-display); font-size: 26px; color: var(--navy-700); margin: 0; line-height: 1.2; }
+    .modal-head p { margin: 6px 0 0; color: var(--warm-black-700); font-size: 15px; }
+    .modal-close { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--warm-black-300); background: #fff;
+      color: var(--navy-700); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 20px; }
+    .modal-body { padding: 24px; }
+    .share-grid { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .share-grid button { display: flex; flex-direction: column; align-items: center; gap: 8px; font-family: var(--font-sans);
+      font-size: 14px; color: var(--warm-black-900); background: none; border: 0; cursor: pointer; }
+    .share-grid .ic { width: 48px; height: 48px; border-radius: 50%; background: var(--navy-100); color: var(--navy-700);
+      display: inline-flex; align-items: center; justify-content: center; font-size: 24px; }
+    .follow-success { border: 1px solid var(--seafoam-300); background: var(--seafoam-100); border-radius: 12px; padding: 20px; text-align: center; }
+    .follow-success .chk { width: 36px; height: 36px; border-radius: 50%; background: var(--seafoam-700); color: #fff;
+      display: inline-flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 8px; }
+    .field { display: flex; gap: 12px; flex-wrap: wrap; }
+    .field input { flex: 1; min-width: 200px; height: 48px; border: 1px solid var(--warm-black-300); border-radius: var(--radius-full);
+      padding: 0 20px; background: var(--gold-50); outline: none; font-family: var(--font-sans); font-size: 16px; }
+
+    .is-hidden { display: none !important; }
+
+    /* ---------- Control panel (demo tool) ---------- */
+    .cp { position: fixed; z-index: 70; right: 16px; bottom: 16px; width: 300px; max-width: calc(100vw - 32px);
+      background: rgba(21,27,36,0.96); backdrop-filter: blur(10px); color: #fff; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,0.4); font-family: var(--font-sans); font-size: 13px; overflow: hidden; }
+    .cp-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .cp-head h2 { font-family: var(--font-sans); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; display: flex; align-items: center; gap: 8px; margin: 0; }
+    .cp-head .caret { transition: transform .2s; opacity: .7; }
+    .cp.collapsed { width: auto; max-width: calc(100vw - 32px); }
+    .cp.collapsed .cp-head { border-bottom: 0; }
+    .cp.collapsed .cp-body { display: none; }
+    .cp.collapsed .cp-head .caret { transform: rotate(180deg); }
+    @media (max-width: 767px){ body.sticky-on .cp { bottom: 84px; } }
+    .cp-body { max-height: min(72vh, 640px); overflow-y: auto; padding: 8px 14px 16px; }
+    .cp-body::-webkit-scrollbar { width: 8px; } .cp-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 9999px; }
+    .cp-group { margin-top: 14px; }
+    .cp-group > .cp-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 8px; }
+    .cp-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 0; }
+    .cp-row span { color: rgba(255,255,255,0.9); }
+    .sw { position: relative; width: 38px; height: 22px; flex: 0 0 auto; }
+    .sw input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+    .sw .track { position: absolute; inset: 0; background: rgba(255,255,255,0.22); border-radius: 9999px; transition: background .15s; }
+    .sw .thumb { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: #fff; border-radius: 9999px; transition: transform .15s; }
+    .sw input:checked ~ .track { background: var(--seafoam-500); }
+    .sw input:checked ~ .thumb { transform: translateX(16px); }
+    .seg { display: flex; background: rgba(255,255,255,0.1); border-radius: 9px; padding: 3px; gap: 2px; }
+    .seg button { flex: 1; border: 0; background: transparent; color: rgba(255,255,255,0.7); font-family: var(--font-sans);
+      font-size: 12px; font-weight: 600; padding: 6px 4px; border-radius: 6px; cursor: pointer; }
+    .seg button.active { background: #fff; color: #151b24; }
+    .cp-actions button { width: 100%; border: 0; border-radius: 9px; padding: 9px; font-family: var(--font-sans); font-size: 12.5px;
+      font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.12); color: #fff; margin-top: 6px; text-align: left; display: flex; align-items: center; gap: 8px; }
+    .cp-actions button:hover { background: rgba(255,255,255,0.2); }
+    .cp-reset { background: rgba(220,80,98,0.18) !important; color: #f7d4da !important; justify-content: center !important; }
+    .cp-note { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.5; margin-top: 10px; }
+
+    /* Responsive nav */
+    @media (max-width: 767px){
+      .nav-search { display: none; }
+      .nav-links { display: none; }
+      .nav-search-mobile { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===================== NAV ===================== -->
+<header>
+  <div class="nav-top">
+    <div class="wrap pad nav-main">
+      <a class="nav-logo" href="#" aria-label="Legacy.com home"><img src="assets/logo-horizontal.svg" alt="Legacy" /></a>
+      <div class="nav-search">
+        <i class="ph ph-magnifying-glass" aria-hidden="true"></i>
+        <input type="text" placeholder="Find a loved one" aria-label="Search obituaries" />
+      </div>
+      <div class="nav-tools">
+        <button class="signin" aria-label="Sign in"><i class="ph ph-user" aria-hidden="true"></i><span>Sign In</span></button>
+        <button class="icon-btn nav-hamburger" aria-label="Open menu"><i class="ph ph-list" aria-hidden="true"></i></button>
+      </div>
+    </div>
+  </div>
+  <div class="nav-search-mobile">
+    <div class="nav-search" style="display:flex; max-width:none; margin:0;">
+      <i class="ph ph-magnifying-glass" aria-hidden="true"></i>
+      <input type="text" placeholder="Find a loved one" aria-label="Search obituaries" />
+    </div>
+  </div>
+  <div class="nav-linkbar">
+    <nav class="wrap pad nav-links" aria-label="Primary">
+      <a href="#">Find an Obituary</a>
+      <a href="#">Sympathy &amp; Flowers</a>
+      <a href="#">Grief Support</a>
+      <a href="#">Gift Shop</a>
+      <a href="#">Offer Help</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===================== FULL-BLEED HERO IMAGE ===================== -->
+<div class="hero-band">
+  <nav class="bc-overlay" aria-label="Breadcrumb">
+    <a href="#">Obituaries</a><span class="sep">/</span>
+    <a href="#">Illinois</a><span class="sep">/</span>
+    <a href="#">Springfield</a><span class="sep">/</span>
+    <span class="current">Ralph Thomas</span>
+  </nav>
+</div>
+
+<!-- ===================== CENTER STAGE ===================== -->
+<div class="stage2">
+  <!-- HERO -->
+  <div class="hero2">
+    <div class="portrait"><img src="assets/ralph-portrait.png" alt="Portrait of Ralph Thomas" /></div>
+    <h1 class="name">Ralph Thomas</h1>
+    <p class="dates">1937 — 2025</p>
+    <div class="cta-row">
+      <button class="btn btn-gold"><i class="ph ph-flower-tulip" aria-hidden="true"></i>Send Flowers</button>
+      <button class="btn btn-green"><i class="ph ph-tree" aria-hidden="true"></i>Plant Trees</button>
+      <button class="btn btn-white js-open-share"><i class="ph ph-share-network" aria-hidden="true"></i>Share</button>
+    </div>
+  </div>
+
+  <!-- EVENTS -->
+  <section id="sec-events" class="panel" aria-labelledby="events-title">
+        <div class="events-head">
+          <h3 id="events-title"><span id="eventsCount">3</span> <span id="eventsWord">Memorial Events</span></h3>
+          <div class="arrows" data-events-controls>
+            <button data-scroll="events" data-dir="-1" aria-label="Previous events"><i class="ph ph-caret-left"></i></button>
+            <button data-scroll="events" data-dir="1" aria-label="Next events"><i class="ph ph-caret-right"></i></button>
+          </div>
+        </div>
+        <div id="eventsEmpty" class="empty-state is-hidden">
+          <span class="badge"><i class="ph ph-calendar-x"></i></span>
+          <p style="font-family:var(--font-serif-display); font-size:20px; color:var(--navy-700); margin:0 0 4px;">No services are listed yet</p>
+          <p style="margin:0;">Service details will appear here once they’re shared by the family.</p>
+        </div>
+        <div id="eventsScroll" class="ev-track">
+          <article class="ev-card" data-index="1">
+            <div class="ev-body">
+              <h4 class="ev-ttl">Graveside Service</h4>
+              <div class="ev-line"><i class="ph ph-clock" aria-hidden="true"></i><div>
+                <p class="ev-strong">Friday, Mar 23</p><p class="ev-muted">8:30 AM – 11:00 AM</p><a class="link" href="#">Add to Calendar</a>
+              </div></div>
+              <div class="ev-line"><i class="ph ph-map-pin" aria-hidden="true"></i><div>
+                <p class="ev-strong">Eternal Springs Funeral Home</p>
+                <a class="link" href="#">1234 Addresshere Dr. Cityhere, ST</a><br/><a class="link" href="#">Get Directions</a>
+              </div></div>
+            </div>
+            <div class="ev-foot">
+              <button class="btn btn-white btn-sm"><i class="ph ph-bed" aria-hidden="true"></i>Book a Hotel</button>
+              <button class="btn btn-gold btn-sm"><i class="ph ph-flower-tulip" aria-hidden="true"></i>Send Flowers</button>
+            </div>
+          </article>
+          <article class="ev-card" data-index="2">
+            <div class="ev-body">
+              <h4 class="ev-ttl">Burial</h4>
+              <div class="ev-line"><i class="ph ph-clock" aria-hidden="true"></i><div>
+                <p class="ev-strong">Friday, Mar 23</p><p class="ev-muted">11:00 AM – 11:30 AM</p><a class="link" href="#">Add to Calendar</a>
+              </div></div>
+              <div class="ev-line"><i class="ph ph-map-pin" aria-hidden="true"></i><div>
+                <p class="ev-strong">Eternal Springs Funeral Home</p>
+                <a class="link" href="#">1234 Addresshere Dr. Cityhere, ST</a><br/><a class="link" href="#">Get Directions</a>
+              </div></div>
+            </div>
+            <div class="ev-foot">
+              <button class="btn btn-white btn-sm"><i class="ph ph-bed" aria-hidden="true"></i>Book a Hotel</button>
+              <button class="btn btn-gold btn-sm"><i class="ph ph-flower-tulip" aria-hidden="true"></i>Send Flowers</button>
+            </div>
+          </article>
+          <article class="ev-card" data-index="3">
+            <div class="ev-body">
+              <h4 class="ev-ttl">Wake</h4>
+              <div class="ev-line"><i class="ph ph-clock" aria-hidden="true"></i><div>
+                <p class="ev-strong">Sunday, March 25</p><p class="ev-muted">8:30 AM – 11:00 AM</p><a class="link" href="#">Add to Calendar</a>
+              </div></div>
+              <div class="ev-line"><i class="ph ph-map-pin" aria-hidden="true"></i><div>
+                <p class="ev-strong">Eternal Springs Funeral Home</p>
+                <a class="link" href="#">1234 Addresshere Dr. Cityhere, ST</a><br/><a class="link" href="#">Get Directions</a>
+              </div></div>
+            </div>
+            <div class="ev-foot">
+              <button class="btn btn-white btn-sm"><i class="ph ph-bed" aria-hidden="true"></i>Book a Hotel</button>
+              <button class="btn btn-gold btn-sm"><i class="ph ph-flower-tulip" aria-hidden="true"></i>Send Flowers</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- OBITUARY -->
+      <section id="sec-obituary" class="panel" aria-labelledby="obit-title">
+        <h2 id="obit-title" class="sec-title" style="margin-bottom:24px;">Ralph Thomas’s Obituary</h2>
+        <div class="obit-body">
+          <div class="prose">
+            <p>Ralph Eugene Thomas, 87, of <a class="link" href="#">Springfield, Illinois</a>, passed away peacefully on April 27, 2025, surrounded by his loving family. Born on August 12, 1937, in <a class="link" href="#">Quincy, Illinois</a>, Ralph was the second of four children born to Edward and Lillian Thomas. He graduated from <a class="link" href="#">Springfield High School</a> in 1955 and proudly served in the <a class="link" href="#">U.S. Navy</a> from 1956 to 1960. Upon returning home, Ralph met the love of his life, Margaret “Maggie” Bennett, and the two were married in 1962. They shared 63 beautiful years together.</p>
+            <p>Ralph worked as a postal carrier for over 30 years, known in his neighborhood for his cheerful whistle, warm smile, and genuine interest in the lives of those on his route. He was a man of quiet integrity, humility, and deep kindness.</p>
+            <p>He was a lifelong Cubs fan, an avid gardener, and a skilled woodworker. In retirement, he built birdhouses for friends and neighbors and volunteered at the local community garden. Ralph also served faithfully as a deacon at <a class="link" href="#">First Baptist Church</a>.</p>
+            <p>He is survived by his wife Maggie; his children, Lisa (David) Morton, James (Angela) Thomas, and Thomas (Elena) Thomas; his sister Carol; nine grandchildren; and three great-grandchildren. He was preceded in death by his parents, his brothers <a class="link" href="#">Robert</a> and <a class="link" href="#">Kenneth</a>, and his granddaughter <a class="link" href="#">Hannah</a>.</p>
+            <p>A memorial service will be held on May 3 at 11:00 a.m. at <a class="link" href="#">First Baptist Church</a>, with visitation beginning at 9:30 a.m. The family asks that charitable donations be made to <a class="link" href="#">American Heart Association</a> or <a class="link" href="#">Alzheimer’s Association</a>.</p>
+            <p>Ralph’s quiet strength and loving presence will be missed by all who knew him.</p>
+          </div>
+          <div class="published">Published on Legacy.com January 3, 2025</div>
+
+          <p class="obit-line">To send flowers or plant a <a class="link" href="#">memorial tree</a> in memory, please visit our <a class="link" href="#">flower store</a>.</p>
+
+          <!-- donation callout -->
+          <div id="obitCharity">
+            <p class="obit-line">Consider a donation to the American Heart Association, as requested by the family.</p>
+            <div class="charity-card" style="margin-top:16px;">
+              <span class="ic" style="background:#fff; color:var(--coral-600);"><i class="ph ph-heart"></i></span>
+              <div class="grow"><div class="nm">American Heart Association</div><a class="link" href="#">Visit the Memorial Page</a></div>
+              <button class="btn btn-sm btn-white">Donate <i class="ph ph-arrow-up-right"></i></button>
+            </div>
+            <div class="charity-card">
+              <span class="ic" style="background:#fff; color:#5B2B82;"><i class="ph ph-brain"></i></span>
+              <div class="grow"><div class="nm">Alzheimer’s Association</div><a class="link" href="#">Visit the Memorial Page</a></div>
+              <button class="btn btn-sm btn-white">Donate <i class="ph ph-arrow-up-right"></i></button>
+            </div>
+            <p class="obit-line">Make a donation to <a class="link" href="#">Pledge Charity Name Goes Here</a> in memory of Ralph Thomas.</p>
+          </div>
+        </div><!-- /obit-body -->
+
+        <!-- tribute video (full width) -->
+        <div id="obitVideo" style="margin-top:24px;">
+          <button class="video" aria-label="Play tribute video">
+            <img src="assets/ralph-family.png" alt="" />
+            <span class="veil"><span class="play"><i class="ph ph-play"></i></span></span>
+            <span class="cap">Tribute video · 2:41</span>
+          </button>
+        </div>
+      </section>
+
+    <!-- REMEMBRANCE PAGES -->
+    <section id="sec-connections" class="panel" aria-labelledby="conn-title">
+      <div style="margin-bottom:16px;">
+        <div class="rem-title-row"><h2 id="conn-title" class="sec-title">Remembrance Pages</h2><span class="rem-badge">12</span></div>
+        <p class="rem-sub">Ralph is remembered across these pages — each one connected to a place or moment that was part of his life.</p>
+      </div>
+      <div class="rem-grid">
+        <a class="rem-item" href="#"><div><p class="lbl">Springfield, Illinois Obituaries</p><p class="loc">United States</p></div><span class="go"><i class="ph ph-arrow-right"></i></span></a>
+        <a class="rem-item" href="#"><div><p class="lbl">Sangamon County Obituaries</p><p class="loc">Illinois</p></div><span class="go"><i class="ph ph-arrow-right"></i></span></a>
+        <a class="rem-item" href="#"><div><p class="lbl">Wheaton College Remembers</p><p class="loc">Wheaton, IL</p></div><span class="go"><i class="ph ph-arrow-right"></i></span></a>
+        <a class="rem-item" href="#"><div><p class="lbl">Cranbury, New Jersey Obituaries</p><p class="loc">Cranbury, NJ</p></div><span class="go"><i class="ph ph-arrow-right"></i></span></a>
+        <a class="rem-item" href="#"><div><p class="lbl">“Thomas” Family Obituaries &amp; Memoriams</p><p class="loc">Worldwide</p></div><span class="go"><i class="ph ph-arrow-right"></i></span></a>
+        <a class="rem-item" href="#"><div><p class="lbl">“Ralph Thomas” Obituary Search</p><p class="loc">Worldwide</p></div><span class="go"><i class="ph ph-arrow-right"></i></span></a>
+        <a class="rem-item rem-extra is-hidden" href="#"><div><p class="lbl">U.S. Navy Veterans Remembered</p><p class="loc">United States</p></div><span class="go"><i class="ph ph-arrow-right"></i></span></a>
+        <a class="rem-item rem-extra is-hidden" href="#"><div><p class="lbl">First Baptist Church Memorials</p><p class="loc">Springfield, IL</p></div><span class="go"><i class="ph ph-arrow-right"></i></span></a>
+        <a class="rem-item rem-extra is-hidden" href="#"><div><p class="lbl">Illinois State Obituaries</p><p class="loc">Illinois</p></div><span class="go"><i class="ph ph-arrow-right"></i></span></a>
+        <a class="rem-item rem-extra is-hidden" href="#"><div><p class="lbl">Chicago Cubs Fans Remembered</p><p class="loc">Chicago, IL</p></div><span class="go"><i class="ph ph-arrow-right"></i></span></a>
+        <a class="rem-item rem-extra is-hidden" href="#"><div><p class="lbl">Community Garden Memorials</p><p class="loc">Springfield, IL</p></div><span class="go"><i class="ph ph-arrow-right"></i></span></a>
+        <a class="rem-item rem-extra is-hidden" href="#"><div><p class="lbl">“Bennett” Family Obituaries</p><p class="loc">Worldwide</p></div><span class="go"><i class="ph ph-arrow-right"></i></span></a>
+      </div>
+      <button id="remToggle" class="rem-toggle" aria-expanded="false"><span id="remToggleLabel">Show All 12</span><i class="ph ph-caret-down"></i></button>
+    </section>
+
+    <!-- PHOTO GALLERY -->
+    <section id="sec-gallery" class="section center" aria-labelledby="gallery-title">
+      <h2 id="gallery-title" class="sec-title" style="margin-bottom:24px;">The Life of Ralph</h2>
+      <div class="gallery-full">
+        <div class="gallery-row" id="galleryScroll">
+          <div class="g" style="width:240px;"><img src="assets/photo-people-grandfather-grandkids.jpg" alt="" /></div>
+          <div class="g" style="width:320px;"><img src="assets/photo-people-warm-moment.png" alt="" /></div>
+          <div class="g" style="width:240px;"><img src="assets/photo-landscape-forest-path.jpg" alt="" /></div>
+          <div class="g" style="width:320px;"><img src="assets/photo-landscape-waterfall.jpg" alt="" /></div>
+          <div class="g" style="width:240px;"><img src="assets/photo-landscape-wildflower-meadow.jpg" alt="" /></div>
+          <div class="g" style="width:320px;"><img src="assets/photo-landscape-forest-valley.jpg" alt="" /></div>
+          <div class="g" style="width:240px;"><img src="assets/photo-landscape-ocean-sunrise.jpg" alt="" /></div>
+        </div>
+      </div>
+      <div style="margin-top:24px;"><button class="btn btn-white">View All Photos</button></div>
+    </section>
+
+    <!-- BOOK OF LIFE -->
+    <section id="sec-book" class="section narrow" aria-labelledby="book-title">
+      <div class="book">
+        <div class="cover"><img src="assets/book-cover.png" alt="Book of Life cover" /></div>
+        <div class="pane">
+          <div>
+            <p class="eye">Celebrating the Life of</p>
+            <h3 id="book-title" class="who">Ralph Thomas</h3>
+            <div class="btns">
+              <button class="btn btn-white"><i class="ph ph-book-open"></i>View Book</button>
+              <button class="btn btn-gold">Buy Book</button>
+            </div>
+            <p class="desc">A beautifully bound keepsake book filled with memories and condolences from family and friends.</p>
+          </div>
+          <div class="divider"></div>
+          <div class="share-row">
+            <div class="grow">
+              <p class="ttl">Share Your Memories</p>
+              <p class="sub">Add your stories and memories to their Legacy Page and they will also appear in this keepsake book.</p>
+            </div>
+            <button class="btn btn-white js-scroll-guestbook"><i class="ph ph-pencil-simple"></i>Add a Story</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GUESTBOOK -->
+    <section id="sec-guestbook" class="section" aria-labelledby="gb-title">
+      <!-- add a post (expands on engagement) -->
+      <div class="gb-add" data-expanded="false" data-candles="false">
+        <h3>Add a post in memory of Ralph</h3>
+        <div class="gb-input">
+          <i class="ph ph-user" aria-hidden="true"></i>
+          <input type="text" placeholder="Your First &amp; Last Name" aria-label="Your name" />
+        </div>
+        <div class="gb-more">
+          <div class="gb-textarea">
+            <i class="ph ph-chat-teardrop-text" aria-hidden="true"></i>
+            <textarea placeholder="(Optional) Leave a condolence message or share a favorite memory" aria-label="Condolence message"></textarea>
+            <i class="ph ph-microphone mic" aria-hidden="true"></i>
+          </div>
+          <div class="gb-input">
+            <i class="ph ph-envelope-simple" aria-hidden="true"></i>
+            <input type="email" placeholder="Your Email Address" aria-label="Your email address" />
+          </div>
+          <label class="gb-agree"><input type="checkbox" checked /> I agree to receive daily updates about this page via email.</label>
+          <div class="gb-note">Posts are moderated to ensure respectful remembrance. Disrespectful or harmful content will be removed.</div>
+          <div class="gb-candles" role="group" aria-label="Choose a candle">
+            <span class="gb-candle" style="background:var(--gold-400)"><i class="ph ph-flame"></i></span>
+            <span class="gb-candle" style="background:var(--caramel)"><i class="ph ph-flame"></i></span>
+            <span class="gb-candle" style="background:var(--coral-400)"><i class="ph ph-flame"></i></span>
+            <span class="gb-candle" style="background:var(--seafoam-500)"><i class="ph ph-flame"></i></span>
+            <span class="gb-candle" style="background:var(--gold-600)"><i class="ph ph-flame"></i></span>
+            <span class="gb-candle" style="background:var(--coral-500)"><i class="ph ph-flame"></i></span>
+            <span class="gb-candle" style="background:var(--seafoam-600)"><i class="ph ph-flame"></i></span>
+            <span class="gb-candle" style="background:var(--gold-500)"><i class="ph ph-flame"></i></span>
+          </div>
+        </div>
+        <div class="gb-actions">
+          <div class="left">
+            <button class="gb-tiny js-add-photos"><i class="ph ph-image"></i>Add Photos</button>
+            <button class="gb-tiny js-light-candle"><i class="ph ph-flame"></i>Light a Candle</button>
+          </div>
+          <button class="btn btn-gold btn-sm">Add to the Guestbook</button>
+        </div>
+      </div>
+
+      <!-- guestbook header -->
+      <div class="gb-head" style="margin-bottom:24px;">
+        <div class="gb-rule-row"><span class="gb-rule"></span><h2 id="gb-title" class="sec-title">Ralph’s Guestbook</h2><span class="gb-rule"></span></div>
+        <p style="margin:12px 0 0; color:var(--warm-black-900);">Sign the Guest Book, share photos and add memories that will last forever.</p>
+        <p style="margin:8px 0 0;"><span class="gb-count" id="gbCount">248</span> Entries</p>
+      </div>
+
+      <!-- empty -->
+      <div id="gbEmpty" class="gb-empty is-hidden">
+        <span class="badge"><i class="ph ph-chat-teardrop-text"></i></span>
+        <p class="msg">Be the first to post a memory or condolences.</p>
+      </div>
+
+      <!-- filled -->
+      <div id="gbFilled" class="gb-masonry">
+        <div class="gb-post">
+          <div class="who"><span class="av" style="background:var(--navy-400);">DS</span><div><div class="nm">Diana Salinas</div><div class="tm">2 hours ago</div></div></div>
+          <p class="msg">Ralph was a bright light in this world. I will always remember his cheerful whistle and kind heart. He will be missed dearly.</p>
+          <span class="likes"><i class="ph ph-heart"></i> 3</span>
+        </div>
+        <div class="gb-post">
+          <div class="who"><span class="av" style="background:var(--gold-600);">AP</span><div><div class="nm">Anya Petrova</div><div class="tm">3 hours ago</div></div></div>
+          <div class="candle"><i class="ph ph-flame"></i></div>
+          <p class="msg">Lit a candle in his memory. His warmth touched everyone he met.</p>
+          <span class="likes"><i class="ph ph-heart"></i> 12</span>
+        </div>
+        <div class="gb-post">
+          <div class="who"><span class="av" style="background:var(--seafoam-500);">SG</span><div><div class="nm">Steven Gardner</div><div class="tm">5 hours ago</div></div></div>
+          <p class="msg">Ralph delivered our mail for years and always had a story to share. A devoted friend who made each day a little brighter.</p>
+          <span class="likes"><i class="ph ph-heart"></i> 7</span>
+        </div>
+        <div class="gb-post">
+          <div class="who"><span class="av" style="background:var(--coral-400);">WB</span><div><div class="nm">Will Blackwood</div><div class="tm">1 day ago</div></div></div>
+          <p class="msg">So generous with his time and always ready to help. Rest easy, dear friend.</p>
+          <span class="likes"><i class="ph ph-heart"></i> 5</span>
+        </div>
+        <div class="gb-post">
+          <div class="who"><span class="av" style="background:var(--navy-600);">HR</span><div><div class="nm">Hazel Rutherford</div><div class="tm">1 day ago</div></div></div>
+          <div class="media"><img src="assets/photo-people-warm-moment.png" alt="" /></div>
+          <p class="msg">Sharing a photo from our trip in 2019. Such wonderful memories together.</p>
+          <span class="likes"><i class="ph ph-heart"></i> 21</span>
+        </div>
+        <div class="gb-post">
+          <div class="who"><span class="av" style="background:var(--gold-700);">JH</span><div><div class="nm">Jasper Hawthorne</div><div class="tm">1 day ago</div></div></div>
+          <p class="msg">His laughter and his spirit will stay with us all. Sending love to the whole family during this difficult time.</p>
+          <span class="likes"><i class="ph ph-heart"></i> 9</span>
+        </div>
+        <div class="gb-post">
+          <div class="who"><span class="av" style="background:var(--seafoam-700);">LC</span><div><div class="nm">Lena Cordova</div><div class="tm">2 days ago</div></div></div>
+          <p class="msg">A truly remarkable person. Thank you for the countless kindnesses over the years.</p>
+          <span class="likes"><i class="ph ph-heart"></i> 4</span>
+        </div>
+        <div class="gb-post">
+          <div class="who"><span class="av" style="background:var(--navy-500);">MT</span><div><div class="nm">Michael Thompson</div><div class="tm">2 days ago</div></div></div>
+          <p class="msg">You will be missed more than words can say. A life beautifully lived and a legacy that endures.</p>
+          <span class="likes"><i class="ph ph-heart"></i> 15</span>
+        </div>
+      </div>
+      <div id="gbLoadMore" style="text-align:center; margin-top:24px;"><button class="btn btn-white">Load more memories</button></div>
+    </section>
+
+    <!-- OTHER WAYS TO SUPPORT -->
+    <section id="sec-support" class="section narrow" aria-labelledby="support-title">
+      <div class="support-head">
+        <h2 id="support-title" class="sec-title">Other Ways to Show Support</h2>
+        <div class="arrows">
+          <button data-scroll="support" data-dir="-1" aria-label="Previous"><i class="ph ph-caret-left"></i></button>
+          <button data-scroll="support" data-dir="1" aria-label="Next"><i class="ph ph-caret-right"></i></button>
+        </div>
+      </div>
+      <div class="support-grid" id="supportScroll">
+        <a class="support-card" href="#">
+          <span class="sc-ic" style="background:var(--navy-500)"><i class="ph ph-user"></i></span>
+          <h3>Visit their Legacy Page</h3>
+          <p>Read stories about their life and add your own on their Legacy Page.</p>
+          <span class="sc-arrow"><i class="ph ph-arrow-right"></i></span>
+        </a>
+        <a class="support-card" href="#">
+          <span class="sc-ic" style="background:var(--gold-500)"><i class="ph ph-flower-tulip"></i></span>
+          <h3>Shop the Sympathy Store</h3>
+          <p>Consider sending flowers or other gifts that show you are thinking of them.</p>
+          <span class="sc-arrow"><i class="ph ph-arrow-right"></i></span>
+        </a>
+        <a class="support-card" href="#">
+          <span class="sc-ic" style="background:var(--seafoam-700)"><i class="ph ph-tree"></i></span>
+          <h3>Plant Trees</h3>
+          <p>Honor them by planting trees in their memory.</p>
+          <span class="sc-arrow"><i class="ph ph-arrow-right"></i></span>
+        </a>
+        <a class="support-card" href="#">
+          <span class="sc-ic" style="background:var(--coral-400)"><i class="ph ph-hand-heart"></i></span>
+          <h3>Donate in Memory</h3>
+          <p>Make a donation in memory of your loved one.</p>
+          <span class="sc-arrow"><i class="ph ph-arrow-right"></i></span>
+        </a>
+        <a class="support-card" href="#">
+          <span class="sc-ic" style="background:var(--navy-500)"><i class="ph ph-image"></i></span>
+          <h3>Add Photos</h3>
+          <p>Share their life story with photo memories.</p>
+          <span class="sc-arrow"><i class="ph ph-arrow-right"></i></span>
+        </a>
+        <a class="support-card" href="#">
+          <span class="sc-ic" style="background:var(--coral-500)"><i class="ph ph-bell"></i></span>
+          <h3>Follow This Page</h3>
+          <p>Get email updates whenever changes are made.</p>
+          <span class="sc-arrow"><i class="ph ph-arrow-right"></i></span>
+        </a>
+        <a class="support-card" href="#">
+          <span class="sc-ic" style="background:var(--navy-700)"><i class="ph ph-share-network"></i></span>
+          <h3>Share This Page</h3>
+          <p>Invite other friends and family to visit this page.</p>
+          <span class="sc-arrow"><i class="ph ph-arrow-right"></i></span>
+        </a>
+      </div>
+    </section>
+
+</div><!-- /stage2 -->
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="wrap pad footer-grid">
+    <div class="brand">
+      <div class="logo"><img src="assets/logo-horizontal-white.svg" alt="Legacy" /></div>
+      <div class="copy">Our mission is to help those grieving find support, hope, and comfort while celebrating the lives of those we’ve lost.</div>
+      <div class="social">
+        <a href="#" aria-label="Facebook"><i class="ph ph-facebook-logo"></i></a>
+        <a href="#" aria-label="YouTube"><i class="ph ph-youtube-logo"></i></a>
+      </div>
+    </div>
+    <div class="col"><h4>Services</h4><a href="#">Create &amp; Publish an Obituary</a><a href="#">Plan a Funeral or Service</a><a href="#">Send Flowers or Gifts</a><a href="#">Grief Support</a><a href="#">Company News</a></div>
+    <div class="col"><h4>Find Obituaries</h4><a href="#">Find an Obituary</a><a href="#">Browse by Location</a><a href="#">Browse by Funeral Home</a><a href="#">Celebrity Obituaries</a><a href="#">Veterans Obituaries</a></div>
+    <div class="col"><h4>Legacy for Business</h4><a href="#">Funeral Homes</a><a href="#">Newspapers &amp; Media</a><a href="#">Floral</a><a href="#">Advertise With Us</a></div>
+    <div class="col"><h4>Help &amp; Support</h4><a href="#">24/7 Publishing Support</a><a href="#">Reach Us by Phone</a><a href="#">Email Us</a><a href="#">Customer Support</a></div>
+  </div>
+  <div class="footer-bar">
+    <div class="wrap pad row">
+      <span>© 2026 Legacy.com. All rights reserved.</span>
+      <span><a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="#">Do Not Sell My Information</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- Sticky mobile CTA -->
+<div id="stickyCta">
+  <button class="btn btn-gold"><i class="ph ph-flower-tulip" aria-hidden="true"></i>Send Flowers</button>
+  <button class="btn btn-primary js-open-share"><i class="ph ph-share-network" aria-hidden="true"></i>Share</button>
+</div>
+
+<!-- Share / Follow modal -->
+<div class="modal-overlay" id="shareModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="shareModalTitle">Share Ralph’s obituary with others.</h2>
+        <p>Invite others to read the obituary and add memories.</p>
+      </div>
+      <button class="modal-close js-close-modal" aria-label="Close"><i class="ph ph-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <h3 style="font-family:var(--font-sans); font-weight:700; font-size:18px; margin:0 0 6px;">Stay updated</h3>
+      <p style="color:var(--warm-black-700); margin:0 0 16px;">We’ll notify you when service details or new memories are added.</p>
+      <div id="shareFollowForm" class="field" style="margin-bottom:24px;">
+        <input type="email" placeholder="Enter your email address" aria-label="Email address" />
+        <button class="btn btn-primary js-do-follow" style="padding:0 28px;">Follow</button>
+      </div>
+      <div id="shareFollowSuccess" class="follow-success is-hidden" style="margin-bottom:24px;">
+        <span class="chk"><i class="ph ph-check"></i></span>
+        <p style="font-family:var(--font-sans); font-weight:700; color:var(--seafoam-800); margin:0;">You’re following this obituary.</p>
+        <p style="color:var(--seafoam-700); margin:2px 0 0; font-size:14px;">We’ll email you when there are updates.</p>
+      </div>
+      <h3 style="font-family:var(--font-sans); font-weight:700; font-size:18px; margin:0 0 16px;">Share this obituary with others</h3>
+      <div class="share-grid">
+        <button aria-label="Facebook"><span class="ic"><i class="ph ph-facebook-logo"></i></span>Facebook</button>
+        <button aria-label="X"><span class="ic"><i class="ph ph-x-logo"></i></span>X</button>
+        <button aria-label="LinkedIn"><span class="ic"><i class="ph ph-linkedin-logo"></i></span>LinkedIn</button>
+        <button aria-label="Email"><span class="ic"><i class="ph ph-envelope-simple"></i></span>Email</button>
+        <button class="js-copy-link" aria-label="Copy link"><span class="ic"><i class="ph ph-link"></i></span>Copy Link</button>
+      </div>
+      <p id="copiedToast" class="is-hidden" style="text-align:center; color:var(--seafoam-700); font-weight:600; margin-top:16px;"><i class="ph ph-check-circle"></i> Link copied to clipboard</p>
+    </div>
+  </div>
+</div>
+
+<!-- Exit-intent modal -->
+<div class="modal-overlay" id="exitModal" role="dialog" aria-modal="true" aria-labelledby="exitTitle">
+  <div class="modal" style="max-width:460px;">
+    <div class="modal-body" style="text-align:center;">
+      <div style="display:flex; justify-content:flex-end;"><button class="modal-close js-close-modal" aria-label="Close"><i class="ph ph-x"></i></button></div>
+      <span style="width:56px; height:56px; border-radius:50%; background:var(--gold-100); color:var(--gold-800); display:inline-flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:12px;"><i class="ph ph-bell"></i></span>
+      <h2 style="font-family:var(--font-serif-display); font-size:26px; color:var(--navy-700); margin:0 0 8px;">Before you go…</h2>
+      <p style="color:var(--warm-black-700); margin:0 0 20px;">Follow Ralph’s obituary and we’ll let you know when service details or new memories are added.</p>
+      <div class="field" style="margin-bottom:12px;">
+        <input type="email" placeholder="Enter your email address" aria-label="Email address" />
+        <button class="btn btn-primary js-do-follow" style="padding:0 28px;">Follow</button>
+      </div>
+      <button class="js-close-modal" style="background:none; border:0; color:var(--warm-black-500); font-family:var(--font-sans); font-size:14px; cursor:pointer;">No thanks</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CONTROL PANEL ===================== -->
+<aside class="cp" id="controlPanel" aria-label="Prototype scenario controls">
+  <div class="cp-head" id="cpToggle" role="button" tabindex="0" aria-expanded="true">
+    <h2><i class="ph ph-sliders-horizontal"></i> Scenario Controls</h2>
+    <i class="ph ph-caret-down caret" aria-hidden="true"></i>
+  </div>
+  <div class="cp-body">
+    <div class="cp-group">
+      <p class="cp-label">Sections</p>
+      <label class="cp-row"><span>Memorial Events</span><span class="sw"><input type="checkbox" data-section="sec-events" checked><span class="track"></span><span class="thumb"></span></span></label>
+      <label class="cp-row"><span>Obituary</span><span class="sw"><input type="checkbox" data-section="sec-obituary" checked><span class="track"></span><span class="thumb"></span></span></label>
+      <label class="cp-row"><span>Photo Gallery</span><span class="sw"><input type="checkbox" data-section="sec-gallery" checked><span class="track"></span><span class="thumb"></span></span></label>
+      <label class="cp-row"><span>Book of Life</span><span class="sw"><input type="checkbox" data-section="sec-book" checked><span class="track"></span><span class="thumb"></span></span></label>
+      <label class="cp-row"><span>Guestbook</span><span class="sw"><input type="checkbox" data-section="sec-guestbook" checked><span class="track"></span><span class="thumb"></span></span></label>
+      <label class="cp-row"><span>Remembrance Pages</span><span class="sw"><input type="checkbox" data-section="sec-connections" checked><span class="track"></span><span class="thumb"></span></span></label>
+      <label class="cp-row"><span>Support the Family</span><span class="sw"><input type="checkbox" data-section="sec-support" checked><span class="track"></span><span class="thumb"></span></span></label>
+    </div>
+    <div class="cp-group">
+      <p class="cp-label">Scenarios &amp; States</p>
+      <label class="cp-row"><span>Following obituary</span><span class="sw"><input type="checkbox" id="cpFollowing"><span class="track"></span><span class="thumb"></span></span></label>
+      <div class="cp-row" style="flex-direction:column; align-items:stretch; gap:6px;">
+        <span>Memorial events</span>
+        <div class="seg" id="segEvents"><button data-events="0">None</button><button data-events="1">1</button><button data-events="2">2</button><button data-events="3" class="active">3+</button></div>
+      </div>
+      <label class="cp-row"><span>Donation callout</span><span class="sw"><input type="checkbox" id="cpCharity" checked><span class="track"></span><span class="thumb"></span></span></label>
+      <label class="cp-row"><span>Tribute video</span><span class="sw"><input type="checkbox" id="cpVideo" checked><span class="track"></span><span class="thumb"></span></span></label>
+      <div class="cp-row" style="flex-direction:column; align-items:stretch; gap:6px;">
+        <span>Guestbook</span>
+        <div class="seg" id="segGuestbook"><button data-gb="empty">Empty</button><button data-gb="filled" class="active">Filled</button></div>
+      </div>
+      <label class="cp-row"><span>Advertising slots</span><span class="sw"><input type="checkbox" id="cpAds"><span class="track"></span><span class="thumb"></span></span></label>
+      <label class="cp-row"><span>Mobile sticky CTA</span><span class="sw"><input type="checkbox" id="cpSticky" checked><span class="track"></span><span class="thumb"></span></span></label>
+    </div>
+    <div class="cp-group cp-actions">
+      <p class="cp-label">Trigger Modals</p>
+      <button class="js-open-share"><i class="ph ph-share-network"></i> Share &amp; Follow modal</button>
+      <button class="js-open-follow-success"><i class="ph ph-check-circle"></i> Follow success state</button>
+      <button class="js-open-copied"><i class="ph ph-link"></i> Link-copied state</button>
+      <button class="js-open-exit"><i class="ph ph-sign-out"></i> Exit-intent prompt</button>
+      <button class="cp-reset" id="cpReset"><i class="ph ph-arrow-counter-clockwise"></i> Reset all</button>
+    </div>
+    <p class="cp-note">Legacy Design System build. Toggle sections and states to preview how an obituary appears. Tap the header to minimize.</p>
+  </div>
+</aside>
+
+<script>
+(function(){
+  const body = document.body;
+  const cp = document.getElementById('controlPanel');
+  const cpToggle = document.getElementById('cpToggle');
+  function toggleCp(){ const c = cp.classList.toggle('collapsed'); cpToggle.setAttribute('aria-expanded', String(!c)); }
+  cpToggle.addEventListener('click', toggleCp);
+  cpToggle.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleCp(); }});
+  if (window.matchMedia('(max-width: 640px)').matches) cp.classList.add('collapsed');
+
+  document.querySelectorAll('input[data-section]').forEach(cb => {
+    cb.addEventListener('change', () => document.getElementById(cb.dataset.section).classList.toggle('is-hidden', !cb.checked));
+  });
+
+  const followLabels = document.querySelectorAll('.js-follow-label');
+  const followIcons = document.querySelectorAll('.js-follow-icon');
+  function setFollowing(on){
+    document.getElementById('cpFollowing').checked = on;
+    followLabels.forEach(l => l.textContent = on ? 'Following' : 'Follow');
+    followIcons.forEach(i => i.className = (on ? 'ph ph-check' : 'ph ph-plus') + ' js-follow-icon');
+    document.getElementById('shareFollowForm').classList.toggle('is-hidden', on);
+    document.getElementById('shareFollowSuccess').classList.toggle('is-hidden', !on);
+  }
+  document.getElementById('cpFollowing').addEventListener('change', e => setFollowing(e.target.checked));
+
+  const eventsCards = document.querySelectorAll('.ev-card');
+  function setEvents(n){
+    document.querySelectorAll('#segEvents button').forEach(b => b.classList.toggle('active', b.dataset.events == n));
+    eventsCards.forEach(c => c.classList.toggle('is-hidden', parseInt(c.dataset.index) > n));
+    document.getElementById('eventsScroll').classList.toggle('is-hidden', n===0);
+    document.getElementById('eventsEmpty').classList.toggle('is-hidden', n!==0);
+    document.querySelector('[data-events-controls]').style.visibility = n>1 ? 'visible' : 'hidden';
+    const c = document.getElementById('eventsCount'), w = document.getElementById('eventsWord');
+    if(n===0){ c.textContent=''; w.textContent='Memorial Events'; }
+    else { c.textContent = n===3 ? '3' : n; w.textContent = n===1 ? 'Memorial Event' : 'Memorial Events'; }
+  }
+  document.querySelectorAll('#segEvents button').forEach(b => b.addEventListener('click', () => setEvents(parseInt(b.dataset.events))));
+
+  document.getElementById('cpCharity').addEventListener('change', e => document.getElementById('obitCharity').classList.toggle('is-hidden', !e.target.checked));
+  document.getElementById('cpVideo').addEventListener('change', e => document.getElementById('obitVideo').classList.toggle('is-hidden', !e.target.checked));
+
+  function setGuestbook(state){
+    document.querySelectorAll('#segGuestbook button').forEach(b => b.classList.toggle('active', b.dataset.gb===state));
+    const empty = state==='empty';
+    document.getElementById('gbEmpty').classList.toggle('is-hidden', !empty);
+    document.getElementById('gbFilled').classList.toggle('is-hidden', empty);
+    document.getElementById('gbLoadMore').classList.toggle('is-hidden', empty);
+    document.getElementById('gbCount').textContent = empty ? '0' : '248';
+  }
+  document.querySelectorAll('#segGuestbook button').forEach(b => b.addEventListener('click', () => setGuestbook(b.dataset.gb)));
+
+  // Ads: inject/remove slots around sections
+  const adTargets = ['sec-events','sec-obituary','sec-support'];
+  function setAds(on){
+    document.querySelectorAll('.ad-slot').forEach(a => a.remove());
+    if(on){
+      // top leaderboard
+      const top = document.createElement('div'); top.className='ad-slot';
+      top.innerHTML = '<div class="ad-box"><span class="lbl">Advertisement</span><span>728 × 90</span></div>';
+      document.querySelector('header').after(top);
+      // in-content
+      adTargets.forEach(id => {
+        const sec = document.getElementById(id); if(!sec) return;
+        const ad = document.createElement('div'); ad.className='ad-slot';
+        ad.innerHTML = '<div class="ad-box"><span class="lbl">Advertisement</span><span>Responsive</span></div>';
+        sec.after(ad);
+      });
+    }
+  }
+  document.getElementById('cpAds').addEventListener('change', e => setAds(e.target.checked));
+
+  document.getElementById('cpSticky').addEventListener('change', e => body.classList.toggle('sticky-on', e.target.checked));
+
+  // Reveal scrollbars only while actively scrolling (they auto-hide after a pause)
+  document.querySelectorAll('.ev-track, .support-grid').forEach(el => {
+    let t;
+    el.addEventListener('scroll', () => {
+      el.classList.add('is-scrolling');
+      clearTimeout(t);
+      t = setTimeout(() => el.classList.remove('is-scrolling'), 900);
+    }, { passive: true });
+  });
+
+  document.querySelectorAll('[data-scroll]').forEach(btn => btn.addEventListener('click', () => {
+    const el = document.getElementById(btn.dataset.scroll + 'Scroll');
+    if(el) el.scrollBy({ left: parseInt(btn.dataset.dir) * 340, behavior: 'smooth' });
+  }));
+
+  // Photo gallery — subtle horizontal drift tied to page scroll
+  const gRow = document.getElementById('galleryScroll');
+  const gWrap = gRow ? gRow.parentElement : null;
+  function galleryParallax(){
+    if (!gWrap) return;
+    const rect = gWrap.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const progress = Math.max(0, Math.min(1, (vh - rect.top) / (vh + rect.height)));
+    gRow.style.transform = 'translateX(' + ((0.5 - progress) * 160) + 'px)';
+  }
+  let gTick = false;
+  window.addEventListener('scroll', () => {
+    if (!gTick) { gTick = true; requestAnimationFrame(() => { galleryParallax(); gTick = false; }); }
+  }, { passive: true });
+  window.addEventListener('resize', galleryParallax);
+  galleryParallax();
+
+  // Guestbook add-post — expand on engagement, candle picker
+  const gbAdd = document.querySelector('.gb-add');
+  if (gbAdd) {
+    const expand = () => gbAdd.dataset.expanded = 'true';
+    gbAdd.querySelector('.gb-input input').addEventListener('focus', expand);
+    gbAdd.querySelector('.js-add-photos').addEventListener('click', expand);
+    gbAdd.querySelector('.js-light-candle').addEventListener('click', () => {
+      expand();
+      gbAdd.dataset.candles = gbAdd.dataset.candles === 'true' ? 'false' : 'true';
+    });
+    gbAdd.querySelectorAll('.gb-candle').forEach(c => c.addEventListener('click', () => {
+      gbAdd.querySelectorAll('.gb-candle').forEach(x => x.classList.remove('sel'));
+      c.classList.add('sel');
+    }));
+  }
+
+  // Remembrance Pages — Show All / Show Less
+  const remToggle = document.getElementById('remToggle');
+  if (remToggle) remToggle.addEventListener('click', () => {
+    const extras = document.querySelectorAll('.rem-extra');
+    const expanding = extras[0].classList.contains('is-hidden');
+    extras.forEach(x => x.classList.toggle('is-hidden', !expanding));
+    document.getElementById('remToggleLabel').textContent = expanding ? 'Show Less' : 'Show All 12';
+    remToggle.querySelector('i').className = expanding ? 'ph ph-caret-up' : 'ph ph-caret-down';
+    remToggle.setAttribute('aria-expanded', String(expanding));
+  });
+
+  const shareModal = document.getElementById('shareModal');
+  const exitModal = document.getElementById('exitModal');
+  function openModal(m){ m.classList.add('open'); }
+  function closeModals(){ shareModal.classList.remove('open'); exitModal.classList.remove('open'); document.getElementById('copiedToast').classList.add('is-hidden'); }
+  document.querySelectorAll('.js-open-share').forEach(b => b.addEventListener('click', () => openModal(shareModal)));
+  document.querySelectorAll('.js-open-follow-success').forEach(b => b.addEventListener('click', () => { setFollowing(true); openModal(shareModal); }));
+  document.querySelectorAll('.js-open-copied').forEach(b => b.addEventListener('click', () => { openModal(shareModal); document.getElementById('copiedToast').classList.remove('is-hidden'); }));
+  document.querySelectorAll('.js-open-exit').forEach(b => b.addEventListener('click', () => openModal(exitModal)));
+  document.querySelectorAll('.js-close-modal').forEach(b => b.addEventListener('click', closeModals));
+  [shareModal, exitModal].forEach(m => m.addEventListener('click', e => { if(e.target===m) closeModals(); }));
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeModals(); });
+  document.querySelectorAll('.js-do-follow').forEach(b => b.addEventListener('click', () => setFollowing(true)));
+  document.querySelector('.js-copy-link').addEventListener('click', () => document.getElementById('copiedToast').classList.remove('is-hidden'));
+  document.querySelector('.js-scroll-guestbook').addEventListener('click', () => document.getElementById('sec-guestbook').scrollIntoView({behavior:'smooth'}));
+
+  document.getElementById('cpReset').addEventListener('click', () => {
+    document.querySelectorAll('input[data-section]').forEach(cb => { cb.checked = true; document.getElementById(cb.dataset.section).classList.remove('is-hidden'); });
+    setFollowing(false); setEvents(3); setGuestbook('filled');
+    document.getElementById('cpCharity').checked = true; document.getElementById('obitCharity').classList.remove('is-hidden');
+    document.getElementById('cpVideo').checked = true; document.getElementById('obitVideo').classList.remove('is-hidden');
+    document.getElementById('cpAds').checked = false; setAds(false);
+    document.getElementById('cpSticky').checked = true; body.classList.add('sticky-on');
+    closeModals();
+  });
+
+  // initial
+  setFollowing(false); setEvents(3); setGuestbook('filled'); body.classList.add('sticky-on');
+})();
+</script>
+</body>
+</html>

@@ -21,6 +21,8 @@
 !saved-pages/**
 !follow-nearby/
 !follow-nearby/**
+!obituary-template/
+!obituary-template/**
 
 # Sign-up follow prototype
 !signup-follow-prototype.html
