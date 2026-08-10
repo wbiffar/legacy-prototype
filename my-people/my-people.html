@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy — My People (V0 · DES-2249)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+            serif: ['"DM Serif Text"', 'Georgia', 'serif'],
+          },
+          colors: {
+            navy:    { 50:'#f0f4fa', 100:'#e6ecf5', 200:'#d3ddeb', 300:'#b0c0d6', 400:'#728ab0', 500:'#42608f', 600:'#3c4d69', 700:'#293548', 800:'#212a3a', 900:'#151b24' },
+            gold:    { 50:'#fbf7ef', 100:'#f6e5b8', 200:'#f0d78d', 300:'#e9c86f', 400:'#e2ba60', 500:'#dcb05e', 600:'#c49e54', 700:'#a48849', 800:'#85713e', 900:'#655b34' },
+            wb:      { 50:'#fbfbfb', 100:'#f6f6f6', 200:'#ebe9e9', 300:'#dbdad7', 400:'#afadaa', 500:'#807e7a', 600:'#63605b', 700:'#514d45', 800:'#373329', 900:'#262116' },
+            seafoam: { 50:'#f3faf9', 100:'#ebf2f1', 200:'#cee2de', 300:'#aecec9', 400:'#81b8ae', 500:'#5c9d94', 600:'#357d75', 700:'#216e6a', 800:'#165c58', 900:'#014744' },
+            coral:   { 50:'#fcf1f3', 100:'#fce8ec', 200:'#f7d4da', 300:'#eba9b5', 400:'#e77d91', 500:'#d6677c', 600:'#c24c62', 700:'#993b4d', 800:'#792f3d', 900:'#662833' },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', system-ui, sans-serif; color: #262116; background: #fbf7ef; }
+    .font-serif-heading { font-family: 'DM Serif Text', Georgia, serif; font-weight: 400; }
+
+    button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+      outline: 2px solid #dcb05e; outline-offset: 2px;
+    }
+
+    /* ---- Sheet / modal scaffolding ---- */
+    .sheet-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(21,27,36,0.80); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; padding: 24px; }
+    .sheet-overlay.open { display: flex; }
+    .sheet-card { background: #fff; width: 100%; max-width: 512px; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); position: relative; animation: pop .18s ease; }
+    @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+    @media (max-width: 639px) {
+      .sheet-overlay { align-items: flex-end; padding: 0; }
+      .sheet-card { max-width: 100%; border-radius: 20px 20px 0 0; animation: slideup .22s ease; }
+      @keyframes slideup { from { transform: translateY(100%); } to { transform: none; } }
+    }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(8px); background: #262116; color: #fff; padding: 12px 16px 12px 20px; border-radius: 9999px; font-size: 14px; font-weight: 500; z-index: 90; opacity: 0; pointer-events: none; transition: all .25s ease; display: flex; align-items: center; gap: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.2); }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+    .toast .lead { display: flex; align-items: center; gap: 10px; }
+    .toast i.ph-check-circle { color: #81b8ae; font-size: 18px; }
+    .toast button { color: #dcb05e; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+    @media (max-width: 639px) { .toast { bottom: 16px; width: calc(100vw - 24px); justify-content: space-between; } }
+
+    /* Mobile account accordion */
+    .acct-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
+    .acct-panel > div { overflow: hidden; }
+    [data-acct-open="true"] .acct-panel { grid-template-rows: 1fr; }
+    [data-acct-open="true"] .acct-chevron { transform: rotate(180deg); }
+    .acct-chevron { transition: transform .25s ease; }
+
+    /* Person card more button overlaid on photo */
+    .more-btn { border-radius: 9999px; border: 1px solid #293548; background: #fff; color: #293548; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 7px; line-height: 0; transition: background .15s; }
+    .more-btn i { font-size: 14px; }
+    .more-btn:hover { background: #f6f6f6; }
+
+    /* Demo scenario switcher */
+    .demo-switcher { position: fixed; bottom: 16px; right: 16px; z-index: 40; background: rgba(21,27,36,0.92); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 8px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.35); max-width: 220px; }
+    .demo-switcher-label { color: rgba(255,255,255,0.45); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px 4px; }
+    .demo-switcher button { padding: 8px 10px; border-radius: 9px; border: 0; background: transparent; color: rgba(255,255,255,0.72); font-size: 12.5px; font-weight: 500; text-align: left; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 8px; }
+    .demo-switcher button:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .demo-switcher button.active { background: #dcb05e; color: #262116; font-weight: 600; }
+    @media print { .demo-switcher { display: none; } }
+  </style>
+</head>
+<body>
+
+<!-- ====================================================================
+     HEADER — NavigationCustom 2.0 (signed in)
+     ==================================================================== -->
+<header class="bg-white border-b border-wb-300">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-3 md:py-4 flex items-center gap-3 md:gap-6">
+    <a href="../" aria-label="Legacy.com home" class="flex-shrink-0 flex items-center">
+      <img src="assets/logo-horizontal.svg" alt="Legacy" class="h-8 md:h-9 w-auto" />
+    </a>
+    <div class="flex-1 max-w-[480px] mx-auto hidden lg:block">
+      <div class="relative">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-wb-500 pointer-events-none"><i class="ph ph-magnifying-glass text-lg"></i></span>
+        <input type="search" placeholder="Find a loved one…" aria-label="Find a loved one" class="w-full h-11 pl-11 pr-4 rounded-full bg-white border border-wb-300 text-[15px] text-wb-900 placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
+      </div>
+    </div>
+    <div class="flex items-center gap-2 md:gap-3 ml-auto">
+      <div class="hidden lg:inline-flex items-center gap-2 px-2 py-1">
+        <span class="w-9 h-9 rounded-full bg-gold-100 text-gold-900 flex items-center justify-center text-sm font-semibold border border-gold-300" aria-hidden="true">J</span>
+        <span class="text-[15px] font-semibold text-wb-900">Hi, John</span>
+      </div>
+      <button aria-label="Your account" class="lg:hidden w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900"><i class="ph ph-user-circle text-xl"></i></button>
+      <button aria-label="Open menu" class="lg:hidden w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900"><i class="ph ph-list text-xl"></i></button>
+    </div>
+  </div>
+  <nav class="hidden lg:block border-t border-wb-200">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-center gap-8 text-[15px] font-semibold text-wb-900 h-12">
+      <a href="#" class="hover:text-navy-700">Create &amp; Publish</a>
+      <a href="#" class="hover:text-navy-700">Browse Obituaries</a>
+      <a href="#" class="hover:text-navy-700">Plan Ahead</a>
+      <a href="#" class="hover:text-navy-700">Get Support</a>
+      <a href="#" class="hover:text-navy-700">Send a Gift</a>
+    </div>
+  </nav>
+</header>
+
+<!-- ====================================================================
+     MAIN
+     ==================================================================== -->
+<main class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-6 md:py-10">
+  <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8 lg:gap-12">
+
+    <!-- =================== LEFT: My Account =================== -->
+    <aside class="hidden lg:block">
+      <nav class="sticky top-[140px] bg-white border border-wb-200 rounded-xl p-6 shadow-sm" aria-label="My Account">
+        <h2 class="font-serif-heading text-2xl text-wb-900 leading-none">My Account</h2>
+        <p class="text-sm text-gold-800 mt-2">Welcome back, John</p>
+        <div class="border-t border-wb-200 my-5"></div>
+        <ul class="space-y-3 text-[15px]">
+          <li><a href="#" aria-current="page" class="font-bold text-wb-900">My People</a></li>
+          <li><a href="#" class="text-wb-700 hover:text-navy-700">Notifications</a></li>
+          <li><a href="#" class="text-wb-700 hover:text-navy-700">Account Settings</a></li>
+        </ul>
+        <div class="border-t border-wb-200 my-5"></div>
+        <a href="#" class="inline-block text-sm font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2">Sign out</a>
+      </nav>
+    </aside>
+
+    <!-- Mobile accordion -->
+    <div class="lg:hidden" data-acct-open="false" id="acct-accordion">
+      <button class="w-full bg-white border border-wb-200 rounded-xl p-5 flex items-start justify-between gap-3 text-left shadow-sm" aria-expanded="false" aria-controls="acct-links" id="acct-toggle">
+        <span class="min-w-0">
+          <span class="block font-serif-heading text-2xl text-wb-900 leading-none">My Account</span>
+          <span class="block text-sm text-gold-800 mt-2 break-words">Welcome back, John</span>
+        </span>
+        <i class="ph ph-caret-down text-xl text-wb-700 acct-chevron flex-shrink-0 mt-1" aria-hidden="true"></i>
+      </button>
+      <div class="acct-panel" id="acct-links">
+        <div>
+          <ul class="px-5 pt-4 pb-1 space-y-3 text-[15px]">
+            <li><a href="#" aria-current="page" class="font-bold text-wb-900">My People</a></li>
+            <li><a href="#" class="text-wb-700">Notifications</a></li>
+            <li><a href="#" class="text-wb-700">Account Settings</a></li>
+            <li><a href="#" class="text-navy-500 font-semibold underline underline-offset-2">Sign out</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== RIGHT: My People =================== -->
+    <div class="max-w-[840px]">
+      <header class="mb-5 md:mb-7 mt-6 lg:mt-0">
+        <div class="flex items-center gap-3">
+          <h1 class="font-serif-heading text-4xl md:text-5xl text-wb-900 leading-tight">My People</h1>
+          <span id="count-pill" class="translate-y-1 inline-flex items-center rounded-full bg-gold-100 text-gold-900 text-sm font-semibold px-3 py-1">3 added</span>
+        </div>
+        <p id="page-subtitle" class="text-base md:text-lg text-wb-700 mt-2 leading-relaxed">Pages for people you have saved. Tap <span class="font-semibold tracking-widest">•••</span> to manage updates or remove a page.</p>
+      </header>
+
+      <div id="grid-root"></div>
+    </div>
+  </div>
+</main>
+
+<!-- ====================================================================
+     HELP CENTER BAND
+     ==================================================================== -->
+<section class="bg-seafoam-100 border-t border-seafoam-200">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-10">
+    <h2 class="font-serif-heading text-2xl text-wb-900">Legacy Help Center</h2>
+    <p class="text-base text-wb-700 mt-1">Need additional help? The Legacy Support Team is available Monday through Friday, 7am–7pm CT.</p>
+    <div class="flex flex-col sm:flex-row gap-6 sm:gap-12 mt-5">
+      <div class="flex items-center gap-3">
+        <span class="w-11 h-11 rounded-full bg-seafoam-200 text-seafoam-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-phone text-xl"></i></span>
+        <span><span class="block text-xs uppercase tracking-wider text-wb-500 font-semibold">Call us</span><a href="tel:8883979494" class="text-base font-semibold text-navy-700">888-397-9494</a></span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="w-11 h-11 rounded-full bg-seafoam-200 text-seafoam-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-envelope-simple text-xl"></i></span>
+        <span><span class="block text-xs uppercase tracking-wider text-wb-500 font-semibold">Email us</span><a href="mailto:info@legacy.com" class="text-base font-semibold text-navy-700">info@legacy.com</a></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     FOOTER
+     ==================================================================== -->
+<footer class="bg-navy-900 text-white">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8">
+      <div class="col-span-2 md:col-span-1">
+        <img src="assets/logo-horizontal-white.svg" alt="Legacy" class="h-9 w-auto" />
+        <div class="flex gap-3 mt-4 text-wb-300">
+          <a href="#" aria-label="Facebook" class="hover:text-gold-500"><i class="ph-fill ph-facebook-logo text-xl"></i></a>
+          <a href="#" aria-label="YouTube" class="hover:text-gold-500"><i class="ph-fill ph-youtube-logo text-xl"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Services</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Create &amp; Publish an obituary</a></li>
+          <li><a href="#" class="hover:text-gold-500">Plan a funeral or estate</a></li>
+          <li><a href="#" class="hover:text-gold-500">Send a Sympathy Gift</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Find obituaries</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Browse by Lastname</a></li>
+          <li><a href="#" class="hover:text-gold-500">Browse by Newspaper</a></li>
+          <li><a href="#" class="hover:text-gold-500">Browse by Location</a></li>
+          <li><a href="#" class="hover:text-gold-500">Celebrity Obituaries</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Legacy for Business</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Funeral Homes</a></li>
+          <li><a href="#" class="hover:text-gold-500">Newspapers &amp; Media Outlets</a></li>
+          <li><a href="#" class="hover:text-gold-500">Advertise with us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Help &amp; Support</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">24/7 Publishing Support</a></li>
+          <li><a href="#" class="hover:text-gold-500">How to write an obituary</a></li>
+          <li><a href="#" class="hover:text-gold-500">FAQs</a></li>
+        </ul>
+        <div class="mt-4 rounded-xl border border-gold-700/60 p-4">
+          <p class="text-sm font-semibold text-gold-500 mb-2">Customer Support</p>
+          <a href="#" class="flex items-center gap-2 text-sm text-wb-300 hover:text-gold-500 mb-1.5"><i class="ph ph-chat-circle-dots"></i> Chat with us</a>
+          <a href="tel:8185555555" class="flex items-center gap-2 text-sm text-wb-300 hover:text-gold-500 mb-1.5"><i class="ph ph-phone"></i> (818) 555-5555</a>
+          <p class="text-xs text-wb-400 mt-2">Available Monday–Friday<br>7:00 am – 7:00 pm CST</p>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-navy-700 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-wb-400">
+      <p>©2026 Legacy.com All rights reserved.</p>
+      <div class="flex gap-5"><a href="#" class="hover:text-gold-500">Do Not Sell My Information</a><a href="#" class="hover:text-gold-500">Privacy policy</a><a href="#" class="hover:text-gold-500">Terms of use</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ====================================================================
+     MORE OPTIONS SHEET
+     ==================================================================== -->
+<div class="sheet-overlay" id="options-overlay" role="dialog" aria-modal="true" aria-labelledby="opt-title">
+  <div class="sheet-card pb-6">
+    <div class="flex items-center gap-3 p-5 md:p-6">
+      <span id="opt-avatar" class="w-14 h-14 rounded-full object-cover border border-wb-200 flex-shrink-0 flex items-center justify-center font-serif-heading text-lg text-white bg-navy-400"></span>
+      <h2 id="opt-title" class="flex-1 min-w-0 font-serif-heading text-xl md:text-2xl text-wb-900 leading-tight pr-10">Person name</h2>
+      <button data-close class="absolute top-4 right-4 w-9 h-9 rounded-full border border-wb-300 text-wb-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph ph-x text-lg"></i></button>
+    </div>
+    <div class="border-t border-wb-200"></div>
+
+    <a id="opt-view" href="index.html" class="w-full flex items-center gap-4 px-5 md:px-6 py-4 text-left hover:bg-wb-50">
+      <span class="w-10 h-10 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-user text-lg"></i></span>
+      <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">View their page</span><span class="block text-sm text-wb-600 mt-0.5">Open the obituary and guest book</span></span>
+      <i class="ph ph-caret-right text-wb-400 flex-shrink-0"></i>
+    </a>
+
+    <!-- Share is out of scope for V0 -->
+
+    <div class="border-t border-wb-200 mx-5 md:mx-6"></div>
+    <button class="w-full flex items-center gap-4 px-5 md:px-6 py-4 text-left hover:bg-coral-50" data-action="remove">
+      <span class="w-10 h-10 rounded-full bg-coral-100 text-coral-600 flex items-center justify-center flex-shrink-0"><i class="ph ph-minus-circle text-lg"></i></span>
+      <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-coral-700 leading-tight">Remove from My People</span><span class="block text-sm text-wb-600 mt-0.5">This person will be removed from your list</span></span>
+      <i class="ph ph-caret-right text-wb-400 flex-shrink-0"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SHARE SHEET
+     ==================================================================== -->
+<div class="sheet-overlay" id="share-overlay" role="dialog" aria-modal="true" aria-labelledby="share-title">
+  <div class="sheet-card p-5 md:p-6">
+    <button data-close class="absolute top-4 right-4 w-9 h-9 rounded-full border border-wb-300 text-wb-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph ph-x text-lg"></i></button>
+    <button data-back class="absolute top-4 left-4 w-9 h-9 rounded-full text-wb-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back to options"><i class="ph ph-arrow-left text-lg"></i></button>
+    <h2 id="share-title" class="font-serif-heading text-xl md:text-2xl text-wb-900 text-center pt-1">Share this page</h2>
+    <p class="text-sm text-wb-600 text-center mt-1" id="share-sub">Invite others to visit this page</p>
+    <div class="grid grid-cols-4 gap-2 mt-6 text-center">
+      <button class="share-channel flex flex-col items-center gap-1.5 text-xs font-semibold text-wb-700" data-channel="Email"><span class="w-[52px] h-[52px] rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-[22px]"><i class="ph ph-envelope-simple"></i></span>Email</button>
+      <button class="share-channel flex flex-col items-center gap-1.5 text-xs font-semibold text-wb-700" data-channel="Text message"><span class="w-[52px] h-[52px] rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-[22px]"><i class="ph ph-chat-circle"></i></span>Message</button>
+      <button class="share-channel flex flex-col items-center gap-1.5 text-xs font-semibold text-wb-700" data-channel="Facebook"><span class="w-[52px] h-[52px] rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-[22px]"><i class="ph ph-facebook-logo"></i></span>Facebook</button>
+      <button class="share-channel flex flex-col items-center gap-1.5 text-xs font-semibold text-wb-700" data-channel="more apps"><span class="w-[52px] h-[52px] rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-[22px]"><i class="ph ph-dots-three-outline"></i></span>More</button>
+    </div>
+    <div class="mt-6">
+      <label class="block text-sm font-semibold text-wb-900 mb-2">Page link</label>
+      <div class="flex items-center gap-2">
+        <input id="share-link" type="text" readonly value="https://www.legacy.com/obituaries/person" class="flex-1 h-12 px-3 rounded-lg border border-wb-300 bg-wb-50 text-sm text-wb-700 focus:outline-none focus:border-navy-500" />
+        <button id="copy-link" class="h-12 px-4 rounded-lg bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold inline-flex items-center gap-2 flex-shrink-0"><i class="ph ph-copy"></i> Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     CONFIRM REMOVE MODAL
+     ==================================================================== -->
+<div class="sheet-overlay" id="remove-overlay" role="alertdialog" aria-modal="true" aria-labelledby="rm-title" aria-describedby="rm-body">
+  <div class="sheet-card p-6 md:p-8">
+    <h2 id="rm-title" class="font-serif-heading text-2xl text-wb-900 leading-tight pr-2">Are you sure you want to remove this person?</h2>
+    <p id="rm-body" class="text-base text-wb-700 mt-3 leading-relaxed">You can always save them again if you change your mind.</p>
+    <div class="flex flex-row gap-3 mt-6">
+      <button id="rm-confirm" class="flex-1 h-12 rounded-full bg-coral-700 hover:bg-coral-800 text-white text-base font-semibold">Remove</button>
+      <button data-close class="flex-1 h-12 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     TOAST
+     ==================================================================== -->
+<div id="toast" class="toast" role="status" aria-live="polite">
+  <span class="lead"><i class="ph-fill ph-check-circle"></i> <span id="toast-text">Done</span></span>
+  <button id="toast-action" type="button" class="hidden">Undo</button>
+</div>
+
+<script src="people.js"></script>
+
+<!-- Demo scenario switcher -->
+<div class="demo-switcher" role="group" aria-label="Demo scenarios">
+  <span class="demo-switcher-label">Demo scenario</span>
+  <button data-scenario="full" class="active"><i class="ph ph-users-three"></i> 3 people saved</button>
+  <button data-scenario="one"><i class="ph ph-user"></i> 1 person saved</button>
+  <button data-scenario="zero"><i class="ph ph-tray"></i> Zero state · none saved</button>
+</div>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const STORE_KEY = 'legacyMyPeople.v0';
+  const esc = (v) => String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+  // ===== localStorage bridge (shared with index.html) =====
+  function readStore(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(_){ return {}; } }
+  function writeStore(o){ try { localStorage.setItem(STORE_KEY, JSON.stringify(o)); } catch(_){} }
+
+  const P = window.LEGACY_PEOPLE || {};
+  const DEFAULT_SAVED = (window.LEGACY_DEFAULT_SAVED || ['mohammad','douglas','jennifer']).slice();
+  const POOL_IDS = ['eleanor','marcus'];
+
+  let savedIds = [];
+  let people = [];
+
+  // Saved people persist as an id array (shared with index.html).
+  function readSaved(){ const o = readStore(); return Array.isArray(o.saved) ? o.saved.slice() : null; }
+  function writeSaved(arr){ const o = readStore(); o.saved = arr.slice(); writeStore(o); }
+  function personData(id){
+    const d = P[id];
+    if (!d) return { id: id, name: 'New Person', photo: null, relation: null };
+    return { id: id, name: d.full, photo: window.LEGACY_PHOTO(d.photo, 'card'), relation: d.relation };
+  }
+
+  function initials(name){
+    const parts = name.trim().split(/\s+/);
+    return ((parts[0]||'')[0] || '' ) + ((parts[parts.length-1]||'')[0] || '');
+  }
+
+  // No-photo panel background: random per person from navy/coral/seafoam/gold/wb 400s
+  const NOPHOTO_COLORS = ['#728ab0','#e77d91','#81b8ae','#e2ba60','#afadaa'];
+  function pickColor(){ return NOPHOTO_COLORS[Math.floor(Math.random() * NOPHOTO_COLORS.length)]; }
+
+  // Photo panel background = dominant (average) color of the photo.
+  const colorCache = {};
+  function dominantColor(url){
+    return new Promise(resolve => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        try {
+          const s = 24, c = document.createElement('canvas');
+          c.width = s; c.height = s;
+          const ctx = c.getContext('2d');
+          ctx.drawImage(img, 0, 0, s, s);
+          const d = ctx.getImageData(0, 0, s, s).data;
+          let r=0,g=0,b=0,n=0;
+          for (let i=0;i<d.length;i+=4){ if (d[i+3] < 128) continue; r+=d[i]; g+=d[i+1]; b+=d[i+2]; n++; }
+          resolve(n ? 'rgb('+Math.round(r/n)+','+Math.round(g/n)+','+Math.round(b/n)+')' : null);
+        } catch(_) { resolve(null); }
+      };
+      img.onerror = () => resolve(null);
+      img.src = url;
+    });
+  }
+  function applyPhotoColors(){
+    $$('.card-photo[data-photo]').forEach(el => {
+      const url = el.dataset.photo;
+      if (colorCache[url]) { el.style.background = colorCache[url]; return; }
+      dominantColor(url).then(c => { if (c) colorCache[url] = c; el.style.background = c || '#627d85'; });
+    });
+  }
+
+  function buildPeople(){
+    people = savedIds.map(personData);
+    people.forEach(p => { if (!p.photo && !p._color) p._color = pickColor(); });
+  }
+
+  // ===== rendering =====
+  const root = $('#grid-root');
+  const countPill = $('#count-pill');
+  const subtitle = $('#page-subtitle');
+
+  function personCardHTML(p){
+    const panel = p.photo
+      ? '<div class="card-photo h-[172px] w-full flex items-center justify-center p-1 overflow-hidden" data-photo="'+esc(p.photo)+'" style="background:#627d85">' +
+          '<img src="'+esc(p.photo)+'" alt="" class="h-full w-auto max-w-full object-contain" />' +
+        '</div>'
+      : '<div class="h-[172px] w-full flex items-center justify-center overflow-hidden" style="background:'+(p._color||'#728ab0')+'">' +
+          '<span class="font-serif-heading text-6xl text-white leading-none">'+esc(initials(p.name))+'</span>' +
+        '</div>';
+    const badge = p.relation
+      ? '<span class="inline-block mt-1 rounded-full bg-gold-100 text-gold-900 text-sm px-3 py-0.5">'+esc(p.relation)+'</span>'
+      : '';
+    return '<article class="person-card relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer transition-shadow hover:shadow-md" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
+      panel +
+      '<div class="flex-1 min-h-[100px] flex flex-col items-center justify-center text-center gap-1 px-2 pb-3">' +
+        '<a href="index.html?id='+esc(p.id)+'" class="text-base font-semibold text-wb-900 leading-tight">'+esc(p.name)+'</a>' + badge +
+      '</div>' +
+      '<button class="more-btn absolute top-[7px] right-[7px]" aria-label="More options for '+esc(p.name)+'"><i class="ph-bold ph-dots-three" aria-hidden="true"></i></button>' +
+    '</article>';
+  }
+
+  // Add More People — a single grid cell when people exist; spans all
+  // columns (and shows a fuller message) when the grid is empty.
+  function addCardHTML(full){
+    const cls = full ? 'col-span-2 lg:col-span-3 min-h-[220px] py-10' : 'min-h-[288px] py-6';
+    return '<button id="add-more" class="'+cls+' h-full rounded-lg border-2 border-dashed border-wb-300 hover:border-gold-400 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2 transition-colors">' +
+      '<span class="w-14 h-14 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-magnifying-glass text-2xl"></i></span>' +
+      '<span class="text-base font-semibold text-wb-900 mt-1">Add More People</span>' +
+      '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Search our database to find the people you care about and add them here.</span>' +
+    '</button>';
+  }
+
+  function render(){
+    const n = people.length;
+    countPill.textContent = n + ' added';
+    countPill.classList.toggle('hidden', n === 0);
+    subtitle.innerHTML = n === 0
+      ? 'You haven’t added anyone yet.'
+      : 'Pages for people you have saved. Tap <span class="font-semibold tracking-widest">•••</span> to manage updates or remove a page.';
+    root.innerHTML =
+      '<div class="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">' +
+        people.map(personCardHTML).join('') +
+        addCardHTML(n === 0) +
+      '</div>';
+    applyPhotoColors();
+  }
+
+  function loadScenario(name){
+    savedIds = name === 'zero' ? [] : name === 'one' ? ['mohammad'] : DEFAULT_SAVED.slice();
+    writeSaved(savedIds);
+    buildPeople();
+    render();
+  }
+
+  function addFromPool(){
+    const next = POOL_IDS.find(id => !savedIds.includes(id)) || ('new' + savedIds.length);
+    if (!savedIds.includes(next)) savedIds.push(next);
+    writeSaved(savedIds);
+    buildPeople();
+    render();
+    toast('Added to My People');
+  }
+
+  // ===== modal plumbing =====
+  let activeId = null, activeName = null, lastFocus = null;
+  const overlays = { options:$('#options-overlay'), share:$('#share-overlay'), remove:$('#remove-overlay') };
+  function openOverlay(o){ lastFocus = document.activeElement; o.classList.add('open'); document.body.style.overflow='hidden'; const f=o.querySelector('button,[href],input'); if(f) f.focus(); }
+  function closeAll(){ Object.values(overlays).forEach(o=>o.classList.remove('open')); document.body.style.overflow=''; if(lastFocus&&document.contains(lastFocus)) lastFocus.focus(); }
+
+  function populateOptions(card){
+    activeId = card.dataset.id; activeName = card.dataset.name;
+    $('#opt-title').textContent = activeName;
+    const av = $('#opt-avatar');
+    if (card.dataset.photo) { av.style.backgroundImage = 'url('+card.dataset.photo+')'; av.style.backgroundSize='cover'; av.style.backgroundPosition='center'; av.textContent=''; }
+    else { av.style.backgroundImage=''; av.textContent = initials(activeName); }
+    const view = $('#opt-view'); if (view) view.href = 'index.html?id=' + activeId;
+    $('#share-link').value = 'https://www.legacy.com/obituaries/' + activeId;
+  }
+
+  // ===== delegated clicks =====
+  root.addEventListener('click', (e) => {
+    const add = e.target.closest('#add-more');
+    if (add) { addFromPool(); return; }
+    const more = e.target.closest('.more-btn');
+    if (more) { e.preventDefault(); populateOptions(more.closest('.person-card')); openOverlay(overlays.options); return; }
+    // Tapping anywhere else on a card opens that person's page.
+    const card = e.target.closest('.person-card');
+    if (card) { window.location.href = 'index.html?id=' + card.dataset.id; }
+  });
+
+  overlays.options.addEventListener('click', (e) => {
+    const action = e.target.closest('[data-action]'); if(!action) return;
+    if (action.dataset.action === 'share') openShare();
+    if (action.dataset.action === 'remove') openRemove();
+  });
+
+  function openShare(){ overlays.options.classList.remove('open'); $('#share-sub').textContent = 'Invite others to visit ' + activeName + '’s page'; openOverlay(overlays.share); }
+  $('#copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('#share-link').value); } catch(_){} closeAll(); toast('Link copied to clipboard'); });
+  $$('.share-channel').forEach(b => b.addEventListener('click', () => { closeAll(); toast('Opening ' + b.dataset.channel + '…'); }));
+
+  function openRemove(){
+    overlays.options.classList.remove('open');
+    $('#rm-title').textContent = 'Are you sure you want to remove ' + activeName + '?';
+    $('#rm-body').textContent = 'You’ll no longer receive updates about this page. You can always save them again if you change your mind.';
+    openOverlay(overlays.remove);
+  }
+  $('#rm-confirm').addEventListener('click', () => {
+    const id = activeId;
+    const idx = savedIds.indexOf(id);
+    closeAll();
+    if (idx === -1) return;
+    savedIds.splice(idx, 1); writeSaved(savedIds); buildPeople(); render();
+    toast('Removed from My People', () => {
+      savedIds.splice(Math.min(idx, savedIds.length), 0, id); writeSaved(savedIds); buildPeople(); render();
+      toast('Restored to My People');
+    });
+  });
+
+  // ===== close handlers =====
+  $$('[data-close]').forEach(b => b.addEventListener('click', closeAll));
+  const backBtn = $('[data-back]'); if (backBtn) backBtn.addEventListener('click', () => { overlays.share.classList.remove('open'); openOverlay(overlays.options); });
+  Object.values(overlays).forEach(o => o.addEventListener('mousedown', e => { if(e.target===o) closeAll(); }));
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeAll(); });
+
+  // ===== toast =====
+  const toastEl=$('#toast'), toastText=$('#toast-text'), toastAction=$('#toast-action');
+  let toastTimer=null;
+  function toast(msg, undoFn){
+    clearTimeout(toastTimer);
+    toastText.textContent = msg;
+    if (undoFn) { toastAction.classList.remove('hidden'); toastAction.textContent='Undo'; toastAction.onclick = () => { clearTimeout(toastTimer); toastEl.classList.remove('show'); undoFn(); }; }
+    else { toastAction.classList.add('hidden'); toastAction.onclick = null; }
+    toastEl.classList.add('show');
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), undoFn ? 6000 : 2600);
+  }
+
+  // ===== mobile account accordion =====
+  const acct=$('#acct-accordion'), acctToggle=$('#acct-toggle');
+  acctToggle.addEventListener('click', () => {
+    const open = acct.dataset.acctOpen === 'true';
+    acct.dataset.acctOpen = String(!open);
+    acctToggle.setAttribute('aria-expanded', String(!open));
+  });
+
+  // ===== demo switcher =====
+  $$('.demo-switcher [data-scenario]').forEach(b => b.addEventListener('click', () => {
+    $$('.demo-switcher [data-scenario]').forEach(x => x.classList.toggle('active', x===b));
+    loadScenario(b.dataset.scenario);
+  }));
+
+  // ===== init =====
+  // Use the persisted saved list if present (so person-page adds/removes carry
+  // over); otherwise seed the default demo set.
+  savedIds = readSaved();
+  if (!savedIds) { savedIds = DEFAULT_SAVED.slice(); writeSaved(savedIds); }
+  buildPeople();
+  render();
+  const activeKey = savedIds.length === 0 ? 'zero'
+    : (savedIds.length === 1 && savedIds[0] === 'mohammad') ? 'one'
+    : (JSON.stringify(savedIds) === JSON.stringify(DEFAULT_SAVED) ? 'full' : null);
+  $$('.demo-switcher [data-scenario]').forEach(b => b.classList.toggle('active', b.dataset.scenario === activeKey));
+})();
+</script>
+</body>
+</html>
