@@ -453,37 +453,28 @@
     '</article>';
   }
 
-  function addCardHTML(){
-    return '<button id="add-more" class="col-span-2 lg:col-span-3 rounded-2xl border-2 border-dashed border-wb-300 hover:border-gold-400 bg-transparent px-4 py-8 flex flex-col items-center justify-center text-center gap-2 transition-colors">' +
+  // Add More People — a single grid cell when people exist; spans all
+  // columns (and shows a fuller message) when the grid is empty.
+  function addCardHTML(full){
+    const cls = full ? 'col-span-2 lg:col-span-3 min-h-[220px] py-10' : 'min-h-[288px] py-6';
+    return '<button id="add-more" class="'+cls+' h-full rounded-lg border-2 border-dashed border-wb-300 hover:border-gold-400 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2 transition-colors">' +
       '<span class="w-14 h-14 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-magnifying-glass text-2xl"></i></span>' +
       '<span class="text-base font-semibold text-wb-900 mt-1">Add More People</span>' +
-      '<span class="text-sm text-wb-600 max-w-[420px]">Search our database to find the people you care about and add them here.</span>' +
+      '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Search our database to find the people you care about and add them here.</span>' +
     '</button>';
-  }
-
-  function zeroStateHTML(){
-    return '<div class="rounded-2xl border-2 border-dashed border-wb-300 bg-white px-4 md:px-8 py-10 flex flex-col items-center text-center gap-4">' +
-      '<span class="w-16 h-16 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-users-three text-3xl"></i></span>' +
-      '<div class="max-w-[440px]"><h2 class="text-2xl font-bold text-wb-900">Keep your people close</h2>' +
-      '<p class="text-base text-wb-700 mt-1">When you add someone to My People, their page lives here — so you can revisit and get updates anytime.</p></div>' +
-      '<button id="add-more" class="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-[15px] font-semibold mt-1"><i class="ph ph-magnifying-glass"></i> Find a Person</button>' +
-    '</div>';
   }
 
   function render(){
     const n = people.length;
     countPill.textContent = n + ' added';
     countPill.classList.toggle('hidden', n === 0);
-    if (n === 0) {
-      subtitle.textContent = 'You haven’t added anyone yet.';
-      root.innerHTML = zeroStateHTML();
-      return;
-    }
-    subtitle.innerHTML = 'Pages for people you have saved. Tap <span class="font-semibold tracking-widest">•••</span> to manage updates or remove a page.';
+    subtitle.innerHTML = n === 0
+      ? 'You haven’t added anyone yet.'
+      : 'Pages for people you have saved. Tap <span class="font-semibold tracking-widest">•••</span> to manage updates or remove a page.';
     root.innerHTML =
       '<div class="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">' +
         people.map(personCardHTML).join('') +
-        addCardHTML() +
+        addCardHTML(n === 0) +
       '</div>';
     applyPhotoColors();
   }
