@@ -266,7 +266,7 @@
     </div>
     <div class="border-t border-wb-200"></div>
 
-    <a href="person.html" class="w-full flex items-center gap-4 px-5 md:px-6 py-4 text-left hover:bg-wb-50">
+    <a id="opt-view" href="person.html" class="w-full flex items-center gap-4 px-5 md:px-6 py-4 text-left hover:bg-wb-50">
       <span class="w-10 h-10 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-user text-lg"></i></span>
       <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">View their page</span><span class="block text-sm text-wb-600 mt-0.5">Open the obituary and guest book</span></span>
       <i class="ph ph-caret-right text-wb-400 flex-shrink-0"></i>
@@ -330,6 +330,8 @@
   <button id="toast-action" type="button" class="hidden">Undo</button>
 </div>
 
+<script src="people.js"></script>
+
 <!-- Demo scenario switcher -->
 <div class="demo-switcher" role="group" aria-label="Demo scenarios">
   <span class="demo-switcher-label">Demo scenario</span>
@@ -349,31 +351,21 @@
   function readStore(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(_){ return {}; } }
   function writeStore(o){ try { localStorage.setItem(STORE_KEY, JSON.stringify(o)); } catch(_){} }
 
-  const AV = {
-    mohammad: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=360&h=360&fit=crop&q=80',
-    jennifer: 'https://images.unsplash.com/photo-1566616213894-2d4e1baee5d8?w=360&h=360&fit=crop&q=80',
-    ralph:    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=360&h=360&fit=crop&q=80',
-    eleanor:  'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=360&h=360&fit=crop&q=80',
-    marcus:   'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=360&h=360&fit=crop&q=80',
-  };
+  const P = window.LEGACY_PEOPLE || {};
+  const DEFAULT_SAVED = (window.LEGACY_DEFAULT_SAVED || ['mohammad','douglas','jennifer']).slice();
+  const POOL_IDS = ['eleanor','marcus'];
 
-  // Base demo people (Figma: Mohammad w/ Grandfather badge, Douglas as initials, Jennifer w/ Friend badge)
-  const BASE = [
-    { id:'mohammad', name:'Mohammad Blumenthal Reallylongname', photo:AV.mohammad, relation:'Grandfather' },
-    { id:'douglas',  name:'Douglas Michael Jones', photo:null, relation:null },
-    { id:'jennifer', name:'Jennifer Sanderson', photo:AV.jennifer, relation:'Friend' },
-  ];
-  // Ralph — added from the person page. Included when the store flag is set.
-  const RALPH = { id:'ralph', name:'Ralph Thomas', photo:AV.ralph, relation:null };
-  // Pool for "Add More People"
-  const POOL = [
-    { id:'eleanor', name:'Eleanor Whitfield', photo:AV.eleanor, relation:'Aunt' },
-    { id:'marcus',  name:'Marcus Allen Reed', photo:AV.marcus, relation:null },
-  ];
-
+  let savedIds = [];
   let people = [];
-  let scenario = 'full';
-  let poolIdx = 0;
+
+  // Saved people persist as an id array (shared with person.html).
+  function readSaved(){ const o = readStore(); return Array.isArray(o.saved) ? o.saved.slice() : null; }
+  function writeSaved(arr){ const o = readStore(); o.saved = arr.slice(); writeStore(o); }
+  function personData(id){
+    const d = P[id];
+    if (!d) return { id: id, name: 'New Person', photo: null, relation: null };
+    return { id: id, name: d.full, photo: window.LEGACY_PHOTO(d.photo, 'card'), relation: d.relation };
+  }
 
   function initials(name){
     const parts = name.trim().split(/\s+/);
@@ -415,11 +407,7 @@
   }
 
   function buildPeople(){
-    if (scenario === 'zero') { people = []; return; }
-    if (scenario === 'one')  { people = [ {...BASE[0]} ]; }
-    else { people = BASE.map(p => ({...p})); }
-    // Bridge: if Ralph was added on the person page, show him here (only in non-zero scenarios)
-    if (readStore().ralphAdded && !people.some(p => p.id === 'ralph')) people.push({...RALPH});
+    people = savedIds.map(personData);
     people.forEach(p => { if (!p.photo && !p._color) p._color = pickColor(); });
   }
 
@@ -442,7 +430,7 @@
     return '<article class="person-card relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer transition-shadow hover:shadow-md" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
       panel +
       '<div class="flex-1 min-h-[100px] flex flex-col items-center justify-center text-center gap-1 px-2 pb-3">' +
-        '<a href="person.html" class="text-base font-semibold text-wb-900 leading-tight">'+esc(p.name)+'</a>' + badge +
+        '<a href="person.html?id='+esc(p.id)+'" class="text-base font-semibold text-wb-900 leading-tight">'+esc(p.name)+'</a>' + badge +
       '</div>' +
       '<button class="more-btn absolute top-[7px] right-[7px]" aria-label="More options for '+esc(p.name)+'"><i class="ph-bold ph-dots-three" aria-hidden="true"></i></button>' +
     '</article>';
@@ -475,17 +463,17 @@
   }
 
   function loadScenario(name){
-    scenario = name;
-    poolIdx = 0;
+    savedIds = name === 'zero' ? [] : name === 'one' ? ['mohammad'] : DEFAULT_SAVED.slice();
+    writeSaved(savedIds);
     buildPeople();
     render();
   }
 
   function addFromPool(){
-    const item = poolIdx < POOL.length ? {...POOL[poolIdx]} : { id:'new'+poolIdx, name:'New Person '+(poolIdx+1), photo:null, relation:null };
-    if (!item.photo && !item._color) item._color = pickColor();
-    poolIdx++;
-    people.push(item);
+    const next = POOL_IDS.find(id => !savedIds.includes(id)) || ('new' + savedIds.length);
+    if (!savedIds.includes(next)) savedIds.push(next);
+    writeSaved(savedIds);
+    buildPeople();
     render();
     toast('Added to My People');
   }
@@ -502,6 +490,7 @@
     const av = $('#opt-avatar');
     if (card.dataset.photo) { av.style.backgroundImage = 'url('+card.dataset.photo+')'; av.style.backgroundSize='cover'; av.style.backgroundPosition='center'; av.textContent=''; }
     else { av.style.backgroundImage=''; av.textContent = initials(activeName); }
+    const view = $('#opt-view'); if (view) view.href = 'person.html?id=' + activeId;
     $('#share-link').value = 'https://www.legacy.com/obituaries/' + activeId;
   }
 
@@ -513,7 +502,7 @@
     if (more) { e.preventDefault(); populateOptions(more.closest('.person-card')); openOverlay(overlays.options); return; }
     // Tapping anywhere else on a card opens that person's page.
     const card = e.target.closest('.person-card');
-    if (card) { window.location.href = 'person.html'; }
+    if (card) { window.location.href = 'person.html?id=' + card.dataset.id; }
   });
 
   overlays.options.addEventListener('click', (e) => {
@@ -533,17 +522,13 @@
     openOverlay(overlays.remove);
   }
   $('#rm-confirm').addEventListener('click', () => {
-    const id = activeId, name = activeName;
-    const idx = people.findIndex(p => p.id === id);
+    const id = activeId;
+    const idx = savedIds.indexOf(id);
     closeAll();
     if (idx === -1) return;
-    const removed = people.splice(idx,1)[0];
-    if (id === 'ralph') { const o = readStore(); o.ralphAdded = false; writeStore(o); } // keep bridge in sync
-    render();
+    savedIds.splice(idx, 1); writeSaved(savedIds); buildPeople(); render();
     toast('Removed from My People', () => {
-      people.splice(Math.min(idx, people.length), 0, removed);
-      if (id === 'ralph') { const o = readStore(); o.ralphAdded = true; writeStore(o); }
-      render();
+      savedIds.splice(Math.min(idx, savedIds.length), 0, id); writeSaved(savedIds); buildPeople(); render();
       toast('Restored to My People');
     });
   });
@@ -581,7 +566,16 @@
   }));
 
   // ===== init =====
-  loadScenario('full');
+  // Use the persisted saved list if present (so person-page adds/removes carry
+  // over); otherwise seed the default demo set.
+  savedIds = readSaved();
+  if (!savedIds) { savedIds = DEFAULT_SAVED.slice(); writeSaved(savedIds); }
+  buildPeople();
+  render();
+  const activeKey = savedIds.length === 0 ? 'zero'
+    : (savedIds.length === 1 && savedIds[0] === 'mohammad') ? 'one'
+    : (JSON.stringify(savedIds) === JSON.stringify(DEFAULT_SAVED) ? 'full' : null);
+  $$('.demo-switcher [data-scenario]').forEach(b => b.classList.toggle('active', b.dataset.scenario === activeKey));
 })();
 </script>
 </body>

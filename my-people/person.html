@@ -200,12 +200,12 @@
     </div>
     <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-16 pt-6 md:pt-8 pb-8 md:pb-16">
       <div class="flex flex-col md:flex-row items-center md:justify-center gap-6 md:gap-16 text-center md:text-left">
-        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=560&h=720&fit=crop&q=80" alt="Ralph Thomas" class="w-[159px] h-[208px] md:w-[269px] md:h-[352px] rounded-2xl md:rounded-xl object-cover shadow-[24px_28px_64px_-10px_rgba(0,20,30,0.28)] flex-shrink-0" />
+        <img id="hero-photo" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=560&h=720&fit=crop&q=80" alt="Ralph Thomas" class="w-[159px] h-[208px] md:w-[269px] md:h-[352px] rounded-2xl md:rounded-xl object-cover shadow-[24px_28px_64px_-10px_rgba(0,20,30,0.28)] flex-shrink-0" />
         <div class="w-full md:w-[467px] flex flex-col items-center md:items-start gap-6">
           <div class="flex flex-col items-center md:items-start gap-2 md:gap-4 w-full">
             <p class="hidden md:block text-sm md:text-base font-semibold tracking-[1.12px] uppercase text-gold-400 leading-normal">In Memory Of</p>
             <h1 class="font-serif-heading text-4xl md:text-6xl text-navy-50 leading-[1.2]">Ralph Thomas</h1>
-            <p class="text-lg md:text-3xl text-gold-400 leading-normal">1935 – 2023</p>
+            <p id="hero-dates" class="text-lg md:text-3xl text-gold-400 leading-normal">1935 – 2023</p>
           </div>
           <div class="w-full flex items-center justify-center md:justify-start gap-3 md:gap-4">
             <button class="flex-1 md:flex-none justify-center inline-flex items-center gap-2 h-11 md:h-10 px-4 md:px-5 rounded-full bg-gold-400 hover:bg-gold-500 text-wb-900 text-sm font-semibold whitespace-nowrap">
@@ -224,7 +224,7 @@
   <!-- Partnership line -->
   <div class="bg-gold-50 border-b border-wb-200">
     <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-4 text-center">
-      <p class="text-sm md:text-base text-gold-900">Memorialized in partnership with <span class="font-semibold">Eternal Springs Funeral Home</span></p>
+      <p class="text-sm md:text-base text-gold-900">Memorialized in partnership with <span id="partnership-home" class="font-semibold">Eternal Springs Funeral Home</span></p>
     </div>
   </div>
 </section>
@@ -290,8 +290,8 @@
       <section class="bg-white border border-wb-200 rounded-2xl card-elev overflow-hidden">
         <div class="p-5 md:p-7">
           <h2 class="font-serif-heading text-2xl text-navy-700">Ralph's Obituaries</h2>
-          <p class="text-sm text-wb-500 mt-1">Excerpt from Chicago Sun-Times</p>
-          <p class="font-body text-lg md:text-xl text-wb-900 leading-relaxed mt-4 excerpt-fade max-h-[168px] overflow-hidden">Ralph Thomas passed away February 14, 2023, at the age of 86. Ralph was born in Fresno, California, on March 18, 1935, to his parents, Robert Thomas and Veronica Delgado. He is preceded in death by his brothers Raymond and Franklin, his son Anthony, and his beloved wife Patricia (Ramirez) Thomas. Ralph is survived by his daughters Elena and Sofia, his grandchildren, and a wide circle of friends.</p>
+          <p id="obit-source" class="text-sm text-wb-500 mt-1">Excerpt from Chicago Sun-Times</p>
+          <p id="obit-body" class="font-body text-lg md:text-xl text-wb-900 leading-relaxed mt-4 excerpt-fade max-h-[168px] overflow-hidden">Ralph Thomas passed away February 14, 2023, at the age of 86. Ralph was born in Fresno, California, on March 18, 1935, to his parents, Robert Thomas and Veronica Delgado. He is preceded in death by his brothers Raymond and Franklin, his son Anthony, and his beloved wife Patricia (Ramirez) Thomas. Ralph is survived by his daughters Elena and Sofia, his grandchildren, and a wide circle of friends.</p>
           <div class="text-center mt-2">
             <a href="#" class="inline-flex items-center gap-2 text-base font-semibold text-navy-500 hover:text-navy-700">Read the most recent obituary <i class="ph ph-arrow-right"></i></a>
           </div>
@@ -619,19 +619,27 @@
   <button data-scenario="signed-out" class="active"><i class="ph ph-user"></i> Sign In or Create an Account</button>
 </div>
 
+<script src="people.js"></script>
 <script>
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const STORE_KEY = 'legacyMyPeople.v0';
 
-  // ===== localStorage bridge to the My People dashboard =====
+  // ===== Which person is this page? (?id=…, default Ralph) =====
+  const PEOPLE = window.LEGACY_PEOPLE || {};
+  const PID = (new URLSearchParams(location.search).get('id')) || 'ralph';
+  const PERSON = PEOPLE[PID] || PEOPLE.ralph || { first:'Ralph', last:'Thomas', full:'Ralph Thomas', dates:'1935 – 2023', photo:null, source:'Chicago Sun-Times', home:'Eternal Springs Funeral Home', obit:'' };
+
+  // ===== localStorage bridge (shared saved list with the dashboard) =====
   function readStore(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(_) { return {}; } }
   function writeStore(o){ try { localStorage.setItem(STORE_KEY, JSON.stringify(o)); } catch(_) {} }
-  function isRalphAdded(){ return !!readStore().ralphAdded; }
-  function setRalphAdded(v){ const o = readStore(); o.ralphAdded = v; writeStore(o); }
+  function readSaved(){ const o = readStore(); return Array.isArray(o.saved) ? o.saved : null; }
+  function writeSaved(a){ const o = readStore(); o.saved = a; writeStore(o); }
+  function isSaved(id){ return (readSaved() || []).indexOf(id) >= 0; }
+  function setSaved(id, on){ const s = readSaved() || []; const i = s.indexOf(id); if (on && i < 0) s.push(id); if (!on && i >= 0) s.splice(i, 1); writeSaved(s); }
 
-  // ===== Account scenario: 'signed-out' | 'create-account' | 'signed-in' =====
+  // ===== Account scenario: 'signed-out' | 'signed-in' =====
   let scenario = 'signed-out';
   const isSignedIn = () => scenario === 'signed-in';
 
@@ -644,7 +652,7 @@
   // Paint the Add-to-My-People button. When signed out we always show the
   // default "Add" state (the visitor can't see their saved list yet).
   function paintAdded(){
-    const added = isSignedIn() && isRalphAdded();
+    const added = isSignedIn() && isSaved(PID);
     addBtn.dataset.added = String(added);
     addBtn.setAttribute('aria-pressed', String(added));
     $('.add-default', addBtn).classList.toggle('hidden', added);
@@ -687,8 +695,8 @@
   $$('[data-close]').forEach(b => b.addEventListener('click', closeAll));
   Object.values(overlays).forEach(o => o.addEventListener('mousedown', e => { if(e.target===o) closeAll(); }));
   document.addEventListener('keydown', e => { if(e.key==='Escape') closeAll(); });
-  $('#upd-form').addEventListener('submit', e => { e.preventDefault(); closeAll(); toast("You're now following Ralph's page"); });
-  $('#copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText('https://www.legacy.com/obituaries/ralph-thomas'); } catch(_){} closeAll(); toast('Link copied to clipboard'); });
+  $('#upd-form').addEventListener('submit', e => { e.preventDefault(); closeAll(); toast('You’re now following ' + PERSON.first + '’s page'); });
+  $('#copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText('https://www.legacy.com/obituaries/' + PID); } catch(_){} closeAll(); toast('Link copied to clipboard'); });
   $$('.share-channel').forEach(b => b.addEventListener('click', () => { closeAll(); toast('Opening ' + b.dataset.channel + '…'); }));
 
   // ===== Auth modal (My People value-prop save gate) =====
@@ -697,9 +705,9 @@
   function authSuccess(){
     closeAll();
     scenario = 'signed-in';
-    setRalphAdded(true);
+    setSaved(PID, true);
     paintScenario();
-    toast('Ralph added to My People', 'index.html', 'View');
+    toast(PERSON.first + ' added to My People', 'index.html', 'View');
   }
   $('#auth-continue').addEventListener('click', authSuccess);
   acctSignin.addEventListener('click', openAuth);
@@ -707,7 +715,7 @@
   // ===== Add to My People =====
   function toggleAdd(){
     const added = !(addBtn.dataset.added === 'true');
-    setRalphAdded(added);
+    setSaved(PID, added);
     paintAdded();
     if (added) toast('Added to My People', 'index.html', 'View');
     else toast('Removed from My People');
@@ -741,7 +749,55 @@
     paintScenario();
   }));
 
+  // ===== Populate this person's content =====
+  function replaceNames(root){
+    if (PID === 'ralph') return; // page is authored for Ralph by default
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(n){
+        const t = n.parentNode && n.parentNode.nodeName;
+        if (t === 'SCRIPT' || t === 'STYLE') return NodeFilter.FILTER_REJECT;
+        return /Ralph|Thomas/.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n => {
+      n.nodeValue = n.nodeValue
+        .replace(/Ralph Thomas/g, PERSON.full)
+        .replace(/Ralph[’']s/g, PERSON.first + '’s')
+        .replace(/Ralph/g, PERSON.first)
+        .replace(/Thomas/g, PERSON.last);
+    });
+  }
+  function populatePerson(){
+    document.title = 'Legacy — ' + PERSON.full + ' (My People V0)';
+    replaceNames(document.body);
+    // Hero media
+    const heroPhoto = $('#hero-photo');
+    if (heroPhoto) {
+      if (PERSON.photo) {
+        heroPhoto.src = window.LEGACY_PHOTO(PERSON.photo, 'hero');
+        heroPhoto.alt = PERSON.full;
+      } else {
+        const div = document.createElement('div');
+        div.className = heroPhoto.className.replace('object-cover', '') + ' flex items-center justify-center';
+        div.style.background = '#728ab0';
+        div.innerHTML = '<span class="font-serif-heading text-white text-6xl leading-none">' + window.LEGACY_INITIALS(PERSON.full) + '</span>';
+        heroPhoto.replaceWith(div);
+      }
+    }
+    const set = (id, val) => { const el = $('#' + id); if (el) el.textContent = val; };
+    set('hero-dates', PERSON.dates);
+    set('obit-source', 'Excerpt from ' + PERSON.source);
+    if (PERSON.obit) set('obit-body', PERSON.obit);
+    set('partnership-home', PERSON.home);
+    const shareInput = document.querySelector('#share-overlay input[readonly]');
+    if (shareInput) shareInput.value = 'https://www.legacy.com/obituaries/' + PID;
+  }
+
   // ===== Init =====
+  // Seed the shared saved list so already-saved people read as saved when signed in.
+  if (!readSaved()) writeSaved((window.LEGACY_DEFAULT_SAVED || []).slice());
+  populatePerson();
   paintScenario();
 })();
 </script>
