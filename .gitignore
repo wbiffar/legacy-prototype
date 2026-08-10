@@ -23,6 +23,8 @@
 !follow-nearby/**
 !obituary-template/
 !obituary-template/**
+!my-people/
+!my-people/**
 
 # Sign-up follow prototype
 !signup-follow-prototype.html
