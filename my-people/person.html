@@ -797,6 +797,10 @@
   // ===== Init =====
   // Seed the shared saved list so already-saved people read as saved when signed in.
   if (!readSaved()) writeSaved((window.LEGACY_DEFAULT_SAVED || []).slice());
+  // If this person is already in My People, they're a saved contact of a
+  // signed-in user — show the added ("My People") state, which links back to
+  // the dashboard when tapped.
+  if (isSaved(PID)) scenario = 'signed-in';
   populatePerson();
   paintScenario();
 })();
