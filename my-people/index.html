@@ -67,8 +67,9 @@
     .acct-chevron { transition: transform .25s ease; }
 
     /* Person card more button overlaid on photo */
-    .more-btn { width: 34px; height: 34px; border-radius: 9999px; border: 1px solid rgba(0,0,0,0.06); background: rgba(255,255,255,0.92); color: #514d45; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; transition: background .15s; box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
-    .more-btn:hover { background: #fff; }
+    .more-btn { border-radius: 9999px; border: 1px solid #293548; background: #fff; color: #293548; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 7px; line-height: 0; transition: background .15s; }
+    .more-btn i { font-size: 14px; }
+    .more-btn:hover { background: #f6f6f6; }
 
     /* Demo scenario switcher */
     .demo-switcher { position: fixed; bottom: 16px; right: 16px; z-index: 40; background: rgba(21,27,36,0.92); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 8px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.35); max-width: 220px; }
@@ -384,12 +385,47 @@
     return ((parts[0]||'')[0] || '' ) + ((parts[parts.length-1]||'')[0] || '');
   }
 
+  // No-photo panel background: random per person from navy/coral/seafoam/gold/wb 400s
+  const NOPHOTO_COLORS = ['#728ab0','#e77d91','#81b8ae','#e2ba60','#afadaa'];
+  function pickColor(){ return NOPHOTO_COLORS[Math.floor(Math.random() * NOPHOTO_COLORS.length)]; }
+
+  // Photo panel background = dominant (average) color of the photo.
+  const colorCache = {};
+  function dominantColor(url){
+    return new Promise(resolve => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        try {
+          const s = 24, c = document.createElement('canvas');
+          c.width = s; c.height = s;
+          const ctx = c.getContext('2d');
+          ctx.drawImage(img, 0, 0, s, s);
+          const d = ctx.getImageData(0, 0, s, s).data;
+          let r=0,g=0,b=0,n=0;
+          for (let i=0;i<d.length;i+=4){ if (d[i+3] < 128) continue; r+=d[i]; g+=d[i+1]; b+=d[i+2]; n++; }
+          resolve(n ? 'rgb('+Math.round(r/n)+','+Math.round(g/n)+','+Math.round(b/n)+')' : null);
+        } catch(_) { resolve(null); }
+      };
+      img.onerror = () => resolve(null);
+      img.src = url;
+    });
+  }
+  function applyPhotoColors(){
+    $$('.card-photo[data-photo]').forEach(el => {
+      const url = el.dataset.photo;
+      if (colorCache[url]) { el.style.background = colorCache[url]; return; }
+      dominantColor(url).then(c => { if (c) colorCache[url] = c; el.style.background = c || '#627d85'; });
+    });
+  }
+
   function buildPeople(){
     if (scenario === 'zero') { people = []; return; }
     if (scenario === 'one')  { people = [ {...BASE[0]} ]; }
     else { people = BASE.map(p => ({...p})); }
     // Bridge: if Ralph was added on the person page, show him here (only in non-zero scenarios)
     if (readStore().ralphAdded && !people.some(p => p.id === 'ralph')) people.push({...RALPH});
+    people.forEach(p => { if (!p.photo && !p._color) p._color = pickColor(); });
   }
 
   // ===== rendering =====
@@ -398,19 +434,22 @@
   const subtitle = $('#page-subtitle');
 
   function personCardHTML(p){
-    const media = p.photo
-      ? '<img src="'+esc(p.photo)+'" alt="" class="absolute inset-0 w-full h-full object-cover" />'
-      : '<span class="absolute inset-0 flex items-center justify-center bg-navy-400 text-white font-serif-heading text-5xl">'+esc(initials(p.name))+'</span>';
+    const panel = p.photo
+      ? '<div class="card-photo h-[172px] w-full flex items-center justify-center p-1 overflow-hidden" data-photo="'+esc(p.photo)+'" style="background:#627d85">' +
+          '<img src="'+esc(p.photo)+'" alt="" class="h-full w-auto max-w-full object-contain" />' +
+        '</div>'
+      : '<div class="h-[172px] w-full flex items-center justify-center overflow-hidden" style="background:'+(p._color||'#728ab0')+'">' +
+          '<span class="font-serif-heading text-6xl text-white leading-none">'+esc(initials(p.name))+'</span>' +
+        '</div>';
     const badge = p.relation
-      ? '<span class="inline-block mt-2 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold px-3 py-1">'+esc(p.relation)+'</span>'
+      ? '<span class="inline-block mt-1 rounded-full bg-gold-100 text-gold-900 text-sm px-3 py-0.5">'+esc(p.relation)+'</span>'
       : '';
-    return '<article class="person-card bg-white border border-wb-200 rounded-2xl overflow-hidden shadow-sm flex flex-col" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
-      '<div class="relative aspect-square">' + media +
-        '<button class="more-btn absolute top-2.5 right-2.5" aria-label="More options for '+esc(p.name)+'"><i class="ph ph-dots-three" aria-hidden="true"></i></button>' +
+    return '<article class="person-card relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
+      panel +
+      '<div class="flex-1 min-h-[100px] flex flex-col items-center justify-center text-center gap-1 px-2 pb-3">' +
+        '<a href="person.html" class="text-base font-semibold text-wb-900 leading-tight">'+esc(p.name)+'</a>' + badge +
       '</div>' +
-      '<a href="person.html" class="flex-1 flex flex-col items-center text-center px-3 py-4">' +
-        '<span class="text-base font-semibold text-wb-900 leading-snug">'+esc(p.name)+'</span>' + badge +
-      '</a>' +
+      '<button class="more-btn absolute top-[7px] right-[7px]" aria-label="More options for '+esc(p.name)+'"><i class="ph-bold ph-dots-three" aria-hidden="true"></i></button>' +
     '</article>';
   }
 
@@ -446,6 +485,7 @@
         people.map(personCardHTML).join('') +
         addCardHTML() +
       '</div>';
+    applyPhotoColors();
   }
 
   function loadScenario(name){
@@ -457,6 +497,7 @@
 
   function addFromPool(){
     const item = poolIdx < POOL.length ? {...POOL[poolIdx]} : { id:'new'+poolIdx, name:'New Person '+(poolIdx+1), photo:null, relation:null };
+    if (!item.photo && !item._color) item._color = pickColor();
     poolIdx++;
     people.push(item);
     render();
