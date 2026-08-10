@@ -272,12 +272,7 @@
       <i class="ph ph-caret-right text-wb-400 flex-shrink-0"></i>
     </a>
 
-    <div class="border-t border-wb-200 mx-5 md:mx-6"></div>
-    <button class="w-full flex items-center gap-4 px-5 md:px-6 py-4 text-left hover:bg-wb-50" data-action="share">
-      <span class="w-10 h-10 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-share-fat text-lg"></i></span>
-      <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Share this page</span><span class="block text-sm text-wb-600 mt-0.5">Invite others to visit this page</span></span>
-      <i class="ph ph-caret-right text-wb-400 flex-shrink-0"></i>
-    </button>
+    <!-- Share is out of scope for V0 -->
 
     <div class="border-t border-wb-200 mx-5 md:mx-6"></div>
     <button class="w-full flex items-center gap-4 px-5 md:px-6 py-4 text-left hover:bg-coral-50" data-action="remove">
@@ -444,7 +439,7 @@
     const badge = p.relation
       ? '<span class="inline-block mt-1 rounded-full bg-gold-100 text-gold-900 text-sm px-3 py-0.5">'+esc(p.relation)+'</span>'
       : '';
-    return '<article class="person-card relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
+    return '<article class="person-card relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer transition-shadow hover:shadow-md" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
       panel +
       '<div class="flex-1 min-h-[100px] flex flex-col items-center justify-center text-center gap-1 px-2 pb-3">' +
         '<a href="person.html" class="text-base font-semibold text-wb-900 leading-tight">'+esc(p.name)+'</a>' + badge +
@@ -515,7 +510,10 @@
     const add = e.target.closest('#add-more');
     if (add) { addFromPool(); return; }
     const more = e.target.closest('.more-btn');
-    if (more) { e.preventDefault(); populateOptions(more.closest('.person-card')); openOverlay(overlays.options); }
+    if (more) { e.preventDefault(); populateOptions(more.closest('.person-card')); openOverlay(overlays.options); return; }
+    // Tapping anywhere else on a card opens that person's page.
+    const card = e.target.closest('.person-card');
+    if (card) { window.location.href = 'person.html'; }
   });
 
   overlays.options.addEventListener('click', (e) => {
