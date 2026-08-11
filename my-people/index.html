@@ -803,10 +803,11 @@
   // ===== Init =====
   // Seed the shared saved list so already-saved people read as saved when signed in.
   if (!readSaved()) writeSaved((window.LEGACY_DEFAULT_SAVED || []).slice());
-  // If this person is already in My People, they're a saved contact of a
-  // signed-in user — show the added ("My People") state, which links back to
-  // the dashboard when tapped.
-  if (isSaved(PID)) scenario = 'signed-in';
+  // Signed-in context when the person is already saved, or when arriving from
+  // the account/dashboard "Add More People" flow (from=account) — so the visitor
+  // can add directly rather than hitting the sign-in gate.
+  const fromAccount = new URLSearchParams(location.search).get('from') === 'account';
+  if (isSaved(PID) || fromAccount) scenario = 'signed-in';
   populatePerson();
   paintScenario();
 })();

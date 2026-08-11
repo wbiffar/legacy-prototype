@@ -473,13 +473,12 @@
     render();
   }
 
-  function addFromPool(){
-    const next = POOL_IDS.find(id => !savedIds.includes(id)) || ('new' + savedIds.length);
-    if (!savedIds.includes(next)) savedIds.push(next);
-    writeSaved(savedIds);
-    buildPeople();
-    render();
-    toast('Added to My People');
+  // "Add More People" takes the user to an (unsaved) person's page so they can
+  // add from there — a more complete experience than a silent add. Carries
+  // from=account so the person page opens signed-in.
+  function goAddMore(){
+    const next = POOL_IDS.find(id => !savedIds.includes(id)) || POOL_IDS[0];
+    window.location.href = 'index.html?id=' + next + '&from=account';
   }
 
   // ===== modal plumbing =====
@@ -501,7 +500,7 @@
   // ===== delegated clicks =====
   root.addEventListener('click', (e) => {
     const add = e.target.closest('#add-more');
-    if (add) { addFromPool(); return; }
+    if (add) { goAddMore(); return; }
     const more = e.target.closest('.more-btn');
     if (more) { e.preventDefault(); populateOptions(more.closest('.person-card')); openOverlay(overlays.options); return; }
     // Tapping anywhere else on a card opens that person's page.
