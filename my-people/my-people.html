@@ -6,84 +6,13 @@
   <title>Legacy — My People (V0 · DES-2249)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0;1&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
-            serif: ['"DM Serif Text"', 'Georgia', 'serif'],
-          },
-          colors: {
-            navy:    { 50:'#f0f4fa', 100:'#e6ecf5', 200:'#d3ddeb', 300:'#b0c0d6', 400:'#728ab0', 500:'#42608f', 600:'#3c4d69', 700:'#293548', 800:'#212a3a', 900:'#151b24' },
-            gold:    { 50:'#fbf7ef', 100:'#f6e5b8', 200:'#f0d78d', 300:'#e9c86f', 400:'#e2ba60', 500:'#dcb05e', 600:'#c49e54', 700:'#a48849', 800:'#85713e', 900:'#655b34' },
-            wb:      { 50:'#fbfbfb', 100:'#f6f6f6', 200:'#ebe9e9', 300:'#dbdad7', 400:'#afadaa', 500:'#807e7a', 600:'#63605b', 700:'#514d45', 800:'#373329', 900:'#262116' },
-            seafoam: { 50:'#f3faf9', 100:'#ebf2f1', 200:'#cee2de', 300:'#aecec9', 400:'#81b8ae', 500:'#5c9d94', 600:'#357d75', 700:'#216e6a', 800:'#165c58', 900:'#014744' },
-            coral:   { 50:'#fcf1f3', 100:'#fce8ec', 200:'#f7d4da', 300:'#eba9b5', 400:'#e77d91', 500:'#d6677c', 600:'#c24c62', 700:'#993b4d', 800:'#792f3d', 900:'#662833' },
-          },
-        },
-      },
-    };
-  </script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', system-ui, sans-serif; color: #262116; background: #fbf7ef; }
-    .font-serif-heading { font-family: 'DM Serif Text', Georgia, serif; font-weight: 400; }
-
-    button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-visible {
-      outline: 2px solid #dcb05e; outline-offset: 2px;
-    }
-
-    /* ---- Sheet / modal scaffolding ---- */
-    .sheet-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(21,27,36,0.80); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; padding: 24px; }
-    .sheet-overlay.open { display: flex; }
-    .sheet-card { background: #fff; width: 100%; max-width: 512px; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); position: relative; animation: pop .18s ease; }
-    @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
-    @media (max-width: 639px) {
-      .sheet-overlay { align-items: flex-end; padding: 0; }
-      .sheet-card { max-width: 100%; border-radius: 20px 20px 0 0; animation: slideup .22s ease; }
-      @keyframes slideup { from { transform: translateY(100%); } to { transform: none; } }
-    }
-
-    /* Toast */
-    .toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-16px); z-index: 90; opacity: 0; pointer-events: none; display: flex; align-items: center; gap: 10px; background: #357d75; color: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 1px 2px -1px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.1); max-width: calc(100vw - 32px); transition: transform .28s ease, opacity .28s ease; }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
-    .toast .toast-ico { font-size: 20px; line-height: 0; flex-shrink: 0; }
-    .toast .toast-body { display: flex; align-items: center; gap: 12px; min-width: 0; padding-left: 16px; border-left: 1px solid rgba(255,255,255,0.4); }
-    .toast #toast-text { font-size: 14px; line-height: 1.5; }
-    .toast #toast-action { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; font-size: 14px; }
-    @media (max-width: 639px) {
-      .toast { top: 16px; left: 16px; right: 16px; max-width: none; transform: translateY(-16px); }
-      .toast.show { transform: translateY(0); }
-    }
-
-    /* Mobile account accordion */
-    .acct-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
-    .acct-panel > div { overflow: hidden; }
-    [data-acct-open="true"] .acct-panel { grid-template-rows: 1fr; }
-    [data-acct-open="true"] .acct-chevron { transform: rotate(180deg); }
-    .acct-chevron { transition: transform .25s ease; }
-
-    /* Person card more button overlaid on photo */
-    .more-btn { border-radius: 9999px; border: 1px solid #293548; background: #fff; color: #293548; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 7px; line-height: 0; transition: background .15s; }
-    .more-btn i { font-size: 14px; }
-    .more-btn:hover { background: #f6f6f6; }
-
-    /* Demo scenario switcher */
-    /* Demo scenario bar — sits under the footer, not floating over content */
-    .demo-switcher { background: #0f141b; border-top: 1px solid rgba(255,255,255,0.08); padding: 12px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
-    .demo-switcher-label { color: rgba(255,255,255,0.45); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 4px; }
-    .demo-switcher button { padding: 6px 12px; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.14); background: transparent; color: rgba(255,255,255,0.72); font-size: 12.5px; font-weight: 500; cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 6px; }
-    .demo-switcher button:hover { background: rgba(255,255,255,0.08); color: #fff; }
-    .demo-switcher button.active { background: #dcb05e; color: #262116; font-weight: 600; border-color: #dcb05e; }
-    @media print { .demo-switcher { display: none; } }
-  </style>
+  <script src="shared/tokens.js"></script>
+  <link rel="stylesheet" href="shared/styles.css" />
 </head>
 <body>
 
@@ -338,7 +267,7 @@
   </div>
 </div>
 
-<script src="people.js"></script>
+<script src="shared/people.js"></script>
 
 <!-- Demo scenario switcher -->
 <div class="demo-switcher" role="group" aria-label="Demo scenarios">
