@@ -65,26 +65,33 @@
       @keyframes slideup { from { transform: translateY(100%); } to { transform: none; } }
     }
 
-    /* Toast */
+    /* Toast — Figma Toast component (seafoam pill), top-center, animated */
     .toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(8px);
-      background: #262116; color: #fff; padding: 12px 16px 12px 20px; border-radius: 9999px;
-      font-size: 14px; font-weight: 500; z-index: 95; opacity: 0; pointer-events: none;
-      transition: all .25s ease; display: flex; align-items: center; gap: 14px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.2); max-width: calc(100vw - 24px);
+      position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-16px);
+      z-index: 95; opacity: 0; pointer-events: none;
+      display: flex; align-items: center; gap: 10px;
+      background: #357d75; color: #fff; padding: 16px; border-radius: 8px;
+      box-shadow: 0 1px 2px -1px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.1);
+      max-width: min(460px, calc(100vw - 32px));
+      transition: transform .28s ease, opacity .28s ease;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
-    .toast .lead { display: flex; align-items: center; gap: 10px; }
-    .toast i.ph-check-circle { color: #81b8ae; font-size: 18px; }
-    .toast a, .toast button { color: #dcb05e; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
-    @media (max-width: 639px) { .toast { bottom: 88px; width: calc(100vw - 24px); justify-content: space-between; } }
+    .toast .toast-ico { font-size: 20px; line-height: 0; flex-shrink: 0; }
+    .toast .toast-body { display: flex; align-items: center; gap: 12px; min-width: 0; padding-left: 16px; border-left: 1px solid rgba(255,255,255,0.4); }
+    .toast #toast-text { font-size: 14px; line-height: 1.5; }
+    .toast #toast-action { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; font-size: 14px; }
+    @media (max-width: 639px) {
+      .toast { top: 16px; left: 16px; right: 16px; max-width: none; transform: translateY(-16px); }
+      .toast.show { transform: translateY(0); }
+    }
 
-    /* Sticky mobile action bar */
+    /* Sticky mobile action bar — full-width bottom sheet-style */
     .sticky-actions {
-      position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 50;
-      background: #fff; border: 1px solid #ebe9e9; border-radius: 9999px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.14); padding: 8px;
-      display: flex; align-items: center; gap: 8px;
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+      background: #fff; border-radius: 20px 20px 0 0;
+      box-shadow: 0 -8px 16px -3px rgba(0,0,0,0.2), 0 -4px 8px rgba(0,0,0,0.1);
+      padding: 16px 16px 24px;
+      display: flex; align-items: center; gap: 16px;
       transform: translateY(140%); transition: transform .28s ease;
     }
     .sticky-actions.show { transform: none; }
@@ -93,18 +100,22 @@
     /* Card shadow */
     .card-elev { box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 8px 24px -12px rgba(0,0,0,0.12); }
 
+    /* Horizontal carousel scrollbar hidden */
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+
     /* Mobile menu */
     .mobile-menu { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
     .mobile-menu > div { overflow: hidden; }
     [data-menu-open="true"] .mobile-menu { grid-template-rows: 1fr; }
 
     /* Demo switcher */
-    .demo-switcher { position: fixed; bottom: 16px; right: 16px; z-index: 60; background: rgba(21,27,36,0.92); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 8px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.35); max-width: 230px; }
-    .demo-switcher-label { color: rgba(255,255,255,0.45); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px 4px; }
-    .demo-switcher button { padding: 8px 10px; border-radius: 9px; border: 0; background: transparent; color: rgba(255,255,255,0.72); font-size: 12.5px; font-weight: 500; text-align: left; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 8px; }
+    /* Demo scenario bar — sits under the footer, not floating over content */
+    .demo-switcher { background: #0f141b; border-top: 1px solid rgba(255,255,255,0.08); padding: 12px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
+    .demo-switcher-label { color: rgba(255,255,255,0.45); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 4px; }
+    .demo-switcher button { padding: 6px 12px; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.14); background: transparent; color: rgba(255,255,255,0.72); font-size: 12.5px; font-weight: 500; cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 6px; }
     .demo-switcher button:hover { background: rgba(255,255,255,0.08); color: #fff; }
-    .demo-switcher button.active { background: #dcb05e; color: #262116; font-weight: 600; }
-    @media (max-width: 639px) { .demo-switcher { bottom: 76px; right: 12px; } }
+    .demo-switcher button.active { background: #dcb05e; color: #262116; font-weight: 600; border-color: #dcb05e; }
     @media print { .demo-switcher, .sticky-actions { display: none; } }
   </style>
 </head>
@@ -242,14 +253,14 @@
       <section class="bg-white border border-wb-200 rounded-2xl card-elev p-5 md:p-7">
         <div class="flex items-center justify-between mb-4">
           <h2 class="font-serif-heading text-2xl text-navy-700">2 Memorial Events</h2>
-          <div class="flex gap-2">
-            <button aria-label="Previous event" class="w-10 h-10 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-700 flex items-center justify-center"><i class="ph ph-caret-left"></i></button>
-            <button aria-label="Next event" class="w-10 h-10 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-700 flex items-center justify-center"><i class="ph ph-caret-right"></i></button>
+          <div class="flex gap-2 sm:hidden">
+            <button id="ev-prev" aria-label="Previous event" class="w-10 h-10 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-700 flex items-center justify-center"><i class="ph ph-caret-left"></i></button>
+            <button id="ev-next" aria-label="Next event" class="w-10 h-10 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-700 flex items-center justify-center"><i class="ph ph-caret-right"></i></button>
           </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div id="events-track" class="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 px-1 sm:mx-0 sm:px-0 sm:overflow-visible" role="group" aria-roledescription="carousel" aria-label="Memorial events">
           <!-- event card -->
-          <div class="border border-wb-200 rounded-xl p-4 flex flex-col">
+          <div class="event-card snap-start shrink-0 basis-[88%] sm:basis-[calc(50%-0.5rem)] border border-wb-200 rounded-xl p-4 flex flex-col">
             <div class="flex items-start justify-between gap-3">
               <h3 class="text-lg font-semibold text-wb-900">Graveside Service</h3>
               <span class="flex-shrink-0 w-12 rounded-md overflow-hidden border border-wb-200 text-center">
@@ -266,7 +277,7 @@
             </div>
           </div>
           <!-- event card -->
-          <div class="border border-wb-200 rounded-xl p-4 flex flex-col">
+          <div class="event-card snap-start shrink-0 basis-[88%] sm:basis-[calc(50%-0.5rem)] border border-wb-200 rounded-xl p-4 flex flex-col">
             <div class="flex items-start justify-between gap-3">
               <h3 class="text-lg font-semibold text-wb-900">Wake</h3>
               <span class="flex-shrink-0 w-12 rounded-md overflow-hidden border border-wb-200 text-center">
@@ -284,6 +295,7 @@
             </div>
           </div>
         </div>
+        <div id="events-dots" class="flex justify-center gap-2 mt-4 sm:hidden" aria-hidden="true"></div>
       </section>
 
       <!-- Ralph's Obituaries -->
@@ -322,7 +334,7 @@
           <h2 class="text-xl font-semibold text-navy-700 leading-tight">Stay Close to Ralph's Story</h2>
           <p class="text-lg font-normal text-wb-700 leading-tight">Get an email whenever someone leaves a new memory in the guest book.</p>
         </div>
-        <button class="js-updates relative z-10 inline-flex items-center gap-2.5 h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold"><i class="ph ph-bell text-xl"></i> Get Updates</button>
+        <button id="updates-btn" class="relative z-10 inline-flex items-center gap-2.5 h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold"><i class="ph ph-bell text-xl"></i> Get Updates</button>
       </section>
 
       <!-- Remembrance Pages -->
@@ -522,9 +534,8 @@
      STICKY MOBILE ACTION BAR
      ==================================================================== -->
 <div class="sticky-actions" id="sticky-actions">
-  <button class="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-full bg-gold-500 text-wb-900 text-[15px] font-semibold"><i class="ph ph-flower-tulip"></i> Send Flowers</button>
-  <button id="sticky-add" aria-label="Add to My People" class="w-11 h-11 rounded-full border border-wb-300 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-plus-circle text-xl"></i></button>
-  <button class="js-share w-11 h-11 rounded-full border border-wb-300 text-wb-700 flex items-center justify-center flex-shrink-0" aria-label="Share"><i class="ph ph-share-network text-xl"></i></button>
+  <button class="flex-1 inline-flex items-center justify-center gap-2.5 px-5 py-3 rounded-full bg-gold-400 hover:bg-gold-500 text-wb-900 text-base font-semibold"><i class="ph ph-flower-tulip text-2xl"></i> Send Flowers</button>
+  <button class="js-share inline-flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 flex-shrink-0" aria-label="Share"><i class="ph ph-share-fat text-2xl"></i></button>
 </div>
 
 <!-- ====================================================================
@@ -608,8 +619,11 @@
      TOAST
      ==================================================================== -->
 <div id="toast" class="toast" role="status" aria-live="polite">
-  <span class="lead"><i class="ph-fill ph-check-circle"></i> <span id="toast-text">Done</span></span>
-  <a id="toast-action" href="my-people.html" class="hidden">View</a>
+  <i id="toast-ico" class="ph ph-bookmark-simple toast-ico" aria-hidden="true"></i>
+  <div class="toast-body">
+    <span id="toast-text">Done</span>
+    <a id="toast-action" href="my-people.html" class="hidden">View</a>
+  </div>
 </div>
 
 <!-- Demo scenario switcher -->
@@ -676,13 +690,15 @@
   // ===== Toast =====
   const toastEl = $('#toast'), toastText = $('#toast-text'), toastAction = $('#toast-action');
   let toastTimer = null;
-  function toast(msg, href, label){
+  const toastIco = $('#toast-ico');
+  function toast(msg, href, label, icon){
     clearTimeout(toastTimer);
     toastText.textContent = msg;
+    if (toastIco) toastIco.className = (icon || 'ph ph-bookmark-simple') + ' toast-ico';
     if (href) { toastAction.classList.remove('hidden'); toastAction.href = href; toastAction.textContent = label || 'View'; }
     else { toastAction.classList.add('hidden'); }
     toastEl.classList.add('show');
-    toastTimer = setTimeout(() => toastEl.classList.remove('show'), href ? 5000 : 2600);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), (href || msg.length > 40) ? 5000 : 2600);
   }
 
   // ===== Overlays =====
@@ -690,12 +706,31 @@
   const overlays = { auth: $('#auth-overlay'), updates: $('#updates-overlay'), share: $('#share-overlay') };
   function openOverlay(o){ lastFocus = document.activeElement; o.classList.add('open'); document.body.style.overflow='hidden'; const f=o.querySelector('button,[href],input'); if(f) f.focus(); }
   function closeAll(){ Object.values(overlays).forEach(o=>o.classList.remove('open')); document.body.style.overflow=''; if(lastFocus&&document.contains(lastFocus)) lastFocus.focus(); }
-  $$('.js-updates').forEach(b => b.addEventListener('click', () => openOverlay(overlays.updates)));
   $$('.js-share').forEach(b => b.addEventListener('click', () => openOverlay(overlays.share)));
   $$('[data-close]').forEach(b => b.addEventListener('click', closeAll));
   Object.values(overlays).forEach(o => o.addEventListener('mousedown', e => { if(e.target===o) closeAll(); }));
   document.addEventListener('keydown', e => { if(e.key==='Escape') closeAll(); });
-  $('#upd-form').addEventListener('submit', e => { e.preventDefault(); closeAll(); toast('You’re now following ' + PERSON.first + '’s page'); });
+
+  // ===== Get Updates / Following (per person, persisted) =====
+  const updatesBtn = $('#updates-btn');
+  function readFollowing(){ const o = readStore(); return Array.isArray(o.following) ? o.following : []; }
+  function setFollowing(id, on){ const f = readFollowing(); const i = f.indexOf(id); if (on && i < 0) f.push(id); if (!on && i >= 0) f.splice(i, 1); const o = readStore(); o.following = f; writeStore(o); }
+  function isFollowing(id){ return readFollowing().indexOf(id) >= 0; }
+  function paintFollowing(){
+    const on = isFollowing(PID);
+    updatesBtn.innerHTML = on
+      ? '<i class="ph-fill ph-bell text-xl"></i> Following'
+      : '<i class="ph ph-bell text-xl"></i> Get Updates';
+    updatesBtn.setAttribute('aria-pressed', String(on));
+  }
+  function followToast(){ toast('Followed successfully, you will now receive emails and notifications about this page.', null, null, 'ph ph-check'); }
+  updatesBtn.addEventListener('click', () => {
+    if (isFollowing(PID)) { setFollowing(PID, false); paintFollowing(); toast('You’re no longer following this page and won’t receive updates.', null, null, 'ph ph-bell-slash'); return; }
+    if (isSignedIn()) { setFollowing(PID, true); paintFollowing(); followToast(); return; }  // signed in → follow directly
+    openOverlay(overlays.updates);                                                            // signed out → email capture
+  });
+  // Signed-out email capture → confirm follow with the same state + toast.
+  $('#upd-form').addEventListener('submit', e => { e.preventDefault(); setFollowing(PID, true); paintFollowing(); closeAll(); followToast(); });
   $('#copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText('https://www.legacy.com/obituaries/' + PID); } catch(_){} closeAll(); toast('Link copied to clipboard'); });
   $$('.share-channel').forEach(b => b.addEventListener('click', () => { closeAll(); toast('Opening ' + b.dataset.channel + '…'); }));
 
@@ -710,7 +745,8 @@
     toast(PERSON.first + ' added to My People', 'my-people.html', 'View');
   }
   $('#auth-continue').addEventListener('click', authSuccess);
-  acctSignin.addEventListener('click', openAuth);
+  // Header "Sign In" takes the visitor to My People (simulates signing in).
+  acctSignin.addEventListener('click', () => { window.location.href = 'my-people.html'; });
 
   // ===== Add to My People =====
   function toggleAdd(){
@@ -727,7 +763,7 @@
   }
   addBtn.addEventListener('click', handleAdd);
   if (stickyAdd) stickyAdd.addEventListener('click', handleAdd);
-  acctMobile.addEventListener('click', () => { if (isSignedIn()) window.location.href = 'my-people.html'; else openAuth(); });
+  acctMobile.addEventListener('click', () => { window.location.href = 'my-people.html'; });
 
   // ===== Mobile menu =====
   const header = $('#site-header'), menuToggle = $('#menu-toggle');
@@ -797,12 +833,60 @@
   // ===== Init =====
   // Seed the shared saved list so already-saved people read as saved when signed in.
   if (!readSaved()) writeSaved((window.LEGACY_DEFAULT_SAVED || []).slice());
-  // If this person is already in My People, they're a saved contact of a
-  // signed-in user — show the added ("My People") state, which links back to
-  // the dashboard when tapped.
-  if (isSaved(PID)) scenario = 'signed-in';
+  // Signed-in context when the person is already saved, or when arriving from
+  // the account/dashboard "Add More People" flow (from=account) — so the visitor
+  // can add directly rather than hitting the sign-in gate.
+  const fromAccount = new URLSearchParams(location.search).get('from') === 'account';
+  const forceSignedOut = new URLSearchParams(location.search).get('so') === '1';  // arriving via Sign Out
+  if (!forceSignedOut && (isSaved(PID) || fromAccount)) scenario = 'signed-in';
   populatePerson();
   paintScenario();
+  paintFollowing();
+
+  // ---- Memorial events carousel (mobile) -------------------------------
+  (function initEventsCarousel(){
+    const track = document.getElementById('events-track');
+    if (!track) return;
+    const cards = Array.from(track.querySelectorAll('.event-card'));
+    const dotsWrap = document.getElementById('events-dots');
+    const prev = document.getElementById('ev-prev');
+    const next = document.getElementById('ev-next');
+    if (cards.length < 2) { if (prev) prev.closest('div').classList.add('hidden'); if (dotsWrap) dotsWrap.classList.add('hidden'); return; }
+
+    // Build a dot per card.
+    cards.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.type = 'button';
+      d.setAttribute('aria-label', 'Go to event ' + (i + 1));
+      d.className = 'h-2 w-2 rounded-full bg-wb-300 transition-colors';
+      d.addEventListener('click', () => scrollToCard(i));
+      dotsWrap.appendChild(d);
+    });
+    const dots = Array.from(dotsWrap.children);
+
+    function current(){
+      let best = 0, bestDist = Infinity;
+      const base = track.scrollLeft;
+      cards.forEach((c, i) => {
+        const dist = Math.abs(c.offsetLeft - track.offsetLeft - base);
+        if (dist < bestDist) { bestDist = dist; best = i; }
+      });
+      return best;
+    }
+    function paintDots(){
+      const idx = current();
+      dots.forEach((d, i) => { d.classList.toggle('bg-navy-700', i === idx); d.classList.toggle('bg-wb-300', i !== idx); });
+    }
+    function scrollToCard(i){
+      const c = cards[Math.max(0, Math.min(cards.length - 1, i))];
+      track.scrollTo({ left: c.offsetLeft - track.offsetLeft, behavior: 'smooth' });
+    }
+    if (prev) prev.addEventListener('click', () => scrollToCard(current() - 1));
+    if (next) next.addEventListener('click', () => scrollToCard(current() + 1));
+    let raf;
+    track.addEventListener('scroll', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(paintDots); });
+    paintDots();
+  })();
 })();
 </script>
 </body>

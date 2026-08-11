@@ -52,12 +52,16 @@
     }
 
     /* Toast */
-    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(8px); background: #262116; color: #fff; padding: 12px 16px 12px 20px; border-radius: 9999px; font-size: 14px; font-weight: 500; z-index: 90; opacity: 0; pointer-events: none; transition: all .25s ease; display: flex; align-items: center; gap: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.2); }
+    .toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-16px); z-index: 90; opacity: 0; pointer-events: none; display: flex; align-items: center; gap: 10px; background: #357d75; color: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 1px 2px -1px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.1); max-width: calc(100vw - 32px); transition: transform .28s ease, opacity .28s ease; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
-    .toast .lead { display: flex; align-items: center; gap: 10px; }
-    .toast i.ph-check-circle { color: #81b8ae; font-size: 18px; }
-    .toast button { color: #dcb05e; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
-    @media (max-width: 639px) { .toast { bottom: 16px; width: calc(100vw - 24px); justify-content: space-between; } }
+    .toast .toast-ico { font-size: 20px; line-height: 0; flex-shrink: 0; }
+    .toast .toast-body { display: flex; align-items: center; gap: 12px; min-width: 0; padding-left: 16px; border-left: 1px solid rgba(255,255,255,0.4); }
+    .toast #toast-text { font-size: 14px; line-height: 1.5; }
+    .toast #toast-action { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; font-size: 14px; }
+    @media (max-width: 639px) {
+      .toast { top: 16px; left: 16px; right: 16px; max-width: none; transform: translateY(-16px); }
+      .toast.show { transform: translateY(0); }
+    }
 
     /* Mobile account accordion */
     .acct-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
@@ -72,11 +76,12 @@
     .more-btn:hover { background: #f6f6f6; }
 
     /* Demo scenario switcher */
-    .demo-switcher { position: fixed; bottom: 16px; right: 16px; z-index: 40; background: rgba(21,27,36,0.92); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 8px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.35); max-width: 220px; }
-    .demo-switcher-label { color: rgba(255,255,255,0.45); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px 4px; }
-    .demo-switcher button { padding: 8px 10px; border-radius: 9px; border: 0; background: transparent; color: rgba(255,255,255,0.72); font-size: 12.5px; font-weight: 500; text-align: left; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 8px; }
+    /* Demo scenario bar — sits under the footer, not floating over content */
+    .demo-switcher { background: #0f141b; border-top: 1px solid rgba(255,255,255,0.08); padding: 12px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
+    .demo-switcher-label { color: rgba(255,255,255,0.45); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 4px; }
+    .demo-switcher button { padding: 6px 12px; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.14); background: transparent; color: rgba(255,255,255,0.72); font-size: 12.5px; font-weight: 500; cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 6px; }
     .demo-switcher button:hover { background: rgba(255,255,255,0.08); color: #fff; }
-    .demo-switcher button.active { background: #dcb05e; color: #262116; font-weight: 600; }
+    .demo-switcher button.active { background: #dcb05e; color: #262116; font-weight: 600; border-color: #dcb05e; }
     @media print { .demo-switcher { display: none; } }
   </style>
 </head>
@@ -119,8 +124,8 @@
 <!-- ====================================================================
      MAIN
      ==================================================================== -->
-<main class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-6 md:py-10">
-  <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8 lg:gap-12">
+<main class="max-w-[1440px] mx-auto px-3 md:px-8 lg:px-12 pt-6 md:pt-10 pb-16">
+  <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-4 lg:gap-12">
 
     <!-- =================== LEFT: My Account =================== -->
     <aside class="hidden lg:block">
@@ -130,17 +135,17 @@
         <div class="border-t border-wb-200 my-5"></div>
         <ul class="space-y-3 text-[15px]">
           <li><a href="#" aria-current="page" class="font-bold text-wb-900">My People</a></li>
-          <li><a href="#" class="text-wb-700 hover:text-navy-700">Notifications</a></li>
+          <li><a href="#" class="text-wb-700 hover:text-navy-700">Notification Preferences</a></li>
           <li><a href="#" class="text-wb-700 hover:text-navy-700">Account Settings</a></li>
         </ul>
         <div class="border-t border-wb-200 my-5"></div>
-        <a href="#" class="inline-block text-sm font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2">Sign out</a>
+        <a href="index.html?id=ralph&so=1" class="inline-block text-sm font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2">Sign out</a>
       </nav>
     </aside>
 
     <!-- Mobile accordion -->
-    <div class="lg:hidden" data-acct-open="false" id="acct-accordion">
-      <button class="w-full bg-white border border-wb-200 rounded-xl p-5 flex items-start justify-between gap-3 text-left shadow-sm" aria-expanded="false" aria-controls="acct-links" id="acct-toggle">
+    <div class="lg:hidden bg-white border border-wb-200 rounded-xl shadow-sm overflow-hidden" data-acct-open="false" id="acct-accordion">
+      <button class="w-full p-5 flex items-start justify-between gap-3 text-left" aria-expanded="false" aria-controls="acct-links" id="acct-toggle">
         <span class="min-w-0">
           <span class="block font-serif-heading text-2xl text-wb-900 leading-none">My Account</span>
           <span class="block text-sm text-gold-800 mt-2 break-words">Welcome back, John</span>
@@ -149,11 +154,11 @@
       </button>
       <div class="acct-panel" id="acct-links">
         <div>
-          <ul class="px-5 pt-4 pb-1 space-y-3 text-[15px]">
+          <ul class="px-5 pt-1 pb-5 space-y-3 text-[15px]">
             <li><a href="#" aria-current="page" class="font-bold text-wb-900">My People</a></li>
-            <li><a href="#" class="text-wb-700">Notifications</a></li>
+            <li><a href="#" class="text-wb-700">Notification Preferences</a></li>
             <li><a href="#" class="text-wb-700">Account Settings</a></li>
-            <li><a href="#" class="text-navy-500 font-semibold underline underline-offset-2">Sign out</a></li>
+            <li><a href="index.html?id=ralph&so=1" class="text-navy-500 font-semibold underline underline-offset-2">Sign out</a></li>
           </ul>
         </div>
       </div>
@@ -161,12 +166,12 @@
 
     <!-- =================== RIGHT: My People =================== -->
     <div class="max-w-[840px]">
-      <header class="mb-5 md:mb-7 mt-6 lg:mt-0">
+      <header class="mb-5 md:mb-7 mt-3 lg:mt-0">
         <div class="flex items-center gap-3">
-          <h1 class="font-serif-heading text-4xl md:text-5xl text-wb-900 leading-tight">My People</h1>
+          <h1 class="font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight">My People</h1>
           <span id="count-pill" class="translate-y-1 inline-flex items-center rounded-full bg-gold-100 text-gold-900 text-sm font-semibold px-3 py-1">3 added</span>
         </div>
-        <p id="page-subtitle" class="text-base md:text-lg text-wb-700 mt-2 leading-relaxed">Pages for people you have saved. Tap <span class="font-semibold tracking-widest">•••</span> to manage updates or remove a page.</p>
+        <p id="page-subtitle" class="text-base md:text-lg text-wb-700 mt-2 leading-relaxed">Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.</p>
       </header>
 
       <div id="grid-root"></div>
@@ -312,8 +317,8 @@
      CONFIRM REMOVE MODAL
      ==================================================================== -->
 <div class="sheet-overlay" id="remove-overlay" role="alertdialog" aria-modal="true" aria-labelledby="rm-title" aria-describedby="rm-body">
-  <div class="sheet-card p-6 md:p-8">
-    <h2 id="rm-title" class="font-serif-heading text-2xl text-wb-900 leading-tight pr-2">Are you sure you want to remove this person?</h2>
+  <div class="sheet-card p-6 md:p-8 !pb-[72px] md:!pb-8">
+    <h2 id="rm-title" class="text-xl font-bold text-navy-700 leading-tight pr-2">Are you sure you want to remove this person?</h2>
     <p id="rm-body" class="text-base text-wb-700 mt-3 leading-relaxed">You can always save them again if you change your mind.</p>
     <div class="flex flex-row gap-3 mt-6">
       <button id="rm-confirm" class="flex-1 h-12 rounded-full bg-coral-700 hover:bg-coral-800 text-white text-base font-semibold">Remove</button>
@@ -326,8 +331,11 @@
      TOAST
      ==================================================================== -->
 <div id="toast" class="toast" role="status" aria-live="polite">
-  <span class="lead"><i class="ph-fill ph-check-circle"></i> <span id="toast-text">Done</span></span>
-  <button id="toast-action" type="button" class="hidden">Undo</button>
+  <i class="ph ph-bookmark-simple toast-ico" aria-hidden="true"></i>
+  <div class="toast-body">
+    <span id="toast-text">Done</span>
+    <button id="toast-action" type="button" class="hidden">Undo</button>
+  </div>
 </div>
 
 <script src="people.js"></script>
@@ -427,12 +435,12 @@
     const badge = p.relation
       ? '<span class="inline-block mt-1 rounded-full bg-gold-100 text-gold-900 text-sm px-3 py-0.5">'+esc(p.relation)+'</span>'
       : '';
-    return '<article class="person-card relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer transition-shadow hover:shadow-md" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
+    return '<article class="person-card relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer transition-shadow hover:shadow-2xl" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
       panel +
       '<div class="flex-1 min-h-[100px] flex flex-col items-center justify-center text-center gap-1 px-2 pb-3">' +
         '<a href="index.html?id='+esc(p.id)+'" class="text-base font-semibold text-wb-900 leading-tight">'+esc(p.name)+'</a>' + badge +
       '</div>' +
-      '<button class="more-btn absolute top-[7px] right-[7px]" aria-label="More options for '+esc(p.name)+'"><i class="ph-bold ph-dots-three" aria-hidden="true"></i></button>' +
+      '<button class="more-btn absolute top-[7px] right-[7px]" aria-label="More options for '+esc(p.name)+'"><i class="ph-bold ph-list" aria-hidden="true"></i></button>' +
     '</article>';
   }
 
@@ -453,9 +461,9 @@
     countPill.classList.toggle('hidden', n === 0);
     subtitle.innerHTML = n === 0
       ? 'You haven’t added anyone yet.'
-      : 'Pages for people you have saved. Tap <span class="font-semibold tracking-widest">•••</span> to manage updates or remove a page.';
+      : 'Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.';
     root.innerHTML =
-      '<div class="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">' +
+      '<div class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">' +
         people.map(personCardHTML).join('') +
         addCardHTML(n === 0) +
       '</div>';
@@ -469,13 +477,12 @@
     render();
   }
 
-  function addFromPool(){
-    const next = POOL_IDS.find(id => !savedIds.includes(id)) || ('new' + savedIds.length);
-    if (!savedIds.includes(next)) savedIds.push(next);
-    writeSaved(savedIds);
-    buildPeople();
-    render();
-    toast('Added to My People');
+  // "Add More People" takes the user to an (unsaved) person's page so they can
+  // add from there — a more complete experience than a silent add. Carries
+  // from=account so the person page opens signed-in.
+  function goAddMore(){
+    const next = POOL_IDS.find(id => !savedIds.includes(id)) || POOL_IDS[0];
+    window.location.href = 'index.html?id=' + next + '&from=account';
   }
 
   // ===== modal plumbing =====
@@ -497,7 +504,7 @@
   // ===== delegated clicks =====
   root.addEventListener('click', (e) => {
     const add = e.target.closest('#add-more');
-    if (add) { addFromPool(); return; }
+    if (add) { goAddMore(); return; }
     const more = e.target.closest('.more-btn');
     if (more) { e.preventDefault(); populateOptions(more.closest('.person-card')); openOverlay(overlays.options); return; }
     // Tapping anywhere else on a card opens that person's page.
