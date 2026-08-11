@@ -167,7 +167,7 @@
           <h1 class="font-serif-heading text-4xl md:text-5xl text-wb-900 leading-tight">My People</h1>
           <span id="count-pill" class="translate-y-1 inline-flex items-center rounded-full bg-gold-100 text-gold-900 text-sm font-semibold px-3 py-1">3 added</span>
         </div>
-        <p id="page-subtitle" class="text-base md:text-lg text-wb-700 mt-2 leading-relaxed">Pages for people you have saved. Tap <span class="font-semibold tracking-widest">•••</span> to manage updates or remove a page.</p>
+        <p id="page-subtitle" class="text-base md:text-lg text-wb-700 mt-2 leading-relaxed">Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.</p>
       </header>
 
       <div id="grid-root"></div>
@@ -436,7 +436,7 @@
       '<div class="flex-1 min-h-[100px] flex flex-col items-center justify-center text-center gap-1 px-2 pb-3">' +
         '<a href="index.html?id='+esc(p.id)+'" class="text-base font-semibold text-wb-900 leading-tight">'+esc(p.name)+'</a>' + badge +
       '</div>' +
-      '<button class="more-btn absolute top-[7px] right-[7px]" aria-label="More options for '+esc(p.name)+'"><i class="ph-bold ph-dots-three" aria-hidden="true"></i></button>' +
+      '<button class="more-btn absolute top-[7px] right-[7px]" aria-label="More options for '+esc(p.name)+'"><i class="ph-bold ph-list" aria-hidden="true"></i></button>' +
     '</article>';
   }
 
@@ -457,7 +457,7 @@
     countPill.classList.toggle('hidden', n === 0);
     subtitle.innerHTML = n === 0
       ? 'You haven’t added anyone yet.'
-      : 'Pages for people you have saved. Tap <span class="font-semibold tracking-widest">•••</span> to manage updates or remove a page.';
+      : 'Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.';
     root.innerHTML =
       '<div class="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">' +
         people.map(personCardHTML).join('') +
