@@ -192,51 +192,79 @@
      MORE OPTIONS SHEET
      ==================================================================== -->
 <div class="sheet-overlay" id="options-overlay" role="dialog" aria-modal="true" aria-labelledby="opt-title">
-  <div class="sheet-card pt-6 pb-8">
-    <!-- Header: avatar + name -->
-    <div class="flex items-center gap-2 pb-4 pl-6 pr-12 border-b border-wb-300">
-      <span id="opt-avatar" class="w-14 h-14 rounded-full border border-wb-300 flex-shrink-0 flex items-center justify-center font-serif-heading text-2xl text-white bg-navy-400 overflow-hidden bg-center bg-cover"></span>
-      <h2 id="opt-title" class="flex-1 min-w-0 font-serif-heading text-xl text-navy-700 leading-tight truncate">Person name</h2>
-      <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
-    </div>
+  <div class="sheet-card overflow-hidden">
+    <div class="wiz-viewport" id="opt-viewport">
 
-    <div class="px-6">
-      <!-- Go to their Page -->
-      <a id="opt-view" href="future-index.html" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50">
-        <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-user text-xl"></i></span>
-        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Go to their Page</span><span class="block text-xs text-wb-700 mt-1">You will be taken to their page</span></span>
-        <i class="ph ph-arrow-right text-2xl text-navy-700 flex-shrink-0"></i>
-      </a>
+      <!-- Pane: menu -->
+      <div class="wiz-pane" data-pane="menu" data-state="active">
+        <div class="pt-6 pb-8">
+          <!-- Header: avatar + name -->
+          <div class="flex items-center gap-2 pb-4 pl-6 pr-12 border-b border-wb-300">
+            <span id="opt-avatar" class="w-14 h-14 rounded-full border border-wb-300 flex-shrink-0 flex items-center justify-center font-serif-heading text-2xl text-white bg-navy-400 overflow-hidden bg-center bg-cover"></span>
+            <h2 id="opt-title" class="flex-1 min-w-0 font-serif-heading text-xl text-navy-700 leading-tight truncate">Person name</h2>
+            <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
+          </div>
 
-      <!-- Add your relationship (Section 4 entry point) -->
-      <button data-action="relationship" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
-        <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-tree-structure text-xl"></i></span>
-        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Add your relationship</span><span class="block text-xs text-wb-700 mt-1">Connect and organize your family tree</span></span>
-        <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
-      </button>
+          <div class="px-6">
+            <!-- Go to their Page -->
+            <a id="opt-view" href="future-index.html" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50">
+              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-user text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Go to their Page</span><span class="block text-xs text-wb-700 mt-1">You will be taken to their page</span></span>
+              <i class="ph ph-arrow-right text-2xl text-navy-700 flex-shrink-0"></i>
+            </a>
 
-      <!-- Email updates (subscribe toggle — decoupled from saving) -->
-      <div class="w-full flex items-center gap-2 py-6 border-b border-wb-300">
-        <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-bell text-xl"></i></span>
-        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Email updates</span><span id="opt-updates-sub" class="block text-xs text-wb-700 mt-1">On • Receive updates for this page</span></span>
-        <button id="opt-updates" role="switch" aria-checked="true" aria-label="Toggle email updates" class="relative w-14 h-7 rounded-full transition-colors flex-shrink-0 bg-seafoam-700">
-          <span id="opt-updates-knob" class="absolute top-[3px] left-[3px] w-[22px] h-[22px] rounded-full bg-white shadow transition-transform translate-x-7"></span>
-        </button>
+            <!-- Add your relationship (Section 4 entry point) -->
+            <button data-action="relationship" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
+              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-tree-structure text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Add your relationship</span><span class="block text-xs text-wb-700 mt-1">Connect and organize your family tree</span></span>
+              <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
+            </button>
+
+            <!-- Email updates (subscribe toggle — decoupled from saving) -->
+            <div class="w-full flex items-center gap-2 py-6 border-b border-wb-300">
+              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-bell text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Email updates</span><span id="opt-updates-sub" class="block text-xs text-wb-700 mt-1">On • Receive updates for this page</span></span>
+              <button id="opt-updates" role="switch" aria-checked="true" aria-label="Toggle email updates" class="relative w-14 h-7 rounded-full transition-colors flex-shrink-0 bg-seafoam-700">
+                <span id="opt-updates-knob" class="absolute top-[3px] left-[3px] w-[22px] h-[22px] rounded-full bg-white shadow transition-transform translate-x-7"></span>
+              </button>
+            </div>
+
+            <!-- Share with others -->
+            <button data-action="share" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
+              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-share-fat text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Share with others</span><span class="block text-xs text-wb-700 mt-1">Invite others to visit this page</span></span>
+              <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
+            </button>
+
+            <!-- Remove -->
+            <button data-action="remove" class="w-full flex items-center gap-2 py-6 hover:bg-coral-50 text-left">
+              <span class="w-8 h-8 rounded-full bg-coral-100 text-coral-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-minus text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-coral-700 leading-tight">Remove from My People</span><span class="block text-xs text-wb-700 mt-1">This page will be removed from your list</span></span>
+              <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
+            </button>
+          </div>
+        </div>
       </div>
 
-      <!-- Share with others -->
-      <button data-action="share" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
-        <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-share-fat text-xl"></i></span>
-        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Share with others</span><span class="block text-xs text-wb-700 mt-1">Invite others to visit this page</span></span>
-        <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
-      </button>
+      <!-- Pane: relationship selector -->
+      <div class="wiz-pane" data-pane="relationship" data-state="next">
+        <div class="pt-16 pb-8 px-6">
+          <button data-back-rel class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back to options"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <h2 id="rel-title" class="text-xl font-bold text-navy-700 leading-tight">How are you related to <span id="rel-name">this person</span>?</h2>
+              <p class="text-base text-wb-700 leading-normal">Adding your relationship helps build your connections and family tree.</p>
+            </div>
+            <div class="flex flex-col gap-4 pt-4">
+              <button class="rel-option w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Family">Family <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Friend/Acquaintance">Friend/Acquaintance <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="School">School <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Work">Work <i class="ph ph-caret-right text-2xl"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <!-- Remove -->
-      <button data-action="remove" class="w-full flex items-center gap-2 py-6 hover:bg-coral-50 text-left">
-        <span class="w-8 h-8 rounded-full bg-coral-100 text-coral-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-minus text-xl"></i></span>
-        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-coral-700 leading-tight">Remove from My People</span><span class="block text-xs text-wb-700 mt-1">This page will be removed from your list</span></span>
-        <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
-      </button>
     </div>
   </div>
 </div>
@@ -446,6 +474,22 @@
   // ===== modal plumbing =====
   let activeId = null, activeName = null, lastFocus = null;
   const overlays = { options:$('#options-overlay'), share:$('#share-overlay'), remove:$('#remove-overlay') };
+
+  // Wizard inside the options sheet: panes slide horizontally, the container
+  // stays put, and the viewport height animates to the active pane.
+  function wizStep(step, instant){
+    const vp = $('#opt-viewport');
+    const menu = vp.querySelector('[data-pane="menu"]');
+    const rel = vp.querySelector('[data-pane="relationship"]');
+    const active = step === 'relationship' ? rel : menu;
+    if (step === 'relationship') { menu.dataset.state = 'prev'; rel.dataset.state = 'active'; }
+    else { rel.dataset.state = 'next'; menu.dataset.state = 'active'; }
+    menu.setAttribute('aria-hidden', String(step === 'relationship'));
+    rel.setAttribute('aria-hidden', String(step !== 'relationship'));
+    const applyHeight = () => { vp.style.height = active.offsetHeight + 'px'; };
+    if (instant) { const t = vp.style.transition; vp.style.transition = 'none'; applyHeight(); void vp.offsetHeight; vp.style.transition = t; }
+    else applyHeight();
+  }
   function openOverlay(o){ lastFocus = document.activeElement; o.classList.add('open'); document.body.style.overflow='hidden'; const f=o.querySelector('button,[href],input'); if(f) f.focus(); }
   function closeAll(){ Object.values(overlays).forEach(o=>o.classList.remove('open')); document.body.style.overflow=''; if(lastFocus&&document.contains(lastFocus)) lastFocus.focus(); }
 
@@ -482,7 +526,7 @@
     const add = e.target.closest('#add-more');
     if (add) { goAddMore(); return; }
     const more = e.target.closest('.more-btn');
-    if (more) { e.preventDefault(); populateOptions(more.closest('.person-card')); openOverlay(overlays.options); return; }
+    if (more) { e.preventDefault(); populateOptions(more.closest('.person-card')); openOverlay(overlays.options); wizStep('menu', true); return; }
     // Tapping anywhere else on a card opens that person's page.
     const card = e.target.closest('.person-card');
     if (card) { window.location.href = 'future-index.html?id=' + card.dataset.id; }
@@ -495,8 +539,12 @@
     if (action.dataset.action === 'remove') openRemove();
   });
 
-  // Section 4 entry point — relationship selector is built in the next step.
-  function openRelationship(){ closeAll(); toast('Relationship selector — coming next for ' + activeName); }
+  // Section 4 — slide the content across to the relationship selector.
+  function openRelationship(){ $('#rel-name').textContent = activeName; wizStep('relationship'); }
+  // Back arrow slides the content back to the menu.
+  $('[data-back-rel]').addEventListener('click', () => wizStep('menu'));
+  // Category taps — sub-options / confirmation come in the next step.
+  $$('.rel-option').forEach(b => b.addEventListener('click', () => { toast(b.dataset.rel + ' selected — next step'); }));
 
   function openShare(){ overlays.options.classList.remove('open'); $('#share-sub').textContent = 'Invite others to visit ' + activeName + '’s page'; openOverlay(overlays.share); }
   $('#copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('#share-link').value); } catch(_){} closeAll(); toast('Link copied to clipboard'); });
