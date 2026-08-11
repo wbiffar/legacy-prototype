@@ -256,10 +256,10 @@
               <p class="text-base text-wb-700 leading-normal">Adding your relationship helps build your connections and family tree.</p>
             </div>
             <div class="flex flex-col gap-4 pt-4">
-              <button class="rel-option w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Family">Family <i class="ph ph-caret-right text-2xl"></i></button>
-              <button class="rel-option w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Friend/Acquaintance">Friend/Acquaintance <i class="ph ph-caret-right text-2xl"></i></button>
-              <button class="rel-option w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="School">School <i class="ph ph-caret-right text-2xl"></i></button>
-              <button class="rel-option w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Work">Work <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Family">Family <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Friend/Acquaintance">Friend/Acquaintance <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="School">School <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Work">Work <i class="ph ph-caret-right text-2xl"></i></button>
             </div>
           </div>
         </div>
@@ -272,21 +272,21 @@
           <div class="flex flex-col gap-3">
             <div class="flex flex-col gap-1">
               <h2 class="text-xl font-bold text-navy-700 leading-tight"><span id="fam-name">This person</span> is my…</h2>
-              <p class="text-base text-wb-700 leading-normal">Choose the closest match.</p>
+              <p class="text-base text-wb-700 leading-normal">Choose the role <span id="fam-sub-name">this person</span> had in your family. We’ll help you refine it next.</p>
             </div>
             <div class="grid grid-cols-2 gap-4 pt-4">
-              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Father">Father</button>
-              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Mother">Mother</button>
-              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Brother">Brother</button>
-              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Sister">Sister</button>
-              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandfather">Grandfather</button>
-              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandmother">Grandmother</button>
-              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandchild">Grandchild</button>
-              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Aunt">Aunt</button>
-              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Uncle">Uncle</button>
-              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Cousin">Cousin</button>
-              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Niece">Niece</button>
-              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Nephew">Nephew</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Father">Father</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Mother">Mother</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Brother">Brother</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Sister">Sister</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandfather">Grandfather</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandmother">Grandmother</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandchild">Grandchild</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Aunt">Aunt</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Uncle">Uncle</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Cousin">Cousin</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Niece">Niece</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Nephew">Nephew</button>
             </div>
           </div>
         </div>
@@ -397,14 +397,18 @@
   function isFollowing(id){ return readFollowing().indexOf(id) >= 0; }
   function setFollowing(id, on){ const f = readFollowing(); const i = f.indexOf(id); if (on && i < 0) f.push(id); if (!on && i >= 0) f.splice(i, 1); const o = readStore(); o.following = f; writeStore(o); }
 
-  // User-set relationships — override the demo defaults; shown as the card badge.
+  // User-set relationships — override the demo defaults. Stored as a full path
+  // { category, relation, detail, badge } so selections can be restored on
+  // revisit; a legacy plain string is treated as the badge.
   function readRelationships(){ const o = readStore(); return (o.relationships && typeof o.relationships === 'object') ? o.relationships : {}; }
-  function setRelationship(id, label){ const o = readStore(); o.relationships = readRelationships(); o.relationships[id] = label; writeStore(o); }
+  function relBadge(v){ return v ? (typeof v === 'string' ? v : v.badge) : null; }
+  function setRelationship(id, obj){ const o = readStore(); o.relationships = readRelationships(); o.relationships[id] = obj; writeStore(o); }
 
   function personData(id){
     const d = P[id];
-    if (!d) return { id: id, name: 'New Person', photo: null, relation: readRelationships()[id] || null };
-    return { id: id, name: d.full, photo: window.LEGACY_PHOTO(d.photo, 'card'), relation: readRelationships()[id] || d.relation };
+    const badge = relBadge(readRelationships()[id]);
+    if (!d) return { id: id, name: 'New Person', photo: null, relation: badge || null };
+    return { id: id, name: d.full, photo: window.LEGACY_PHOTO(d.photo, 'card'), relation: badge || d.relation };
   }
 
   function initials(name){
@@ -593,16 +597,39 @@
     if (action.dataset.action === 'remove') openRemove();
   });
 
+  // Current selection path — loaded from the store on open, updated on taps, and
+  // used to pre-highlight pills so a back-out or revisit shows prior choices.
+  let sel = { category: null, relation: null, detail: null };
+  function paintPressed(selector, key, value){ $$(selector).forEach(b => b.setAttribute('aria-pressed', String(b.dataset[key] === value))); }
+
   // Section 4 — slide across to the relationship category selector.
-  function openRelationship(){ $('#rel-name').textContent = activeName; wizGo('relationship'); }
+  function openRelationship(){
+    $('#rel-name').textContent = activeName;
+    const saved = readRelationships()[activeId];
+    sel = (saved && typeof saved === 'object')
+      ? { category: saved.category || null, relation: saved.relation || null, detail: saved.detail || null }
+      : { category: null, relation: null, detail: null };
+    paintPressed('.rel-option', 'rel', sel.category);
+    wizGo('relationship');
+  }
   // Back arrows slide one pane back through the stack.
   $$('[data-wiz-back]').forEach(b => b.addEventListener('click', wizBack));
   // Category taps: Family drills into sub-relationships; others are pending frames.
   $$('.rel-option').forEach(b => b.addEventListener('click', () => {
-    const rel = b.dataset.rel;
-    if (rel === 'Family') { $('#fam-name').textContent = activeFirst(); wizGo('family'); }
-    else toast(rel + ' options — coming next');
+    const cat = b.dataset.rel;
+    if (sel.category !== cat) { sel.category = cat; sel.relation = null; sel.detail = null; }  // changing category clears deeper choices
+    paintPressed('.rel-option', 'rel', sel.category);
+    if (cat === 'Family') openFamily();
+    else toast(cat + ' options — coming next');
   }));
+
+  function openFamily(){
+    const first = activeFirst();
+    $('#fam-name').textContent = first;
+    $('#fam-sub-name').textContent = first;
+    paintPressed('.fam-option', 'fam', sel.relation);
+    wizGo('family');
+  }
   // Every family relation drills one more level into a connection type. Options
   // are relation-appropriate and inclusive of blended, adoptive, and chosen family.
   const FAM_DETAIL = {
@@ -624,6 +651,8 @@
   // Family relation taps drill into the connection-type step for that relation.
   $$('.fam-option').forEach(b => b.addEventListener('click', () => {
     const rel = b.dataset.fam;
+    if (sel.relation !== rel) { sel.relation = rel; sel.detail = null; }  // changing relation clears the detail
+    paintPressed('.fam-option', 'fam', sel.relation);
     if (FAM_DETAIL[rel]) openFamilyDetail(rel);
     else finalizeRelationship(rel, null);
   }));
@@ -632,22 +661,24 @@
     pendingFamRel = rel;
     $('#famdetail-title').textContent = 'How should we connect ' + activeFirst() + ' as your ' + rel.toLowerCase() + '?';
     $('#famdetail-options').innerHTML = FAM_DETAIL[rel].map(opt =>
-      '<button class="famdetail-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-detail="' + opt + '">' + opt + '</button>'
+      '<button class="famdetail-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" aria-pressed="' + (opt === sel.detail) + '" data-detail="' + opt + '">' + opt + '</button>'
     ).join('');
     wizGo('familyDetail');
   }
   $('#famdetail-options').addEventListener('click', (e) => {
     const b = e.target.closest('.famdetail-option'); if (!b) return;
+    sel.detail = b.dataset.detail;
+    paintPressed('.famdetail-option', 'detail', sel.detail);
     finalizeRelationship(pendingFamRel, b.dataset.detail);
   });
 
-  // Persist the relationship, close, and confirm. The badge shows the base
-  // relation, EXCEPT for step-relations, which stay explicit on the badge
+  // Persist the full selection path, close, and confirm. The badge shows the
+  // base relation, EXCEPT for step-relations, which stay explicit on the badge
   // (e.g. "Stepfather") — the most sensitive distinction to surface.
   function finalizeRelationship(base, detail){
     const isStep = detail && /^step/i.test(detail);
     const badge = isStep ? detail : base;
-    setRelationship(activeId, badge);
+    setRelationship(activeId, { category: sel.category || 'Family', relation: base, detail: detail || null, badge: badge });
     buildPeople(); render();
     closeAll();
     const shown = (detail && detail !== 'Skip This') ? detail : base;

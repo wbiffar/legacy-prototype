@@ -40,6 +40,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .wiz-pane[data-state="prev"]   { transform: translateX(-100%); opacity: 0; pointer-events: none; }
 .wiz-pane[data-state="next"]   { transform: translateX(100%); opacity: 0; pointer-events: none; }
 
+/* Selectable pill (relationship wizard): filled navy when chosen. The
+   button+attribute selector outranks Tailwind's hover:, so it stays filled. */
+button.rel-pill[aria-pressed="true"] { background: #293548; border-color: #293548; color: #fff; }
+button.rel-pill[aria-pressed="true"] i { color: #fff; }
+
 /* =================== Toast (Figma Toast component) =================== */
 .toast {
   position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-16px);
