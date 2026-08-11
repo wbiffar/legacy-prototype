@@ -10,16 +10,16 @@
       obit: 'Ralph Thomas passed away February 14, 2023, at the age of 86. Ralph was born in Fresno, California, on March 18, 1935, to his parents, Robert Thomas and Veronica Delgado. He is survived by his daughters Elena and Sofia, his grandchildren, and a wide circle of friends who cherished his warmth and humor.'
     },
     mohammad: {
-      first: 'Anthony', last: 'Blumenthal', full: 'Anthony Maxwell Blumenthal', dates: '1940 – 2024',
+      first: 'Anthony', last: 'Thomas', full: 'Anthony Maxwell Thomas', dates: '1940 – 2024',
       photo: 'assets/people/anthony.png', relation: 'Grandfather',
       source: 'The Sacramento Bee', home: 'Green Valley Funeral Home', location: 'Sacramento, CA',
-      obit: 'Anthony Maxwell Blumenthal passed away on June 2, 2024, at the age of 84. A devoted grandfather and lifelong teacher, he is remembered for his warmth, his patience, and the countless students whose lives he shaped over four decades in the classroom.'
+      obit: 'Anthony Maxwell Thomas passed away on June 2, 2024, at the age of 84. A devoted grandfather and lifelong teacher, he is remembered for his warmth, his patience, and the countless students whose lives he shaped over four decades in the classroom.'
     },
     douglas: {
-      first: 'Douglas', last: 'Jones', full: 'Douglas Michael Jones', dates: '1948 – 2023',
+      first: 'Douglas', last: 'Whitfield', full: 'Douglas Michael Whitfield', dates: '1948 – 2023',
       photo: null, relation: null,
       source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
-      obit: 'Douglas Michael Jones passed away on November 12, 2023, at the age of 75. Doug was a proud Chicagoan, a Navy veteran, and a friend to everyone he met. He never missed a Cubs game and never met a stranger.'
+      obit: 'Douglas Michael Whitfield passed away on November 12, 2023, at the age of 75. Doug was a proud Chicagoan, a Navy veteran, and a friend to everyone he met. He never missed a Cubs game and never met a stranger.'
     },
     jennifer: {
       first: 'Jennifer', last: 'Sanderson', full: 'Jennifer Sanderson', dates: '1951 – 2024',
