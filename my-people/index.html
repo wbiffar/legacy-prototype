@@ -100,6 +100,10 @@
     /* Card shadow */
     .card-elev { box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 8px 24px -12px rgba(0,0,0,0.12); }
 
+    /* Horizontal carousel scrollbar hidden */
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+
     /* Mobile menu */
     .mobile-menu { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
     .mobile-menu > div { overflow: hidden; }
@@ -249,14 +253,14 @@
       <section class="bg-white border border-wb-200 rounded-2xl card-elev p-5 md:p-7">
         <div class="flex items-center justify-between mb-4">
           <h2 class="font-serif-heading text-2xl text-navy-700">2 Memorial Events</h2>
-          <div class="flex gap-2">
-            <button aria-label="Previous event" class="w-10 h-10 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-700 flex items-center justify-center"><i class="ph ph-caret-left"></i></button>
-            <button aria-label="Next event" class="w-10 h-10 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-700 flex items-center justify-center"><i class="ph ph-caret-right"></i></button>
+          <div class="flex gap-2 sm:hidden">
+            <button id="ev-prev" aria-label="Previous event" class="w-10 h-10 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-700 flex items-center justify-center"><i class="ph ph-caret-left"></i></button>
+            <button id="ev-next" aria-label="Next event" class="w-10 h-10 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-700 flex items-center justify-center"><i class="ph ph-caret-right"></i></button>
           </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div id="events-track" class="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 px-1 sm:mx-0 sm:px-0 sm:overflow-visible" role="group" aria-roledescription="carousel" aria-label="Memorial events">
           <!-- event card -->
-          <div class="border border-wb-200 rounded-xl p-4 flex flex-col">
+          <div class="event-card snap-start shrink-0 basis-[88%] sm:basis-[calc(50%-0.5rem)] border border-wb-200 rounded-xl p-4 flex flex-col">
             <div class="flex items-start justify-between gap-3">
               <h3 class="text-lg font-semibold text-wb-900">Graveside Service</h3>
               <span class="flex-shrink-0 w-12 rounded-md overflow-hidden border border-wb-200 text-center">
@@ -273,7 +277,7 @@
             </div>
           </div>
           <!-- event card -->
-          <div class="border border-wb-200 rounded-xl p-4 flex flex-col">
+          <div class="event-card snap-start shrink-0 basis-[88%] sm:basis-[calc(50%-0.5rem)] border border-wb-200 rounded-xl p-4 flex flex-col">
             <div class="flex items-start justify-between gap-3">
               <h3 class="text-lg font-semibold text-wb-900">Wake</h3>
               <span class="flex-shrink-0 w-12 rounded-md overflow-hidden border border-wb-200 text-center">
@@ -291,6 +295,7 @@
             </div>
           </div>
         </div>
+        <div id="events-dots" class="flex justify-center gap-2 mt-4 sm:hidden" aria-hidden="true"></div>
       </section>
 
       <!-- Ralph's Obituaries -->
@@ -837,6 +842,51 @@
   populatePerson();
   paintScenario();
   paintFollowing();
+
+  // ---- Memorial events carousel (mobile) -------------------------------
+  (function initEventsCarousel(){
+    const track = document.getElementById('events-track');
+    if (!track) return;
+    const cards = Array.from(track.querySelectorAll('.event-card'));
+    const dotsWrap = document.getElementById('events-dots');
+    const prev = document.getElementById('ev-prev');
+    const next = document.getElementById('ev-next');
+    if (cards.length < 2) { if (prev) prev.closest('div').classList.add('hidden'); if (dotsWrap) dotsWrap.classList.add('hidden'); return; }
+
+    // Build a dot per card.
+    cards.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.type = 'button';
+      d.setAttribute('aria-label', 'Go to event ' + (i + 1));
+      d.className = 'h-2 w-2 rounded-full bg-wb-300 transition-colors';
+      d.addEventListener('click', () => scrollToCard(i));
+      dotsWrap.appendChild(d);
+    });
+    const dots = Array.from(dotsWrap.children);
+
+    function current(){
+      let best = 0, bestDist = Infinity;
+      const base = track.scrollLeft;
+      cards.forEach((c, i) => {
+        const dist = Math.abs(c.offsetLeft - track.offsetLeft - base);
+        if (dist < bestDist) { bestDist = dist; best = i; }
+      });
+      return best;
+    }
+    function paintDots(){
+      const idx = current();
+      dots.forEach((d, i) => { d.classList.toggle('bg-navy-700', i === idx); d.classList.toggle('bg-wb-300', i !== idx); });
+    }
+    function scrollToCard(i){
+      const c = cards[Math.max(0, Math.min(cards.length - 1, i))];
+      track.scrollTo({ left: c.offsetLeft - track.offsetLeft, behavior: 'smooth' });
+    }
+    if (prev) prev.addEventListener('click', () => scrollToCard(current() - 1));
+    if (next) next.addEventListener('click', () => scrollToCard(current() + 1));
+    let raf;
+    track.addEventListener('scroll', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(paintDots); });
+    paintDots();
+  })();
 })();
 </script>
 </body>
