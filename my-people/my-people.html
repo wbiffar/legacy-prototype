@@ -432,7 +432,7 @@
     const badge = p.relation
       ? '<span class="inline-block mt-1 rounded-full bg-gold-100 text-gold-900 text-sm px-3 py-0.5">'+esc(p.relation)+'</span>'
       : '';
-    return '<article class="person-card relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer transition-shadow hover:shadow-md" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
+    return '<article class="person-card relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer transition-shadow hover:shadow-2xl" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
       panel +
       '<div class="flex-1 min-h-[100px] flex flex-col items-center justify-center text-center gap-1 px-2 pb-3">' +
         '<a href="index.html?id='+esc(p.id)+'" class="text-base font-semibold text-wb-900 leading-tight">'+esc(p.name)+'</a>' + badge +
