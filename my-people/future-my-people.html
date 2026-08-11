@@ -361,6 +361,7 @@
 </div>
 
 <script src="shared/people.js"></script>
+<script src="shared/relationships.js"></script>
 
 <!-- Demo scenario switcher -->
 <div class="demo-switcher" role="group" aria-label="Demo scenarios">
@@ -400,9 +401,9 @@
   // User-set relationships — override the demo defaults. Stored as a full path
   // { category, relation, detail, badge } so selections can be restored on
   // revisit; a legacy plain string is treated as the badge.
-  function readRelationships(){ const o = readStore(); return (o.relationships && typeof o.relationships === 'object') ? o.relationships : {}; }
-  function relBadge(v){ return v ? (typeof v === 'string' ? v : v.badge) : null; }
-  function setRelationship(id, obj){ const o = readStore(); o.relationships = readRelationships(); o.relationships[id] = obj; writeStore(o); }
+  const readRelationships = window.LEGACY_REL.readRelationships;
+  const relBadge = window.LEGACY_REL.relBadge;
+  const setRelationship = window.LEGACY_REL.setRelationship;
 
   function personData(id){
     const d = P[id];
@@ -635,22 +636,8 @@
     paintPressed('.fam-option', 'fam', sel.relation);
     wizGo('family');
   }
-  // Every family relation drills one more level into a connection type. Options
-  // are relation-appropriate and inclusive of blended, adoptive, and chosen family.
-  const FAM_DETAIL = {
-    Father:      ['Biological father', 'Adoptive father', 'Stepfather', 'Foster father', 'Guardian', 'Skip This'],
-    Mother:      ['Biological mother', 'Adoptive mother', 'Stepmother', 'Foster mother', 'Guardian', 'Skip This'],
-    Brother:     ['Biological brother', 'Half-brother', 'Stepbrother', 'Adoptive brother', 'Foster brother', 'Skip This'],
-    Sister:      ['Biological sister', 'Half-sister', 'Stepsister', 'Adoptive sister', 'Foster sister', 'Skip This'],
-    Grandfather: ['Biological grandfather', 'Step-grandfather', 'Adoptive grandfather', 'Skip This'],
-    Grandmother: ['Biological grandmother', 'Step-grandmother', 'Adoptive grandmother', 'Skip This'],
-    Grandchild:  ['Biological grandchild', 'Step-grandchild', 'Adoptive grandchild', 'Skip This'],
-    Aunt:        ['Aunt by birth', 'Aunt by marriage', 'Great-aunt', 'Skip This'],
-    Uncle:       ['Uncle by birth', 'Uncle by marriage', 'Great-uncle', 'Skip This'],
-    Cousin:      ['First cousin', 'Second cousin', 'Cousin by marriage', 'Skip This'],
-    Niece:       ['Niece by birth', 'Niece by marriage', 'Great-niece', 'Skip This'],
-    Nephew:      ['Nephew by birth', 'Nephew by marriage', 'Great-nephew', 'Skip This'],
-  };
+  // Family connection types (shared with the person page).
+  const FAM_DETAIL = window.LEGACY_REL.FAM_DETAIL;
   let pendingFamRel = null;
 
   // Family relation taps drill into the connection-type step for that relation.
@@ -681,8 +668,7 @@
   // base relation, EXCEPT for step-relations, which stay explicit on the badge
   // (e.g. "Stepfather") — the most sensitive distinction to surface.
   function finalizeRelationship(base, detail){
-    const isStep = detail && /^step/i.test(detail);
-    const badge = isStep ? detail : base;
+    const badge = window.LEGACY_REL.computeBadge(base, detail);
     setRelationship(activeId, { category: sel.category || 'Family', relation: base, detail: detail || null, badge: badge });
     buildPeople(); render();
     closeAll();

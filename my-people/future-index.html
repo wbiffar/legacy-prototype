@@ -109,7 +109,7 @@
         <img id="hero-photo" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=560&h=720&fit=crop&q=80" alt="Ralph Thomas" class="w-[159px] h-[208px] md:w-[269px] md:h-[352px] rounded-2xl md:rounded-xl object-cover shadow-[24px_28px_64px_-10px_rgba(0,20,30,0.28)] flex-shrink-0" />
         <div class="w-full md:w-[467px] flex flex-col items-center md:items-start gap-6">
           <div class="flex flex-col items-center md:items-start gap-2 md:gap-4 w-full">
-            <p class="hidden md:block text-sm md:text-base font-semibold tracking-[1.12px] uppercase text-gold-400 leading-normal">In Memory Of</p>
+            <div id="hero-rel"></div>
             <h1 class="font-serif-heading text-4xl md:text-6xl text-navy-50 leading-[1.2]">Ralph Thomas</h1>
             <p id="hero-dates" class="text-lg md:text-3xl text-gold-400 leading-normal">1935 – 2023</p>
           </div>
@@ -511,6 +511,64 @@
 </div>
 
 <!-- ====================================================================
+     ADD RELATIONSHIP SHEET (sliding wizard, opened from the hero chip)
+     ==================================================================== -->
+<div class="sheet-overlay" id="rel-overlay" role="dialog" aria-modal="true" aria-labelledby="rel-title">
+  <div class="sheet-card">
+    <div class="wiz-viewport" id="rel-viewport">
+
+      <!-- Pane: category selector -->
+      <div class="wiz-pane" data-pane="relationship" data-state="active">
+        <div class="pt-16 pb-8 px-6">
+          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <h2 id="rel-title" class="text-xl font-bold text-navy-700 leading-tight">How are you related to <span id="rel-name">this person</span>?</h2>
+              <p class="text-base text-wb-700 leading-normal">Adding your relationship helps build your connections and family tree.</p>
+            </div>
+            <div class="flex flex-col gap-4 pt-4">
+              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Family">Family <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Friend/Acquaintance">Friend/Acquaintance <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="School">School <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Work">Work <i class="ph ph-caret-right text-2xl"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pane: family relations -->
+      <div class="wiz-pane" data-pane="family" data-state="next">
+        <div class="pt-16 pb-8 px-6">
+          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <h2 class="text-xl font-bold text-navy-700 leading-tight"><span id="fam-name">This person</span> is my…</h2>
+              <p class="text-base text-wb-700 leading-normal">Choose the role <span id="fam-sub-name">this person</span> had in your family. We’ll help you refine it next.</p>
+            </div>
+            <div id="fam-options" class="grid grid-cols-2 gap-4 pt-4"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pane: family connection detail -->
+      <div class="wiz-pane" data-pane="familyDetail" data-state="next">
+        <div class="pt-16 pb-8 px-6">
+          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <h2 id="famdetail-title" class="text-xl font-bold text-navy-700 leading-tight">How should we connect them?</h2>
+              <p class="text-base text-wb-700 leading-normal">Choose what best fits your family story.</p>
+            </div>
+            <div id="famdetail-options" class="grid grid-cols-2 gap-4 pt-4"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
      TOAST
      ==================================================================== -->
 <div id="toast" class="toast" role="status" aria-live="polite">
@@ -529,6 +587,7 @@
 </div>
 
 <script src="shared/people.js"></script>
+<script src="shared/relationships.js"></script>
 <script>
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
@@ -598,8 +657,8 @@
 
   // ===== Overlays =====
   let lastFocus = null;
-  const overlays = { auth: $('#auth-overlay'), updates: $('#updates-overlay'), share: $('#share-overlay') };
-  function openOverlay(o){ lastFocus = document.activeElement; o.classList.add('open'); document.body.style.overflow='hidden'; const f=o.querySelector('button,[href],input'); if(f) f.focus(); }
+  const overlays = { auth: $('#auth-overlay'), updates: $('#updates-overlay'), share: $('#share-overlay'), relationship: $('#rel-overlay') };
+  function openOverlay(o){ lastFocus = document.activeElement; o.classList.add('open'); document.body.style.overflow='hidden'; const f=o.querySelector('button,[href],input'); if(f) f.focus({ preventScroll: true }); }
   function closeAll(){ Object.values(overlays).forEach(o=>o.classList.remove('open')); document.body.style.overflow=''; if(lastFocus&&document.contains(lastFocus)) lastFocus.focus(); }
   $$('.js-share').forEach(b => b.addEventListener('click', () => openOverlay(overlays.share)));
   $$('[data-close]').forEach(b => b.addEventListener('click', closeAll));
@@ -725,6 +784,110 @@
     if (shareInput) shareInput.value = 'https://www.legacy.com/obituaries/' + PID;
   }
 
+  // ===== Hero relationship chip + Add-relationship flow (shared logic) =====
+  const REL = window.LEGACY_REL;
+  const esc = (v) => String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+  // Chip above the name: "My <relation>" when known, else "Add your relationship".
+  function currentRelBadge(){ return REL.relBadge(REL.readRelationships()[PID]) || PERSON.relation || null; }
+  function paintHeroRel(){
+    const el = $('#hero-rel'); if (!el) return;
+    const badge = currentRelBadge();
+    el.innerHTML = badge
+      ? '<button type="button" class="hero-rel-chip inline-flex items-center px-3 py-0.5 rounded-full bg-navy-600 border border-navy-300 text-navy-300 text-sm">My ' + esc(badge) + '</button>'
+      : '<button type="button" class="hero-rel-chip inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-navy-100 text-navy-800 text-sm"><i class="ph ph-plus-circle text-sm" aria-hidden="true"></i>Add your relationship</button>';
+  }
+  $('#hero-rel').addEventListener('click', (e) => { if (e.target.closest('.hero-rel-chip')) openRelationshipFlow(); });
+
+  // ----- Relationship wizard (category → family → connection detail) -----
+  const relVp = $('#rel-viewport');
+  const REL_PANES = ['relationship', 'family', 'familyDetail'];
+  let relStack = ['relationship'];
+  let sel = { category: null, relation: null, detail: null };
+  let pendingFamRel = null;
+
+  // Render the family relations grid once from the shared list.
+  $('#fam-options').innerHTML = REL.FAMILY_RELATIONS.map(r =>
+    '<button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="' + r + '">' + r + '</button>'
+  ).join('');
+
+  function paintPressed(selector, key, value){ $$(selector).forEach(b => b.setAttribute('aria-pressed', String(b.dataset[key] === value))); }
+  function relRender(instant){
+    const top = relStack[relStack.length - 1];
+    REL_PANES.forEach(name => {
+      const pane = relVp.querySelector('[data-pane="' + name + '"]');
+      pane.dataset.state = (name === top) ? 'active' : (relStack.indexOf(name) !== -1 ? 'prev' : 'next');
+      pane.setAttribute('aria-hidden', String(name !== top));
+    });
+    const active = relVp.querySelector('[data-pane="' + top + '"]');
+    relVp.scrollTop = 0;
+    const applyHeight = () => { relVp.style.height = active.offsetHeight + 'px'; };
+    if (instant) { const t = relVp.style.transition; relVp.style.transition = 'none'; applyHeight(); void relVp.offsetHeight; relVp.style.transition = t; }
+    else applyHeight();
+  }
+  function relGo(name){ relStack.push(name); relRender(); }
+  function relBack(){ if (relStack.length > 1) { relStack.pop(); relRender(); } else closeAll(); }
+
+  function openRelationshipFlow(){
+    $('#rel-name').textContent = PERSON.full;
+    const saved = REL.readRelationships()[PID];
+    sel = (saved && typeof saved === 'object')
+      ? { category: saved.category || null, relation: saved.relation || null, detail: saved.detail || null }
+      : { category: null, relation: null, detail: null };
+    paintPressed('.rel-option', 'rel', sel.category);
+    relStack = ['relationship'];
+    openOverlay(overlays.relationship);
+    relRender(true);
+  }
+
+  $$('#rel-overlay [data-wiz-back]').forEach(b => b.addEventListener('click', relBack));
+
+  $$('.rel-option').forEach(b => b.addEventListener('click', () => {
+    const cat = b.dataset.rel;
+    if (sel.category !== cat) { sel.category = cat; sel.relation = null; sel.detail = null; }
+    paintPressed('.rel-option', 'rel', sel.category);
+    if (cat === 'Family') openFamily();
+    else toast(cat + ' options — coming next');
+  }));
+
+  function openFamily(){
+    $('#fam-name').textContent = PERSON.first;
+    $('#fam-sub-name').textContent = PERSON.first;
+    paintPressed('.fam-option', 'fam', sel.relation);
+    relGo('family');
+  }
+  $$('.fam-option').forEach(b => b.addEventListener('click', () => {
+    const rel = b.dataset.fam;
+    if (sel.relation !== rel) { sel.relation = rel; sel.detail = null; }
+    paintPressed('.fam-option', 'fam', sel.relation);
+    if (REL.FAM_DETAIL[rel]) openFamilyDetail(rel);
+    else finalizeRelationship(rel, null);
+  }));
+
+  function openFamilyDetail(rel){
+    pendingFamRel = rel;
+    $('#famdetail-title').textContent = 'How should we connect ' + PERSON.first + ' as your ' + rel.toLowerCase() + '?';
+    $('#famdetail-options').innerHTML = REL.FAM_DETAIL[rel].map(opt =>
+      '<button class="famdetail-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" aria-pressed="' + (opt === sel.detail) + '" data-detail="' + esc(opt) + '">' + esc(opt) + '</button>'
+    ).join('');
+    relGo('familyDetail');
+  }
+  $('#famdetail-options').addEventListener('click', (e) => {
+    const b = e.target.closest('.famdetail-option'); if (!b) return;
+    sel.detail = b.dataset.detail;
+    paintPressed('.famdetail-option', 'detail', sel.detail);
+    finalizeRelationship(pendingFamRel, b.dataset.detail);
+  });
+
+  function finalizeRelationship(base, detail){
+    const badge = REL.computeBadge(base, detail);
+    REL.setRelationship(PID, { category: sel.category || 'Family', relation: base, detail: detail || null, badge: badge });
+    closeAll();
+    paintHeroRel();
+    const shown = (detail && detail !== 'Skip This') ? detail : base;
+    toast('Saved as your ' + shown.toLowerCase(), null, null, 'ph ph-check');
+  }
+
   // ===== Init =====
   // Seed the shared saved list so already-saved people read as saved when signed in.
   if (!readSaved()) writeSaved((window.LEGACY_DEFAULT_SAVED || []).slice());
@@ -737,6 +900,7 @@
   populatePerson();
   paintScenario();
   paintFollowing();
+  paintHeroRel();
 
   // ---- Memorial events carousel (mobile) -------------------------------
   (function initEventsCarousel(){
