@@ -65,19 +65,22 @@
       @keyframes slideup { from { transform: translateY(100%); } to { transform: none; } }
     }
 
-    /* Toast */
+    /* Toast — Figma Toast component (seafoam pill), top-center, animated */
     .toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(8px);
-      background: #262116; color: #fff; padding: 12px 16px 12px 20px; border-radius: 9999px;
-      font-size: 14px; font-weight: 500; z-index: 95; opacity: 0; pointer-events: none;
-      transition: all .25s ease; display: flex; align-items: center; gap: 14px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.2); max-width: calc(100vw - 24px);
+      position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-16px);
+      z-index: 95; opacity: 0; pointer-events: none;
+      display: flex; align-items: center; gap: 10px;
+      background: #357d75; color: #fff; padding: 16px; border-radius: 8px;
+      box-shadow: 0 1px 2px -1px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.1);
+      max-width: calc(100vw - 32px);
+      transition: transform .28s ease, opacity .28s ease;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
-    .toast .lead { display: flex; align-items: center; gap: 10px; }
-    .toast i.ph-check-circle { color: #81b8ae; font-size: 18px; }
-    .toast a, .toast button { color: #dcb05e; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
-    @media (max-width: 639px) { .toast { bottom: 88px; width: calc(100vw - 24px); justify-content: space-between; } }
+    .toast .toast-ico { font-size: 20px; line-height: 0; flex-shrink: 0; }
+    .toast .toast-body { display: flex; align-items: center; gap: 12px; min-width: 0; padding-left: 16px; border-left: 1px solid rgba(255,255,255,0.4); }
+    .toast #toast-text { font-size: 14px; line-height: 1.5; }
+    .toast #toast-action { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; font-size: 14px; }
+    @media (max-width: 639px) { .toast { top: 16px; } }
 
     /* Sticky mobile action bar */
     .sticky-actions {
@@ -608,8 +611,11 @@
      TOAST
      ==================================================================== -->
 <div id="toast" class="toast" role="status" aria-live="polite">
-  <span class="lead"><i class="ph-fill ph-check-circle"></i> <span id="toast-text">Done</span></span>
-  <a id="toast-action" href="my-people.html" class="hidden">View</a>
+  <i class="ph ph-bookmark-simple toast-ico" aria-hidden="true"></i>
+  <div class="toast-body">
+    <span id="toast-text">Done</span>
+    <a id="toast-action" href="my-people.html" class="hidden">View</a>
+  </div>
 </div>
 
 <!-- Demo scenario switcher -->
