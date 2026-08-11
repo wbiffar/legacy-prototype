@@ -249,7 +249,7 @@
       <!-- Pane: relationship selector -->
       <div class="wiz-pane" data-pane="relationship" data-state="next">
         <div class="pt-16 pb-8 px-6">
-          <button data-back-rel class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back to options"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
           <div class="flex flex-col gap-3">
             <div class="flex flex-col gap-1">
               <h2 id="rel-title" class="text-xl font-bold text-navy-700 leading-tight">How are you related to <span id="rel-name">this person</span>?</h2>
@@ -260,6 +260,33 @@
               <button class="rel-option w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Friend/Acquaintance">Friend/Acquaintance <i class="ph ph-caret-right text-2xl"></i></button>
               <button class="rel-option w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="School">School <i class="ph ph-caret-right text-2xl"></i></button>
               <button class="rel-option w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Work">Work <i class="ph ph-caret-right text-2xl"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pane: family sub-relationships -->
+      <div class="wiz-pane" data-pane="family" data-state="next">
+        <div class="pt-16 pb-8 px-6">
+          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <h2 class="text-xl font-bold text-navy-700 leading-tight"><span id="fam-name">This person</span> is my…</h2>
+              <p class="text-base text-wb-700 leading-normal">Choose the closest match.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4 pt-4">
+              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Father">Father</button>
+              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Mother">Mother</button>
+              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Brother">Brother</button>
+              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Sister">Sister</button>
+              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandfather">Grandfather</button>
+              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandmother">Grandmother</button>
+              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandchild">Grandchild</button>
+              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Aunt">Aunt</button>
+              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Uncle">Uncle</button>
+              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Cousin">Cousin</button>
+              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Niece">Niece</button>
+              <button class="fam-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Nephew">Nephew</button>
             </div>
           </div>
         </div>
@@ -355,10 +382,15 @@
   function readFollowing(){ const o = readStore(); return Array.isArray(o.following) ? o.following : []; }
   function isFollowing(id){ return readFollowing().indexOf(id) >= 0; }
   function setFollowing(id, on){ const f = readFollowing(); const i = f.indexOf(id); if (on && i < 0) f.push(id); if (!on && i >= 0) f.splice(i, 1); const o = readStore(); o.following = f; writeStore(o); }
+
+  // User-set relationships — override the demo defaults; shown as the card badge.
+  function readRelationships(){ const o = readStore(); return (o.relationships && typeof o.relationships === 'object') ? o.relationships : {}; }
+  function setRelationship(id, label){ const o = readStore(); o.relationships = readRelationships(); o.relationships[id] = label; writeStore(o); }
+
   function personData(id){
     const d = P[id];
-    if (!d) return { id: id, name: 'New Person', photo: null, relation: null };
-    return { id: id, name: d.full, photo: window.LEGACY_PHOTO(d.photo, 'card'), relation: d.relation };
+    if (!d) return { id: id, name: 'New Person', photo: null, relation: readRelationships()[id] || null };
+    return { id: id, name: d.full, photo: window.LEGACY_PHOTO(d.photo, 'card'), relation: readRelationships()[id] || d.relation };
   }
 
   function initials(name){
@@ -475,21 +507,29 @@
   let activeId = null, activeName = null, lastFocus = null;
   const overlays = { options:$('#options-overlay'), share:$('#share-overlay'), remove:$('#remove-overlay') };
 
-  // Wizard inside the options sheet: panes slide horizontally, the container
-  // stays put, and the viewport height animates to the active pane.
-  function wizStep(step, instant){
+  // Wizard inside the options sheet: a stack of panes slides horizontally
+  // while the container stays put and the viewport height animates. Panes
+  // earlier in the stack sit off-screen left (prev); unvisited panes sit off
+  // -screen right (next); the top of the stack is active.
+  const WIZ_PANES = ['menu', 'relationship', 'family'];
+  let wizStack = ['menu'];
+  function wizRender(instant){
     const vp = $('#opt-viewport');
-    const menu = vp.querySelector('[data-pane="menu"]');
-    const rel = vp.querySelector('[data-pane="relationship"]');
-    const active = step === 'relationship' ? rel : menu;
-    if (step === 'relationship') { menu.dataset.state = 'prev'; rel.dataset.state = 'active'; }
-    else { rel.dataset.state = 'next'; menu.dataset.state = 'active'; }
-    menu.setAttribute('aria-hidden', String(step === 'relationship'));
-    rel.setAttribute('aria-hidden', String(step !== 'relationship'));
+    const top = wizStack[wizStack.length - 1];
+    WIZ_PANES.forEach(name => {
+      const pane = vp.querySelector('[data-pane="' + name + '"]');
+      pane.dataset.state = (name === top) ? 'active' : (wizStack.indexOf(name) !== -1 ? 'prev' : 'next');
+      pane.setAttribute('aria-hidden', String(name !== top));
+    });
+    const active = vp.querySelector('[data-pane="' + top + '"]');
     const applyHeight = () => { vp.style.height = active.offsetHeight + 'px'; };
     if (instant) { const t = vp.style.transition; vp.style.transition = 'none'; applyHeight(); void vp.offsetHeight; vp.style.transition = t; }
     else applyHeight();
   }
+  function wizGo(name){ wizStack.push(name); wizRender(); }
+  function wizBack(){ if (wizStack.length > 1) { wizStack.pop(); wizRender(); } }
+  function wizReset(){ wizStack = ['menu']; wizRender(true); }
+  function activeFirst(){ return (P[activeId] && P[activeId].first) || String(activeName || '').split(/\s+/)[0]; }
   function openOverlay(o){ lastFocus = document.activeElement; o.classList.add('open'); document.body.style.overflow='hidden'; const f=o.querySelector('button,[href],input'); if(f) f.focus(); }
   function closeAll(){ Object.values(overlays).forEach(o=>o.classList.remove('open')); document.body.style.overflow=''; if(lastFocus&&document.contains(lastFocus)) lastFocus.focus(); }
 
@@ -526,7 +566,7 @@
     const add = e.target.closest('#add-more');
     if (add) { goAddMore(); return; }
     const more = e.target.closest('.more-btn');
-    if (more) { e.preventDefault(); populateOptions(more.closest('.person-card')); openOverlay(overlays.options); wizStep('menu', true); return; }
+    if (more) { e.preventDefault(); populateOptions(more.closest('.person-card')); openOverlay(overlays.options); wizReset(); return; }
     // Tapping anywhere else on a card opens that person's page.
     const card = e.target.closest('.person-card');
     if (card) { window.location.href = 'future-index.html?id=' + card.dataset.id; }
@@ -539,12 +579,24 @@
     if (action.dataset.action === 'remove') openRemove();
   });
 
-  // Section 4 — slide the content across to the relationship selector.
-  function openRelationship(){ $('#rel-name').textContent = activeName; wizStep('relationship'); }
-  // Back arrow slides the content back to the menu.
-  $('[data-back-rel]').addEventListener('click', () => wizStep('menu'));
-  // Category taps — sub-options / confirmation come in the next step.
-  $$('.rel-option').forEach(b => b.addEventListener('click', () => { toast(b.dataset.rel + ' selected — next step'); }));
+  // Section 4 — slide across to the relationship category selector.
+  function openRelationship(){ $('#rel-name').textContent = activeName; wizGo('relationship'); }
+  // Back arrows slide one pane back through the stack.
+  $$('[data-wiz-back]').forEach(b => b.addEventListener('click', wizBack));
+  // Category taps: Family drills into sub-relationships; others are pending frames.
+  $$('.rel-option').forEach(b => b.addEventListener('click', () => {
+    const rel = b.dataset.rel;
+    if (rel === 'Family') { $('#fam-name').textContent = activeFirst(); wizGo('family'); }
+    else toast(rel + ' options — coming next');
+  }));
+  // Family sub-relationship taps set the relationship, update the card, and close.
+  $$('.fam-option').forEach(b => b.addEventListener('click', () => {
+    const label = b.dataset.fam;
+    setRelationship(activeId, label);
+    buildPeople(); render();
+    closeAll();
+    toast(activeFirst() + ' saved as your ' + label);
+  }));
 
   function openShare(){ overlays.options.classList.remove('open'); $('#share-sub').textContent = 'Invite others to visit ' + activeName + '’s page'; openOverlay(overlays.share); }
   $('#copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('#share-link').value); } catch(_){} closeAll(); toast('Link copied to clipboard'); });
