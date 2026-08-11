@@ -82,12 +82,13 @@
     .toast #toast-action { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; font-size: 14px; }
     @media (max-width: 639px) { .toast { top: 16px; } }
 
-    /* Sticky mobile action bar */
+    /* Sticky mobile action bar — full-width bottom sheet-style */
     .sticky-actions {
-      position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 50;
-      background: #fff; border: 1px solid #ebe9e9; border-radius: 9999px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.14); padding: 8px;
-      display: flex; align-items: center; gap: 8px;
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+      background: #fff; border-radius: 20px 20px 0 0;
+      box-shadow: 0 -8px 16px -3px rgba(0,0,0,0.2), 0 -4px 8px rgba(0,0,0,0.1);
+      padding: 16px 16px 24px;
+      display: flex; align-items: center; gap: 16px;
       transform: translateY(140%); transition: transform .28s ease;
     }
     .sticky-actions.show { transform: none; }
@@ -525,9 +526,8 @@
      STICKY MOBILE ACTION BAR
      ==================================================================== -->
 <div class="sticky-actions" id="sticky-actions">
-  <button class="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-full bg-gold-500 text-wb-900 text-[15px] font-semibold"><i class="ph ph-flower-tulip"></i> Send Flowers</button>
-  <button id="sticky-add" aria-label="Add to My People" class="w-11 h-11 rounded-full border border-wb-300 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-plus-circle text-xl"></i></button>
-  <button class="js-share w-11 h-11 rounded-full border border-wb-300 text-wb-700 flex items-center justify-center flex-shrink-0" aria-label="Share"><i class="ph ph-share-network text-xl"></i></button>
+  <button class="flex-1 inline-flex items-center justify-center gap-2.5 px-5 py-3 rounded-full bg-gold-400 hover:bg-gold-500 text-wb-900 text-base font-semibold"><i class="ph ph-flower-tulip text-2xl"></i> Send Flowers</button>
+  <button class="js-share inline-flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 flex-shrink-0" aria-label="Share"><i class="ph ph-share-fat text-2xl"></i></button>
 </div>
 
 <!-- ====================================================================
