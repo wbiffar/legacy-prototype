@@ -192,28 +192,52 @@
      MORE OPTIONS SHEET
      ==================================================================== -->
 <div class="sheet-overlay" id="options-overlay" role="dialog" aria-modal="true" aria-labelledby="opt-title">
-  <div class="sheet-card pb-6">
-    <div class="flex items-center gap-3 p-5 md:p-6">
-      <span id="opt-avatar" class="w-14 h-14 rounded-full object-cover border border-wb-200 flex-shrink-0 flex items-center justify-center font-serif-heading text-lg text-white bg-navy-400"></span>
-      <h2 id="opt-title" class="flex-1 min-w-0 font-serif-heading text-xl md:text-2xl text-wb-900 leading-tight pr-10">Person name</h2>
-      <button data-close class="absolute top-4 right-4 w-9 h-9 rounded-full border border-wb-300 text-wb-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph ph-x text-lg"></i></button>
+  <div class="sheet-card pt-6 pb-8">
+    <!-- Header: avatar + name -->
+    <div class="flex items-center gap-2 pb-4 pl-6 pr-12 border-b border-wb-300">
+      <span id="opt-avatar" class="w-14 h-14 rounded-full border border-wb-300 flex-shrink-0 flex items-center justify-center font-serif-heading text-2xl text-white bg-navy-400 overflow-hidden bg-center bg-cover"></span>
+      <h2 id="opt-title" class="flex-1 min-w-0 font-serif-heading text-xl text-navy-700 leading-tight truncate">Person name</h2>
+      <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
     </div>
-    <div class="border-t border-wb-200"></div>
 
-    <a id="opt-view" href="future-index.html" class="w-full flex items-center gap-4 px-5 md:px-6 py-4 text-left hover:bg-wb-50">
-      <span class="w-10 h-10 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-user text-lg"></i></span>
-      <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">View their page</span><span class="block text-sm text-wb-600 mt-0.5">Open the obituary and guest book</span></span>
-      <i class="ph ph-caret-right text-wb-400 flex-shrink-0"></i>
-    </a>
+    <div class="px-6">
+      <!-- Go to their Page -->
+      <a id="opt-view" href="future-index.html" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50">
+        <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-user text-xl"></i></span>
+        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Go to their Page</span><span class="block text-xs text-wb-700 mt-1">You will be taken to their page</span></span>
+        <i class="ph ph-arrow-right text-2xl text-navy-700 flex-shrink-0"></i>
+      </a>
 
-    <!-- Share is out of scope for V0 -->
+      <!-- Add your relationship (Section 4 entry point) -->
+      <button data-action="relationship" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
+        <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-tree-structure text-xl"></i></span>
+        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Add your relationship</span><span class="block text-xs text-wb-700 mt-1">Connect and organize your family tree</span></span>
+        <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
+      </button>
 
-    <div class="border-t border-wb-200 mx-5 md:mx-6"></div>
-    <button class="w-full flex items-center gap-4 px-5 md:px-6 py-4 text-left hover:bg-coral-50" data-action="remove">
-      <span class="w-10 h-10 rounded-full bg-coral-100 text-coral-600 flex items-center justify-center flex-shrink-0"><i class="ph ph-minus-circle text-lg"></i></span>
-      <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-coral-700 leading-tight">Remove from My People</span><span class="block text-sm text-wb-600 mt-0.5">This person will be removed from your list</span></span>
-      <i class="ph ph-caret-right text-wb-400 flex-shrink-0"></i>
-    </button>
+      <!-- Email updates (subscribe toggle — decoupled from saving) -->
+      <div class="w-full flex items-center gap-2 py-6 border-b border-wb-300">
+        <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-bell text-xl"></i></span>
+        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Email updates</span><span id="opt-updates-sub" class="block text-xs text-wb-700 mt-1">On • Receive updates for this page</span></span>
+        <button id="opt-updates" role="switch" aria-checked="true" aria-label="Toggle email updates" class="relative w-14 h-7 rounded-full transition-colors flex-shrink-0 bg-seafoam-700">
+          <span id="opt-updates-knob" class="absolute top-[3px] left-[3px] w-[22px] h-[22px] rounded-full bg-white shadow transition-transform translate-x-7"></span>
+        </button>
+      </div>
+
+      <!-- Share with others -->
+      <button data-action="share" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
+        <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-share-fat text-xl"></i></span>
+        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Share with others</span><span class="block text-xs text-wb-700 mt-1">Invite others to visit this page</span></span>
+        <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
+      </button>
+
+      <!-- Remove -->
+      <button data-action="remove" class="w-full flex items-center gap-2 py-6 hover:bg-coral-50 text-left">
+        <span class="w-8 h-8 rounded-full bg-coral-100 text-coral-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-minus text-xl"></i></span>
+        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-coral-700 leading-tight">Remove from My People</span><span class="block text-xs text-wb-700 mt-1">This page will be removed from your list</span></span>
+        <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -298,6 +322,11 @@
   // Saved people persist as an id array (shared with future-index.html).
   function readSaved(){ const o = readStore(); return Array.isArray(o.saved) ? o.saved.slice() : null; }
   function writeSaved(arr){ const o = readStore(); o.saved = arr.slice(); writeStore(o); }
+
+  // Email-updates (follow) state — decoupled from saving; shared with future-index.html.
+  function readFollowing(){ const o = readStore(); return Array.isArray(o.following) ? o.following : []; }
+  function isFollowing(id){ return readFollowing().indexOf(id) >= 0; }
+  function setFollowing(id, on){ const f = readFollowing(); const i = f.indexOf(id); if (on && i < 0) f.push(id); if (!on && i >= 0) f.splice(i, 1); const o = readStore(); o.following = f; writeStore(o); }
   function personData(id){
     const d = P[id];
     if (!d) return { id: id, name: 'New Person', photo: null, relation: null };
@@ -428,7 +457,25 @@
     else { av.style.backgroundImage=''; av.textContent = initials(activeName); }
     const view = $('#opt-view'); if (view) view.href = 'future-index.html?id=' + activeId;
     $('#share-link').value = 'https://www.legacy.com/obituaries/' + activeId;
+    paintUpdatesToggle(isFollowing(activeId));
   }
+
+  // Email-updates toggle inside the options sheet. State-dependent styles are
+  // set inline (token values) so they render instantly, independent of the
+  // Tailwind CDN's async class generation.
+  function paintUpdatesToggle(on){
+    const t = $('#opt-updates'), knob = $('#opt-updates-knob'), sub = $('#opt-updates-sub');
+    t.setAttribute('aria-checked', String(on));
+    t.style.backgroundColor = on ? '#216e6a' : '#dbdad7';   // seafoam-700 / wb-300
+    knob.style.transform = on ? 'translateX(28px)' : 'translateX(0)';
+    sub.textContent = on ? 'On • Receive updates for this page' : 'Off • You won’t receive updates';
+  }
+  $('#opt-updates').addEventListener('click', () => {
+    const next = !isFollowing(activeId);
+    setFollowing(activeId, next);
+    paintUpdatesToggle(next);
+    toast(next ? 'Email updates on for ' + activeName : 'Email updates off for ' + activeName);
+  });
 
   // ===== delegated clicks =====
   root.addEventListener('click', (e) => {
@@ -443,9 +490,13 @@
 
   overlays.options.addEventListener('click', (e) => {
     const action = e.target.closest('[data-action]'); if(!action) return;
+    if (action.dataset.action === 'relationship') openRelationship();
     if (action.dataset.action === 'share') openShare();
     if (action.dataset.action === 'remove') openRemove();
   });
+
+  // Section 4 entry point — relationship selector is built in the next step.
+  function openRelationship(){ closeAll(); toast('Relationship selector — coming next for ' + activeName); }
 
   function openShare(){ overlays.options.classList.remove('open'); $('#share-sub').textContent = 'Invite others to visit ' + activeName + '’s page'; openOverlay(overlays.share); }
   $('#copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('#share-link').value); } catch(_){} closeAll(); toast('Link copied to clipboard'); });
