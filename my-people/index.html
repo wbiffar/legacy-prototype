@@ -72,7 +72,7 @@
       display: flex; align-items: center; gap: 10px;
       background: #357d75; color: #fff; padding: 16px; border-radius: 8px;
       box-shadow: 0 1px 2px -1px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.1);
-      max-width: calc(100vw - 32px);
+      max-width: min(460px, calc(100vw - 32px));
       transition: transform .28s ease, opacity .28s ease;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
@@ -325,7 +325,7 @@
           <h2 class="text-xl font-semibold text-navy-700 leading-tight">Stay Close to Ralph's Story</h2>
           <p class="text-lg font-normal text-wb-700 leading-tight">Get an email whenever someone leaves a new memory in the guest book.</p>
         </div>
-        <button class="js-updates relative z-10 inline-flex items-center gap-2.5 h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold"><i class="ph ph-bell text-xl"></i> Get Updates</button>
+        <button id="updates-btn" class="relative z-10 inline-flex items-center gap-2.5 h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold"><i class="ph ph-bell text-xl"></i> Get Updates</button>
       </section>
 
       <!-- Remembrance Pages -->
@@ -611,7 +611,7 @@
      TOAST
      ==================================================================== -->
 <div id="toast" class="toast" role="status" aria-live="polite">
-  <i class="ph ph-bookmark-simple toast-ico" aria-hidden="true"></i>
+  <i id="toast-ico" class="ph ph-bookmark-simple toast-ico" aria-hidden="true"></i>
   <div class="toast-body">
     <span id="toast-text">Done</span>
     <a id="toast-action" href="my-people.html" class="hidden">View</a>
@@ -682,13 +682,15 @@
   // ===== Toast =====
   const toastEl = $('#toast'), toastText = $('#toast-text'), toastAction = $('#toast-action');
   let toastTimer = null;
-  function toast(msg, href, label){
+  const toastIco = $('#toast-ico');
+  function toast(msg, href, label, icon){
     clearTimeout(toastTimer);
     toastText.textContent = msg;
+    if (toastIco) toastIco.className = (icon || 'ph ph-bookmark-simple') + ' toast-ico';
     if (href) { toastAction.classList.remove('hidden'); toastAction.href = href; toastAction.textContent = label || 'View'; }
     else { toastAction.classList.add('hidden'); }
     toastEl.classList.add('show');
-    toastTimer = setTimeout(() => toastEl.classList.remove('show'), href ? 5000 : 2600);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), (href || msg.length > 40) ? 5000 : 2600);
   }
 
   // ===== Overlays =====
@@ -696,12 +698,31 @@
   const overlays = { auth: $('#auth-overlay'), updates: $('#updates-overlay'), share: $('#share-overlay') };
   function openOverlay(o){ lastFocus = document.activeElement; o.classList.add('open'); document.body.style.overflow='hidden'; const f=o.querySelector('button,[href],input'); if(f) f.focus(); }
   function closeAll(){ Object.values(overlays).forEach(o=>o.classList.remove('open')); document.body.style.overflow=''; if(lastFocus&&document.contains(lastFocus)) lastFocus.focus(); }
-  $$('.js-updates').forEach(b => b.addEventListener('click', () => openOverlay(overlays.updates)));
   $$('.js-share').forEach(b => b.addEventListener('click', () => openOverlay(overlays.share)));
   $$('[data-close]').forEach(b => b.addEventListener('click', closeAll));
   Object.values(overlays).forEach(o => o.addEventListener('mousedown', e => { if(e.target===o) closeAll(); }));
   document.addEventListener('keydown', e => { if(e.key==='Escape') closeAll(); });
-  $('#upd-form').addEventListener('submit', e => { e.preventDefault(); closeAll(); toast('You’re now following ' + PERSON.first + '’s page'); });
+
+  // ===== Get Updates / Following (per person, persisted) =====
+  const updatesBtn = $('#updates-btn');
+  function readFollowing(){ const o = readStore(); return Array.isArray(o.following) ? o.following : []; }
+  function setFollowing(id, on){ const f = readFollowing(); const i = f.indexOf(id); if (on && i < 0) f.push(id); if (!on && i >= 0) f.splice(i, 1); const o = readStore(); o.following = f; writeStore(o); }
+  function isFollowing(id){ return readFollowing().indexOf(id) >= 0; }
+  function paintFollowing(){
+    const on = isFollowing(PID);
+    updatesBtn.innerHTML = on
+      ? '<i class="ph-fill ph-bell text-xl"></i> Following'
+      : '<i class="ph ph-bell text-xl"></i> Get Updates';
+    updatesBtn.setAttribute('aria-pressed', String(on));
+  }
+  function followToast(){ toast('Followed successfully, you will now receive emails and notifications about this page.', null, null, 'ph ph-check'); }
+  updatesBtn.addEventListener('click', () => {
+    if (isFollowing(PID)) { setFollowing(PID, false); paintFollowing(); toast('You’ll no longer receive updates about this page.', null, null, 'ph ph-bell-slash'); return; }
+    if (isSignedIn()) { setFollowing(PID, true); paintFollowing(); followToast(); return; }  // signed in → follow directly
+    openOverlay(overlays.updates);                                                            // signed out → email capture
+  });
+  // Signed-out email capture → confirm follow with the same state + toast.
+  $('#upd-form').addEventListener('submit', e => { e.preventDefault(); setFollowing(PID, true); paintFollowing(); closeAll(); followToast(); });
   $('#copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText('https://www.legacy.com/obituaries/' + PID); } catch(_){} closeAll(); toast('Link copied to clipboard'); });
   $$('.share-channel').forEach(b => b.addEventListener('click', () => { closeAll(); toast('Opening ' + b.dataset.channel + '…'); }));
 
@@ -810,6 +831,7 @@
   if (isSaved(PID) || fromAccount) scenario = 'signed-in';
   populatePerson();
   paintScenario();
+  paintFollowing();
 })();
 </script>
 </body>
