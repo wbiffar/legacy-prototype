@@ -144,8 +144,8 @@
     </aside>
 
     <!-- Mobile accordion -->
-    <div class="lg:hidden" data-acct-open="false" id="acct-accordion">
-      <button class="w-full bg-white border border-wb-200 rounded-xl p-5 flex items-start justify-between gap-3 text-left shadow-sm" aria-expanded="false" aria-controls="acct-links" id="acct-toggle">
+    <div class="lg:hidden bg-white border border-wb-200 rounded-xl shadow-sm overflow-hidden" data-acct-open="false" id="acct-accordion">
+      <button class="w-full p-5 flex items-start justify-between gap-3 text-left" aria-expanded="false" aria-controls="acct-links" id="acct-toggle">
         <span class="min-w-0">
           <span class="block font-serif-heading text-2xl text-wb-900 leading-none">My Account</span>
           <span class="block text-sm text-gold-800 mt-2 break-words">Welcome back, John</span>
@@ -154,7 +154,7 @@
       </button>
       <div class="acct-panel" id="acct-links">
         <div>
-          <ul class="px-5 pt-4 pb-1 space-y-3 text-[15px]">
+          <ul class="px-5 pt-1 pb-5 space-y-3 text-[15px]">
             <li><a href="#" aria-current="page" class="font-bold text-wb-900">My People</a></li>
             <li><a href="#" class="text-wb-700">Notification Preferences</a></li>
             <li><a href="#" class="text-wb-700">Account Settings</a></li>
