@@ -292,6 +292,20 @@
         </div>
       </div>
 
+      <!-- Pane: family connection detail (e.g. parent type) -->
+      <div class="wiz-pane" data-pane="familyDetail" data-state="next">
+        <div class="pt-16 pb-8 px-6">
+          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <h2 id="famdetail-title" class="text-xl font-bold text-navy-700 leading-tight">How should we connect them?</h2>
+              <p class="text-base text-wb-700 leading-normal">Choose what best fits your family story.</p>
+            </div>
+            <div id="famdetail-options" class="grid grid-cols-2 gap-4 pt-4"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -511,7 +525,7 @@
   // while the container stays put and the viewport height animates. Panes
   // earlier in the stack sit off-screen left (prev); unvisited panes sit off
   // -screen right (next); the top of the stack is active.
-  const WIZ_PANES = ['menu', 'relationship', 'family'];
+  const WIZ_PANES = ['menu', 'relationship', 'family', 'familyDetail'];
   let wizStack = ['menu'];
   function wizRender(instant){
     const vp = $('#opt-viewport');
@@ -589,14 +603,56 @@
     if (rel === 'Family') { $('#fam-name').textContent = activeFirst(); wizGo('family'); }
     else toast(rel + ' options — coming next');
   }));
-  // Family sub-relationship taps set the relationship, update the card, and close.
+  // Every family relation drills one more level into a connection type. Options
+  // are relation-appropriate and inclusive of blended, adoptive, and chosen family.
+  const FAM_DETAIL = {
+    Father:      ['Biological father', 'Adoptive father', 'Stepfather', 'Foster father', 'Guardian', 'Skip This'],
+    Mother:      ['Biological mother', 'Adoptive mother', 'Stepmother', 'Foster mother', 'Guardian', 'Skip This'],
+    Brother:     ['Biological brother', 'Half-brother', 'Stepbrother', 'Adoptive brother', 'Foster brother', 'Skip This'],
+    Sister:      ['Biological sister', 'Half-sister', 'Stepsister', 'Adoptive sister', 'Foster sister', 'Skip This'],
+    Grandfather: ['Biological grandfather', 'Step-grandfather', 'Adoptive grandfather', 'Skip This'],
+    Grandmother: ['Biological grandmother', 'Step-grandmother', 'Adoptive grandmother', 'Skip This'],
+    Grandchild:  ['Biological grandchild', 'Step-grandchild', 'Adoptive grandchild', 'Skip This'],
+    Aunt:        ['Aunt by birth', 'Aunt by marriage', 'Great-aunt', 'Skip This'],
+    Uncle:       ['Uncle by birth', 'Uncle by marriage', 'Great-uncle', 'Skip This'],
+    Cousin:      ['First cousin', 'Second cousin', 'Cousin by marriage', 'Skip This'],
+    Niece:       ['Niece by birth', 'Niece by marriage', 'Great-niece', 'Skip This'],
+    Nephew:      ['Nephew by birth', 'Nephew by marriage', 'Great-nephew', 'Skip This'],
+  };
+  let pendingFamRel = null;
+
+  // Family relation taps drill into the connection-type step for that relation.
   $$('.fam-option').forEach(b => b.addEventListener('click', () => {
-    const label = b.dataset.fam;
-    setRelationship(activeId, label);
+    const rel = b.dataset.fam;
+    if (FAM_DETAIL[rel]) openFamilyDetail(rel);
+    else finalizeRelationship(rel, null);
+  }));
+
+  function openFamilyDetail(rel){
+    pendingFamRel = rel;
+    $('#famdetail-title').textContent = 'How should we connect ' + activeFirst() + ' as your ' + rel.toLowerCase() + '?';
+    $('#famdetail-options').innerHTML = FAM_DETAIL[rel].map(opt =>
+      '<button class="famdetail-option w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-detail="' + opt + '">' + opt + '</button>'
+    ).join('');
+    wizGo('familyDetail');
+  }
+  $('#famdetail-options').addEventListener('click', (e) => {
+    const b = e.target.closest('.famdetail-option'); if (!b) return;
+    finalizeRelationship(pendingFamRel, b.dataset.detail);
+  });
+
+  // Persist the relationship, close, and confirm. The badge shows the base
+  // relation, EXCEPT for step-relations, which stay explicit on the badge
+  // (e.g. "Stepfather") — the most sensitive distinction to surface.
+  function finalizeRelationship(base, detail){
+    const isStep = detail && /^step/i.test(detail);
+    const badge = isStep ? detail : base;
+    setRelationship(activeId, badge);
     buildPeople(); render();
     closeAll();
-    toast(activeFirst() + ' saved as your ' + label);
-  }));
+    const shown = (detail && detail !== 'Skip This') ? detail : base;
+    toast(activeFirst() + ' saved as your ' + shown.toLowerCase());
+  }
 
   function openShare(){ overlays.options.classList.remove('open'); $('#share-sub').textContent = 'Invite others to visit ' + activeName + '’s page'; openOverlay(overlays.share); }
   $('#copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('#share-link').value); } catch(_){} closeAll(); toast('Link copied to clipboard'); });
