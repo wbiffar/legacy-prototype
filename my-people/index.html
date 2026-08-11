@@ -80,7 +80,10 @@
     .toast .toast-body { display: flex; align-items: center; gap: 12px; min-width: 0; padding-left: 16px; border-left: 1px solid rgba(255,255,255,0.4); }
     .toast #toast-text { font-size: 14px; line-height: 1.5; }
     .toast #toast-action { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; font-size: 14px; }
-    @media (max-width: 639px) { .toast { top: 16px; } }
+    @media (max-width: 639px) {
+      .toast { top: 16px; left: 16px; right: 16px; max-width: none; transform: translateY(-16px); }
+      .toast.show { transform: translateY(0); }
+    }
 
     /* Sticky mobile action bar — full-width bottom sheet-style */
     .sticky-actions {
