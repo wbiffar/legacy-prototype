@@ -124,7 +124,7 @@
 <!-- ====================================================================
      MAIN
      ==================================================================== -->
-<main class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-6 md:py-10">
+<main class="max-w-[1440px] mx-auto px-3 md:px-8 lg:px-12 py-6 md:py-10">
   <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-4 lg:gap-12">
 
     <!-- =================== LEFT: My Account =================== -->
@@ -463,7 +463,7 @@
       ? 'You haven’t added anyone yet.'
       : 'Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.';
     root.innerHTML =
-      '<div class="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">' +
+      '<div class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">' +
         people.map(personCardHTML).join('') +
         addCardHTML(n === 0) +
       '</div>';
