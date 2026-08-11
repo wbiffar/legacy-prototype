@@ -369,6 +369,8 @@
   <button data-scenario="full" class="active"><i class="ph ph-users-three"></i> 3 people saved</button>
   <button data-scenario="one"><i class="ph ph-user"></i> 1 person saved</button>
   <button data-scenario="zero"><i class="ph ph-tray"></i> Zero state · none saved</button>
+  <span class="demo-switcher-divider" aria-hidden="true"></span>
+  <button data-demo-reset title="Reset saved people, relationships, and follows to the demo default"><i class="ph ph-arrow-clockwise"></i> Reset demo</button>
 </div>
 
 <script>
@@ -729,6 +731,8 @@
     $$('.demo-switcher [data-scenario]').forEach(x => x.classList.toggle('active', x===b));
     loadScenario(b.dataset.scenario);
   }));
+  const demoReset = $('[data-demo-reset]');
+  if (demoReset) demoReset.addEventListener('click', () => { try { localStorage.removeItem('legacyMyPeople.v0'); } catch(_){} location.reload(); });
 
   // ===== init =====
   // Use the persisted saved list if present (so person-page adds/removes carry

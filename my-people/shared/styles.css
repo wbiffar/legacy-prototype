@@ -113,5 +113,7 @@ button.rel-pill[aria-pressed="true"] i { color: #fff; }
 .demo-switcher button { padding: 6px 12px; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.14); background: transparent; color: rgba(255,255,255,0.72); font-size: 12.5px; font-weight: 500; cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 6px; }
 .demo-switcher button:hover { background: rgba(255,255,255,0.08); color: #fff; }
 .demo-switcher button.active { background: #dcb05e; color: #262116; font-weight: 600; border-color: #dcb05e; }
+.demo-switcher-divider { width: 1px; align-self: stretch; margin: 2px 4px; background: rgba(255,255,255,0.14); }
+.demo-switcher [data-demo-reset]:hover { background: rgba(220,176,94,0.16); color: #f0d78d; border-color: rgba(220,176,94,0.5); }
 
 @media print { .demo-switcher, .sticky-actions { display: none; } }

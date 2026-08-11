@@ -584,6 +584,8 @@
   <span class="demo-switcher-label">Account scenario</span>
   <button data-scenario="signed-in"><i class="ph ph-user-circle-check"></i> Signed In</button>
   <button data-scenario="signed-out" class="active"><i class="ph ph-user"></i> Sign In or Create an Account</button>
+  <span class="demo-switcher-divider" aria-hidden="true"></span>
+  <button data-demo-reset title="Reset saved people, relationships, and follows to the demo default"><i class="ph ph-arrow-clockwise"></i> Reset demo</button>
 </div>
 
 <script src="shared/people.js"></script>
@@ -738,6 +740,8 @@
     scenario = b.dataset.scenario;
     paintScenario();
   }));
+  const demoReset = $('[data-demo-reset]');
+  if (demoReset) demoReset.addEventListener('click', () => { try { localStorage.removeItem('legacyMyPeople.v0'); } catch(_){} location.reload(); });
 
   // ===== Populate this person's content =====
   function replaceNames(root){
