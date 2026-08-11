@@ -717,7 +717,7 @@
   }
   function followToast(){ toast('Followed successfully, you will now receive emails and notifications about this page.', null, null, 'ph ph-check'); }
   updatesBtn.addEventListener('click', () => {
-    if (isFollowing(PID)) { setFollowing(PID, false); paintFollowing(); toast('You’ll no longer receive updates about this page.', null, null, 'ph ph-bell-slash'); return; }
+    if (isFollowing(PID)) { setFollowing(PID, false); paintFollowing(); toast('You’re no longer following this page and won’t receive updates.', null, null, 'ph ph-bell-slash'); return; }
     if (isSignedIn()) { setFollowing(PID, true); paintFollowing(); followToast(); return; }  // signed in → follow directly
     openOverlay(overlays.updates);                                                            // signed out → email capture
   });
