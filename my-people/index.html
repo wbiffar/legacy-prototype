@@ -737,7 +737,8 @@
     toast(PERSON.first + ' added to My People', 'my-people.html', 'View');
   }
   $('#auth-continue').addEventListener('click', authSuccess);
-  acctSignin.addEventListener('click', openAuth);
+  // Header "Sign In" takes the visitor to My People (simulates signing in).
+  acctSignin.addEventListener('click', () => { window.location.href = 'my-people.html'; });
 
   // ===== Add to My People =====
   function toggleAdd(){
@@ -754,7 +755,7 @@
   }
   addBtn.addEventListener('click', handleAdd);
   if (stickyAdd) stickyAdd.addEventListener('click', handleAdd);
-  acctMobile.addEventListener('click', () => { if (isSignedIn()) window.location.href = 'my-people.html'; else openAuth(); });
+  acctMobile.addEventListener('click', () => { window.location.href = 'my-people.html'; });
 
   // ===== Mobile menu =====
   const header = $('#site-header'), menuToggle = $('#menu-toggle');
@@ -828,7 +829,8 @@
   // the account/dashboard "Add More People" flow (from=account) — so the visitor
   // can add directly rather than hitting the sign-in gate.
   const fromAccount = new URLSearchParams(location.search).get('from') === 'account';
-  if (isSaved(PID) || fromAccount) scenario = 'signed-in';
+  const forceSignedOut = new URLSearchParams(location.search).get('so') === '1';  // arriving via Sign Out
+  if (!forceSignedOut && (isSaved(PID) || fromAccount)) scenario = 'signed-in';
   populatePerson();
   paintScenario();
   paintFollowing();
