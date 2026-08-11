@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy — Ralph Thomas (My People FUTURE · DES-2251)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0;1&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <script src="shared/tokens.js"></script>
+  <link rel="stylesheet" href="shared/styles.css" />
+</head>
+<body>
+
+<!-- ====================================================================
+     LEADERBOARD AD PLACEHOLDER
+     ==================================================================== -->
+<div class="w-full bg-wb-100 border-b border-wb-200 flex items-center justify-center h-[90px] text-[11px] font-semibold tracking-[0.2em] text-wb-400">AD</div>
+
+<!-- ====================================================================
+     HEADER — NavigationCustom (signed in)
+     ==================================================================== -->
+<header class="bg-white border-b border-wb-200" data-menu-open="false" id="site-header">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-16 py-3 md:py-4 flex items-center gap-3 md:gap-6 lg:border-b lg:border-wb-200">
+    <a href="../" aria-label="Legacy.com home" class="flex-shrink-0 flex items-center">
+      <img src="assets/logo-horizontal.svg" alt="Legacy" class="h-8 md:h-9 w-auto" />
+    </a>
+    <div class="flex-1 max-w-[420px] mx-auto hidden lg:block">
+      <div class="relative">
+        <input type="search" placeholder="Find a loved one..." aria-label="Find a loved one" class="w-full h-10 pl-4 pr-11 rounded-full bg-wb-50 border border-wb-500 text-base text-wb-900 placeholder:text-wb-600 focus:outline-none focus:border-navy-500" />
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-wb-700 pointer-events-none"><i class="ph ph-magnifying-glass text-xl"></i></span>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 md:gap-3 ml-auto">
+      <!-- Desktop account — signed out / create account -->
+      <button id="acct-signin" type="button" class="hidden lg:inline-flex items-center gap-1 px-1 py-2 text-wb-900 hover:text-navy-700">
+        <i class="ph ph-user-circle text-2xl"></i>
+        <span class="text-sm font-semibold">Sign In</span>
+      </button>
+      <!-- Desktop account — signed in -->
+      <a id="acct-signedin" href="future-my-people.html" style="display:none" class="hidden lg:inline-flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-wb-50">
+        <span class="w-9 h-9 rounded-full bg-gold-100 text-gold-900 flex items-center justify-center text-sm font-semibold border border-gold-300" aria-hidden="true">J</span>
+        <span class="text-[15px] font-semibold text-wb-900">Hi, John</span>
+      </a>
+      <!-- Mobile account -->
+      <button id="acct-mobile" aria-label="Your account" class="lg:hidden w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900"><i class="ph ph-user-circle text-xl"></i></button>
+      <button aria-label="Open menu" aria-expanded="false" id="menu-toggle" class="lg:hidden w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900"><i class="ph ph-list text-xl"></i></button>
+    </div>
+  </div>
+  <!-- Desktop nav bar -->
+  <nav class="hidden lg:block bg-wb-50">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-16 flex items-center justify-center gap-16 text-sm font-normal text-wb-900 py-3">
+      <a href="#" class="hover:text-navy-700">Create &amp; Publish</a>
+      <a href="#" class="hover:text-navy-700">Browse Obituaries</a>
+      <a href="#" class="hover:text-navy-700">Plan Ahead</a>
+      <a href="#" class="hover:text-navy-700">Get Support</a>
+      <a href="#" class="hover:text-navy-700">Send a Gift</a>
+    </div>
+  </nav>
+  <!-- Mobile menu -->
+  <div class="mobile-menu lg:hidden border-t border-wb-200">
+    <div>
+      <div class="px-4 py-3">
+        <div class="relative mb-3">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-wb-500 pointer-events-none"><i class="ph ph-magnifying-glass text-lg"></i></span>
+          <input type="search" placeholder="Find a loved one…" aria-label="Find a loved one" class="w-full h-11 pl-11 pr-4 rounded-full bg-white border border-wb-300 text-[15px] text-wb-900 placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
+        </div>
+        <ul class="text-[15px] font-semibold text-wb-900">
+          <li><a href="#" class="block py-2.5">Create &amp; Publish</a></li>
+          <li><a href="#" class="block py-2.5">Browse Obituaries</a></li>
+          <li><a href="#" class="block py-2.5">Plan Ahead</a></li>
+          <li><a href="#" class="block py-2.5">Get Support</a></li>
+          <li><a href="#" class="block py-2.5">Send a Gift</a></li>
+          <li class="border-t border-wb-200 mt-1 pt-1"><a href="future-my-people.html" class="block py-2.5 text-navy-500">My People</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ====================================================================
+     HERO — navy region (desktop breadcrumb/share bar + hero)
+     ==================================================================== -->
+<section>
+  <div class="bg-navy-600">
+    <!-- Desktop breadcrumb + share bar -->
+    <div class="hidden md:block">
+      <div class="max-w-[1440px] mx-auto px-8 lg:px-16 py-3 flex items-center gap-8">
+        <nav aria-label="Breadcrumb" class="flex-1 min-w-0">
+          <ol class="flex items-center gap-1 text-sm whitespace-nowrap">
+            <li><a href="#" class="text-gold-500 underline underline-offset-2 hover:text-gold-400">Home</a></li>
+            <li aria-hidden="true" class="text-wb-400">/</li>
+            <li><a href="#" class="text-gold-500 underline underline-offset-2 hover:text-gold-400">Obituaries</a></li>
+            <li aria-hidden="true" class="text-wb-400">/</li>
+            <li><a href="#" class="text-gold-500 underline underline-offset-2 hover:text-gold-400">Ralph Thomas</a></li>
+          </ol>
+        </nav>
+        <button class="js-share flex-shrink-0 inline-flex items-center gap-2.5 h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold">
+          <i class="ph ph-share-fat text-xl"></i> Share
+        </button>
+      </div>
+    </div>
+    <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-16 pt-6 md:pt-8 pb-8 md:pb-16">
+      <div class="flex flex-col md:flex-row items-center md:justify-center gap-6 md:gap-16 text-center md:text-left">
+        <img id="hero-photo" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=560&h=720&fit=crop&q=80" alt="Ralph Thomas" class="w-[159px] h-[208px] md:w-[269px] md:h-[352px] rounded-2xl md:rounded-xl object-cover shadow-[24px_28px_64px_-10px_rgba(0,20,30,0.28)] flex-shrink-0" />
+        <div class="w-full md:w-[467px] flex flex-col items-center md:items-start gap-6">
+          <div class="flex flex-col items-center md:items-start gap-2 md:gap-4 w-full">
+            <p class="hidden md:block text-sm md:text-base font-semibold tracking-[1.12px] uppercase text-gold-400 leading-normal">In Memory Of</p>
+            <h1 class="font-serif-heading text-4xl md:text-6xl text-navy-50 leading-[1.2]">Ralph Thomas</h1>
+            <p id="hero-dates" class="text-lg md:text-3xl text-gold-400 leading-normal">1935 – 2023</p>
+          </div>
+          <div class="w-full flex items-center justify-center md:justify-start gap-3 md:gap-4">
+            <button class="flex-1 md:flex-none justify-center inline-flex items-center gap-2 h-11 md:h-10 px-4 md:px-5 rounded-full bg-gold-400 hover:bg-gold-500 text-wb-900 text-sm font-semibold whitespace-nowrap">
+              <i class="ph ph-flower-tulip text-xl"></i> Send Flowers
+            </button>
+            <!-- Add to My People toggle -->
+            <button id="add-btn" data-added="false" aria-pressed="false" class="flex-1 md:flex-none justify-center inline-flex items-center gap-2 h-11 md:h-10 px-4 md:px-5 rounded-full bg-white text-navy-700 text-sm font-semibold border border-navy-700 hover:bg-wb-50 transition-colors whitespace-nowrap">
+              <span class="add-default inline-flex items-center gap-2"><i class="ph ph-plus-circle text-xl"></i> Add to My People</span>
+              <span class="add-added hidden items-center gap-2"><i class="ph-fill ph-check-circle text-xl text-seafoam-600"></i> My People <i class="ph ph-arrow-right"></i></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Partnership line -->
+  <div class="bg-gold-50 border-b border-wb-200">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-4 text-center">
+      <p class="text-sm md:text-base text-gold-900">Memorialized in partnership with <span id="partnership-home" class="font-semibold">Eternal Springs Funeral Home</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     MAIN — center stage + right rail
+     ==================================================================== -->
+<main class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-6 md:py-10">
+  <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-8 lg:gap-10">
+
+    <!-- ================= CENTER STAGE ================= -->
+    <div class="space-y-5 md:space-y-6 min-w-0">
+
+      <!-- 2 Memorial Events — hidden for the board scenario (events have passed) -->
+      <section class="hidden bg-white border border-wb-200 rounded-2xl card-elev p-5 md:p-7">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-serif-heading text-2xl text-navy-700">2 Memorial Events</h2>
+          <div class="flex gap-2 sm:hidden">
+            <button id="ev-prev" aria-label="Previous event" class="w-10 h-10 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-700 flex items-center justify-center"><i class="ph ph-caret-left"></i></button>
+            <button id="ev-next" aria-label="Next event" class="w-10 h-10 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-700 flex items-center justify-center"><i class="ph ph-caret-right"></i></button>
+          </div>
+        </div>
+        <div id="events-track" class="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 px-1 sm:mx-0 sm:px-0 sm:overflow-visible" role="group" aria-roledescription="carousel" aria-label="Memorial events">
+          <!-- event card -->
+          <div class="event-card snap-start shrink-0 basis-[88%] sm:basis-[calc(50%-0.5rem)] border border-wb-200 rounded-xl p-4 flex flex-col">
+            <div class="flex items-start justify-between gap-3">
+              <h3 class="text-lg font-semibold text-wb-900">Graveside Service</h3>
+              <span class="flex-shrink-0 w-12 rounded-md overflow-hidden border border-wb-200 text-center">
+                <span class="block bg-coral-700 text-white text-[10px] font-bold tracking-wider py-0.5">MAR</span>
+                <span class="block text-xl font-bold text-wb-900 py-0.5">24</span>
+              </span>
+            </div>
+            <div class="mt-3 space-y-2.5 text-sm text-wb-700">
+              <p class="flex gap-2"><i class="ph ph-clock text-base text-wb-500 mt-0.5"></i> <span>Saturday, March 24<br>11:30 AM – 4:00 PM</span></p>
+              <p class="flex gap-2"><i class="ph ph-map-pin text-base text-wb-500 mt-0.5"></i> <span>Eternal Springs Funeral Home</span></p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-wb-200">
+              <a href="#" class="inline-flex items-center gap-2 text-sm font-semibold text-navy-500 hover:text-navy-700"><i class="ph ph-bed"></i> Book a Hotel Nearby</a>
+            </div>
+          </div>
+          <!-- event card -->
+          <div class="event-card snap-start shrink-0 basis-[88%] sm:basis-[calc(50%-0.5rem)] border border-wb-200 rounded-xl p-4 flex flex-col">
+            <div class="flex items-start justify-between gap-3">
+              <h3 class="text-lg font-semibold text-wb-900">Wake</h3>
+              <span class="flex-shrink-0 w-12 rounded-md overflow-hidden border border-wb-200 text-center">
+                <span class="block bg-coral-700 text-white text-[10px] font-bold tracking-wider py-0.5">MAR</span>
+                <span class="block text-xl font-bold text-wb-900 py-0.5">25</span>
+              </span>
+            </div>
+            <div class="mt-3 space-y-2.5 text-sm text-wb-700">
+              <p class="flex gap-2"><i class="ph ph-clock text-base text-wb-500 mt-0.5"></i> <span>Sunday, March 25<br>9:30 AM – 11:00 AM</span></p>
+              <p class="flex gap-2"><i class="ph ph-map-pin text-base text-wb-500 mt-0.5"></i> <span>Evanston First Christian Church<br>54326 Sparrow Dr., Evanston, IL, 60201</span></p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-wb-200 flex flex-col gap-2">
+              <a href="#" class="inline-flex items-center gap-2 text-sm font-semibold text-navy-500 hover:text-navy-700"><i class="ph ph-bed"></i> Book a Hotel Nearby</a>
+              <a href="#" class="inline-flex items-center gap-2 text-sm font-semibold text-navy-500 hover:text-navy-700"><i class="ph ph-flower-tulip"></i> Send Flowers</a>
+            </div>
+          </div>
+        </div>
+        <div id="events-dots" class="flex justify-center gap-2 mt-4 sm:hidden" aria-hidden="true"></div>
+      </section>
+
+      <!-- Ralph's Obituaries -->
+      <section class="bg-white border border-wb-200 rounded-2xl card-elev overflow-hidden">
+        <div class="p-5 md:p-7">
+          <h2 class="font-serif-heading text-2xl text-navy-700">Ralph's Obituaries</h2>
+          <p id="obit-source" class="text-sm text-wb-500 mt-1">Excerpt from Chicago Sun-Times</p>
+          <p id="obit-body" class="font-body text-lg md:text-xl text-wb-900 leading-relaxed mt-4 excerpt-fade max-h-[168px] overflow-hidden">Ralph Thomas passed away February 14, 2023, at the age of 86. Ralph was born in Fresno, California, on March 18, 1935, to his parents, Robert Thomas and Veronica Delgado. He is preceded in death by his brothers Raymond and Franklin, his son Anthony, and his beloved wife Patricia (Ramirez) Thomas. Ralph is survived by his daughters Elena and Sofia, his grandchildren, and a wide circle of friends.</p>
+          <div class="text-center mt-2">
+            <a href="#" class="inline-flex items-center gap-2 text-base font-semibold text-navy-500 hover:text-navy-700">Read the most recent obituary <i class="ph ph-arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="bg-wb-50 border-t border-wb-200 p-5 md:p-6">
+          <p class="text-sm font-semibold text-wb-700 mb-3">Choose from all obituaries available</p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <a href="#" class="flex items-center justify-between gap-2 bg-white border border-wb-300 rounded-lg px-4 h-16 hover:border-navy-500">
+              <img src="assets/logo-horizontal.svg" class="h-6 w-auto" alt="Legacy" />
+              <i class="ph ph-arrow-right text-wb-500"></i>
+            </a>
+            <a href="#" class="flex items-center justify-between gap-2 bg-white border border-wb-300 rounded-lg px-4 h-16 hover:border-navy-500">
+              <span class="flex items-center gap-2 min-w-0"><span class="text-sm font-bold uppercase tracking-wide text-wb-900 truncate">Chicago Sun·Times</span><span class="flex-shrink-0 w-5 h-5 rounded-full bg-gold-100 text-gold-900 text-[11px] font-bold flex items-center justify-center">4</span></span>
+              <i class="ph ph-arrow-square-out text-wb-500"></i>
+            </a>
+            <a href="#" class="flex items-center justify-between gap-2 bg-white border border-wb-300 rounded-lg px-4 h-16 hover:border-navy-500">
+              <span class="font-serif-heading text-base text-coral-700">Eternal Rest<span class="block text-[10px] tracking-wider text-coral-600">FUNERAL HOME</span></span>
+              <i class="ph ph-arrow-square-out text-wb-500"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stay Close to Ralph's Story (Get Updates callout) -->
+      <section class="relative overflow-hidden rounded-2xl border-[3px] border-gold-200 bg-[#fdf6e3] flex flex-col items-start gap-3 py-4 pl-4 pr-8 md:pl-8 md:pr-32">
+        <img src="assets/updates-art.jpg" alt="" aria-hidden="true" class="pointer-events-none absolute -bottom-[3px] -right-[3px] w-[245px] h-[232px] object-cover z-0" />
+        <div class="relative z-10 flex flex-col gap-1 w-full">
+          <h2 class="text-xl font-semibold text-navy-700 leading-tight">Stay Close to Ralph's Story</h2>
+          <p class="text-lg font-normal text-wb-700 leading-tight">Get an email whenever someone leaves a new memory in the guest book.</p>
+        </div>
+        <button id="updates-btn" class="relative z-10 inline-flex items-center gap-2.5 h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold"><i class="ph ph-bell text-xl"></i> Get Updates</button>
+      </section>
+
+      <!-- Remembrance Pages -->
+      <section class="bg-white border border-wb-200 rounded-2xl card-elev p-5 md:p-7">
+        <div class="flex items-center gap-2">
+          <h2 class="font-serif-heading text-2xl text-navy-700">Remembrance Pages</h2>
+          <span class="w-6 h-6 rounded-full bg-gold-100 text-gold-900 text-xs font-bold flex items-center justify-center">4</span>
+        </div>
+        <p class="text-sm md:text-base text-wb-700 mt-2">Ralph is remembered across these pages — each one connected to a place or moment that was part of their life.</p>
+        <p class="text-base font-semibold text-wb-900 mt-5 mb-1">4 Memorial pages related to Ralph</p>
+        <ul class="divide-y divide-wb-200">
+          <li class="flex items-center justify-between gap-4 py-4">
+            <span class="min-w-0"><a href="#" class="text-[15px] font-semibold text-navy-500 hover:text-navy-700">Springfield, Illinois Obituaries</a><span class="block text-sm text-wb-500">United States</span></span>
+            <a href="#" aria-label="Open Springfield, Illinois Obituaries" class="flex-shrink-0 w-11 h-11 rounded-full border border-wb-300 text-wb-700 hover:bg-wb-50 flex items-center justify-center"><i class="ph ph-arrow-right"></i></a>
+          </li>
+          <li class="flex items-center justify-between gap-4 py-4">
+            <span class="min-w-0"><a href="#" class="text-[15px] font-semibold text-navy-500 hover:text-navy-700">Sangamon County Obituaries</a><span class="block text-sm text-wb-500">Illinois</span></span>
+            <a href="#" aria-label="Open Sangamon County Obituaries" class="flex-shrink-0 w-11 h-11 rounded-full border border-wb-300 text-wb-700 hover:bg-wb-50 flex items-center justify-center"><i class="ph ph-arrow-right"></i></a>
+          </li>
+          <li class="flex items-center justify-between gap-4 py-4">
+            <span class="min-w-0"><a href="#" class="text-[15px] font-semibold text-navy-500 hover:text-navy-700">"Thomas" Family Obituaries &amp; Memoriams</a></span>
+            <a href="#" aria-label="Open Thomas Family Obituaries" class="flex-shrink-0 w-11 h-11 rounded-full border border-wb-300 text-wb-700 hover:bg-wb-50 flex items-center justify-center"><i class="ph ph-arrow-right"></i></a>
+          </li>
+          <li class="flex items-center justify-between gap-4 py-4">
+            <span class="min-w-0"><a href="#" class="text-[15px] font-semibold text-navy-500 hover:text-navy-700">"Ralph Thomas" Obituary Search</a></span>
+            <a href="#" aria-label="Open Ralph Thomas Obituary Search" class="flex-shrink-0 w-11 h-11 rounded-full border border-wb-300 text-wb-700 hover:bg-wb-50 flex items-center justify-center"><i class="ph ph-arrow-right"></i></a>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Donate to a Charity -->
+      <section class="hidden bg-white border border-wb-200 rounded-2xl card-elev p-5 md:p-7">
+        <h2 class="font-serif-heading text-2xl text-navy-700">Donate to a Charity</h2>
+        <p class="text-sm md:text-base text-wb-700 mt-1">Ralph's family requested donations in their memory to the following charities:</p>
+        <div class="mt-4 border border-wb-300 rounded-xl p-4 flex items-center gap-4">
+          <span class="flex-shrink-0 flex items-center gap-1">
+            <span class="w-9 h-9 rounded bg-coral-700 text-white flex items-center justify-center"><i class="ph-fill ph-triangle text-lg"></i></span>
+            <span class="font-serif-heading text-2xl text-coral-700">85</span>
+          </span>
+          <span class="flex-1 min-w-0 text-base font-semibold text-wb-900">American Diabetes Association</span>
+          <button class="flex-shrink-0 h-10 px-5 rounded-full bg-gold-500 hover:bg-gold-600 text-wb-900 text-sm font-semibold">Donate</button>
+        </div>
+      </section>
+
+      <!-- Ancestry -->
+      <section class="hidden bg-white border border-wb-200 rounded-2xl card-elev p-5 md:p-7">
+        <div class="flex items-center justify-between mb-4">
+          <span class="flex items-center gap-1.5 text-lg font-bold text-[#2e6b3e]"><i class="ph-fill ph-leaf"></i> ancestry</span>
+          <span class="text-xs uppercase tracking-wider text-wb-400 font-semibold">Sponsored</span>
+        </div>
+        <ul class="divide-y divide-wb-200">
+          <li class="flex items-center gap-4 py-3">
+            <span class="w-11 h-14 rounded bg-wb-100 border border-wb-200 flex items-center justify-center text-wb-400 flex-shrink-0"><i class="ph ph-file-text text-xl"></i></span>
+            <span class="flex-1 min-w-0"><span class="block font-serif-heading text-lg text-wb-900">Dwight Thomas</span><span class="block text-sm text-wb-600 truncate">27 Mar 1926 | 20 Sep 2008 | Before 1951 Michigan</span></span>
+            <a href="#" class="flex-shrink-0 inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold">Visit <i class="ph ph-arrow-square-out"></i></a>
+          </li>
+          <li class="flex items-center gap-4 py-3">
+            <span class="w-11 h-14 rounded bg-wb-100 border border-wb-200 flex items-center justify-center text-wb-400 flex-shrink-0"><i class="ph ph-file-text text-xl"></i></span>
+            <span class="flex-1 min-w-0"><span class="block font-serif-heading text-lg text-wb-900">Scott Thomas</span><span class="block text-sm text-wb-600 truncate">Ben Thomas; Mildred Thomas | Mills | Debbie McMillan</span></span>
+            <a href="#" class="flex-shrink-0 inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold">Visit <i class="ph ph-arrow-square-out"></i></a>
+          </li>
+          <li class="flex items-center gap-4 py-3">
+            <span class="w-11 h-14 rounded bg-wb-100 border border-wb-200 flex items-center justify-center text-wb-400 flex-shrink-0"><i class="ph ph-file-text text-xl"></i></span>
+            <span class="flex-1 min-w-0"><span class="block font-serif-heading text-lg text-wb-900">Billie B. Thomas</span><span class="block text-sm text-wb-600 truncate">Da Smythe | Memfflan | Mark</span></span>
+            <a href="#" class="flex-shrink-0 inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold">Visit <i class="ph ph-arrow-square-out"></i></a>
+          </li>
+        </ul>
+        <div class="text-center mt-4">
+          <a href="#" class="inline-flex items-center gap-2 h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold">View 543k Results on Ancestry <i class="ph ph-arrow-square-out"></i></a>
+        </div>
+      </section>
+
+      <!-- Other Ways to Support the Family -->
+      <section class="bg-white border border-wb-200 rounded-2xl card-elev p-5 md:p-7">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-serif-heading text-2xl text-navy-700">Other Ways to Support the Family</h2>
+          <div class="hidden sm:flex gap-2">
+            <button aria-label="Previous" class="w-9 h-9 rounded-full border border-gold-400 text-gold-700 flex items-center justify-center"><i class="ph ph-arrow-left"></i></button>
+            <button aria-label="Next" class="w-9 h-9 rounded-full border border-gold-400 text-gold-700 flex items-center justify-center"><i class="ph ph-arrow-right"></i></button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <a href="#" class="rounded-xl bg-gold-50 border border-wb-200 p-5 flex flex-col hover:border-gold-400">
+            <span class="w-14 h-14 rounded-full bg-gold-500 text-white flex items-center justify-center mb-4"><i class="ph ph-flower-tulip text-2xl"></i></span>
+            <h3 class="text-lg font-semibold text-wb-900">Shop the Sympathy Store</h3>
+            <p class="text-sm text-wb-700 mt-1 flex-1">Consider sending gifts that show you are thinking of them.</p>
+            <i class="ph ph-arrow-right text-wb-700 mt-4"></i>
+          </a>
+          <a href="#" class="rounded-xl bg-gold-50 border border-wb-200 p-5 flex flex-col hover:border-gold-400">
+            <span class="w-14 h-14 rounded-full bg-seafoam-700 text-white flex items-center justify-center mb-4"><i class="ph ph-tree text-2xl"></i></span>
+            <h3 class="text-lg font-semibold text-wb-900">Plant Trees</h3>
+            <p class="text-sm text-wb-700 mt-1 flex-1">Honor them by planting trees in their memory.</p>
+            <i class="ph ph-arrow-right text-wb-700 mt-4"></i>
+          </a>
+          <a href="#" class="rounded-xl bg-gold-50 border border-wb-200 p-5 flex flex-col hover:border-gold-400">
+            <span class="w-14 h-14 rounded-full bg-coral-700 text-white flex items-center justify-center mb-4"><i class="ph-fill ph-bookmark-simple text-2xl"></i></span>
+            <h3 class="text-lg font-semibold text-wb-900">Follow This Page</h3>
+            <p class="text-sm text-wb-700 mt-1 flex-1">Get email updates when new memories are made.</p>
+            <i class="ph ph-arrow-right text-wb-700 mt-4"></i>
+          </a>
+        </div>
+      </section>
+
+      <!-- Missing or inaccurate -->
+      <section class="bg-wb-50 border border-wb-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-3">
+        <div class="flex-1"><p class="text-base font-semibold text-wb-900">Missing or inaccurate information?</p><p class="text-sm text-wb-600">We want to honor Ralph's loved ones' memory with accuracy and care.</p></div>
+        <a href="#" class="inline-flex items-center gap-2 text-sm font-semibold text-navy-500 hover:text-navy-700">Contact customer support <i class="ph ph-arrow-right"></i></a>
+      </section>
+    </div>
+
+    <!-- ================= RIGHT RAIL ================= -->
+    <aside class="hidden lg:block space-y-6">
+      <div class="bg-wb-100 border border-wb-200 rounded-xl h-[250px] flex items-center justify-center text-[11px] font-semibold tracking-[0.2em] text-wb-400">AD</div>
+      <div class="bg-white border border-wb-200 rounded-xl p-5">
+        <h3 class="font-serif-heading text-xl text-navy-700 mb-3">Help with Grief and Loss</h3>
+        <ul class="space-y-4">
+          <li class="flex gap-3">
+            <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=160&q=80" alt="" class="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
+            <span><a href="#" class="text-sm font-semibold text-wb-900 hover:text-navy-700 leading-snug block">The Five Stages of Grief</a><a href="#" class="text-xs font-semibold text-navy-500">Read Article</a></span>
+          </li>
+          <li class="flex gap-3">
+            <img src="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=160&q=80" alt="" class="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
+            <span><a href="#" class="text-sm font-semibold text-wb-900 hover:text-navy-700 leading-snug block">How Do I Handle Holidays While Grieving?</a><a href="#" class="text-xs font-semibold text-navy-500">Read Article</a></span>
+          </li>
+          <li class="flex gap-3">
+            <img src="https://images.unsplash.com/photo-1494972308805-463bc619d34e?w=160&q=80" alt="" class="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
+            <span><a href="#" class="text-sm font-semibold text-wb-900 hover:text-navy-700 leading-snug block">How to Cope With Grief</a><a href="#" class="text-xs font-semibold text-navy-500">Read Article</a></span>
+          </li>
+        </ul>
+      </div>
+      <div class="bg-wb-100 border border-wb-200 rounded-xl h-[600px] flex items-center justify-center text-[11px] font-semibold tracking-[0.2em] text-wb-400 sticky top-[140px]">AD</div>
+    </aside>
+  </div>
+</main>
+
+<!-- ====================================================================
+     FOOTER
+     ==================================================================== -->
+<footer class="bg-navy-900 text-white">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8">
+      <div class="col-span-2 md:col-span-1">
+        <img src="assets/logo-horizontal-white.svg" alt="Legacy" class="h-9 w-auto" />
+        <div class="flex gap-3 mt-4 text-wb-300">
+          <a href="#" aria-label="Facebook" class="hover:text-gold-500"><i class="ph-fill ph-facebook-logo text-xl"></i></a>
+          <a href="#" aria-label="YouTube" class="hover:text-gold-500"><i class="ph-fill ph-youtube-logo text-xl"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Services</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Create &amp; Publish an obituary</a></li>
+          <li><a href="#" class="hover:text-gold-500">Plan a funeral or estate</a></li>
+          <li><a href="#" class="hover:text-gold-500">Send a Sympathy Gift</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Find obituaries</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Browse by Lastname</a></li>
+          <li><a href="#" class="hover:text-gold-500">Browse by Newspaper</a></li>
+          <li><a href="#" class="hover:text-gold-500">Browse by Location</a></li>
+          <li><a href="#" class="hover:text-gold-500">Celebrity Obituaries</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Legacy for Business</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Funeral Homes</a></li>
+          <li><a href="#" class="hover:text-gold-500">Newspapers &amp; Media Outlets</a></li>
+          <li><a href="#" class="hover:text-gold-500">Advertise with us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Help &amp; Support</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">24/7 Publishing Support</a></li>
+          <li><a href="#" class="hover:text-gold-500">How to write an obituary</a></li>
+          <li><a href="#" class="hover:text-gold-500">FAQs</a></li>
+        </ul>
+        <div class="mt-4 rounded-xl border border-gold-700/60 p-4">
+          <p class="text-sm font-semibold text-gold-500 mb-2">Customer Support</p>
+          <a href="#" class="flex items-center gap-2 text-sm text-wb-300 hover:text-gold-500 mb-1.5"><i class="ph ph-chat-circle-dots"></i> Chat with us</a>
+          <a href="tel:8185555555" class="flex items-center gap-2 text-sm text-wb-300 hover:text-gold-500 mb-1.5"><i class="ph ph-phone"></i> (818) 555-5555</a>
+          <p class="text-xs text-wb-400 mt-2">Available Monday–Friday<br>7:00 am – 7:00 pm CST</p>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-navy-700 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-wb-400">
+      <p>©2026 Legacy.com All rights reserved.</p>
+      <div class="flex gap-5"><a href="#" class="hover:text-gold-500">Do Not Sell My Information</a><a href="#" class="hover:text-gold-500">Privacy policy</a><a href="#" class="hover:text-gold-500">Terms of use</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ====================================================================
+     STICKY MOBILE ACTION BAR
+     ==================================================================== -->
+<div class="sticky-actions" id="sticky-actions">
+  <button class="flex-1 inline-flex items-center justify-center gap-2.5 px-5 py-3 rounded-full bg-gold-400 hover:bg-gold-500 text-wb-900 text-base font-semibold"><i class="ph ph-flower-tulip text-2xl"></i> Send Flowers</button>
+  <button class="js-share inline-flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 flex-shrink-0" aria-label="Share"><i class="ph ph-share-fat text-2xl"></i></button>
+</div>
+
+<!-- ====================================================================
+     AUTH MODAL — sign in / create account (save gate)
+     ==================================================================== -->
+<div class="sheet-overlay" id="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+  <div class="sheet-card border border-wb-300 flex flex-col items-center gap-8 p-8 text-center">
+    <span class="inline-flex items-center gap-1 rounded-md bg-gold-100 px-3 py-0.5 text-sm text-gold-900"><i class="ph ph-user text-sm"></i> My People</span>
+
+    <div class="flex flex-col items-center gap-8 w-full">
+      <div class="flex flex-col items-center gap-2 max-w-[480px]">
+        <h2 id="auth-title" class="font-serif-heading text-3xl text-navy-700 leading-tight">Add Ralph to My People</h2>
+        <p class="text-sm text-wb-700 leading-relaxed">My People is your own space to keep the people who matter within reach. Sign in or create a free account to add Ralph.</p>
+      </div>
+      <ul class="flex flex-col gap-3 max-w-[480px] w-full text-left">
+        <li class="flex items-start gap-2">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph-bold ph-check text-[13px]"></i></span>
+          <span class="flex-1 text-sm font-bold text-wb-700 leading-normal">The people who matter to you, kept in one place.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph-bold ph-check text-[13px]"></i></span>
+          <span class="flex-1 text-sm font-bold text-wb-700 leading-normal">Return to Ralph's page anytime, without searching again.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph-bold ph-check text-[13px]"></i></span>
+          <span class="flex-1 text-sm font-bold text-wb-700 leading-normal">Free to create — and there whenever you want to come back.</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center sm:justify-end gap-3 sm:gap-4 w-full">
+      <button type="button" data-close class="inline-flex items-center justify-center px-5 py-3 rounded-full border border-navy-700 bg-white text-base font-semibold text-navy-700 hover:bg-wb-50">Maybe Later</button>
+      <button type="button" id="auth-continue" class="inline-flex items-center justify-center px-5 py-3 rounded-full bg-gold-400 hover:bg-gold-500 text-base font-semibold text-wb-900">Sign In or Create an Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     GET UPDATES MODAL
+     ==================================================================== -->
+<div class="sheet-overlay" id="updates-overlay" role="dialog" aria-modal="true" aria-labelledby="upd-title">
+  <div class="sheet-card p-6 md:p-8">
+    <button data-close class="absolute top-4 right-4 w-9 h-9 rounded-full border border-wb-300 text-wb-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph ph-x text-lg"></i></button>
+    <div class="w-12 h-12 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center mb-4"><i class="ph ph-bell text-2xl"></i></div>
+    <h2 id="upd-title" class="font-serif-heading text-2xl text-navy-700">Never Miss a Notice</h2>
+    <p class="text-base text-wb-700 mt-2">Get an email alert when new obituaries and tributes are published for Ralph's page — the simplest way to stay informed.</p>
+    <form id="upd-form" class="mt-5">
+      <label class="block text-sm font-semibold text-wb-900 mb-1.5" for="upd-email">Your Email Address</label>
+      <input id="upd-email" type="email" required placeholder="you@example.com" class="w-full h-12 px-4 rounded-lg border border-wb-300 text-[15px] focus:outline-none focus:border-navy-500" />
+      <button type="submit" class="w-full h-12 mt-4 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold">Start Following</button>
+    </form>
+    <p class="text-xs text-wb-500 mt-3 text-center">By following, you agree to our <a href="#" class="underline text-navy-500">Terms of Use</a> and <a href="#" class="underline text-navy-500">Privacy Policy</a>.</p>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SHARE SHEET
+     ==================================================================== -->
+<div class="sheet-overlay" id="share-overlay" role="dialog" aria-modal="true" aria-labelledby="share-title">
+  <div class="sheet-card p-5 md:p-6">
+    <button data-close class="absolute top-4 right-4 w-9 h-9 rounded-full border border-wb-300 text-wb-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph ph-x text-lg"></i></button>
+    <h2 id="share-title" class="font-serif-heading text-xl md:text-2xl text-navy-700 text-center pt-1">Share Ralph's page</h2>
+    <p class="text-sm text-wb-600 text-center mt-1">Invite others to visit and leave a memory</p>
+    <div class="grid grid-cols-4 gap-2 mt-6 text-center">
+      <button class="share-channel flex flex-col items-center gap-1.5 text-xs font-semibold text-wb-700" data-channel="Email"><span class="w-13 h-13 w-[52px] h-[52px] rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-[22px]"><i class="ph ph-envelope-simple"></i></span>Email</button>
+      <button class="share-channel flex flex-col items-center gap-1.5 text-xs font-semibold text-wb-700" data-channel="Text message"><span class="w-[52px] h-[52px] rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-[22px]"><i class="ph ph-chat-circle"></i></span>Message</button>
+      <button class="share-channel flex flex-col items-center gap-1.5 text-xs font-semibold text-wb-700" data-channel="Facebook"><span class="w-[52px] h-[52px] rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-[22px]"><i class="ph ph-facebook-logo"></i></span>Facebook</button>
+      <button class="share-channel flex flex-col items-center gap-1.5 text-xs font-semibold text-wb-700" data-channel="more apps"><span class="w-[52px] h-[52px] rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-[22px]"><i class="ph ph-dots-three-outline"></i></span>More</button>
+    </div>
+    <div class="mt-6">
+      <label class="block text-sm font-semibold text-wb-900 mb-2">Page link</label>
+      <div class="flex items-center gap-2">
+        <input type="text" readonly value="https://www.legacy.com/obituaries/ralph-thomas" class="flex-1 h-12 px-3 rounded-lg border border-wb-300 bg-wb-50 text-sm text-wb-700 focus:outline-none focus:border-navy-500" />
+        <button id="copy-link" class="h-12 px-4 rounded-lg bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold inline-flex items-center gap-2 flex-shrink-0"><i class="ph ph-copy"></i> Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     TOAST
+     ==================================================================== -->
+<div id="toast" class="toast" role="status" aria-live="polite">
+  <i id="toast-ico" class="ph ph-bookmark-simple toast-ico" aria-hidden="true"></i>
+  <div class="toast-body">
+    <span id="toast-text">Done</span>
+    <a id="toast-action" href="future-my-people.html" class="hidden">View</a>
+  </div>
+</div>
+
+<!-- Demo scenario switcher -->
+<div class="demo-switcher" role="group" aria-label="Demo scenarios">
+  <span class="demo-switcher-label">Account scenario</span>
+  <button data-scenario="signed-in"><i class="ph ph-user-circle-check"></i> Signed In</button>
+  <button data-scenario="signed-out" class="active"><i class="ph ph-user"></i> Sign In or Create an Account</button>
+</div>
+
+<script src="shared/people.js"></script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const STORE_KEY = 'legacyMyPeople.v0';
+
+  // ===== Which person is this page? (?id=…, default Ralph) =====
+  const PEOPLE = window.LEGACY_PEOPLE || {};
+  const PID = (new URLSearchParams(location.search).get('id')) || 'ralph';
+  const PERSON = PEOPLE[PID] || PEOPLE.ralph || { first:'Ralph', last:'Thomas', full:'Ralph Thomas', dates:'1935 – 2023', photo:null, source:'Chicago Sun-Times', home:'Eternal Springs Funeral Home', obit:'' };
+
+  // ===== localStorage bridge (shared saved list with the dashboard) =====
+  function readStore(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(_) { return {}; } }
+  function writeStore(o){ try { localStorage.setItem(STORE_KEY, JSON.stringify(o)); } catch(_) {} }
+  function readSaved(){ const o = readStore(); return Array.isArray(o.saved) ? o.saved : null; }
+  function writeSaved(a){ const o = readStore(); o.saved = a; writeStore(o); }
+  function isSaved(id){ return (readSaved() || []).indexOf(id) >= 0; }
+  function setSaved(id, on){ const s = readSaved() || []; const i = s.indexOf(id); if (on && i < 0) s.push(id); if (!on && i >= 0) s.splice(i, 1); writeSaved(s); }
+
+  // ===== Account scenario: 'signed-out' | 'signed-in' =====
+  let scenario = 'signed-out';
+  const isSignedIn = () => scenario === 'signed-in';
+
+  const addBtn    = $('#add-btn');
+  const stickyAdd = $('#sticky-add');
+  const acctSignin   = $('#acct-signin');
+  const acctSignedin = $('#acct-signedin');
+  const acctMobile   = $('#acct-mobile');
+
+  // Paint the Add-to-My-People button. When signed out we always show the
+  // default "Add" state (the visitor can't see their saved list yet).
+  function paintAdded(){
+    const added = isSignedIn() && isSaved(PID);
+    addBtn.dataset.added = String(added);
+    addBtn.setAttribute('aria-pressed', String(added));
+    $('.add-default', addBtn).classList.toggle('hidden', added);
+    $('.add-default', addBtn).classList.toggle('inline-flex', !added);
+    $('.add-added', addBtn).classList.toggle('hidden', !added);
+    $('.add-added', addBtn).classList.toggle('inline-flex', added);
+    if (stickyAdd) stickyAdd.innerHTML = added
+      ? '<i class="ph-fill ph-check-circle text-xl text-seafoam-600"></i>'
+      : '<i class="ph ph-plus-circle text-xl"></i>';
+  }
+
+  function paintScenario(){
+    // Header account area
+    acctSignin.style.display   = isSignedIn() ? 'none' : '';
+    acctSignedin.style.display = isSignedIn() ? '' : 'none';
+    // Demo switcher active state
+    $$('.demo-switcher [data-scenario]').forEach(b => b.classList.toggle('active', b.dataset.scenario === scenario));
+    paintAdded();
+  }
+
+  // ===== Toast =====
+  const toastEl = $('#toast'), toastText = $('#toast-text'), toastAction = $('#toast-action');
+  let toastTimer = null;
+  const toastIco = $('#toast-ico');
+  function toast(msg, href, label, icon){
+    clearTimeout(toastTimer);
+    toastText.textContent = msg;
+    if (toastIco) toastIco.className = (icon || 'ph ph-bookmark-simple') + ' toast-ico';
+    if (href) { toastAction.classList.remove('hidden'); toastAction.href = href; toastAction.textContent = label || 'View'; }
+    else { toastAction.classList.add('hidden'); }
+    toastEl.classList.add('show');
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), (href || msg.length > 40) ? 5000 : 2600);
+  }
+
+  // ===== Overlays =====
+  let lastFocus = null;
+  const overlays = { auth: $('#auth-overlay'), updates: $('#updates-overlay'), share: $('#share-overlay') };
+  function openOverlay(o){ lastFocus = document.activeElement; o.classList.add('open'); document.body.style.overflow='hidden'; const f=o.querySelector('button,[href],input'); if(f) f.focus(); }
+  function closeAll(){ Object.values(overlays).forEach(o=>o.classList.remove('open')); document.body.style.overflow=''; if(lastFocus&&document.contains(lastFocus)) lastFocus.focus(); }
+  $$('.js-share').forEach(b => b.addEventListener('click', () => openOverlay(overlays.share)));
+  $$('[data-close]').forEach(b => b.addEventListener('click', closeAll));
+  Object.values(overlays).forEach(o => o.addEventListener('mousedown', e => { if(e.target===o) closeAll(); }));
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeAll(); });
+
+  // ===== Get Updates / Following (per person, persisted) =====
+  const updatesBtn = $('#updates-btn');
+  function readFollowing(){ const o = readStore(); return Array.isArray(o.following) ? o.following : []; }
+  function setFollowing(id, on){ const f = readFollowing(); const i = f.indexOf(id); if (on && i < 0) f.push(id); if (!on && i >= 0) f.splice(i, 1); const o = readStore(); o.following = f; writeStore(o); }
+  function isFollowing(id){ return readFollowing().indexOf(id) >= 0; }
+  function paintFollowing(){
+    const on = isFollowing(PID);
+    updatesBtn.innerHTML = on
+      ? '<i class="ph-fill ph-bell text-xl"></i> Following'
+      : '<i class="ph ph-bell text-xl"></i> Get Updates';
+    updatesBtn.setAttribute('aria-pressed', String(on));
+  }
+  function followToast(){ toast('Followed successfully, you will now receive emails and notifications about this page.', null, null, 'ph ph-check'); }
+  updatesBtn.addEventListener('click', () => {
+    if (isFollowing(PID)) { setFollowing(PID, false); paintFollowing(); toast('You’re no longer following this page and won’t receive updates.', null, null, 'ph ph-bell-slash'); return; }
+    if (isSignedIn()) { setFollowing(PID, true); paintFollowing(); followToast(); return; }  // signed in → follow directly
+    openOverlay(overlays.updates);                                                            // signed out → email capture
+  });
+  // Signed-out email capture → confirm follow with the same state + toast.
+  $('#upd-form').addEventListener('submit', e => { e.preventDefault(); setFollowing(PID, true); paintFollowing(); closeAll(); followToast(); });
+  $('#copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText('https://www.legacy.com/obituaries/' + PID); } catch(_){} closeAll(); toast('Link copied to clipboard'); });
+  $$('.share-channel').forEach(b => b.addEventListener('click', () => { closeAll(); toast('Opening ' + b.dataset.channel + '…'); }));
+
+  // ===== Auth modal (My People value-prop save gate) =====
+  function openAuth(){ openOverlay(overlays.auth); }
+  // "Sign In or Create an Account" simulates success: become signed in and save Ralph.
+  function authSuccess(){
+    closeAll();
+    scenario = 'signed-in';
+    setSaved(PID, true);
+    paintScenario();
+    toast(PERSON.first + ' added to My People', 'future-my-people.html', 'View');
+  }
+  $('#auth-continue').addEventListener('click', authSuccess);
+  // Header "Sign In" takes the visitor to My People (simulates signing in).
+  acctSignin.addEventListener('click', () => { window.location.href = 'future-my-people.html'; });
+
+  // ===== Add to My People =====
+  function toggleAdd(){
+    const added = !(addBtn.dataset.added === 'true');
+    setSaved(PID, added);
+    paintAdded();
+    if (added) toast('Added to My People', 'future-my-people.html', 'View');
+    else toast('Removed from My People');
+  }
+  function handleAdd(){
+    if (!isSignedIn()) { openAuth(); return; }          // save gate
+    if (addBtn.dataset.added === 'true') { window.location.href = 'future-my-people.html'; return; }
+    toggleAdd();
+  }
+  addBtn.addEventListener('click', handleAdd);
+  if (stickyAdd) stickyAdd.addEventListener('click', handleAdd);
+  acctMobile.addEventListener('click', () => { window.location.href = 'future-my-people.html'; });
+
+  // ===== Mobile menu =====
+  const header = $('#site-header'), menuToggle = $('#menu-toggle');
+  menuToggle.addEventListener('click', () => {
+    const open = header.dataset.menuOpen === 'true';
+    header.dataset.menuOpen = String(!open);
+    menuToggle.setAttribute('aria-expanded', String(!open));
+  });
+
+  // ===== Sticky mobile action bar (show after scrolling past hero) =====
+  const sticky = $('#sticky-actions');
+  const hero = $('section');
+  const io = new IntersectionObserver(([e]) => { sticky.classList.toggle('show', !e.isIntersecting); }, { rootMargin: '-200px 0px 0px 0px' });
+  io.observe(hero);
+
+  // ===== Demo switcher =====
+  $$('.demo-switcher [data-scenario]').forEach(b => b.addEventListener('click', () => {
+    scenario = b.dataset.scenario;
+    paintScenario();
+  }));
+
+  // ===== Populate this person's content =====
+  function replaceNames(root){
+    if (PID === 'ralph') return; // page is authored for Ralph by default
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(n){
+        const t = n.parentNode && n.parentNode.nodeName;
+        if (t === 'SCRIPT' || t === 'STYLE') return NodeFilter.FILTER_REJECT;
+        return /Ralph|Thomas/.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n => {
+      n.nodeValue = n.nodeValue
+        .replace(/Ralph Thomas/g, PERSON.full)
+        .replace(/Ralph[’']s/g, PERSON.first + '’s')
+        .replace(/Ralph/g, PERSON.first)
+        .replace(/Thomas/g, PERSON.last);
+    });
+  }
+  function populatePerson(){
+    document.title = 'Legacy — ' + PERSON.full + ' (My People FUTURE · DES-2251)';
+    replaceNames(document.body);
+    // Hero media
+    const heroPhoto = $('#hero-photo');
+    if (heroPhoto) {
+      if (PERSON.photo) {
+        heroPhoto.src = window.LEGACY_PHOTO(PERSON.photo, 'hero');
+        heroPhoto.alt = PERSON.full;
+      } else {
+        const div = document.createElement('div');
+        div.className = heroPhoto.className.replace('object-cover', '') + ' flex items-center justify-center';
+        div.style.background = '#728ab0';
+        div.innerHTML = '<span class="font-serif-heading text-white text-6xl leading-none">' + window.LEGACY_INITIALS(PERSON.full) + '</span>';
+        heroPhoto.replaceWith(div);
+      }
+    }
+    const set = (id, val) => { const el = $('#' + id); if (el) el.textContent = val; };
+    set('hero-dates', PERSON.dates);
+    set('obit-source', 'Excerpt from ' + PERSON.source);
+    if (PERSON.obit) set('obit-body', PERSON.obit);
+    set('partnership-home', PERSON.home);
+    const shareInput = document.querySelector('#share-overlay input[readonly]');
+    if (shareInput) shareInput.value = 'https://www.legacy.com/obituaries/' + PID;
+  }
+
+  // ===== Init =====
+  // Seed the shared saved list so already-saved people read as saved when signed in.
+  if (!readSaved()) writeSaved((window.LEGACY_DEFAULT_SAVED || []).slice());
+  // Signed-in context when the person is already saved, or when arriving from
+  // the account/dashboard "Add More People" flow (from=account) — so the visitor
+  // can add directly rather than hitting the sign-in gate.
+  const fromAccount = new URLSearchParams(location.search).get('from') === 'account';
+  const forceSignedOut = new URLSearchParams(location.search).get('so') === '1';  // arriving via Sign Out
+  if (!forceSignedOut && (isSaved(PID) || fromAccount)) scenario = 'signed-in';
+  populatePerson();
+  paintScenario();
+  paintFollowing();
+
+  // ---- Memorial events carousel (mobile) -------------------------------
+  (function initEventsCarousel(){
+    const track = document.getElementById('events-track');
+    if (!track) return;
+    const cards = Array.from(track.querySelectorAll('.event-card'));
+    const dotsWrap = document.getElementById('events-dots');
+    const prev = document.getElementById('ev-prev');
+    const next = document.getElementById('ev-next');
+    if (cards.length < 2) { if (prev) prev.closest('div').classList.add('hidden'); if (dotsWrap) dotsWrap.classList.add('hidden'); return; }
+
+    // Build a dot per card.
+    cards.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.type = 'button';
+      d.setAttribute('aria-label', 'Go to event ' + (i + 1));
+      d.className = 'h-2 w-2 rounded-full bg-wb-300 transition-colors';
+      d.addEventListener('click', () => scrollToCard(i));
+      dotsWrap.appendChild(d);
+    });
+    const dots = Array.from(dotsWrap.children);
+
+    function current(){
+      let best = 0, bestDist = Infinity;
+      const base = track.scrollLeft;
+      cards.forEach((c, i) => {
+        const dist = Math.abs(c.offsetLeft - track.offsetLeft - base);
+        if (dist < bestDist) { bestDist = dist; best = i; }
+      });
+      return best;
+    }
+    function paintDots(){
+      const idx = current();
+      dots.forEach((d, i) => { d.classList.toggle('bg-navy-700', i === idx); d.classList.toggle('bg-wb-300', i !== idx); });
+    }
+    function scrollToCard(i){
+      const c = cards[Math.max(0, Math.min(cards.length - 1, i))];
+      track.scrollTo({ left: c.offsetLeft - track.offsetLeft, behavior: 'smooth' });
+    }
+    if (prev) prev.addEventListener('click', () => scrollToCard(current() - 1));
+    if (next) next.addEventListener('click', () => scrollToCard(current() + 1));
+    let raf;
+    track.addEventListener('scroll', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(paintDots); });
+    paintDots();
+  })();
+})();
+</script>
+</body>
+</html>
