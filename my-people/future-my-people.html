@@ -105,7 +105,7 @@
         <!-- =================== Collections =================== -->
         <section class="flex flex-col gap-8">
           <div class="flex flex-col gap-2">
-            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Collections</h2>
+            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">My collections <span id="collections-count"></span></h2>
             <p class="text-base text-wb-700 leading-relaxed">Organize the people you’ve saved into groups that matter to you.</p>
           </div>
           <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
@@ -699,7 +699,9 @@
   function renderCollections(){
     const grid = $('#collections-grid');
     if (!grid) return;
-    grid.innerHTML = createCollectionTileHTML() + readCollections().map(collectionCardHTML).join('');
+    const colls = readCollections();
+    const cnt = $('#collections-count'); if (cnt) cnt.textContent = '• (' + colls.length + ')';
+    grid.innerHTML = createCollectionTileHTML() + colls.map(collectionCardHTML).join('');
   }
 
   // ===== Collection detail view =====
