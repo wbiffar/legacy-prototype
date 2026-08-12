@@ -235,6 +235,13 @@
               <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
             </button>
 
+            <!-- Add to collection -->
+            <button data-action="addcollection" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
+              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-folders text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Add to collection</span><span class="block text-xs text-wb-700 mt-1">Group them with people who belong together</span></span>
+              <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
+            </button>
+
             <!-- Email updates (subscribe toggle — decoupled from saving) -->
             <div class="w-full flex items-center gap-2 py-6 border-b border-wb-300">
               <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-bell text-xl"></i></span>
@@ -317,6 +324,20 @@
               <p class="text-base text-wb-700 leading-normal">Choose what best fits your family story.</p>
             </div>
             <div id="famdetail-options" class="grid grid-cols-2 gap-4 pt-4"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pane: add to collection -->
+      <div class="wiz-pane" data-pane="collections" data-state="next">
+        <div class="pt-16 pb-8 px-6">
+          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <h2 class="text-xl font-bold text-navy-700 leading-tight">Add <span id="addcoll-name">this person</span> to a collection</h2>
+              <p class="text-base text-wb-700 leading-normal">Tap a collection to add or remove them.</p>
+            </div>
+            <div id="addcoll-list" class="flex flex-col pt-1"></div>
           </div>
         </div>
       </div>
@@ -613,7 +634,7 @@
   // while the container stays put and the viewport height animates. Panes
   // earlier in the stack sit off-screen left (prev); unvisited panes sit off
   // -screen right (next); the top of the stack is active.
-  const WIZ_PANES = ['menu', 'relationship', 'family', 'familyDetail'];
+  const WIZ_PANES = ['menu', 'relationship', 'family', 'familyDetail', 'collections'];
   let wizStack = ['menu'];
   function wizRender(instant){
     const vp = $('#opt-viewport');
@@ -681,8 +702,52 @@
   overlays.options.addEventListener('click', (e) => {
     const action = e.target.closest('[data-action]'); if(!action) return;
     if (action.dataset.action === 'relationship') openRelationship();
+    if (action.dataset.action === 'addcollection') openAddToCollection();
     if (action.dataset.action === 'share') openShare();
     if (action.dataset.action === 'remove') openRemove();
+  });
+
+  // ----- Add to collection (slides in as a wizard pane) -----
+  function openAddToCollection(){
+    $('#addcoll-name').textContent = activeName;
+    renderAddCollList();
+    wizGo('collections');
+  }
+  function renderAddCollList(){
+    const wrap = $('#addcoll-list');
+    const colls = readCollections();
+    const rows = colls.map(c => {
+      const inIt = (c.people || []).indexOf(activeId) >= 0;
+      const n = (c.people || []).length;
+      return '<button type="button" class="coll-toggle w-full flex items-center gap-3 py-4 border-b border-wb-300 text-left" data-coll="' + esc(c.id) + '">' +
+        '<span class="w-9 h-9 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center flex-shrink-0"><i class="ph ph-folders text-lg"></i></span>' +
+        '<span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight truncate">' + esc(c.name) + '</span><span class="block text-xs text-wb-700 mt-0.5">' + n + ' ' + (n === 1 ? 'person' : 'people') + '</span></span>' +
+        (inIt
+          ? '<i class="ph-fill ph-check-circle text-2xl text-seafoam-600 flex-shrink-0"></i>'
+          : '<i class="ph ph-circle text-2xl text-wb-400 flex-shrink-0"></i>') +
+      '</button>';
+    }).join('');
+    const createRow = '<button type="button" id="addcoll-create" class="w-full flex items-center gap-3 py-4 text-left">' +
+      '<span class="w-9 h-9 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center flex-shrink-0"><i class="ph ph-plus text-lg"></i></span>' +
+      '<span class="flex-1 text-base font-semibold text-navy-700">Create a new collection</span>' +
+    '</button>';
+    wrap.innerHTML = (colls.length ? rows : '<p class="text-sm text-wb-600 py-2">No collections yet — create your first one.</p>') + createRow;
+  }
+  $('#addcoll-list').addEventListener('click', (e) => {
+    const create = e.target.closest('#addcoll-create');
+    if (create) { closeAll(); openCreateCollection([activeId]); return; }
+    const row = e.target.closest('.coll-toggle'); if (!row) return;
+    const id = row.dataset.coll;
+    const colls = readCollections();
+    const c = colls.find(x => x.id === id); if (!c) return;
+    c.people = c.people || [];
+    const i = c.people.indexOf(activeId);
+    const nowIn = i < 0;
+    if (nowIn) c.people.push(activeId); else c.people.splice(i, 1);
+    writeCollections(colls);
+    renderCollections();
+    renderAddCollList();
+    toast(nowIn ? activeName + ' added to “' + c.name + '”' : activeName + ' removed from “' + c.name + '”');
   });
 
   // Current selection path — loaded from the store on open, updated on taps, and
@@ -825,7 +890,8 @@
     collCount.textContent = '(' + selected + ' selected)';
     collCreate.disabled = collName.value.trim().length === 0;
   }
-  function openCreateCollection(){
+  function openCreateCollection(preselect){
+    const pre = preselect || [];
     collName.value = ''; collDesc.value = '';
     $('#coll-people').innerHTML = savedIds.map(id => {
       const p = personData(id);
@@ -835,7 +901,7 @@
       return '<label class="flex items-center gap-3 py-2 px-1 rounded-lg hover:bg-wb-50 cursor-pointer">' +
         av +
         '<span class="flex-1 min-w-0 truncate text-base text-wb-900">' + esc(p.name) + '</span>' +
-        '<input type="checkbox" class="coll-person w-5 h-5 accent-navy-700" value="' + esc(id) + '" />' +
+        '<input type="checkbox" class="coll-person w-5 h-5 accent-navy-700" value="' + esc(id) + '"' + (pre.indexOf(id) >= 0 ? ' checked' : '') + ' />' +
       '</label>';
     }).join('');
     refreshCollForm();
