@@ -18,7 +18,7 @@
     { id: 'marcus',  reasonType: 'place',        icon: 'ph ph-map-pin',        reason: 'Followed by people near Los Angeles, CA' },
   ];
 
-  // Suggestions = candidates not already saved, not dismissed, and not the current person.
+  // User-level suggestions (dashboard): candidates not already saved/dismissed/current.
   function list(savedIds, excludeId){
     var saved = savedIds || [];
     var dis = readDismissed();
@@ -27,5 +27,36 @@
     });
   }
 
-  window.LEGACY_SUGGEST = { CANDIDATES: CANDIDATES, readDismissed: readDismissed, dismiss: dismiss, list: list };
+  var STATES = { IL:'Illinois', CA:'California', MA:'Massachusetts', CO:'Colorado', NY:'New York', TX:'Texas', FL:'Florida' };
+  function stateOf(loc){ var m = /,\s*([A-Z]{2})\b/.exec(loc || ''); return m ? m[1] : null; }
+
+  // Person-specific suggestions: other people connected to `pid` by a shared
+  // attribute (surname → family, funeral home, newspaper, or state), reason
+  // phrased relative to the viewed person. Excludes current/saved/dismissed.
+  // Note: saved people are NOT excluded — connections to the viewed person are
+  // worth surfacing even if already in My People (the card reflects that state).
+  function forPerson(pid){
+    var P = window.LEGACY_PEOPLE || {};
+    var me = P[pid]; if (!me) return [];
+    var dis = readDismissed();
+    var out = [];
+    Object.keys(P).forEach(function (id) {
+      if (id === pid || dis.indexOf(id) >= 0) return;
+      var c = P[id];
+      var s = null;
+      if (c.last && me.last && c.last === me.last) {
+        s = { reasonType: 'relationship', icon: 'ph ph-tree-structure', reason: 'Possibly related · both named ' + me.last };
+      } else if (c.home && me.home && c.home === me.home) {
+        s = { reasonType: 'place', icon: 'ph ph-buildings', reason: 'Also cared for by ' + me.home };
+      } else if (c.source && me.source && c.source === me.source) {
+        s = { reasonType: 'people', icon: 'ph ph-newspaper', reason: 'Also remembered in ' + me.source };
+      } else if (stateOf(c.location) && stateOf(c.location) === stateOf(me.location)) {
+        s = { reasonType: 'place', icon: 'ph ph-map-pin', reason: 'Also from ' + (STATES[stateOf(me.location)] || stateOf(me.location)) };
+      }
+      if (s) { s.id = id; out.push(s); }
+    });
+    return out;
+  }
+
+  window.LEGACY_SUGGEST = { CANDIDATES: CANDIDATES, readDismissed: readDismissed, dismiss: dismiss, list: list, forPerson: forPerson };
 })();
