@@ -126,12 +126,32 @@
 
       <!-- ---------- COLLECTION DETAIL VIEW ---------- -->
       <div id="detail-view" style="display:none">
-        <button id="detail-back" type="button" class="inline-flex items-center gap-2 text-sm font-semibold text-navy-700 hover:text-navy-800 mb-4 mt-3 lg:mt-0"><i class="ph-bold ph-arrow-left"></i> All collections</button>
-        <header class="mb-5 md:mb-7">
-          <h1 id="detail-title" class="font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight">Collection</h1>
-          <p id="detail-desc" class="text-base md:text-lg text-wb-700 mt-2 leading-relaxed"></p>
-          <p id="detail-count" class="text-sm text-wb-600 mt-1"></p>
+        <div class="flex items-center justify-between gap-3 mb-4 mt-3 lg:mt-0">
+          <button id="detail-back" type="button" class="inline-flex items-center gap-2 text-sm font-semibold text-navy-700 hover:text-navy-800"><i class="ph-bold ph-arrow-left"></i> All collections</button>
+          <div class="flex items-center gap-2">
+            <button id="coll-share" type="button" class="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50"><i class="ph ph-share-fat text-lg"></i> Share</button>
+            <button id="coll-more" type="button" class="w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-50 flex items-center justify-center flex-shrink-0" aria-label="More options"><i class="ph-bold ph-list text-lg"></i></button>
+          </div>
+        </div>
+        <header class="mb-5">
+          <div class="flex items-center gap-2">
+            <h1 id="detail-title" contenteditable="true" spellcheck="false" class="min-w-0 font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight rounded px-1 -mx-1 focus:outline-none focus:bg-wb-100">Collection</h1>
+            <button id="edit-title" type="button" class="text-wb-400 hover:text-navy-700 flex-shrink-0" aria-label="Edit name"><i class="ph ph-pencil-simple text-xl"></i></button>
+          </div>
+          <div class="flex items-start gap-2 mt-2">
+            <p id="detail-desc" contenteditable="true" spellcheck="false" data-placeholder="Add a description…" class="flex-1 min-w-0 text-base md:text-lg text-wb-700 leading-relaxed rounded px-1 -mx-1 focus:outline-none focus:bg-wb-100 empty:before:content-[attr(data-placeholder)] empty:before:text-wb-400"></p>
+            <button id="edit-desc" type="button" class="text-wb-400 hover:text-navy-700 flex-shrink-0 mt-1" aria-label="Edit description"><i class="ph ph-pencil-simple text-lg"></i></button>
+          </div>
+          <p id="detail-count" class="text-sm text-wb-600 mt-2"></p>
         </header>
+
+        <!-- Make my relationship to this group public -->
+        <div class="flex items-center gap-3 p-4 rounded-xl bg-wb-50 border border-wb-200 mb-5">
+          <button id="coll-mine" role="switch" aria-checked="false" aria-label="Make my relationship to this group public" class="relative w-14 h-7 rounded-full transition-colors flex-shrink-0"><span id="coll-mine-knob" class="absolute top-[3px] left-[3px] w-[22px] h-[22px] rounded-full bg-white shadow transition-transform"></span></button>
+          <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Make my relationship to this group public</span><span id="coll-mine-sub" class="block text-sm text-wb-600 mt-0.5">Off · Your relationship to this group stays private</span></span>
+        </div>
+
+        <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700 mb-4">People</h2>
         <div id="detail-people" class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5"></div>
 
         <!-- Tailored suggestions for this collection (moved here from the root) -->
@@ -441,6 +461,51 @@
 </div>
 
 <!-- ====================================================================
+     COLLECTION ••• MENU
+     ==================================================================== -->
+<div class="sheet-overlay" id="coll-menu-overlay" role="dialog" aria-modal="true" aria-labelledby="coll-menu-title">
+  <div class="sheet-card pt-6 pb-8">
+    <div class="flex items-center pb-4 pl-6 pr-12 border-b border-wb-300">
+      <h2 id="coll-menu-title" class="font-serif-heading text-xl text-navy-700 leading-tight">Collection options</h2>
+      <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
+    </div>
+    <div class="px-6">
+      <button id="coll-delete-open" type="button" class="w-full flex items-center gap-2 py-6 hover:bg-coral-50 text-left">
+        <span class="w-8 h-8 rounded-full bg-coral-100 text-coral-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-trash text-xl"></i></span>
+        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-coral-700 leading-tight">Delete collection</span><span class="block text-xs text-wb-700 mt-1">Removes the collection — people stay in My People</span></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     CONFIRM DELETE COLLECTION
+     ==================================================================== -->
+<div class="sheet-overlay" id="coll-delete-overlay" role="alertdialog" aria-modal="true" aria-labelledby="coll-delete-title">
+  <div class="sheet-card p-6 md:p-8 !pb-[72px] md:!pb-8">
+    <h2 id="coll-delete-title" class="text-xl font-bold text-navy-700 leading-tight">Delete this collection?</h2>
+    <p class="text-base text-wb-700 mt-3 leading-relaxed">“<span id="coll-delete-name">this collection</span>” will be removed. The people in it stay in My People.</p>
+    <div class="flex flex-row gap-3 mt-6">
+      <button id="coll-delete-confirm" type="button" class="flex-1 h-12 rounded-full bg-coral-700 hover:bg-coral-800 text-white text-base font-semibold">Delete</button>
+      <button type="button" data-close class="flex-1 h-12 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     ADD PEOPLE TO COLLECTION
+     ==================================================================== -->
+<div class="sheet-overlay" id="coll-addpeople-overlay" role="dialog" aria-modal="true" aria-labelledby="coll-addpeople-title">
+  <div class="sheet-card p-6 md:p-8 !pb-[72px] md:!pb-8">
+    <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
+    <h2 id="coll-addpeople-title" class="text-xl font-bold text-navy-700 leading-tight pr-10">Add people to this collection</h2>
+    <p class="text-sm text-wb-700 mt-1 leading-relaxed">Tap to add or remove people you’ve saved.</p>
+    <div id="coll-addpeople-list" class="mt-4 flex flex-col gap-1 max-h-[300px] overflow-y-auto -mx-1 px-1"></div>
+    <button id="coll-addpeople-done" type="button" class="w-full h-12 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold mt-4">Done</button>
+  </div>
+</div>
+
+<!-- ====================================================================
      TOAST
      ==================================================================== -->
 <div id="toast" class="toast" role="status" aria-live="polite">
@@ -659,19 +724,24 @@
 
   function updateDetailHeader(c){
     $('#detail-title').textContent = c.name;
-    const desc = $('#detail-desc');
-    desc.textContent = c.description || '';
-    desc.style.display = c.description ? '' : 'none';
+    $('#detail-desc').textContent = c.description || '';  // empty shows the placeholder via CSS
     const n = (c.people || []).length;
     $('#detail-count').textContent = n + ' ' + (n === 1 ? 'person' : 'people');
+    paintCollMine(!!c.mine);
+  }
+  function detailAddTileHTML(full){
+    const cls = full ? 'col-span-2 lg:col-span-3 min-h-[220px] py-10' : 'min-h-[288px] py-6';
+    return '<button id="detail-add-person" type="button" class="' + cls + ' h-full rounded-lg border-2 border-dashed border-wb-300 hover:border-gold-400 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2 transition-colors">' +
+      '<span class="w-14 h-14 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-plus text-2xl"></i></span>' +
+      '<span class="text-base font-semibold text-wb-900 mt-1">Add a person</span>' +
+      '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Add someone from the people you’ve saved.</span>' +
+    '</button>';
   }
   function renderDetailPeople(c){
     const wrap = $('#detail-people');
     const ppl = (c.people || []).map(personData);
     ppl.forEach(p => { if (!p.photo && !p._color) p._color = colorFor(p.id); });
-    wrap.innerHTML = ppl.length
-      ? ppl.map(personCardHTML).join('')
-      : '<p class="col-span-full text-base text-wb-600 py-2">No one here yet — add someone from the suggestions below, or from a person’s ••• menu.</p>';
+    wrap.innerHTML = (ppl.length ? ppl.map(personCardHTML).join('') : '') + detailAddTileHTML(ppl.length === 0);
     applyPhotoColors();
   }
   function renderDetailSuggestions(c){
@@ -708,16 +778,101 @@
     const card = e.target.closest('.suggest-card'); if (!card) return;
     const id = card.dataset.id;
     if (e.target.closest('.suggest-dismiss')) { window.LEGACY_SUGGEST.dismiss(id); refreshDetail(); return; }
-    if (e.target.closest('.suggest-add')) {
-      const colls = readCollections();
-      const c = colls.find(x => x.id === currentCollId); if (!c) return;
-      c.people = c.people || [];
-      if (c.people.indexOf(id) < 0) c.people.push(id);
-      if (savedIds.indexOf(id) < 0) { savedIds.push(id); writeSaved(savedIds); buildPeople(); render(); }  // adding to a collection also saves them
-      writeCollections(colls);
-      refreshDetail();
-      toast(personData(id).name + ' added to “' + c.name + '”');
-    }
+    if (e.target.closest('.suggest-add')) { addToCurrentCollection(id); }
+  });
+  function currentColl(){ return readCollections().find(x => x.id === currentCollId); }
+  function addToCurrentCollection(id){
+    const colls = readCollections();
+    const c = colls.find(x => x.id === currentCollId); if (!c) return;
+    c.people = c.people || [];
+    if (c.people.indexOf(id) < 0) c.people.push(id);
+    if (savedIds.indexOf(id) < 0) { savedIds.push(id); writeSaved(savedIds); buildPeople(); render(); }  // adding to a collection also saves them
+    writeCollections(colls);
+    refreshDetail();
+    toast(personData(id).name + ' added to “' + c.name + '”');
+  }
+
+  // ----- Editable name + description (contenteditable, commit on blur) -----
+  const detTitle = $('#detail-title'), detDesc = $('#detail-desc');
+  function commitCollField(field, el, fallback){
+    const c = currentColl(); if (!c) return;
+    let v = (el.textContent || '').replace(/\s+/g, ' ').trim();
+    if (field === 'name' && !v) { v = c.name; el.textContent = c.name; }  // name can't be empty
+    const colls = readCollections(); const cc = colls.find(x => x.id === currentCollId); if (!cc) return;
+    cc[field] = v; writeCollections(colls); renderCollections();
+    if (field === 'name') { /* keep as typed */ }
+  }
+  detTitle.addEventListener('blur', () => commitCollField('name', detTitle));
+  detTitle.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); detTitle.blur(); } });
+  detDesc.addEventListener('blur', () => commitCollField('description', detDesc));
+  $('#edit-title').addEventListener('click', () => { detTitle.focus(); document.getSelection().selectAllChildren(detTitle); });
+  $('#edit-desc').addEventListener('click', () => { detDesc.focus(); });
+
+  // ----- Share -----
+  $('#coll-share').addEventListener('click', () => {
+    const c = currentColl(); if (!c) return;
+    $('#share-sub').textContent = 'Invite others to see the “' + c.name + '” collection';
+    $('#share-link').value = 'https://www.legacy.com/my-people/collections/' + c.id;
+    openOverlay(overlays.share);
+  });
+
+  // ----- ••• menu → Delete (with confirmation) -----
+  $('#coll-more').addEventListener('click', () => openOverlay(overlays.collMenu));
+  $('#coll-delete-open').addEventListener('click', () => {
+    overlays.collMenu.classList.remove('open');
+    const c = currentColl(); $('#coll-delete-name').textContent = c ? c.name : 'this collection';
+    openOverlay(overlays.collDelete);
+  });
+  $('#coll-delete-confirm').addEventListener('click', () => {
+    const colls = readCollections().filter(x => x.id !== currentCollId);
+    const name = (currentColl() || {}).name || 'Collection';
+    writeCollections(colls);
+    closeAll();
+    hideCollection();
+    toast('“' + name + '” deleted');
+  });
+
+  // ----- Add a person -----
+  function renderAddPeopleList(){
+    const c = currentColl(); if (!c) return;
+    const inColl = c.people || [];
+    $('#coll-addpeople-list').innerHTML = savedIds.map(id => {
+      const p = personData(id);
+      const on = inColl.indexOf(id) >= 0;
+      const av = p.photo
+        ? '<span class="w-9 h-9 rounded-full bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
+        : '<span class="w-9 h-9 rounded-full flex items-center justify-center font-serif-heading text-white text-sm flex-shrink-0" style="background:' + colorFor(id) + '">' + esc(initials(p.name)) + '</span>';
+      return '<button type="button" class="addperson-row w-full flex items-center gap-3 py-3 px-1 rounded-lg hover:bg-wb-50 text-left" data-id="' + esc(id) + '">' +
+        av + '<span class="flex-1 min-w-0 truncate text-base text-wb-900">' + esc(p.name) + '</span>' +
+        (on ? '<i class="ph-fill ph-check-circle text-2xl text-seafoam-600 flex-shrink-0"></i>' : '<i class="ph ph-circle text-2xl text-wb-400 flex-shrink-0"></i>') +
+      '</button>';
+    }).join('') || '<p class="text-sm text-wb-600 py-2">You haven’t saved anyone yet.</p>';
+  }
+  function openAddPeople(){ renderAddPeopleList(); openOverlay(overlays.collAddPeople); }
+  $('#coll-addpeople-list').addEventListener('click', (e) => {
+    const row = e.target.closest('.addperson-row'); if (!row) return;
+    const id = row.dataset.id;
+    const colls = readCollections(); const c = colls.find(x => x.id === currentCollId); if (!c) return;
+    c.people = c.people || [];
+    const i = c.people.indexOf(id);
+    if (i < 0) c.people.push(id); else c.people.splice(i, 1);
+    writeCollections(colls);
+    renderAddPeopleList();
+    refreshDetail();
+  });
+  $('#coll-addpeople-done').addEventListener('click', closeAll);
+
+  // ----- Make my relationship to this group -----
+  function paintCollMine(on){
+    const t = $('#coll-mine'), knob = $('#coll-mine-knob'), sub = $('#coll-mine-sub');
+    t.setAttribute('aria-checked', String(on));
+    t.style.backgroundColor = on ? '#216e6a' : '#dbdad7';
+    knob.style.transform = on ? 'translateX(28px)' : 'translateX(0)';
+    sub.textContent = on ? 'On · Your relationship to this group is public' : 'Off · Your relationship to this group stays private';
+  }
+  $('#coll-mine').addEventListener('click', () => {
+    const colls = readCollections(); const c = colls.find(x => x.id === currentCollId); if (!c) return;
+    c.mine = !c.mine; writeCollections(colls); paintCollMine(c.mine);
   });
 
   function loadScenario(name){
@@ -737,7 +892,7 @@
 
   // ===== modal plumbing =====
   let activeId = null, activeName = null, lastFocus = null;
-  const overlays = { options:$('#options-overlay'), share:$('#share-overlay'), remove:$('#remove-overlay'), collection:$('#collection-overlay') };
+  const overlays = { options:$('#options-overlay'), share:$('#share-overlay'), remove:$('#remove-overlay'), collection:$('#collection-overlay'), collMenu:$('#coll-menu-overlay'), collDelete:$('#coll-delete-overlay'), collAddPeople:$('#coll-addpeople-overlay') };
 
   // Wizard inside the options sheet: a stack of panes slides horizontally
   // while the container stays put and the viewport height animates. Panes
@@ -796,6 +951,8 @@
 
   // ===== delegated clicks (main grid + collection-detail people) =====
   function handleCardArea(e){
+    const addPerson = e.target.closest('#detail-add-person');
+    if (addPerson) { openAddPeople(); return; }
     const add = e.target.closest('#add-more');
     if (add) { goAddMore(); return; }
     const more = e.target.closest('.more-btn');
