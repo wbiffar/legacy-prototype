@@ -105,6 +105,15 @@
 
       <div id="grid-root"></div>
 
+      <!-- =================== Suggested for you =================== -->
+      <section id="suggest-section" class="mt-10 md:mt-12 flex-col gap-5" style="display:none">
+        <div class="flex flex-col gap-1">
+          <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Suggested for you</h2>
+          <p class="text-base text-wb-700 leading-relaxed">People you may want to add — based on who you’ve saved, places you follow, and family connections.</p>
+        </div>
+        <div id="suggest-row" class="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 px-1"></div>
+      </section>
+
       <!-- =================== Collections =================== -->
       <section class="mt-10 md:mt-12 flex flex-col gap-8">
         <div class="flex flex-col gap-2">
@@ -428,6 +437,7 @@
 
 <script src="shared/people.js"></script>
 <script src="shared/relationships.js"></script>
+<script src="shared/suggestions.js"></script>
 
 <!-- Demo scenario switcher -->
 <div class="demo-switcher" role="group" aria-label="Demo scenarios">
@@ -611,11 +621,46 @@
     grid.innerHTML = readCollections().map(collectionCardHTML).join('');
   }
 
+  // ===== Suggested for you =====
+  function suggestCardHTML(s){
+    const p = personData(s.id);
+    const d = P[s.id];
+    const av = p.photo
+      ? '<span class="w-12 h-12 rounded-full bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
+      : '<span class="w-12 h-12 rounded-full flex items-center justify-center font-serif-heading text-white text-lg flex-shrink-0" style="background:' + colorFor(s.id) + '">' + esc(initials(p.name)) + '</span>';
+    return '<div class="suggest-card shrink-0 basis-[85%] sm:basis-[288px] snap-start bg-white border border-wb-300 rounded-lg p-4 flex flex-col gap-3" data-id="' + esc(s.id) + '">' +
+      '<div class="flex items-start gap-3">' + av +
+        '<div class="flex-1 min-w-0"><p class="text-base font-semibold text-wb-900 leading-tight truncate">' + esc(p.name) + '</p><p class="text-sm text-wb-600">' + esc(d ? d.dates : '') + '</p></div>' +
+        '<button class="suggest-dismiss w-7 h-7 -mr-1 -mt-1 rounded-full text-wb-400 hover:text-wb-700 hover:bg-wb-100 flex items-center justify-center flex-shrink-0" aria-label="Dismiss suggestion"><i class="ph ph-x"></i></button>' +
+      '</div>' +
+      '<p class="flex items-start gap-1.5 text-sm text-wb-700 leading-snug"><i class="' + s.icon + ' text-base text-gold-700 flex-shrink-0 mt-0.5"></i> <span class="min-w-0">' + esc(s.reason) + '</span></p>' +
+      '<button class="suggest-add mt-auto w-full h-10 rounded-full border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors inline-flex items-center justify-center gap-2"><i class="ph ph-plus-circle text-lg"></i> Add to My People</button>' +
+    '</div>';
+  }
+  function renderSuggestions(){
+    const sec = $('#suggest-section'), row = $('#suggest-row');
+    if (!sec) return;
+    const items = window.LEGACY_SUGGEST.list(savedIds, null);
+    sec.style.display = items.length ? 'flex' : 'none';
+    row.innerHTML = items.map(suggestCardHTML).join('');
+  }
+  $('#suggest-row').addEventListener('click', (e) => {
+    const card = e.target.closest('.suggest-card'); if (!card) return;
+    const id = card.dataset.id;
+    if (e.target.closest('.suggest-dismiss')) { window.LEGACY_SUGGEST.dismiss(id); renderSuggestions(); return; }
+    if (e.target.closest('.suggest-add')) {
+      if (savedIds.indexOf(id) < 0) { savedIds.push(id); writeSaved(savedIds); buildPeople(); render(); }
+      renderSuggestions();
+      toast(personData(id).name + ' added to My People');
+    }
+  });
+
   function loadScenario(name){
     savedIds = name === 'zero' ? [] : name === 'one' ? ['mohammad'] : DEFAULT_SAVED.slice();
     writeSaved(savedIds);
     buildPeople();
     render();
+    renderSuggestions();
   }
 
   // "Add More People" takes the user to an (unsaved) person's page so they can
@@ -930,6 +975,7 @@
   buildPeople();
   render();
   renderCollections();
+  renderSuggestions();
   const activeKey = savedIds.length === 0 ? 'zero'
     : (savedIds.length === 1 && savedIds[0] === 'mohammad') ? 'one'
     : (JSON.stringify(savedIds) === JSON.stringify(DEFAULT_SAVED) ? 'full' : null);
