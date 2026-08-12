@@ -891,10 +891,17 @@
   function finalizeRelationship(base, detail){
     const badge = REL.computeBadge(base, detail);
     REL.setRelationship(PID, { category: sel.category || 'Family', relation: base, detail: detail || null, badge: badge });
+    // Adding a relationship implies a connection — also save them to My People.
+    const wasSaved = isSaved(PID);
+    if (!wasSaved) setSaved(PID, true);
     closeAll();
     paintHeroRel();
+    paintAdded();
     const shown = (detail && detail !== 'Skip This') ? detail : base;
-    toast('Saved as your ' + shown.toLowerCase(), null, null, 'ph ph-check');
+    toast(wasSaved
+      ? 'Saved as your ' + shown.toLowerCase()
+      : PERSON.first + ' added to My People as your ' + shown.toLowerCase(),
+      'future-my-people.html', 'View', 'ph ph-check');
   }
 
   // ===== Init =====
