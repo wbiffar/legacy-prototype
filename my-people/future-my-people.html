@@ -936,7 +936,7 @@
     collCreate.disabled = collName.value.trim().length === 0;
   }
   function openCreateCollection(preselect){
-    const pre = preselect || [];
+    const pre = Array.isArray(preselect) ? preselect : [];  // guard: click handler passes an Event, not an array
     collName.value = ''; collDesc.value = '';
     $('#coll-people').innerHTML = savedIds.map(id => {
       const p = personData(id);
