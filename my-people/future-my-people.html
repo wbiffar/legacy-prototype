@@ -95,39 +95,55 @@
 
     <!-- =================== RIGHT: My People =================== -->
     <div class="max-w-[840px]">
-      <header class="mb-5 md:mb-7 mt-3 lg:mt-0">
-        <div class="flex items-center gap-3">
-          <h1 class="font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight">My People</h1>
-          <span id="count-pill" class="translate-y-1 inline-flex items-center rounded-full bg-gold-100 text-gold-900 text-sm font-semibold px-3 py-1">3 added</span>
-        </div>
-        <p id="page-subtitle" class="text-base md:text-lg text-wb-700 mt-2 leading-relaxed">Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.</p>
-      </header>
 
-      <div id="grid-root"></div>
+      <!-- ---------- LIST VIEW ---------- -->
+      <div id="list-view">
+        <header class="mb-5 md:mb-7 mt-3 lg:mt-0">
+          <div class="flex items-center gap-3">
+            <h1 class="font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight">My People</h1>
+            <span id="count-pill" class="translate-y-1 inline-flex items-center rounded-full bg-gold-100 text-gold-900 text-sm font-semibold px-3 py-1">3 added</span>
+          </div>
+          <p id="page-subtitle" class="text-base md:text-lg text-wb-700 mt-2 leading-relaxed">Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.</p>
+        </header>
 
-      <!-- =================== Suggested for you =================== -->
-      <section id="suggest-section" class="mt-10 md:mt-12 flex-col gap-5" style="display:none">
-        <div class="flex flex-col gap-1">
-          <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Suggested for you</h2>
-          <p class="text-base text-wb-700 leading-relaxed">People you may want to add — based on who you’ve saved, places you follow, and family connections.</p>
-        </div>
-        <div id="suggest-row" class="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 px-1"></div>
-      </section>
+        <div id="grid-root"></div>
 
-      <!-- =================== Collections =================== -->
-      <section class="mt-10 md:mt-12 flex flex-col gap-8">
-        <div class="flex flex-col gap-2">
-          <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Collections</h2>
-          <p class="text-base text-wb-700 leading-relaxed">Create collections for what matters to you: family research, a friend group, an old neighborhood, your graduating class, or the start of your own family tree.</p>
-        </div>
-        <div class="flex flex-col gap-4">
-          <button id="create-collection" type="button" class="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-gold-700 bg-wb-50 hover:bg-gold-50 transition-colors">
-            <span class="w-8 h-8 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center flex-shrink-0"><i class="ph ph-plus text-xl"></i></span>
-            <span class="text-base font-semibold text-wb-900">Create a Collection</span>
-          </button>
-          <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-        </div>
-      </section>
+        <!-- =================== Collections =================== -->
+        <section class="mt-10 md:mt-12 flex flex-col gap-8">
+          <div class="flex flex-col gap-2">
+            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Collections</h2>
+            <p class="text-base text-wb-700 leading-relaxed">Create collections for what matters to you: family research, a friend group, an old neighborhood, your graduating class, or the start of your own family tree.</p>
+          </div>
+          <div class="flex flex-col gap-4">
+            <button id="create-collection" type="button" class="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-gold-700 bg-wb-50 hover:bg-gold-50 transition-colors">
+              <span class="w-8 h-8 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center flex-shrink-0"><i class="ph ph-plus text-xl"></i></span>
+              <span class="text-base font-semibold text-wb-900">Create a Collection</span>
+            </button>
+            <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ---------- COLLECTION DETAIL VIEW ---------- -->
+      <div id="detail-view" style="display:none">
+        <button id="detail-back" type="button" class="inline-flex items-center gap-2 text-sm font-semibold text-navy-700 hover:text-navy-800 mb-4 mt-3 lg:mt-0"><i class="ph-bold ph-arrow-left"></i> All collections</button>
+        <header class="mb-5 md:mb-7">
+          <h1 id="detail-title" class="font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight">Collection</h1>
+          <p id="detail-desc" class="text-base md:text-lg text-wb-700 mt-2 leading-relaxed"></p>
+          <p id="detail-count" class="text-sm text-wb-600 mt-1"></p>
+        </header>
+        <div id="detail-people" class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5"></div>
+
+        <!-- Tailored suggestions for this collection (moved here from the root) -->
+        <section id="detail-suggest-section" class="mt-10 md:mt-12 flex-col gap-5" style="display:none">
+          <div class="flex flex-col gap-1">
+            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Suggested for this collection</h2>
+            <p class="text-base text-wb-700 leading-relaxed">People who may belong here — based on family names, hometowns, and where they’re remembered.</p>
+          </div>
+          <div id="detail-suggest-row" class="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 px-1"></div>
+        </section>
+      </div>
+
     </div>
   </div>
 </main>
@@ -606,14 +622,14 @@
         '</div>'
       : '';
     const count = ids.length + ' ' + (ids.length === 1 ? 'person' : 'people');
-    return '<div class="bg-white border border-wb-300 rounded-lg p-3 flex flex-col gap-2">' +
+    return '<button type="button" data-coll-id="' + esc(c.id) + '" class="text-left bg-white border border-wb-300 rounded-lg p-3 flex flex-col gap-2 cursor-pointer transition-shadow hover:shadow-2xl">' +
       '<div class="flex flex-col gap-1">' +
         '<h3 class="font-serif-heading text-xl text-wb-900 leading-tight">' + esc(c.name) + '</h3>' +
         (c.description ? '<p class="text-sm text-wb-700 leading-snug">' + esc(c.description) + '</p>' : '') +
       '</div>' +
       avatars +
       '<p class="text-sm text-wb-700 text-right mt-auto">' + count + '</p>' +
-    '</div>';
+    '</button>';
   }
   function renderCollections(){
     const grid = $('#collections-grid');
@@ -621,7 +637,10 @@
     grid.innerHTML = readCollections().map(collectionCardHTML).join('');
   }
 
-  // ===== Suggested for you =====
+  // ===== Collection detail view =====
+  let currentCollId = null;
+
+  // Suggestion card for the collection detail's "Suggested for this collection" row.
   function suggestCardHTML(s){
     const p = personData(s.id);
     const d = P[s.id];
@@ -634,24 +653,70 @@
         '<button class="suggest-dismiss w-7 h-7 -mr-1 -mt-1 rounded-full text-wb-400 hover:text-wb-700 hover:bg-wb-100 flex items-center justify-center flex-shrink-0" aria-label="Dismiss suggestion"><i class="ph ph-x"></i></button>' +
       '</div>' +
       '<p class="flex items-start gap-1.5 text-sm text-wb-700 leading-snug"><i class="' + s.icon + ' text-base text-gold-700 flex-shrink-0 mt-0.5"></i> <span class="min-w-0">' + esc(s.reason) + '</span></p>' +
-      '<button class="suggest-add mt-auto w-full h-10 rounded-full border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors inline-flex items-center justify-center gap-2"><i class="ph ph-plus-circle text-lg"></i> Add to My People</button>' +
+      '<button class="suggest-add mt-auto w-full h-10 rounded-full border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors inline-flex items-center justify-center gap-2"><i class="ph ph-plus-circle text-lg"></i> Add to collection</button>' +
     '</div>';
   }
-  function renderSuggestions(){
-    const sec = $('#suggest-section'), row = $('#suggest-row');
-    if (!sec) return;
-    const items = window.LEGACY_SUGGEST.list(savedIds, null);
+
+  function updateDetailHeader(c){
+    $('#detail-title').textContent = c.name;
+    const desc = $('#detail-desc');
+    desc.textContent = c.description || '';
+    desc.style.display = c.description ? '' : 'none';
+    const n = (c.people || []).length;
+    $('#detail-count').textContent = n + ' ' + (n === 1 ? 'person' : 'people');
+  }
+  function renderDetailPeople(c){
+    const wrap = $('#detail-people');
+    const ppl = (c.people || []).map(personData);
+    ppl.forEach(p => { if (!p.photo && !p._color) p._color = colorFor(p.id); });
+    wrap.innerHTML = ppl.length
+      ? ppl.map(personCardHTML).join('')
+      : '<p class="col-span-full text-base text-wb-600 py-2">No one here yet — add someone from the suggestions below, or from a person’s ••• menu.</p>';
+    applyPhotoColors();
+  }
+  function renderDetailSuggestions(c){
+    const sec = $('#detail-suggest-section'), row = $('#detail-suggest-row');
+    const items = window.LEGACY_SUGGEST.forCollection(c);
     sec.style.display = items.length ? 'flex' : 'none';
     row.innerHTML = items.map(suggestCardHTML).join('');
   }
-  $('#suggest-row').addEventListener('click', (e) => {
+  function refreshDetail(){
+    const c = readCollections().find(x => x.id === currentCollId);
+    if (!c) { hideCollection(); return; }
+    updateDetailHeader(c); renderDetailPeople(c); renderDetailSuggestions(c);
+  }
+  function showCollection(id){
+    const c = readCollections().find(x => x.id === id); if (!c) return;
+    currentCollId = id;
+    updateDetailHeader(c); renderDetailPeople(c); renderDetailSuggestions(c);
+    $('#list-view').style.display = 'none';
+    $('#detail-view').style.display = '';
+    window.scrollTo(0, 0);
+  }
+  function hideCollection(){
+    currentCollId = null;
+    $('#detail-view').style.display = 'none';
+    $('#list-view').style.display = '';
+    renderCollections();
+  }
+  $('#detail-back').addEventListener('click', hideCollection);
+  $('#collections-grid').addEventListener('click', (e) => {
+    const card = e.target.closest('[data-coll-id]'); if (!card) return;
+    showCollection(card.dataset.collId);
+  });
+  $('#detail-suggest-row').addEventListener('click', (e) => {
     const card = e.target.closest('.suggest-card'); if (!card) return;
     const id = card.dataset.id;
-    if (e.target.closest('.suggest-dismiss')) { window.LEGACY_SUGGEST.dismiss(id); renderSuggestions(); return; }
+    if (e.target.closest('.suggest-dismiss')) { window.LEGACY_SUGGEST.dismiss(id); refreshDetail(); return; }
     if (e.target.closest('.suggest-add')) {
-      if (savedIds.indexOf(id) < 0) { savedIds.push(id); writeSaved(savedIds); buildPeople(); render(); }
-      renderSuggestions();
-      toast(personData(id).name + ' added to My People');
+      const colls = readCollections();
+      const c = colls.find(x => x.id === currentCollId); if (!c) return;
+      c.people = c.people || [];
+      if (c.people.indexOf(id) < 0) c.people.push(id);
+      if (savedIds.indexOf(id) < 0) { savedIds.push(id); writeSaved(savedIds); buildPeople(); render(); }  // adding to a collection also saves them
+      writeCollections(colls);
+      refreshDetail();
+      toast(personData(id).name + ' added to “' + c.name + '”');
     }
   });
 
@@ -660,7 +725,6 @@
     writeSaved(savedIds);
     buildPeople();
     render();
-    renderSuggestions();
   }
 
   // "Add More People" takes the user to an (unsaved) person's page so they can
@@ -730,8 +794,8 @@
     toast(next ? 'Email updates on for ' + activeName : 'Email updates off for ' + activeName);
   });
 
-  // ===== delegated clicks =====
-  root.addEventListener('click', (e) => {
+  // ===== delegated clicks (main grid + collection-detail people) =====
+  function handleCardArea(e){
     const add = e.target.closest('#add-more');
     if (add) { goAddMore(); return; }
     const more = e.target.closest('.more-btn');
@@ -742,7 +806,9 @@
     // Tapping anywhere else on a card opens that person's page.
     const card = e.target.closest('.person-card');
     if (card) { window.location.href = 'future-index.html?id=' + card.dataset.id; }
-  });
+  }
+  root.addEventListener('click', handleCardArea);
+  $('#detail-people').addEventListener('click', handleCardArea);
 
   overlays.options.addEventListener('click', (e) => {
     const action = e.target.closest('[data-action]'); if(!action) return;
@@ -975,7 +1041,6 @@
   buildPeople();
   render();
   renderCollections();
-  renderSuggestions();
   const activeKey = savedIds.length === 0 ? 'zero'
     : (savedIds.length === 1 && savedIds[0] === 'mohammad') ? 'one'
     : (JSON.stringify(savedIds) === JSON.stringify(DEFAULT_SAVED) ? 'full' : null);

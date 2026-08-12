@@ -58,5 +58,32 @@
     return out;
   }
 
-  window.LEGACY_SUGGEST = { CANDIDATES: CANDIDATES, readDismissed: readDismissed, dismiss: dismiss, list: list, forPerson: forPerson };
+  // Collection-specific suggestions: people NOT already in the collection who
+  // connect to any member (shared surname → family, funeral home, newspaper,
+  // or state). Reason names the specific member. Strongest connection wins.
+  function forCollection(coll){
+    var P = window.LEGACY_PEOPLE || {};
+    var members = (coll && coll.people) || [];
+    if (!members.length) return [];
+    var dis = readDismissed();
+    var out = [];
+    Object.keys(P).forEach(function (id) {
+      if (members.indexOf(id) >= 0 || dis.indexOf(id) >= 0) return;
+      var c = P[id];
+      var best = null;
+      members.forEach(function (mid) {
+        var m = P[mid]; if (!m) return;
+        var s = null;
+        if (c.last && m.last && c.last === m.last) s = { rank: 4, reasonType: 'relationship', icon: 'ph ph-tree-structure', reason: 'Shares the ' + m.last + ' name with ' + m.first };
+        else if (c.home && m.home && c.home === m.home) s = { rank: 3, reasonType: 'place', icon: 'ph ph-buildings', reason: 'Also cared for by ' + m.home };
+        else if (c.source && m.source && c.source === m.source) s = { rank: 2, reasonType: 'people', icon: 'ph ph-newspaper', reason: 'Also remembered in ' + m.source };
+        else if (stateOf(c.location) && stateOf(c.location) === stateOf(m.location)) s = { rank: 1, reasonType: 'place', icon: 'ph ph-map-pin', reason: 'Also from ' + (STATES[stateOf(m.location)] || stateOf(m.location)) };
+        if (s && (!best || s.rank > best.rank)) best = s;
+      });
+      if (best) { best.id = id; out.push(best); }
+    });
+    return out;
+  }
+
+  window.LEGACY_SUGGEST = { CANDIDATES: CANDIDATES, readDismissed: readDismissed, dismiss: dismiss, list: list, forPerson: forPerson, forCollection: forCollection };
 })();
