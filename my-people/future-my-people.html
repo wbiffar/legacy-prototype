@@ -106,15 +106,9 @@
         <section class="flex flex-col gap-8">
           <div class="flex flex-col gap-2">
             <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Collections</h2>
-            <p class="text-base text-wb-700 leading-relaxed">Create collections for what matters to you: family research, a friend group, an old neighborhood, your graduating class, or the start of your own family tree.</p>
+            <p class="text-base text-wb-700 leading-relaxed">Organize the people you’ve saved into groups that matter to you.</p>
           </div>
-          <div class="flex flex-col gap-4">
-            <button id="create-collection" type="button" class="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-gold-700 bg-wb-50 hover:bg-gold-50 transition-colors">
-              <span class="w-8 h-8 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center flex-shrink-0"><i class="ph ph-plus text-xl"></i></span>
-              <span class="text-base font-semibold text-wb-900">Create a Collection</span>
-            </button>
-            <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-          </div>
+          <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
         </section>
 
         <!-- =================== All of my people =================== -->
@@ -688,19 +682,24 @@
         '</div>'
       : '';
     const count = ids.length + ' ' + (ids.length === 1 ? 'person' : 'people');
-    return '<button type="button" data-coll-id="' + esc(c.id) + '" class="text-left bg-white border border-wb-300 rounded-lg p-3 flex flex-col gap-2 cursor-pointer transition-shadow hover:shadow-2xl">' +
+    return '<button type="button" data-coll-id="' + esc(c.id) + '" class="text-left bg-white border border-wb-300 rounded-lg p-3 flex flex-col cursor-pointer transition-shadow hover:shadow-2xl">' +
       '<div class="flex flex-col gap-1">' +
         '<h3 class="font-serif-heading text-xl text-wb-900 leading-tight">' + esc(c.name) + '</h3>' +
         (c.description ? '<p class="text-sm text-wb-700 leading-snug">' + esc(c.description) + '</p>' : '') +
       '</div>' +
-      avatars +
-      '<p class="text-sm text-wb-700 text-right mt-auto">' + count + '</p>' +
+      '<div class="flex items-center gap-2 mt-4">' + avatars + '<span class="text-sm text-wb-700">' + count + '</span></div>' +
+    '</button>';
+  }
+  function createCollectionTileHTML(){
+    return '<button id="create-collection" type="button" class="h-full min-h-[132px] rounded-lg border-2 border-dashed border-gold-700 bg-transparent hover:bg-gold-50 flex flex-col items-center justify-center text-center gap-2 p-4 transition-colors">' +
+      '<span class="w-10 h-10 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center"><i class="ph ph-plus text-xl"></i></span>' +
+      '<span class="text-base font-semibold text-wb-900">Create a Collection</span>' +
     '</button>';
   }
   function renderCollections(){
     const grid = $('#collections-grid');
     if (!grid) return;
-    grid.innerHTML = readCollections().map(collectionCardHTML).join('');
+    grid.innerHTML = createCollectionTileHTML() + readCollections().map(collectionCardHTML).join('');
   }
 
   // ===== Collection detail view =====
@@ -772,6 +771,7 @@
   }
   $('#detail-back').addEventListener('click', hideCollection);
   $('#collections-grid').addEventListener('click', (e) => {
+    if (e.target.closest('#create-collection')) { openCreateCollection(); return; }
     const card = e.target.closest('[data-coll-id]'); if (!card) return;
     showCollection(card.dataset.collId);
   });
@@ -1176,7 +1176,6 @@
     refreshCollForm();
     openOverlay(overlays.collection);
   }
-  $('#create-collection').addEventListener('click', openCreateCollection);
   collName.addEventListener('input', refreshCollForm);
   $('#coll-people').addEventListener('change', refreshCollForm);
   $('#coll-form').addEventListener('submit', (e) => {
