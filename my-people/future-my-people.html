@@ -138,11 +138,10 @@
             <h1 id="detail-title" contenteditable="true" spellcheck="false" class="min-w-0 font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight rounded px-1 -mx-1 focus:outline-none focus:bg-wb-100">Collection</h1>
             <button id="edit-title" type="button" class="text-wb-400 hover:text-navy-700 flex-shrink-0" aria-label="Edit name"><i class="ph ph-pencil-simple text-xl"></i></button>
           </div>
-          <div class="flex items-start gap-2 mt-2">
-            <p id="detail-desc" contenteditable="true" spellcheck="false" data-placeholder="Add a description…" class="flex-1 min-w-0 text-base md:text-lg text-wb-700 leading-relaxed rounded px-1 -mx-1 focus:outline-none focus:bg-wb-100 empty:before:content-[attr(data-placeholder)] empty:before:text-wb-400"></p>
-            <button id="edit-desc" type="button" class="text-wb-400 hover:text-navy-700 flex-shrink-0 mt-1" aria-label="Edit description"><i class="ph ph-pencil-simple text-lg"></i></button>
+          <div class="mt-2">
+            <p id="detail-desc" contenteditable="true" spellcheck="false" data-placeholder="Add a description…" class="inline text-base md:text-lg text-wb-700 leading-relaxed rounded focus:outline-none focus:bg-wb-100 empty:before:content-[attr(data-placeholder)] empty:before:text-wb-400"></p>
+            <button id="edit-desc" type="button" class="inline-flex align-middle ml-1 text-wb-400 hover:text-navy-700" aria-label="Edit description"><i class="ph ph-pencil-simple text-lg"></i></button>
           </div>
-          <p id="detail-count" class="text-sm text-wb-600 mt-2"></p>
         </header>
 
         <!-- Make my relationship to this group public -->
@@ -151,7 +150,7 @@
           <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Make my relationship to this group public</span><span id="coll-mine-sub" class="block text-sm text-wb-600 mt-0.5">Off · Your relationship to this group stays private</span></span>
         </div>
 
-        <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700 mb-4">People</h2>
+        <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700 mb-4">People <span id="detail-people-count"></span></h2>
         <div id="detail-people" class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5"></div>
 
         <!-- Tailored suggestions for this collection (moved here from the root) -->
@@ -726,7 +725,7 @@
     $('#detail-title').textContent = c.name;
     $('#detail-desc').textContent = c.description || '';  // empty shows the placeholder via CSS
     const n = (c.people || []).length;
-    $('#detail-count').textContent = n + ' ' + (n === 1 ? 'person' : 'people');
+    $('#detail-people-count').textContent = '· ' + n;
     paintCollMine(!!c.mine);
   }
   function detailAddTileHTML(full){
