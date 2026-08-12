@@ -104,6 +104,21 @@
       </header>
 
       <div id="grid-root"></div>
+
+      <!-- =================== Collections =================== -->
+      <section class="mt-10 md:mt-12 flex flex-col gap-8">
+        <div class="flex flex-col gap-2">
+          <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Collections</h2>
+          <p class="text-base text-wb-700 leading-relaxed">Create collections for what matters to you: family research, a friend group, an old neighborhood, your graduating class, or the start of your own family tree.</p>
+        </div>
+        <div class="flex flex-col gap-4">
+          <button id="create-collection" type="button" class="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-gold-700 bg-wb-50 hover:bg-gold-50 transition-colors">
+            <span class="w-8 h-8 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center flex-shrink-0"><i class="ph ph-plus text-xl"></i></span>
+            <span class="text-base font-semibold text-wb-900">Create a Collection</span>
+          </button>
+          <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        </div>
+      </section>
     </div>
   </div>
 </main>
@@ -350,6 +365,36 @@
 </div>
 
 <!-- ====================================================================
+     CREATE COLLECTION MODAL
+     ==================================================================== -->
+<div class="sheet-overlay" id="collection-overlay" role="dialog" aria-modal="true" aria-labelledby="coll-title">
+  <div class="sheet-card p-6 md:p-8 !pb-[72px] md:!pb-8">
+    <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
+    <h2 id="coll-title" class="text-xl font-bold text-navy-700 leading-tight pr-10">Create a collection</h2>
+    <p class="text-sm text-wb-700 mt-1 leading-relaxed">Name it whatever you like and choose who belongs.</p>
+
+    <form id="coll-form" class="mt-5 flex flex-col gap-4">
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-wb-900">Name</span>
+        <input id="coll-name" type="text" required maxlength="60" placeholder="e.g. College Friends" class="h-12 px-3 rounded-lg border border-wb-300 bg-white text-base text-wb-900 placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
+      </label>
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-wb-900">Description <span class="font-normal text-wb-500">(optional)</span></span>
+        <textarea id="coll-desc" rows="2" maxlength="140" placeholder="What ties these people together?" class="px-3 py-2.5 rounded-lg border border-wb-300 bg-white text-base text-wb-900 placeholder:text-wb-400 leading-snug resize-none focus:outline-none focus:border-navy-500"></textarea>
+      </label>
+      <div class="flex flex-col gap-2">
+        <span class="text-sm font-semibold text-wb-900">Add people <span id="coll-count" class="font-normal text-wb-500">(0 selected)</span></span>
+        <div id="coll-people" class="flex flex-col gap-1 max-h-[220px] overflow-y-auto -mx-1 px-1"></div>
+      </div>
+      <div class="flex flex-row gap-3 mt-2">
+        <button id="coll-create" type="submit" class="flex-1 h-12 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold disabled:opacity-40 disabled:cursor-not-allowed">Create collection</button>
+        <button type="button" data-close class="flex-1 h-12 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ====================================================================
      TOAST
      ==================================================================== -->
 <div id="toast" class="toast" role="status" aria-live="polite">
@@ -509,6 +554,42 @@
     applyPhotoColors();
   }
 
+  // ===== Collections =====
+  function readCollections(){ const o = readStore(); return Array.isArray(o.collections) ? o.collections : []; }
+  function writeCollections(arr){ const o = readStore(); o.collections = arr; writeStore(o); }
+  // Deterministic no-photo avatar color (stable per person across renders).
+  function colorFor(id){ let h = 0; for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(id.length - 1 - i)) >>> 0; return NOPHOTO_COLORS[h % NOPHOTO_COLORS.length]; }
+  function avatarHTML(id){
+    const p = personData(id);
+    return p.photo
+      ? '<span class="w-10 h-10 rounded-full border-2 border-white bg-center bg-cover -ml-2 first:ml-0" style="background-image:url(' + esc(p.photo) + ')" title="' + esc(p.name) + '"></span>'
+      : '<span class="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center font-serif-heading text-white text-lg -ml-2 first:ml-0" style="background:' + colorFor(id) + '" title="' + esc(p.name) + '">' + esc(initials(p.name)) + '</span>';
+  }
+  function collectionCardHTML(c){
+    const ids = (c.people || []);
+    const shown = ids.slice(0, 4);
+    const extra = ids.length - shown.length;
+    const avatars = ids.length
+      ? '<div class="flex items-center">' + shown.map(avatarHTML).join('') +
+        (extra > 0 ? '<span class="w-10 h-10 rounded-full border-2 border-white bg-wb-200 text-wb-700 text-sm font-semibold flex items-center justify-center -ml-2">+' + extra + '</span>' : '') +
+        '</div>'
+      : '';
+    const count = ids.length + ' ' + (ids.length === 1 ? 'person' : 'people');
+    return '<div class="bg-white border border-wb-300 rounded-lg p-3 flex flex-col gap-2">' +
+      '<div class="flex flex-col gap-1">' +
+        '<h3 class="font-serif-heading text-xl text-wb-900 leading-tight">' + esc(c.name) + '</h3>' +
+        (c.description ? '<p class="text-sm text-wb-700 leading-snug">' + esc(c.description) + '</p>' : '') +
+      '</div>' +
+      avatars +
+      '<p class="text-sm text-wb-700 text-right mt-auto">' + count + '</p>' +
+    '</div>';
+  }
+  function renderCollections(){
+    const grid = $('#collections-grid');
+    if (!grid) return;
+    grid.innerHTML = readCollections().map(collectionCardHTML).join('');
+  }
+
   function loadScenario(name){
     savedIds = name === 'zero' ? [] : name === 'one' ? ['mohammad'] : DEFAULT_SAVED.slice();
     writeSaved(savedIds);
@@ -526,7 +607,7 @@
 
   // ===== modal plumbing =====
   let activeId = null, activeName = null, lastFocus = null;
-  const overlays = { options:$('#options-overlay'), share:$('#share-overlay'), remove:$('#remove-overlay') };
+  const overlays = { options:$('#options-overlay'), share:$('#share-overlay'), remove:$('#remove-overlay'), collection:$('#collection-overlay') };
 
   // Wizard inside the options sheet: a stack of panes slides horizontally
   // while the container stays put and the viewport height animates. Panes
@@ -737,6 +818,44 @@
     location.href = location.pathname;  // clean URL, default demo state
   });
 
+  // ===== Create collection modal =====
+  const collName = $('#coll-name'), collDesc = $('#coll-desc'), collCreate = $('#coll-create'), collCount = $('#coll-count');
+  function refreshCollForm(){
+    const selected = $$('.coll-person:checked').length;
+    collCount.textContent = '(' + selected + ' selected)';
+    collCreate.disabled = collName.value.trim().length === 0;
+  }
+  function openCreateCollection(){
+    collName.value = ''; collDesc.value = '';
+    $('#coll-people').innerHTML = savedIds.map(id => {
+      const p = personData(id);
+      const av = p.photo
+        ? '<span class="w-8 h-8 rounded-full bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
+        : '<span class="w-8 h-8 rounded-full flex items-center justify-center font-serif-heading text-white text-sm flex-shrink-0" style="background:' + colorFor(id) + '">' + esc(initials(p.name)) + '</span>';
+      return '<label class="flex items-center gap-3 py-2 px-1 rounded-lg hover:bg-wb-50 cursor-pointer">' +
+        av +
+        '<span class="flex-1 min-w-0 truncate text-base text-wb-900">' + esc(p.name) + '</span>' +
+        '<input type="checkbox" class="coll-person w-5 h-5 accent-navy-700" value="' + esc(id) + '" />' +
+      '</label>';
+    }).join('');
+    refreshCollForm();
+    openOverlay(overlays.collection);
+  }
+  $('#create-collection').addEventListener('click', openCreateCollection);
+  collName.addEventListener('input', refreshCollForm);
+  $('#coll-people').addEventListener('change', refreshCollForm);
+  $('#coll-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = collName.value.trim(); if (!name) return;
+    const chosen = $$('.coll-person:checked').map(c => c.value);
+    const colls = readCollections();
+    colls.push({ id: 'coll-' + (colls.length + 1) + '-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24), name: name, description: collDesc.value.trim(), people: chosen });
+    writeCollections(colls);
+    renderCollections();
+    closeAll();
+    toast('Collection “' + name + '” created');
+  });
+
   // ===== init =====
   // Use the persisted saved list if present (so person-page adds/removes carry
   // over); otherwise seed the default demo set.
@@ -744,6 +863,7 @@
   if (!savedIds) { savedIds = DEFAULT_SAVED.slice(); writeSaved(savedIds); }
   buildPeople();
   render();
+  renderCollections();
   const activeKey = savedIds.length === 0 ? 'zero'
     : (savedIds.length === 1 && savedIds[0] === 'mohammad') ? 'one'
     : (JSON.stringify(savedIds) === JSON.stringify(DEFAULT_SAVED) ? 'full' : null);
