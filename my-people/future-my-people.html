@@ -627,7 +627,7 @@
     const badge = p.relation
       ? '<span class="inline-block mt-1 rounded-full bg-gold-100 text-gold-900 text-sm px-3 py-0.5">'+esc(p.relation)+'</span>'
       : '<button type="button" class="add-rel-chip inline-flex items-center gap-1 mt-1 px-3 py-0.5 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-900 text-sm transition-colors"><i class="ph ph-plus-circle text-sm" aria-hidden="true"></i><span>Add Relationship</span></button>';
-    return '<article class="person-card mp-tile relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
+    return '<article class="person-card transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
       panel +
       '<div class="flex-1 min-h-[100px] flex flex-col items-center justify-center text-center gap-1 px-2 pb-3">' +
         '<a href="future-index.html?id='+esc(p.id)+'" class="text-base font-semibold text-wb-900 leading-tight">'+esc(p.name)+'</a>' + badge +
@@ -640,7 +640,7 @@
   // columns (and shows a fuller message) when the grid is empty.
   function addCardHTML(full){
     const cls = full ? 'col-span-2 lg:col-span-3 min-h-[220px] py-10' : 'min-h-[288px] py-6';
-    return '<button id="add-more" class="'+cls+' mp-tile h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
+    return '<button id="add-more" class="'+cls+' transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
       '<span class="w-14 h-14 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-magnifying-glass text-2xl"></i></span>' +
       '<span class="text-base font-semibold text-wb-900 mt-1">Add More People</span>' +
       '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Search our database to find the people you care about and add them here.</span>' +
@@ -682,7 +682,7 @@
         '</div>'
       : '';
     const count = ids.length + ' ' + (ids.length === 1 ? 'person' : 'people');
-    return '<button type="button" data-coll-id="' + esc(c.id) + '" class="mp-tile text-left bg-white border border-wb-300 rounded-lg p-3 flex flex-col cursor-pointer">' +
+    return '<button type="button" data-coll-id="' + esc(c.id) + '" class="transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg text-left bg-white border border-wb-300 rounded-lg p-3 flex flex-col cursor-pointer">' +
       '<div class="flex flex-col gap-1">' +
         '<h3 class="font-serif-heading text-xl text-wb-900 leading-tight">' + esc(c.name) + '</h3>' +
         (c.description ? '<p class="text-sm text-wb-700 leading-snug">' + esc(c.description) + '</p>' : '') +
@@ -691,7 +691,7 @@
     '</button>';
   }
   function createCollectionTileHTML(){
-    return '<button id="create-collection" type="button" class="mp-tile h-full min-h-[132px] rounded-lg border-2 border-dashed border-gold-700 bg-transparent flex flex-col items-center justify-center text-center gap-2 p-4">' +
+    return '<button id="create-collection" type="button" class="transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full min-h-[132px] rounded-lg border-2 border-dashed border-gold-700 bg-transparent flex flex-col items-center justify-center text-center gap-2 p-4">' +
       '<span class="w-10 h-10 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center"><i class="ph ph-plus text-xl"></i></span>' +
       '<span class="text-base font-semibold text-wb-900">Create a Collection</span>' +
     '</button>';
@@ -731,7 +731,7 @@
   }
   function detailAddTileHTML(full){
     const cls = full ? 'col-span-2 lg:col-span-3 min-h-[220px] py-10' : 'min-h-[288px] py-6';
-    return '<button id="detail-add-person" type="button" class="' + cls + ' mp-tile h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
+    return '<button id="detail-add-person" type="button" class="' + cls + ' transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
       '<span class="w-14 h-14 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-plus text-2xl"></i></span>' +
       '<span class="text-base font-semibold text-wb-900 mt-1">Add a person</span>' +
       '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Add someone from the people you’ve saved.</span>' +

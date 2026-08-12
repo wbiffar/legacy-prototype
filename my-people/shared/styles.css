@@ -68,13 +68,6 @@ button.rel-pill[aria-pressed="true"] i { color: #fff; }
 /* Card shadow (person page cards) */
 .card-elev { box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 8px 24px -12px rgba(0,0,0,0.12); }
 
-/* Shared tile hover — subtle lift + soft shadow + gold accent border. Used by
-   the person cards, collection cards, and the dashed add/create tiles so they
-   all respond the same way. */
-.mp-tile { transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease; }
-.mp-tile:hover { transform: translateY(-2px); box-shadow: 0 14px 28px -12px rgba(21,27,36,0.22); border-color: #e2ba60; }
-.mp-tile:active { transform: translateY(0); }
-
 /* Horizontal carousel — hidden scrollbar */
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
