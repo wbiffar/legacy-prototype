@@ -732,7 +732,10 @@
     loadScenario(b.dataset.scenario);
   }));
   const demoReset = $('[data-demo-reset]');
-  if (demoReset) demoReset.addEventListener('click', () => { try { localStorage.removeItem('legacyMyPeople.v0'); } catch(_){} location.reload(); });
+  if (demoReset) demoReset.addEventListener('click', () => {
+    try { localStorage.removeItem('legacyMyPeople.v0'); } catch(_){}
+    location.href = location.pathname;  // clean URL, default demo state
+  });
 
   // ===== init =====
   // Use the persisted saved list if present (so person-page adds/removes carry

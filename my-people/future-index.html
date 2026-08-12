@@ -582,8 +582,8 @@
 <!-- Demo scenario switcher -->
 <div class="demo-switcher" role="group" aria-label="Demo scenarios">
   <span class="demo-switcher-label">Account scenario</span>
-  <button data-scenario="signed-in"><i class="ph ph-user-circle-check"></i> Signed In</button>
-  <button data-scenario="signed-out" class="active"><i class="ph ph-user"></i> Sign In or Create an Account</button>
+  <button data-scenario="signed-in" class="active"><i class="ph ph-user-circle-check"></i> Signed In</button>
+  <button data-scenario="signed-out"><i class="ph ph-user"></i> Sign In or Create an Account</button>
   <span class="demo-switcher-divider" aria-hidden="true"></span>
   <button data-demo-reset title="Reset saved people, relationships, and follows to the demo default"><i class="ph ph-arrow-clockwise"></i> Reset demo</button>
 </div>
@@ -610,7 +610,8 @@
   function setSaved(id, on){ const s = readSaved() || []; const i = s.indexOf(id); if (on && i < 0) s.push(id); if (!on && i >= 0) s.splice(i, 1); writeSaved(s); }
 
   // ===== Account scenario: 'signed-out' | 'signed-in' =====
-  let scenario = 'signed-out';
+  // Board demo defaults to signed-in (overridable via the switcher or ?so=1).
+  let scenario = 'signed-in';
   const isSignedIn = () => scenario === 'signed-in';
 
   const addBtn    = $('#add-btn');
@@ -741,7 +742,11 @@
     paintScenario();
   }));
   const demoReset = $('[data-demo-reset]');
-  if (demoReset) demoReset.addEventListener('click', () => { try { localStorage.removeItem('legacyMyPeople.v0'); } catch(_){} location.reload(); });
+  if (demoReset) demoReset.addEventListener('click', () => {
+    try { localStorage.removeItem('legacyMyPeople.v0'); } catch(_){}
+    // Reload to a clean URL (drop so=/from= so it returns to the signed-in default).
+    location.href = location.pathname + '?id=' + encodeURIComponent(PID);
+  });
 
   // ===== Populate this person's content =====
   function replaceNames(root){
@@ -898,9 +903,8 @@
   // Signed-in context when the person is already saved, or when arriving from
   // the account/dashboard "Add More People" flow (from=account) — so the visitor
   // can add directly rather than hitting the sign-in gate.
-  const fromAccount = new URLSearchParams(location.search).get('from') === 'account';
   const forceSignedOut = new URLSearchParams(location.search).get('so') === '1';  // arriving via Sign Out
-  if (!forceSignedOut && (isSaved(PID) || fromAccount)) scenario = 'signed-in';
+  if (forceSignedOut) scenario = 'signed-out';
   populatePerson();
   paintScenario();
   paintFollowing();
