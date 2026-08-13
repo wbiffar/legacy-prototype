@@ -529,6 +529,7 @@
 <!-- Demo scenario switcher -->
 <div class="demo-switcher" role="group" aria-label="Demo scenarios">
   <span class="demo-switcher-label">Demo scenario</span>
+  <button data-scenario="family"><i class="ph ph-tree-structure"></i> All family added</button>
   <button data-scenario="full" class="active"><i class="ph ph-users-three"></i> 3 people saved</button>
   <button data-scenario="one"><i class="ph ph-user"></i> 1 person saved</button>
   <button data-scenario="zero"><i class="ph ph-tray"></i> Zero state · none saved</button>
@@ -919,11 +920,21 @@
     c.mine = !c.mine; writeCollections(colls); paintCollMine(c.mine);
   });
 
+  // Default saved set plus every blood-family member who has a page — the
+  // "all family added" demo scenario, derived from the LEGACY_FAMILY graph.
+  function familySavedSet(){
+    const fam = window.LEGACY_FAMILY, people = window.LEGACY_PEOPLE || {};
+    const ids = DEFAULT_SAVED.slice();
+    if (fam) fam.all().forEach(id => { if (fam.isBlood(id) && people[id] && ids.indexOf(id) < 0) ids.push(id); });
+    return ids;
+  }
   function loadScenario(name){
-    savedIds = name === 'zero' ? [] : name === 'one' ? ['mohammad'] : DEFAULT_SAVED.slice();
+    savedIds = name === 'zero' ? [] : name === 'one' ? ['mohammad'] : name === 'family' ? familySavedSet() : DEFAULT_SAVED.slice();
     writeSaved(savedIds);
     buildPeople();
     render();
+    renderCollections();
+    renderMatches();
   }
 
   // "Add More People" takes the user to an (unsaved) person's page so they can
@@ -1242,9 +1253,12 @@
   render();
   renderCollections();
   renderMatches();
+  const sortedSaved = [...savedIds].sort();
   const activeKey = savedIds.length === 0 ? 'zero'
     : (savedIds.length === 1 && savedIds[0] === 'mohammad') ? 'one'
-    : (JSON.stringify(savedIds) === JSON.stringify(DEFAULT_SAVED) ? 'full' : null);
+    : (JSON.stringify(savedIds) === JSON.stringify(DEFAULT_SAVED)) ? 'full'
+    : (JSON.stringify(sortedSaved) === JSON.stringify([...familySavedSet()].sort())) ? 'family'
+    : null;
   $$('.demo-switcher [data-scenario]').forEach(b => b.classList.toggle('active', b.dataset.scenario === activeKey));
 })();
 </script>
