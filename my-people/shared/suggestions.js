@@ -18,20 +18,29 @@
     { id: 'marcus',  reasonType: 'place',        icon: 'ph ph-map-pin',        reason: 'Followed by people near Los Angeles, CA' },
   ];
 
-  // User-level suggestions (dashboard): candidates not already saved/dismissed/current.
-  // When a candidate is in the family graph, its reason comes from that graph
-  // (anchored on "you") so "possible matches" reflect the real relationships.
+  // User-level suggestions (dashboard "Possible matches"): every family-graph
+  // person marked "possible" who has a page, plus any authored CANDIDATES —
+  // minus anyone already saved/dismissed/current. Family members get a reason
+  // straight from the graph ("Your grandfather's brother · Thomas family");
+  // non-family candidates (e.g. Marcus by place) keep their authored reason.
   function list(savedIds, excludeId){
     var saved = savedIds || [];
     var dis = readDismissed();
     var fam = window.LEGACY_FAMILY;
-    return CANDIDATES.filter(function (c) {
-      return c.id !== excludeId && saved.indexOf(c.id) < 0 && dis.indexOf(c.id) < 0;
-    }).map(function (c) {
-      if (fam && fam.get(c.id) && fam.reason(c.id)) {
-        return { id: c.id, reasonType: 'relationship', icon: 'ph ph-tree-structure', reason: fam.reason(c.id) };
-      }
-      return c;
+    var people = window.LEGACY_PEOPLE || {};
+    var authored = {}; CANDIDATES.forEach(function (c) { authored[c.id] = c; });
+
+    // Candidate id pool: graph "possible" people with a page, then authored ids.
+    var pool = [];
+    if (fam) fam.byState('possible').forEach(function (id) { if (people[id] && pool.indexOf(id) < 0) pool.push(id); });
+    CANDIDATES.forEach(function (c) { if (pool.indexOf(c.id) < 0) pool.push(c.id); });
+
+    return pool.filter(function (id) {
+      return id !== excludeId && saved.indexOf(id) < 0 && dis.indexOf(id) < 0;
+    }).map(function (id) {
+      if (fam && fam.reason(id)) return { id: id, reasonType: 'relationship', icon: 'ph ph-tree-structure', reason: fam.reason(id) };
+      if (authored[id]) return authored[id];
+      return { id: id, reasonType: 'people', icon: 'ph ph-users-three', reason: 'Suggested for you' };
     });
   }
 

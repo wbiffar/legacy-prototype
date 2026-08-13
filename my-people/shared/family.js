@@ -20,7 +20,7 @@
 
     mohammad: { name:'Anthony M. Thomas', dates:'1940–2024', surname:'Thomas',    line:'thomas',    tier:'grand',      relToYou:'Your grandfather',             state:'saved',    parents:['robert','veronica'], spouse:[] },
     ralph:    { name:'Ralph Thomas',      dates:'1935–2023', surname:'Thomas',    line:'thomas',    tier:'grand',      relToYou:'Your grandfather’s brother',   state:'possible', parents:['robert','veronica'], spouse:['patricia'] },
-    patricia: { name:'Patricia Ramirez',  dates:'1938–2019', surname:'Ramirez',   line:'thomas',    tier:'grand',      relToYou:'Married into the Thomas family',state:'possible', parents:[],                    spouse:['ralph'] },
+    patricia: { name:'Patricia Ramirez',  dates:'1938–2019', surname:'Ramirez',   line:'thomas',    tier:'grand',      relToYou:'Your great-uncle’s wife',      state:'possible', parents:[],                    spouse:['ralph'] },
     robert:   { name:'Robert Thomas',     dates:'1904–1979', surname:'Thomas',    line:'thomas',    tier:'greatgrand', relToYou:'Your great-grandfather',       state:'possible', parents:[],                    spouse:['veronica'] },
     veronica: { name:'Veronica Delgado',  dates:'1908–1986', surname:'Delgado',   line:'thomas',    tier:'greatgrand', relToYou:'Your great-grandmother',       state:'possible', parents:[],                    spouse:['robert'] },
 

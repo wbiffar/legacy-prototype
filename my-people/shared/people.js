@@ -38,6 +38,38 @@
       photo: 'assets/people/marcus.png', relation: null,
       source: 'Los Angeles Times', home: 'Crenshaw Memorial', location: 'Los Angeles, CA',
       obit: 'Marcus Allen Reed passed away on December 20, 2023, at the age of 68. A jazz musician and mentor, Marcus filled every room with music and generosity, and his Sunday sessions launched a generation of young players.'
+    },
+
+    // ---- Extended family (DES-2251 §5 relationship tree, see FAMILY-TREE.md) ----
+    robert: {
+      first: 'Robert', last: 'Thomas', full: 'Robert Thomas', dates: '1904 – 1979',
+      photo: null, relation: 'Great-grandfather',
+      source: 'The Fresno Bee', home: 'Fresno Memorial Gardens', location: 'Fresno, CA',
+      obit: 'Robert Thomas passed away in 1979 at the age of 75. A railroad man and father of five, he raised his family in Fresno alongside his wife, Veronica, and was known for a steady hand and a good story.'
+    },
+    veronica: {
+      first: 'Veronica', last: 'Delgado', full: 'Veronica Delgado Thomas', dates: '1908 – 1986',
+      photo: null, relation: 'Great-grandmother',
+      source: 'The Fresno Bee', home: 'Fresno Memorial Gardens', location: 'Fresno, CA',
+      obit: 'Veronica (Delgado) Thomas passed away in 1986 at the age of 78. The heart of the Thomas home in Fresno, she kept the family close, the kitchen full, and every grandchild remembered by name.'
+    },
+    patricia: {
+      first: 'Patricia', last: 'Thomas', full: 'Patricia (Ramirez) Thomas', dates: '1938 – 2019',
+      photo: null, relation: 'Great-aunt',
+      source: 'Chicago Sun-Times', home: 'Eternal Springs Funeral Home', location: 'Dixon, IL',
+      obit: 'Patricia (Ramirez) Thomas passed away in 2019 at the age of 81. She married Ralph Thomas in 1958 and shared six decades with him in Dixon, where her garden and her generosity were local legend.'
+    },
+    george: {
+      first: 'George', last: 'Whitfield', full: 'George Whitfield', dates: '1912 – 1988',
+      photo: null, relation: 'Grandfather',
+      source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
+      obit: 'George Whitfield passed away in 1988 at the age of 76. A lifelong Chicagoan and union machinist, he and his wife Margaret raised three children on the South Side and never missed a Sunday dinner.'
+    },
+    margaret: {
+      first: 'Margaret', last: 'Whitfield', full: 'Margaret Whitfield', dates: '1916 – 1994',
+      photo: null, relation: 'Grandmother',
+      source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
+      obit: 'Margaret Whitfield passed away in 1994 at the age of 78. A schoolteacher for thirty years, she gave the Whitfield family its love of books, its sharp humor, and its Sunday-dinner traditions.'
     }
   };
 
