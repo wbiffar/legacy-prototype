@@ -584,8 +584,6 @@
   }
 
   // No-photo panel background: random per person from navy/coral/seafoam/gold/wb 400s
-  const NOPHOTO_COLORS = ['#728ab0','#e77d91','#81b8ae','#e2ba60','#afadaa'];
-  function pickColor(){ return NOPHOTO_COLORS[Math.floor(Math.random() * NOPHOTO_COLORS.length)]; }
 
   // Photo panel background = dominant (average) color of the photo.
   const colorCache = {};
@@ -619,7 +617,7 @@
 
   function buildPeople(){
     people = savedIds.map(personData);
-    people.forEach(p => { if (!p.photo && !p._color) p._color = pickColor(); });
+    people.forEach(p => { if (!p.photo && !p._color) p._color = window.LEGACY_AVATAR_COLOR(p.id); });
   }
 
   // ===== rendering =====
@@ -719,7 +717,7 @@
   function readCollections(){ const o = readStore(); return Array.isArray(o.collections) ? o.collections : []; }
   function writeCollections(arr){ const o = readStore(); o.collections = arr; writeStore(o); }
   // Deterministic no-photo avatar color (stable per person across renders).
-  function colorFor(id){ let h = 0; for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(id.length - 1 - i)) >>> 0; return NOPHOTO_COLORS[h % NOPHOTO_COLORS.length]; }
+  function colorFor(id){ return window.LEGACY_AVATAR_COLOR(id); }
   function avatarHTML(id){
     const p = personData(id);
     return p.photo

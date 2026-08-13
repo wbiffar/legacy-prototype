@@ -108,4 +108,21 @@
     var p = String(name || '').trim().split(/\s+/);
     return ((p[0] || '')[0] || '') + ((p[p.length - 1] || '')[0] || '');
   };
+
+  // No-photo avatar color: assigned at random the first time a person is seen,
+  // then persisted per id so it stays stable across renders and reloads (and is
+  // the same everywhere that person appears). Cleared by "Reset demo".
+  var AVATAR_COLORS = ['#728ab0', '#e77d91', '#81b8ae', '#e2ba60', '#afadaa'];
+  var STORE_KEY = 'legacyMyPeople.v0';
+  window.LEGACY_AVATAR_COLOR = function (id) {
+    try {
+      var o = JSON.parse(localStorage.getItem(STORE_KEY)) || {};
+      o.avatarColors = o.avatarColors || {};
+      if (!o.avatarColors[id]) {
+        o.avatarColors[id] = AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
+        localStorage.setItem(STORE_KEY, JSON.stringify(o));
+      }
+      return o.avatarColors[id];
+    } catch (_) { return AVATAR_COLORS[0]; }
+  };
 })();
