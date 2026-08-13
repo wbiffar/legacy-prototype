@@ -19,11 +19,19 @@
   ];
 
   // User-level suggestions (dashboard): candidates not already saved/dismissed/current.
+  // When a candidate is in the family graph, its reason comes from that graph
+  // (anchored on "you") so "possible matches" reflect the real relationships.
   function list(savedIds, excludeId){
     var saved = savedIds || [];
     var dis = readDismissed();
+    var fam = window.LEGACY_FAMILY;
     return CANDIDATES.filter(function (c) {
       return c.id !== excludeId && saved.indexOf(c.id) < 0 && dis.indexOf(c.id) < 0;
+    }).map(function (c) {
+      if (fam && fam.get(c.id) && fam.reason(c.id)) {
+        return { id: c.id, reasonType: 'relationship', icon: 'ph ph-tree-structure', reason: fam.reason(c.id) };
+      }
+      return c;
     });
   }
 

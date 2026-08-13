@@ -17,7 +17,7 @@
     },
     douglas: {
       first: 'Douglas', last: 'Whitfield', full: 'Douglas Michael Whitfield', dates: '1948 – 2023',
-      photo: null, relation: null,
+      photo: null, relation: 'Uncle',
       source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
       obit: 'Douglas Michael Whitfield passed away on November 12, 2023, at the age of 75. Doug was a proud Chicagoan, a Navy veteran, and a friend to everyone he met. He never missed a Cubs game and never met a stranger.'
     },
