@@ -126,7 +126,7 @@
             <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Possible matches <span id="matches-count"></span></h2>
             <p class="text-base text-wb-700 leading-relaxed">People you may want to save — based on family names, the people you’ve saved, and places you follow.</p>
           </div>
-          <div id="matches-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5"></div>
+          <div id="matches-grid" class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5"></div>
         </section>
       </div>
 
@@ -680,13 +680,12 @@
     const av = p.photo
       ? '<span class="w-12 h-12 rounded-full bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
       : '<span class="w-12 h-12 rounded-full flex items-center justify-center font-serif-heading text-white text-lg flex-shrink-0" style="background:' + colorFor(s.id) + '">' + esc(initials(p.name)) + '</span>';
-    return '<article class="match-card transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg bg-white border border-wb-300 rounded-lg p-4 flex flex-col gap-3 cursor-pointer" data-id="' + esc(s.id) + '">' +
-      '<div class="flex items-start gap-3">' + av +
-        '<div class="flex-1 min-w-0"><p class="text-base font-semibold text-wb-900 leading-tight truncate">' + esc(p.name) + '</p><p class="text-sm text-wb-600">' + esc(d ? d.dates : '') + '</p></div>' +
-        '<button class="match-dismiss w-7 h-7 -mr-1 -mt-1 rounded-full text-wb-400 hover:text-wb-700 hover:bg-wb-100 flex items-center justify-center flex-shrink-0" aria-label="Dismiss suggestion"><i class="ph ph-x"></i></button>' +
-      '</div>' +
-      '<p class="flex items-start gap-1.5 text-sm text-wb-700 leading-snug"><i class="' + s.icon + ' text-base text-gold-700 flex-shrink-0 mt-0.5"></i> <span class="min-w-0">' + esc(s.reason) + '</span></p>' +
-      '<button class="match-add mt-auto w-full h-10 rounded-full border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors inline-flex items-center justify-center gap-2"><i class="ph ph-plus-circle text-lg"></i> Add to My People</button>' +
+    return '<article class="match-card relative transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg bg-white border border-wb-300 rounded-lg p-3 sm:p-4 flex flex-col items-center text-center gap-2 cursor-pointer" data-id="' + esc(s.id) + '">' +
+      '<button class="match-dismiss absolute top-2 right-2 w-7 h-7 rounded-full text-wb-400 hover:text-wb-700 hover:bg-wb-100 flex items-center justify-center flex-shrink-0" aria-label="Dismiss suggestion"><i class="ph ph-x"></i></button>' +
+      '<div class="mt-1">' + av + '</div>' +
+      '<div><p class="text-base font-semibold text-wb-900 leading-tight break-words">' + esc(p.name) + '</p><p class="text-sm text-wb-600 mt-0.5">' + esc(d ? d.dates : '') + '</p></div>' +
+      '<p class="flex items-start justify-center gap-1.5 text-sm text-wb-700 leading-snug"><i class="' + s.icon + ' text-base text-gold-700 flex-shrink-0 mt-0.5"></i> <span class="min-w-0">' + esc(s.reason) + '</span></p>' +
+      '<button class="match-add mt-auto w-full min-h-10 py-1.5 rounded-full border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors inline-flex items-center justify-center gap-1.5"><i class="ph ph-plus-circle text-lg flex-shrink-0"></i> <span>Add to My People</span></button>' +
     '</article>';
   }
   function renderMatches(){
