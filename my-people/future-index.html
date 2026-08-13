@@ -224,9 +224,20 @@
 
       <!-- Historical records -->
       <section id="records-section" class="bg-white border border-wb-200 rounded-2xl card-elev p-5 md:p-7" style="display:none">
-        <h2 class="font-serif-heading text-2xl text-navy-700 mb-1">Historical records</h2>
+        <div class="flex items-center gap-2 mb-1">
+          <h2 class="font-serif-heading text-2xl text-navy-700">Historical records</h2>
+          <span id="records-premium-chip" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold"><i class="ph-fill ph-crown-simple"></i> Premium</span>
+        </div>
         <p id="records-sub" class="text-sm md:text-base text-wb-700 mb-4">Records that may belong to this person — matched on name, dates, and places.</p>
         <div id="records-list" class="flex flex-col"></div>
+        <div id="records-upsell" class="mt-5 rounded-xl border border-gold-200 bg-gold-50 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+          <span class="w-10 h-10 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center flex-shrink-0"><i class="ph-fill ph-crown-simple text-xl"></i></span>
+          <div class="flex-1 min-w-0">
+            <p class="text-base font-semibold text-wb-900 leading-snug">Open the original documents</p>
+            <p class="text-sm text-wb-700 leading-snug mt-0.5">View every match and its full details with a Legacy membership.</p>
+          </div>
+          <button id="records-upsell-btn" type="button" class="flex-shrink-0 inline-flex items-center justify-center gap-2 h-10 px-5 rounded-full bg-gold-400 hover:bg-gold-500 text-wb-900 text-sm font-semibold"><i class="ph ph-lock-key-open text-lg"></i> Unlock records</button>
+        </div>
       </section>
 
       <!-- Stay Close to Ralph's Story (Get Updates callout) -->
@@ -483,6 +494,41 @@
 </div>
 
 <!-- ====================================================================
+     PREMIUM MODAL — unlock Historical records
+     ==================================================================== -->
+<div class="sheet-overlay" id="premium-overlay" role="dialog" aria-modal="true" aria-labelledby="premium-title">
+  <div class="sheet-card border border-wb-300 flex flex-col items-center gap-8 p-8 text-center">
+    <span class="inline-flex items-center gap-1 rounded-md bg-gold-100 px-3 py-0.5 text-sm text-gold-900"><i class="ph-fill ph-crown-simple text-sm"></i> Legacy Membership</span>
+
+    <div class="flex flex-col items-center gap-8 w-full">
+      <div class="flex flex-col items-center gap-2 max-w-[480px]">
+        <h2 id="premium-title" class="font-serif-heading text-3xl text-navy-700 leading-tight">Unlock Historical records</h2>
+        <p class="text-sm text-wb-700 leading-relaxed">We found records that may belong to <span class="premium-name">Ralph</span>. Become a member to open the original documents and see every detail.</p>
+      </div>
+      <ul class="flex flex-col gap-3 max-w-[480px] w-full text-left">
+        <li class="flex items-start gap-2">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph-bold ph-check text-[13px]"></i></span>
+          <span class="flex-1 text-sm font-bold text-wb-700 leading-normal">Open and view the original record images.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph-bold ph-check text-[13px]"></i></span>
+          <span class="flex-1 text-sm font-bold text-wb-700 leading-normal">See full details — names, dates, places, and household.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph-bold ph-check text-[13px]"></i></span>
+          <span class="flex-1 text-sm font-bold text-wb-700 leading-normal">Save records to <span class="premium-name">Ralph</span>'s profile, and get new matches as archives grow.</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center sm:justify-end gap-3 sm:gap-4 w-full">
+      <button type="button" data-close class="inline-flex items-center justify-center px-5 py-3 rounded-full border border-navy-700 bg-white text-base font-semibold text-navy-700 hover:bg-wb-50">Maybe Later</button>
+      <button type="button" id="premium-unlock" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-gold-400 hover:bg-gold-500 text-base font-semibold text-wb-900"><i class="ph ph-lock-key-open text-xl"></i> Become a Member</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
      GET UPDATES MODAL
      ==================================================================== -->
 <div class="sheet-overlay" id="updates-overlay" role="dialog" aria-modal="true" aria-labelledby="upd-title">
@@ -624,6 +670,9 @@
   function writeSaved(a){ const o = readStore(); o.saved = a; writeStore(o); }
   function isSaved(id){ return (readSaved() || []).indexOf(id) >= 0; }
   function setSaved(id, on){ const s = readSaved() || []; const i = s.indexOf(id); if (on && i < 0) s.push(id); if (!on && i >= 0) s.splice(i, 1); writeSaved(s); }
+  // Premium membership (gates Historical records). Default: free tier.
+  function isPremium(){ return !!readStore().premium; }
+  function setPremium(on){ const o = readStore(); o.premium = !!on; writeStore(o); }
 
   // ===== Account scenario: 'signed-out' | 'signed-in' =====
   // Board demo defaults to signed-in (overridable via the switcher or ?so=1).
@@ -676,7 +725,7 @@
 
   // ===== Overlays =====
   let lastFocus = null;
-  const overlays = { auth: $('#auth-overlay'), updates: $('#updates-overlay'), share: $('#share-overlay'), relationship: $('#rel-overlay') };
+  const overlays = { auth: $('#auth-overlay'), updates: $('#updates-overlay'), share: $('#share-overlay'), relationship: $('#rel-overlay'), premium: $('#premium-overlay') };
   function openOverlay(o){ lastFocus = document.activeElement; o.classList.add('open'); document.body.style.overflow='hidden'; const f=o.querySelector('button,[href],input'); if(f) f.focus({ preventScroll: true }); }
   function closeAll(){ Object.values(overlays).forEach(o=>o.classList.remove('open')); document.body.style.overflow=''; if(lastFocus&&document.contains(lastFocus)) lastFocus.focus(); }
   $$('.js-share').forEach(b => b.addEventListener('click', () => openOverlay(overlays.share)));
@@ -964,7 +1013,12 @@
       ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-seafoam-100 text-seafoam-800 text-xs font-semibold"><i class="ph-fill ph-seal-check"></i> Strong match</span>'
       : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold"><i class="ph ph-sparkle"></i> Possible match</span>';
   }
-  function recordRowHTML(r){
+  function recordRowHTML(r, premium){
+    // Free tier: opening a record is locked behind membership (the match
+    // teaser stays visible). Premium: a normal "View" action.
+    const action = premium
+      ? '<button class="record-view flex-shrink-0 inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors"><span class="hidden sm:inline">View</span><i class="ph ph-arrow-square-out text-base"></i></button>'
+      : '<button class="record-locked flex-shrink-0 inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-gold-700 text-gold-800 bg-gold-50 text-sm font-semibold hover:bg-gold-100 transition-colors" aria-label="Unlock to view this record"><i class="ph ph-lock-simple text-base"></i><span class="hidden sm:inline">View</span></button>';
     return '<div class="record-row flex items-start gap-4 py-4 border-t border-wb-200 first:border-t-0 first:pt-0">' +
       '<span class="w-11 h-11 rounded-xl bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="' + r.icon + ' text-xl" aria-hidden="true"></i></span>' +
       '<div class="flex-1 min-w-0">' +
@@ -973,19 +1027,31 @@
           '<span class="text-sm text-wb-600">' + esc(r.meta) + '</span>' + matchChip(r.match) +
         '</div>' +
         (r.note ? '<p class="text-xs text-wb-500 mt-1">' + esc(r.note) + '</p>' : '') +
-      '</div>' +
-      '<button class="record-view flex-shrink-0 inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors"><span class="hidden sm:inline">View</span><i class="ph ph-arrow-square-out text-base"></i></button>' +
+      '</div>' + action +
     '</div>';
   }
   function renderRecords(){
     const sec = $('#records-section'), list = $('#records-list'); if (!sec) return;
     const items = (window.LEGACY_RECORDS ? window.LEGACY_RECORDS.forPerson(PID) : []) || [];
     sec.style.display = items.length ? '' : 'none';
-    const sub = $('#records-sub'); if (sub) sub.textContent = 'Records that may belong to ' + PERSON.first + ' — matched on name, dates, and places.';
-    list.innerHTML = items.map(recordRowHTML).join('');
+    const premium = isPremium();
+    const sub = $('#records-sub'); if (sub) sub.textContent = premium
+      ? 'Records that may belong to ' + PERSON.first + ' — matched on name, dates, and places.'
+      : 'A preview of records that may belong to ' + PERSON.first + '. Unlock to open the original documents.';
+    $('#records-premium-chip').style.display = premium ? 'none' : '';
+    $('#records-upsell').style.display = premium ? 'none' : '';
+    list.innerHTML = items.map(r => recordRowHTML(r, premium)).join('');
   }
   $('#records-list').addEventListener('click', (e) => {
+    if (e.target.closest('.record-locked')) { openOverlay(overlays.premium); return; }
     if (e.target.closest('.record-view')) toast('Opening record…', null, null, 'ph ph-scroll');
+  });
+  $('#records-upsell-btn').addEventListener('click', () => openOverlay(overlays.premium));
+  $('#premium-unlock').addEventListener('click', () => {
+    setPremium(true);
+    closeAll();
+    renderRecords();
+    toast('Membership active — Historical records unlocked', null, null, 'ph-fill ph-crown-simple');
   });
 
   // ===== Init =====
