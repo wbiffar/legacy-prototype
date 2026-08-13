@@ -50,6 +50,24 @@
   function byState(s){ return Object.keys(PEOPLE).filter(function(k){ return PEOPLE[k].state === s; }); }
   function all(){ return Object.keys(PEOPLE); }
 
+  // Explicit sex per person — only used to phrase pairwise relations
+  // (father/mother, brother/sister, husband/wife…). Demo data.
+  var GENDER = { dad:'m', mom:'f', mohammad:'m', ralph:'m', patricia:'f', robert:'m', veronica:'f', george:'m', margaret:'f', eleanor:'f', douglas:'m', jennifer:'f', marcus:'m' };
+  function genderOf(id){ return GENDER[id] || null; }
+  // Immediate relationship of `b` as seen from `a` ('father','sister','wife',
+  // 'son'…), or null. Covers parent/child/spouse/sibling — enough to connect
+  // people on a page without walking the whole tree.
+  function relationBetween(a, b){
+    var pa = PEOPLE[a], pb = PEOPLE[b]; if (!pa || !pb || a === b) return null;
+    var g = genderOf(b);
+    if (pa.parents.indexOf(b) >= 0) return g === 'm' ? 'father' : g === 'f' ? 'mother' : 'parent';
+    if (pb.parents.indexOf(a) >= 0) return g === 'm' ? 'son' : g === 'f' ? 'daughter' : 'child';
+    if (pa.spouse.indexOf(b) >= 0) return g === 'm' ? 'husband' : g === 'f' ? 'wife' : 'spouse';
+    if (pa.parents.length && pb.parents.some(function (x) { return pa.parents.indexOf(x) >= 0; }))
+      return g === 'm' ? 'brother' : g === 'f' ? 'sister' : 'sibling';
+    return null;
+  }
+
   // Human "possible match" reason, e.g. "Your grandfather’s brother · Thomas family".
   function reason(id){
     var p = PEOPLE[id]; if (!p || !p.relToYou) return null;
@@ -63,6 +81,7 @@
     anchor: ANCHOR, PEOPLE: PEOPLE,
     get: get, parentsOf: parentsOf, spouseOf: spouseOf, childrenOf: childrenOf,
     siblingsOf: siblingsOf, relTo: relTo, line: line, state: state,
-    isBlood: isBlood, byState: byState, all: all, reason: reason
+    isBlood: isBlood, byState: byState, all: all, reason: reason,
+    relationBetween: relationBetween
   };
 })();
