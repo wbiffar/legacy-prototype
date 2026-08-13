@@ -1,8 +1,8 @@
 /* Shared "Suggested people" recommendations for the My People FUTURE prototype.
-   Candidates are surfaced with a human reason drawn from one of three signals:
-   people you've saved, places you follow, and family/relationships. (Reasons
-   are authored for the demo — a real system would derive them.) Dismissed and
-   already-saved candidates drop out. Used by the dashboard and the person page. */
+   A connection is only strong enough to suggest when people share a LAST NAME
+   or a FAMILY RELATIONSHIP (from the LEGACY_FAMILY graph). Weaker coincidences
+   — same hometown/state or same newspaper — are intentionally NOT used.
+   Dismissed candidates drop out. Used by the dashboard and the person page. */
 (function () {
   var STORE_KEY = 'legacyMyPeople.v0';
   function readStore(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (_) { return {}; } }
@@ -11,47 +11,46 @@
   function readDismissed(){ var o = readStore(); return Array.isArray(o.dismissedSuggestions) ? o.dismissedSuggestions : []; }
   function dismiss(id){ var o = readStore(); var d = readDismissed(); if (d.indexOf(id) < 0) d.push(id); o.dismissedSuggestions = d; writeStore(o); }
 
-  // reasonType: 'relationship' | 'people' | 'place' — the signal behind the suggestion.
-  var CANDIDATES = [
-    { id: 'eleanor', reasonType: 'relationship', icon: 'ph ph-tree-structure', reason: 'Possible family match · shares the Whitfield name' },
-    { id: 'ralph',   reasonType: 'people',       icon: 'ph ph-users-three',    reason: 'Because you saved Anthony Thomas' },
-    { id: 'marcus',  reasonType: 'place',        icon: 'ph ph-map-pin',        reason: 'Followed by people near Los Angeles, CA' },
-  ];
+  function cap(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 
-  // User-level suggestions (dashboard): candidates not already saved/dismissed/current.
+  // User-level suggestions (dashboard "Possible matches"): every family-graph
+  // person marked "possible" who has a page and a relationship to you — minus
+  // anyone already saved/dismissed/current. Reason comes straight from the graph
+  // ("Your grandfather's brother · Thomas family"). People with no last-name or
+  // relationship tie (e.g. a same-city coincidence) are excluded by design.
   function list(savedIds, excludeId){
     var saved = savedIds || [];
     var dis = readDismissed();
-    return CANDIDATES.filter(function (c) {
-      return c.id !== excludeId && saved.indexOf(c.id) < 0 && dis.indexOf(c.id) < 0;
+    var fam = window.LEGACY_FAMILY;
+    var people = window.LEGACY_PEOPLE || {};
+    if (!fam) return [];
+    return fam.byState('possible').filter(function (id) {
+      return people[id] && fam.reason(id) && id !== excludeId && saved.indexOf(id) < 0 && dis.indexOf(id) < 0;
+    }).map(function (id) {
+      return { id: id, reasonType: 'relationship', icon: 'ph ph-tree-structure', reason: fam.reason(id) };
     });
   }
 
-  var STATES = { IL:'Illinois', CA:'California', MA:'Massachusetts', CO:'Colorado', NY:'New York', TX:'Texas', FL:'Florida' };
-  function stateOf(loc){ var m = /,\s*([A-Z]{2})\b/.exec(loc || ''); return m ? m[1] : null; }
-
-  // Person-specific suggestions: other people connected to `pid` by a shared
-  // attribute (surname → family, funeral home, newspaper, or state), reason
-  // phrased relative to the viewed person. Excludes current/saved/dismissed.
-  // Note: saved people are NOT excluded — connections to the viewed person are
-  // worth surfacing even if already in My People (the card reflects that state).
+  // Person-specific suggestions: other people connected to `pid` by a family
+  // relationship (parent/child/spouse/sibling) or a shared last name. Reason is
+  // phrased relative to the viewed person. Excludes current/dismissed.
+  // Note: saved people are NOT excluded — a connection is worth surfacing even
+  // if already in My People (the card reflects that state).
   function forPerson(pid){
     var P = window.LEGACY_PEOPLE || {};
+    var fam = window.LEGACY_FAMILY;
     var me = P[pid]; if (!me) return [];
     var dis = readDismissed();
     var out = [];
     Object.keys(P).forEach(function (id) {
       if (id === pid || dis.indexOf(id) >= 0) return;
       var c = P[id];
+      var rel = fam ? fam.relationBetween(pid, id) : null;
       var s = null;
-      if (c.last && me.last && c.last === me.last) {
+      if (rel) {
+        s = { reasonType: 'relationship', icon: 'ph ph-tree-structure', reason: me.first + '’s ' + rel };
+      } else if (c.last && me.last && c.last === me.last) {
         s = { reasonType: 'relationship', icon: 'ph ph-tree-structure', reason: 'Possibly related · both named ' + me.last };
-      } else if (c.home && me.home && c.home === me.home) {
-        s = { reasonType: 'place', icon: 'ph ph-buildings', reason: 'Also cared for by ' + me.home };
-      } else if (c.source && me.source && c.source === me.source) {
-        s = { reasonType: 'people', icon: 'ph ph-newspaper', reason: 'Also remembered in ' + me.source };
-      } else if (stateOf(c.location) && stateOf(c.location) === stateOf(me.location)) {
-        s = { reasonType: 'place', icon: 'ph ph-map-pin', reason: 'Also from ' + (STATES[stateOf(me.location)] || stateOf(me.location)) };
       }
       if (s) { s.id = id; out.push(s); }
     });
@@ -59,10 +58,11 @@
   }
 
   // Collection-specific suggestions: people NOT already in the collection who
-  // connect to any member (shared surname → family, funeral home, newspaper,
-  // or state). Reason names the specific member. Strongest connection wins.
+  // connect to a member by family relationship or a shared last name. Reason
+  // names the specific member. Strongest connection wins (relationship > name).
   function forCollection(coll){
     var P = window.LEGACY_PEOPLE || {};
+    var fam = window.LEGACY_FAMILY;
     var members = (coll && coll.people) || [];
     if (!members.length) return [];
     var dis = readDismissed();
@@ -73,11 +73,10 @@
       var best = null;
       members.forEach(function (mid) {
         var m = P[mid]; if (!m) return;
+        var rel = fam ? fam.relationBetween(mid, id) : null;
         var s = null;
-        if (c.last && m.last && c.last === m.last) s = { rank: 4, reasonType: 'relationship', icon: 'ph ph-tree-structure', reason: 'Shares the ' + m.last + ' name with ' + m.first };
-        else if (c.home && m.home && c.home === m.home) s = { rank: 3, reasonType: 'place', icon: 'ph ph-buildings', reason: 'Also cared for by ' + m.home };
-        else if (c.source && m.source && c.source === m.source) s = { rank: 2, reasonType: 'people', icon: 'ph ph-newspaper', reason: 'Also remembered in ' + m.source };
-        else if (stateOf(c.location) && stateOf(c.location) === stateOf(m.location)) s = { rank: 1, reasonType: 'place', icon: 'ph ph-map-pin', reason: 'Also from ' + (STATES[stateOf(m.location)] || stateOf(m.location)) };
+        if (rel) s = { rank: 2, reasonType: 'relationship', icon: 'ph ph-tree-structure', reason: m.first + '’s ' + rel };
+        else if (c.last && m.last && c.last === m.last) s = { rank: 1, reasonType: 'relationship', icon: 'ph ph-tree-structure', reason: 'Shares the ' + m.last + ' name with ' + m.first };
         if (s && (!best || s.rank > best.rank)) best = s;
       });
       if (best) { best.id = id; out.push(best); }
@@ -85,5 +84,5 @@
     return out;
   }
 
-  window.LEGACY_SUGGEST = { CANDIDATES: CANDIDATES, readDismissed: readDismissed, dismiss: dismiss, list: list, forPerson: forPerson, forCollection: forCollection };
+  window.LEGACY_SUGGEST = { readDismissed: readDismissed, dismiss: dismiss, list: list, forPerson: forPerson, forCollection: forCollection };
 })();

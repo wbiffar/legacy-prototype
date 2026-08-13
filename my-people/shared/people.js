@@ -17,7 +17,7 @@
     },
     douglas: {
       first: 'Douglas', last: 'Whitfield', full: 'Douglas Michael Whitfield', dates: '1948 – 2023',
-      photo: null, relation: null,
+      photo: null, relation: 'Uncle',
       source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
       obit: 'Douglas Michael Whitfield passed away on November 12, 2023, at the age of 75. Doug was a proud Chicagoan, a Navy veteran, and a friend to everyone he met. He never missed a Cubs game and never met a stranger.'
     },
@@ -38,6 +38,59 @@
       photo: 'assets/people/marcus.png', relation: null,
       source: 'Los Angeles Times', home: 'Crenshaw Memorial', location: 'Los Angeles, CA',
       obit: 'Marcus Allen Reed passed away on December 20, 2023, at the age of 68. A jazz musician and mentor, Marcus filled every room with music and generosity, and his Sunday sessions launched a generation of young players.'
+    },
+
+    // ---- Extended family (DES-2251 §5 relationship tree, see FAMILY-TREE.md) ----
+    robert: {
+      first: 'Robert', last: 'Thomas', full: 'Robert Thomas', dates: '1904 – 1979',
+      photo: null, relation: 'Great-grandfather',
+      source: 'The Fresno Bee', home: 'Fresno Memorial Gardens', location: 'Fresno, CA',
+      obit: 'Robert Thomas passed away in 1979 at the age of 75. A railroad man and father of five, he raised his family in Fresno alongside his wife, Veronica, and was known for a steady hand and a good story.'
+    },
+    veronica: {
+      first: 'Veronica', last: 'Delgado', full: 'Veronica Delgado Thomas', dates: '1908 – 1986',
+      photo: null, relation: 'Great-grandmother',
+      source: 'The Fresno Bee', home: 'Fresno Memorial Gardens', location: 'Fresno, CA',
+      obit: 'Veronica (Delgado) Thomas passed away in 1986 at the age of 78. The heart of the Thomas home in Fresno, she kept the family close, the kitchen full, and every grandchild remembered by name.'
+    },
+    patricia: {
+      first: 'Patricia', last: 'Thomas', full: 'Patricia (Ramirez) Thomas', dates: '1938 – 2019',
+      photo: null, relation: 'Great-aunt',
+      source: 'Chicago Sun-Times', home: 'Eternal Springs Funeral Home', location: 'Dixon, IL',
+      obit: 'Patricia (Ramirez) Thomas passed away in 2019 at the age of 81. She married Ralph Thomas in 1958 and shared six decades with him in Dixon, where her garden and her generosity were local legend.'
+    },
+    george: {
+      first: 'George', last: 'Whitfield', full: 'George Whitfield', dates: '1912 – 1988',
+      photo: null, relation: 'Grandfather',
+      source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
+      obit: 'George Whitfield passed away in 1988 at the age of 76. A lifelong Chicagoan and union machinist, he and his wife Margaret raised three children on the South Side and never missed a Sunday dinner.'
+    },
+    margaret: {
+      first: 'Margaret', last: 'Whitfield', full: 'Margaret Whitfield', dates: '1916 – 1994',
+      photo: null, relation: 'Grandmother',
+      source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
+      obit: 'Margaret Whitfield passed away in 1994 at the age of 78. A schoolteacher for thirty years, she gave the Whitfield family its love of books, its sharp humor, and its Sunday-dinner traditions.'
+    },
+
+    // ---- Other "Reed" people: shared-last-name links for Marcus, not part of
+    //      the account holder's family tree (DES-2251 §5/§7). ----
+    gloria: {
+      first: 'Gloria', last: 'Reed', full: 'Gloria Reed', dates: '1958 – 2022',
+      photo: null, relation: null,
+      source: 'Los Angeles Times', home: 'Crenshaw Memorial', location: 'Los Angeles, CA',
+      obit: 'Gloria Reed passed away on July 9, 2022, at the age of 64. A gospel and soul singer, she filled Los Angeles churches and clubs alike with a voice people drove across the city to hear.'
+    },
+    james: {
+      first: 'James', last: 'Reed', full: 'James Reed', dates: '1949 – 2018',
+      photo: null, relation: null,
+      source: 'Los Angeles Times', home: 'Angelus Funeral Home', location: 'Los Angeles, CA',
+      obit: 'James Reed passed away on March 2, 2018, at the age of 68. A session drummer, he kept time on countless records made in Los Angeles and mentored younger players every chance he got.'
+    },
+    dorothy: {
+      first: 'Dorothy', last: 'Reed', full: 'Dorothy Reed', dates: '1931 – 2009',
+      photo: null, relation: null,
+      source: 'Los Angeles Sentinel', home: 'Angelus Funeral Home', location: 'Los Angeles, CA',
+      obit: 'Dorothy Reed passed away on October 18, 2009, at the age of 78. The heart of a large Los Angeles family, she led her church choir for decades and never met a neighbor she didn’t feed.'
     }
   };
 
@@ -54,5 +107,22 @@
   window.LEGACY_INITIALS = function (name) {
     var p = String(name || '').trim().split(/\s+/);
     return ((p[0] || '')[0] || '') + ((p[p.length - 1] || '')[0] || '');
+  };
+
+  // No-photo avatar color: assigned at random the first time a person is seen,
+  // then persisted per id so it stays stable across renders and reloads (and is
+  // the same everywhere that person appears). Cleared by "Reset demo".
+  var AVATAR_COLORS = ['#728ab0', '#e77d91', '#81b8ae', '#e2ba60', '#afadaa'];
+  var STORE_KEY = 'legacyMyPeople.v0';
+  window.LEGACY_AVATAR_COLOR = function (id) {
+    try {
+      var o = JSON.parse(localStorage.getItem(STORE_KEY)) || {};
+      o.avatarColors = o.avatarColors || {};
+      if (!o.avatarColors[id]) {
+        o.avatarColors[id] = AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
+        localStorage.setItem(STORE_KEY, JSON.stringify(o));
+      }
+      return o.avatarColors[id];
+    } catch (_) { return AVATAR_COLORS[0]; }
   };
 })();
