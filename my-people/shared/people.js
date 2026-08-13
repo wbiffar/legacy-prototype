@@ -70,6 +70,27 @@
       photo: null, relation: 'Grandmother',
       source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
       obit: 'Margaret Whitfield passed away in 1994 at the age of 78. A schoolteacher for thirty years, she gave the Whitfield family its love of books, its sharp humor, and its Sunday-dinner traditions.'
+    },
+
+    // ---- Other "Reed" people: shared-last-name links for Marcus, not part of
+    //      the account holder's family tree (DES-2251 §5/§7). ----
+    gloria: {
+      first: 'Gloria', last: 'Reed', full: 'Gloria Reed', dates: '1958 – 2022',
+      photo: null, relation: null,
+      source: 'Los Angeles Times', home: 'Crenshaw Memorial', location: 'Los Angeles, CA',
+      obit: 'Gloria Reed passed away on July 9, 2022, at the age of 64. A gospel and soul singer, she filled Los Angeles churches and clubs alike with a voice people drove across the city to hear.'
+    },
+    james: {
+      first: 'James', last: 'Reed', full: 'James Reed', dates: '1949 – 2018',
+      photo: null, relation: null,
+      source: 'Los Angeles Times', home: 'Angelus Funeral Home', location: 'Los Angeles, CA',
+      obit: 'James Reed passed away on March 2, 2018, at the age of 68. A session drummer, he kept time on countless records made in Los Angeles and mentored younger players every chance he got.'
+    },
+    dorothy: {
+      first: 'Dorothy', last: 'Reed', full: 'Dorothy Reed', dates: '1931 – 2009',
+      photo: null, relation: null,
+      source: 'Los Angeles Sentinel', home: 'Angelus Funeral Home', location: 'Los Angeles, CA',
+      obit: 'Dorothy Reed passed away on October 18, 2009, at the age of 78. The heart of a large Los Angeles family, she led her church choir for decades and never met a neighbor she didn’t feed.'
     }
   };
 
