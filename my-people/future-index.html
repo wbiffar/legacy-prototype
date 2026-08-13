@@ -222,6 +222,13 @@
         </div>
       </section>
 
+      <!-- Historical records -->
+      <section id="records-section" class="bg-white border border-wb-200 rounded-2xl card-elev p-5 md:p-7" style="display:none">
+        <h2 class="font-serif-heading text-2xl text-navy-700 mb-1">Historical records</h2>
+        <p id="records-sub" class="text-sm md:text-base text-wb-700 mb-4">Records that may belong to this person — matched on name, dates, and places.</p>
+        <div id="records-list" class="flex flex-col"></div>
+      </section>
+
       <!-- Stay Close to Ralph's Story (Get Updates callout) -->
       <section class="relative overflow-hidden rounded-2xl border-[3px] border-gold-200 bg-[#fdf6e3] flex flex-col items-start gap-3 py-4 pl-4 pr-8 md:pl-8 md:pr-32">
         <img src="assets/updates-art.jpg" alt="" aria-hidden="true" class="pointer-events-none absolute -bottom-[3px] -right-[3px] w-[245px] h-[232px] object-cover z-0" />
@@ -598,6 +605,7 @@
 <script src="shared/people.js"></script>
 <script src="shared/relationships.js"></script>
 <script src="shared/suggestions.js"></script>
+<script src="shared/records.js"></script>
 <script>
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
@@ -950,6 +958,36 @@
     }
   });
 
+  // ===== Historical records =====
+  function matchChip(m){
+    return m === 'strong'
+      ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-seafoam-100 text-seafoam-800 text-xs font-semibold"><i class="ph-fill ph-seal-check"></i> Strong match</span>'
+      : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-100 text-gold-900 text-xs font-semibold"><i class="ph ph-sparkle"></i> Possible match</span>';
+  }
+  function recordRowHTML(r){
+    return '<div class="record-row flex items-start gap-4 py-4 border-t border-wb-200 first:border-t-0 first:pt-0">' +
+      '<span class="w-11 h-11 rounded-xl bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="' + r.icon + ' text-xl" aria-hidden="true"></i></span>' +
+      '<div class="flex-1 min-w-0">' +
+        '<p class="text-base font-semibold text-wb-900 leading-snug">' + esc(r.title) + '</p>' +
+        '<div class="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1">' +
+          '<span class="text-sm text-wb-600">' + esc(r.meta) + '</span>' + matchChip(r.match) +
+        '</div>' +
+        (r.note ? '<p class="text-xs text-wb-500 mt-1">' + esc(r.note) + '</p>' : '') +
+      '</div>' +
+      '<button class="record-view flex-shrink-0 inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors"><span class="hidden sm:inline">View</span><i class="ph ph-arrow-square-out text-base"></i></button>' +
+    '</div>';
+  }
+  function renderRecords(){
+    const sec = $('#records-section'), list = $('#records-list'); if (!sec) return;
+    const items = (window.LEGACY_RECORDS ? window.LEGACY_RECORDS.forPerson(PID) : []) || [];
+    sec.style.display = items.length ? '' : 'none';
+    const sub = $('#records-sub'); if (sub) sub.textContent = 'Records that may belong to ' + PERSON.first + ' — matched on name, dates, and places.';
+    list.innerHTML = items.map(recordRowHTML).join('');
+  }
+  $('#records-list').addEventListener('click', (e) => {
+    if (e.target.closest('.record-view')) toast('Opening record…', null, null, 'ph ph-scroll');
+  });
+
   // ===== Init =====
   // Seed the shared saved list so already-saved people read as saved when signed in.
   if (!readSaved()) writeSaved((window.LEGACY_DEFAULT_SAVED || []).slice());
@@ -963,6 +1001,7 @@
   paintFollowing();
   paintHeroRel();
   renderSuggestions();
+  renderRecords();
 
   // ---- Memorial events carousel (mobile) -------------------------------
   (function initEventsCarousel(){
