@@ -682,7 +682,7 @@
     const d = P[s.id];
     const label = kind === 'match' ? 'Add to My People' : 'Add to collection';
     const av = p.photo
-      ? '<span class="w-12 h-12 rounded-full bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
+      ? '<span class="inline-block w-12 h-12 rounded-full bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
       : '<span class="w-12 h-12 rounded-full flex items-center justify-center font-serif-heading text-white text-lg flex-shrink-0" style="background:' + colorFor(s.id) + '">' + esc(initials(p.name)) + '</span>';
     return '<article class="' + kind + '-card relative shrink-0 basis-[78%] sm:basis-[240px] snap-start transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg bg-white border border-wb-300 rounded-lg p-4 flex flex-col items-center text-center gap-2 cursor-pointer" data-id="' + esc(s.id) + '">' +
       '<button class="' + kind + '-dismiss absolute top-2 right-2 w-7 h-7 rounded-full text-wb-400 hover:text-wb-700 hover:bg-wb-100 flex items-center justify-center flex-shrink-0" aria-label="Dismiss suggestion"><i class="ph ph-x"></i></button>' +
