@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy — My People (FUTURE · DES-2251)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0;1&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <script src="shared/tokens.js"></script>
+  <link rel="stylesheet" href="shared/styles.css" />
+</head>
+<body>
+
+<!-- ====================================================================
+     HEADER — NavigationCustom 2.0 (signed in)
+     ==================================================================== -->
+<header class="bg-white border-b border-wb-300">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-3 md:py-4 flex items-center gap-3 md:gap-6">
+    <a href="../" aria-label="Legacy.com home" class="flex-shrink-0 flex items-center">
+      <img src="assets/logo-horizontal.svg" alt="Legacy" class="h-8 md:h-9 w-auto" />
+    </a>
+    <div class="flex-1 max-w-[480px] mx-auto hidden lg:block">
+      <div class="relative">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-wb-500 pointer-events-none"><i class="ph ph-magnifying-glass text-lg"></i></span>
+        <input type="search" placeholder="Find a loved one…" aria-label="Find a loved one" class="w-full h-11 pl-11 pr-4 rounded-full bg-white border border-wb-300 text-[15px] text-wb-900 placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
+      </div>
+    </div>
+    <div class="flex items-center gap-2 md:gap-3 ml-auto">
+      <div class="hidden lg:inline-flex items-center gap-2 px-2 py-1">
+        <span class="w-9 h-9 rounded-full bg-gold-100 text-gold-900 flex items-center justify-center text-sm font-semibold border border-gold-300" aria-hidden="true">J</span>
+        <span class="text-[15px] font-semibold text-wb-900">Hi, John</span>
+      </div>
+      <button aria-label="Your account" class="lg:hidden w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900"><i class="ph ph-user-circle text-xl"></i></button>
+      <button aria-label="Open menu" class="lg:hidden w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900"><i class="ph ph-list text-xl"></i></button>
+    </div>
+  </div>
+  <nav class="hidden lg:block border-t border-wb-200">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-center gap-8 text-[15px] font-semibold text-wb-900 h-12">
+      <a href="#" class="hover:text-navy-700">Create &amp; Publish</a>
+      <a href="#" class="hover:text-navy-700">Browse Obituaries</a>
+      <a href="#" class="hover:text-navy-700">Plan Ahead</a>
+      <a href="#" class="hover:text-navy-700">Get Support</a>
+      <a href="#" class="hover:text-navy-700">Send a Gift</a>
+    </div>
+  </nav>
+</header>
+
+<!-- ====================================================================
+     MAIN
+     ==================================================================== -->
+<main class="max-w-[1440px] mx-auto px-3 md:px-8 lg:px-12 pt-6 md:pt-10 pb-16">
+  <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-4 lg:gap-12">
+
+    <!-- =================== LEFT: My Account =================== -->
+    <aside class="hidden lg:block">
+      <nav class="sticky top-[140px] bg-white border border-wb-200 rounded-xl p-6 shadow-sm" aria-label="My Account">
+        <h2 class="font-serif-heading text-2xl text-wb-900 leading-none">My Account</h2>
+        <p class="text-sm text-gold-800 mt-2">Welcome back, John</p>
+        <div class="border-t border-wb-200 my-5"></div>
+        <ul class="space-y-3 text-[15px]">
+          <li><a href="#" aria-current="page" class="font-bold text-wb-900">My People</a></li>
+          <li><a href="#" class="text-wb-700 hover:text-navy-700">Notification Preferences</a></li>
+          <li><a href="#" class="text-wb-700 hover:text-navy-700">Account Settings</a></li>
+        </ul>
+        <div class="border-t border-wb-200 my-5"></div>
+        <a href="future-index.html?id=ralph&so=1" class="inline-block text-sm font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2">Sign out</a>
+      </nav>
+    </aside>
+
+    <!-- Mobile accordion -->
+    <div class="lg:hidden bg-white border border-wb-200 rounded-xl shadow-sm overflow-hidden" data-acct-open="false" id="acct-accordion">
+      <button class="w-full p-5 flex items-start justify-between gap-3 text-left" aria-expanded="false" aria-controls="acct-links" id="acct-toggle">
+        <span class="min-w-0">
+          <span class="block font-serif-heading text-2xl text-wb-900 leading-none">My Account</span>
+          <span class="block text-sm text-gold-800 mt-2 break-words">Welcome back, John</span>
+        </span>
+        <i class="ph ph-caret-down text-xl text-wb-700 acct-chevron flex-shrink-0 mt-1" aria-hidden="true"></i>
+      </button>
+      <div class="acct-panel" id="acct-links">
+        <div>
+          <ul class="px-5 pt-1 pb-5 space-y-3 text-[15px]">
+            <li><a href="#" aria-current="page" class="font-bold text-wb-900">My People</a></li>
+            <li><a href="#" class="text-wb-700">Notification Preferences</a></li>
+            <li><a href="#" class="text-wb-700">Account Settings</a></li>
+            <li><a href="future-index.html?id=ralph&so=1" class="text-navy-500 font-semibold underline underline-offset-2">Sign out</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== RIGHT: My People =================== -->
+    <div class="max-w-[840px]">
+
+      <!-- ---------- LIST VIEW ---------- -->
+      <div id="list-view">
+        <header class="mb-6 md:mb-8 mt-3 lg:mt-0">
+          <h1 class="font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight">My People</h1>
+        </header>
+
+        <!-- =================== Collections =================== -->
+        <section class="flex flex-col gap-8">
+          <div class="flex flex-col gap-2">
+            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">My collections <span id="collections-count"></span></h2>
+            <p class="text-base text-wb-700 leading-relaxed">Organize the people you’ve saved into groups that matter to you.</p>
+          </div>
+          <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        </section>
+
+        <!-- =================== All of my people =================== -->
+        <section class="mt-10 md:mt-12 flex flex-col gap-5">
+          <div class="flex flex-col gap-2">
+            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">All of my people <span id="count-pill"></span></h2>
+            <p id="page-subtitle" class="text-base text-wb-700 leading-relaxed">Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.</p>
+          </div>
+          <div id="grid-root"></div>
+        </section>
+      </div>
+
+      <!-- ---------- COLLECTION DETAIL VIEW ---------- -->
+      <div id="detail-view" style="display:none">
+        <div class="flex items-center justify-between gap-3 mb-4 mt-3 lg:mt-0">
+          <button id="detail-back" type="button" class="inline-flex items-center gap-2 text-base font-semibold text-navy-700 hover:text-navy-800"><i class="ph-bold ph-arrow-left"></i> All collections</button>
+          <div class="flex items-center gap-2">
+            <button id="coll-share" type="button" class="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50"><i class="ph ph-share-fat text-lg"></i> Share</button>
+            <button id="coll-more" type="button" class="w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-50 flex items-center justify-center flex-shrink-0" aria-label="More options"><i class="ph-bold ph-list text-lg"></i></button>
+          </div>
+        </div>
+        <header class="mb-5">
+          <div class="flex items-center gap-2">
+            <h1 id="detail-title" contenteditable="true" spellcheck="false" class="min-w-0 font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight rounded px-1 -mx-1 focus:outline-none focus:bg-wb-100">Collection</h1>
+            <button id="edit-title" type="button" class="text-wb-400 hover:text-navy-700 flex-shrink-0" aria-label="Edit name"><i class="ph ph-pencil-simple text-xl"></i></button>
+          </div>
+          <div class="mt-2">
+            <p id="detail-desc" contenteditable="true" spellcheck="false" data-placeholder="Add a description…" class="inline text-base md:text-lg text-wb-700 leading-relaxed rounded focus:outline-none focus:bg-wb-100 empty:before:content-[attr(data-placeholder)] empty:before:text-wb-400"></p>
+            <button id="edit-desc" type="button" class="inline-flex align-middle ml-1 text-wb-400 hover:text-navy-700" aria-label="Edit description"><i class="ph ph-pencil-simple text-lg"></i></button>
+          </div>
+        </header>
+
+        <!-- Make my relationship to this group public -->
+        <div class="flex items-center gap-3 p-4 rounded-xl bg-wb-50 border border-wb-200 mb-5">
+          <button id="coll-mine" role="switch" aria-checked="false" aria-label="Make my relationship to this group public" class="relative w-14 h-7 rounded-full transition-colors flex-shrink-0"><span id="coll-mine-knob" class="absolute top-[3px] left-[3px] w-[22px] h-[22px] rounded-full bg-white shadow transition-transform"></span></button>
+          <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Make my relationship to this group public</span><span id="coll-mine-sub" class="block text-sm text-wb-600 mt-0.5">Off · Your relationship to this group stays private</span></span>
+        </div>
+
+        <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700 mb-4">People <span id="detail-people-count"></span></h2>
+        <div id="detail-people" class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5"></div>
+
+        <!-- Tailored suggestions for this collection (moved here from the root) -->
+        <section id="detail-suggest-section" class="mt-10 md:mt-12 flex-col gap-5" style="display:none">
+          <div class="flex flex-col gap-1">
+            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Suggested for this collection</h2>
+            <p class="text-base text-wb-700 leading-relaxed">People who may belong here — based on family names, hometowns, and where they’re remembered.</p>
+          </div>
+          <div id="detail-suggest-row" class="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 px-1"></div>
+        </section>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- ====================================================================
+     HELP CENTER BAND
+     ==================================================================== -->
+<section class="bg-seafoam-100 border-t border-seafoam-200">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-10">
+    <h2 class="font-serif-heading text-2xl text-wb-900">Legacy Help Center</h2>
+    <p class="text-base text-wb-700 mt-1">Need additional help? The Legacy Support Team is available Monday through Friday, 7am–7pm CT.</p>
+    <div class="flex flex-col sm:flex-row gap-6 sm:gap-12 mt-5">
+      <div class="flex items-center gap-3">
+        <span class="w-11 h-11 rounded-full bg-seafoam-200 text-seafoam-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-phone text-xl"></i></span>
+        <span><span class="block text-xs uppercase tracking-wider text-wb-500 font-semibold">Call us</span><a href="tel:8883979494" class="text-base font-semibold text-navy-700">888-397-9494</a></span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="w-11 h-11 rounded-full bg-seafoam-200 text-seafoam-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-envelope-simple text-xl"></i></span>
+        <span><span class="block text-xs uppercase tracking-wider text-wb-500 font-semibold">Email us</span><a href="mailto:info@legacy.com" class="text-base font-semibold text-navy-700">info@legacy.com</a></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     FOOTER
+     ==================================================================== -->
+<footer class="bg-navy-900 text-white">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8">
+      <div class="col-span-2 md:col-span-1">
+        <img src="assets/logo-horizontal-white.svg" alt="Legacy" class="h-9 w-auto" />
+        <div class="flex gap-3 mt-4 text-wb-300">
+          <a href="#" aria-label="Facebook" class="hover:text-gold-500"><i class="ph-fill ph-facebook-logo text-xl"></i></a>
+          <a href="#" aria-label="YouTube" class="hover:text-gold-500"><i class="ph-fill ph-youtube-logo text-xl"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Services</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Create &amp; Publish an obituary</a></li>
+          <li><a href="#" class="hover:text-gold-500">Plan a funeral or estate</a></li>
+          <li><a href="#" class="hover:text-gold-500">Send a Sympathy Gift</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Find obituaries</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Browse by Lastname</a></li>
+          <li><a href="#" class="hover:text-gold-500">Browse by Newspaper</a></li>
+          <li><a href="#" class="hover:text-gold-500">Browse by Location</a></li>
+          <li><a href="#" class="hover:text-gold-500">Celebrity Obituaries</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Legacy for Business</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Funeral Homes</a></li>
+          <li><a href="#" class="hover:text-gold-500">Newspapers &amp; Media Outlets</a></li>
+          <li><a href="#" class="hover:text-gold-500">Advertise with us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Help &amp; Support</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">24/7 Publishing Support</a></li>
+          <li><a href="#" class="hover:text-gold-500">How to write an obituary</a></li>
+          <li><a href="#" class="hover:text-gold-500">FAQs</a></li>
+        </ul>
+        <div class="mt-4 rounded-xl border border-gold-700/60 p-4">
+          <p class="text-sm font-semibold text-gold-500 mb-2">Customer Support</p>
+          <a href="#" class="flex items-center gap-2 text-sm text-wb-300 hover:text-gold-500 mb-1.5"><i class="ph ph-chat-circle-dots"></i> Chat with us</a>
+          <a href="tel:8185555555" class="flex items-center gap-2 text-sm text-wb-300 hover:text-gold-500 mb-1.5"><i class="ph ph-phone"></i> (818) 555-5555</a>
+          <p class="text-xs text-wb-400 mt-2">Available Monday–Friday<br>7:00 am – 7:00 pm CST</p>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-navy-700 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-wb-400">
+      <p>©2026 Legacy.com All rights reserved.</p>
+      <div class="flex gap-5"><a href="#" class="hover:text-gold-500">Do Not Sell My Information</a><a href="#" class="hover:text-gold-500">Privacy policy</a><a href="#" class="hover:text-gold-500">Terms of use</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ====================================================================
+     MORE OPTIONS SHEET
+     ==================================================================== -->
+<div class="sheet-overlay" id="options-overlay" role="dialog" aria-modal="true" aria-labelledby="opt-title">
+  <div class="sheet-card">
+    <div class="wiz-viewport" id="opt-viewport">
+
+      <!-- Pane: menu -->
+      <div class="wiz-pane" data-pane="menu" data-state="active">
+        <div class="pt-6 pb-8">
+          <!-- Header: avatar + name -->
+          <div class="flex items-center gap-2 pb-4 pl-6 pr-12 border-b border-wb-300">
+            <span id="opt-avatar" class="w-14 h-14 rounded-full border border-wb-300 flex-shrink-0 flex items-center justify-center font-serif-heading text-2xl text-white bg-navy-400 overflow-hidden bg-center bg-cover"></span>
+            <h2 id="opt-title" class="flex-1 min-w-0 font-serif-heading text-xl text-navy-700 leading-tight truncate">Person name</h2>
+            <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
+          </div>
+
+          <div class="px-6">
+            <!-- Go to their Page -->
+            <a id="opt-view" href="future-index.html" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50">
+              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-user text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Go to their Page</span><span class="block text-xs text-wb-700 mt-1">You will be taken to their page</span></span>
+              <i class="ph ph-arrow-right text-2xl text-navy-700 flex-shrink-0"></i>
+            </a>
+
+            <!-- Add your relationship (Section 4 entry point) -->
+            <button data-action="relationship" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
+              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-tree-structure text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Add your relationship</span><span class="block text-xs text-wb-700 mt-1">Connect and organize your family tree</span></span>
+              <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
+            </button>
+
+            <!-- Add to collection -->
+            <button data-action="addcollection" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
+              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-folders text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Add to collection</span><span class="block text-xs text-wb-700 mt-1">Group them with people who belong together</span></span>
+              <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
+            </button>
+
+            <!-- Email updates (subscribe toggle — decoupled from saving) -->
+            <div class="w-full flex items-center gap-2 py-6 border-b border-wb-300">
+              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-bell text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Email updates</span><span id="opt-updates-sub" class="block text-xs text-wb-700 mt-1">On • Receive updates for this page</span></span>
+              <button id="opt-updates" role="switch" aria-checked="true" aria-label="Toggle email updates" class="relative w-14 h-7 rounded-full transition-colors flex-shrink-0 bg-seafoam-700">
+                <span id="opt-updates-knob" class="absolute top-[3px] left-[3px] w-[22px] h-[22px] rounded-full bg-white shadow transition-transform translate-x-7"></span>
+              </button>
+            </div>
+
+            <!-- Share with others -->
+            <button data-action="share" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
+              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-share-fat text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Share with others</span><span class="block text-xs text-wb-700 mt-1">Invite others to visit this page</span></span>
+              <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
+            </button>
+
+            <!-- Remove -->
+            <button data-action="remove" class="w-full flex items-center gap-2 py-6 hover:bg-coral-50 text-left">
+              <span class="w-8 h-8 rounded-full bg-coral-100 text-coral-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-minus text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-coral-700 leading-tight">Remove from My People</span><span class="block text-xs text-wb-700 mt-1">This page will be removed from your list</span></span>
+              <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pane: relationship selector -->
+      <div class="wiz-pane" data-pane="relationship" data-state="next">
+        <div class="pt-16 pb-8 px-6">
+          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <h2 id="rel-title" class="text-xl font-bold text-navy-700 leading-tight">How are you related to <span id="rel-name">this person</span>?</h2>
+              <p class="text-base text-wb-700 leading-normal">Adding your relationship helps build your connections and family tree.</p>
+            </div>
+            <div class="flex flex-col gap-4 pt-4">
+              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Family">Family <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Friend/Acquaintance">Friend/Acquaintance <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="School">School <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Work">Work <i class="ph ph-caret-right text-2xl"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pane: family sub-relationships -->
+      <div class="wiz-pane" data-pane="family" data-state="next">
+        <div class="pt-16 pb-8 px-6">
+          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <h2 class="text-xl font-bold text-navy-700 leading-tight"><span id="fam-name">This person</span> is my…</h2>
+              <p class="text-base text-wb-700 leading-normal">Choose the role <span id="fam-sub-name">this person</span> had in your family. We’ll help you refine it next.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4 pt-4">
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Father">Father</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Mother">Mother</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Brother">Brother</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Sister">Sister</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandfather">Grandfather</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandmother">Grandmother</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandchild">Grandchild</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Aunt">Aunt</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Uncle">Uncle</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Cousin">Cousin</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Niece">Niece</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Nephew">Nephew</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pane: family connection detail (e.g. parent type) -->
+      <div class="wiz-pane" data-pane="familyDetail" data-state="next">
+        <div class="pt-16 pb-8 px-6">
+          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <h2 id="famdetail-title" class="text-xl font-bold text-navy-700 leading-tight">How should we connect them?</h2>
+              <p class="text-base text-wb-700 leading-normal">Choose what best fits your family story.</p>
+            </div>
+            <div id="famdetail-options" class="grid grid-cols-2 gap-4 pt-4"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pane: add to collection -->
+      <div class="wiz-pane" data-pane="collections" data-state="next">
+        <div class="pt-16 pb-8 px-6">
+          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <h2 class="text-xl font-bold text-navy-700 leading-tight">Add <span id="addcoll-name">this person</span> to a collection</h2>
+              <p class="text-base text-wb-700 leading-normal">Tap a collection to add or remove them.</p>
+            </div>
+            <div id="addcoll-list" class="flex flex-col pt-1"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SHARE SHEET
+     ==================================================================== -->
+<div class="sheet-overlay" id="share-overlay" role="dialog" aria-modal="true" aria-labelledby="share-title">
+  <div class="sheet-card p-5 md:p-6">
+    <button data-close class="absolute top-4 right-4 w-9 h-9 rounded-full border border-wb-300 text-wb-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph ph-x text-lg"></i></button>
+    <button data-back class="absolute top-4 left-4 w-9 h-9 rounded-full text-wb-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back to options"><i class="ph ph-arrow-left text-lg"></i></button>
+    <h2 id="share-title" class="font-serif-heading text-xl md:text-2xl text-wb-900 text-center pt-1">Share this page</h2>
+    <p class="text-sm text-wb-600 text-center mt-1" id="share-sub">Invite others to visit this page</p>
+    <div class="grid grid-cols-4 gap-2 mt-6 text-center">
+      <button class="share-channel flex flex-col items-center gap-1.5 text-xs font-semibold text-wb-700" data-channel="Email"><span class="w-[52px] h-[52px] rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-[22px]"><i class="ph ph-envelope-simple"></i></span>Email</button>
+      <button class="share-channel flex flex-col items-center gap-1.5 text-xs font-semibold text-wb-700" data-channel="Text message"><span class="w-[52px] h-[52px] rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-[22px]"><i class="ph ph-chat-circle"></i></span>Message</button>
+      <button class="share-channel flex flex-col items-center gap-1.5 text-xs font-semibold text-wb-700" data-channel="Facebook"><span class="w-[52px] h-[52px] rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-[22px]"><i class="ph ph-facebook-logo"></i></span>Facebook</button>
+      <button class="share-channel flex flex-col items-center gap-1.5 text-xs font-semibold text-wb-700" data-channel="more apps"><span class="w-[52px] h-[52px] rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-[22px]"><i class="ph ph-dots-three-outline"></i></span>More</button>
+    </div>
+    <div class="mt-6">
+      <label class="block text-sm font-semibold text-wb-900 mb-2">Page link</label>
+      <div class="flex items-center gap-2">
+        <input id="share-link" type="text" readonly value="https://www.legacy.com/obituaries/person" class="flex-1 h-12 px-3 rounded-lg border border-wb-300 bg-wb-50 text-sm text-wb-700 focus:outline-none focus:border-navy-500" />
+        <button id="copy-link" class="h-12 px-4 rounded-lg bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold inline-flex items-center gap-2 flex-shrink-0"><i class="ph ph-copy"></i> Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     CONFIRM REMOVE MODAL
+     ==================================================================== -->
+<div class="sheet-overlay" id="remove-overlay" role="alertdialog" aria-modal="true" aria-labelledby="rm-title" aria-describedby="rm-body">
+  <div class="sheet-card p-6 md:p-8 !pb-[72px] md:!pb-8">
+    <h2 id="rm-title" class="text-xl font-bold text-navy-700 leading-tight pr-2">Are you sure you want to remove this person?</h2>
+    <p id="rm-body" class="text-base text-wb-700 mt-3 leading-relaxed">You can always save them again if you change your mind.</p>
+    <div class="flex flex-row gap-3 mt-6">
+      <button id="rm-confirm" class="flex-1 h-12 rounded-full bg-coral-700 hover:bg-coral-800 text-white text-base font-semibold">Remove</button>
+      <button data-close class="flex-1 h-12 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     CREATE COLLECTION MODAL
+     ==================================================================== -->
+<div class="sheet-overlay" id="collection-overlay" role="dialog" aria-modal="true" aria-labelledby="coll-title">
+  <div class="sheet-card p-6 md:p-8 !pb-[72px] md:!pb-8">
+    <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
+    <h2 id="coll-title" class="text-xl font-bold text-navy-700 leading-tight pr-10">Create a collection</h2>
+    <p class="text-sm text-wb-700 mt-1 leading-relaxed">Name it whatever you like and choose who belongs.</p>
+
+    <form id="coll-form" class="mt-5 flex flex-col gap-4">
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-wb-900">Name</span>
+        <input id="coll-name" type="text" required maxlength="60" placeholder="e.g. College Friends" class="h-12 px-3 rounded-lg border border-wb-300 bg-white text-base text-wb-900 placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
+      </label>
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-wb-900">Description <span class="font-normal text-wb-500">(optional)</span></span>
+        <textarea id="coll-desc" rows="2" maxlength="140" placeholder="What ties these people together?" class="px-3 py-2.5 rounded-lg border border-wb-300 bg-white text-base text-wb-900 placeholder:text-wb-400 leading-snug resize-none focus:outline-none focus:border-navy-500"></textarea>
+      </label>
+      <div class="flex flex-col gap-2">
+        <span class="text-sm font-semibold text-wb-900">Add people <span id="coll-count" class="font-normal text-wb-500">(0 selected)</span></span>
+        <div id="coll-people" class="flex flex-col gap-1 max-h-[220px] overflow-y-auto -mx-1 px-1"></div>
+      </div>
+      <div class="flex flex-row gap-3 mt-2">
+        <button id="coll-create" type="submit" class="flex-1 h-12 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold disabled:opacity-40 disabled:cursor-not-allowed">Create collection</button>
+        <button type="button" data-close class="flex-1 h-12 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ====================================================================
+     COLLECTION ••• MENU
+     ==================================================================== -->
+<div class="sheet-overlay" id="coll-menu-overlay" role="dialog" aria-modal="true" aria-labelledby="coll-menu-title">
+  <div class="sheet-card pt-6 pb-8">
+    <div class="flex items-center pb-4 pl-6 pr-12 border-b border-wb-300">
+      <h2 id="coll-menu-title" class="font-serif-heading text-xl text-navy-700 leading-tight">Collection options</h2>
+      <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
+    </div>
+    <div class="px-6">
+      <button id="coll-delete-open" type="button" class="w-full flex items-center gap-2 py-6 hover:bg-coral-50 text-left">
+        <span class="w-8 h-8 rounded-full bg-coral-100 text-coral-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-trash text-xl"></i></span>
+        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-coral-700 leading-tight">Delete collection</span><span class="block text-xs text-wb-700 mt-1">Removes the collection — people stay in My People</span></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     CONFIRM DELETE COLLECTION
+     ==================================================================== -->
+<div class="sheet-overlay" id="coll-delete-overlay" role="alertdialog" aria-modal="true" aria-labelledby="coll-delete-title">
+  <div class="sheet-card p-6 md:p-8 !pb-[72px] md:!pb-8">
+    <h2 id="coll-delete-title" class="text-xl font-bold text-navy-700 leading-tight">Delete this collection?</h2>
+    <p class="text-base text-wb-700 mt-3 leading-relaxed">“<span id="coll-delete-name">this collection</span>” will be removed. The people in it stay in My People.</p>
+    <div class="flex flex-row gap-3 mt-6">
+      <button id="coll-delete-confirm" type="button" class="flex-1 h-12 rounded-full bg-coral-700 hover:bg-coral-800 text-white text-base font-semibold">Delete</button>
+      <button type="button" data-close class="flex-1 h-12 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     ADD PEOPLE TO COLLECTION
+     ==================================================================== -->
+<div class="sheet-overlay" id="coll-addpeople-overlay" role="dialog" aria-modal="true" aria-labelledby="coll-addpeople-title">
+  <div class="sheet-card p-6 md:p-8 !pb-[72px] md:!pb-8">
+    <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
+    <h2 id="coll-addpeople-title" class="text-xl font-bold text-navy-700 leading-tight pr-10">Add people to this collection</h2>
+    <p class="text-sm text-wb-700 mt-1 leading-relaxed">Tap to add or remove people you’ve saved.</p>
+    <div id="coll-addpeople-list" class="mt-4 flex flex-col gap-1 max-h-[300px] overflow-y-auto -mx-1 px-1"></div>
+    <button id="coll-addpeople-done" type="button" class="w-full h-12 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold mt-4">Done</button>
+  </div>
+</div>
+
+<!-- ====================================================================
+     TOAST
+     ==================================================================== -->
+<div id="toast" class="toast" role="status" aria-live="polite">
+  <i class="ph ph-bookmark-simple toast-ico" aria-hidden="true"></i>
+  <div class="toast-body">
+    <span id="toast-text">Done</span>
+    <button id="toast-action" type="button" class="hidden">Undo</button>
+  </div>
+</div>
+
+<script src="shared/people.js"></script>
+<script src="shared/relationships.js"></script>
+<script src="shared/suggestions.js"></script>
+
+<!-- Demo scenario switcher -->
+<div class="demo-switcher" role="group" aria-label="Demo scenarios">
+  <span class="demo-switcher-label">Demo scenario</span>
+  <button data-scenario="full" class="active"><i class="ph ph-users-three"></i> 3 people saved</button>
+  <button data-scenario="one"><i class="ph ph-user"></i> 1 person saved</button>
+  <button data-scenario="zero"><i class="ph ph-tray"></i> Zero state · none saved</button>
+  <span class="demo-switcher-divider" aria-hidden="true"></span>
+  <button data-demo-reset title="Reset saved people, relationships, and follows to the demo default"><i class="ph ph-arrow-clockwise"></i> Reset demo</button>
+</div>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const STORE_KEY = 'legacyMyPeople.v0';
+  const esc = (v) => String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+  // ===== localStorage bridge (shared with future-index.html) =====
+  function readStore(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(_){ return {}; } }
+  function writeStore(o){ try { localStorage.setItem(STORE_KEY, JSON.stringify(o)); } catch(_){} }
+
+  const P = window.LEGACY_PEOPLE || {};
+  const DEFAULT_SAVED = (window.LEGACY_DEFAULT_SAVED || ['mohammad','douglas','jennifer']).slice();
+  const POOL_IDS = ['eleanor','marcus'];
+
+  let savedIds = [];
+  let people = [];
+
+  // Saved people persist as an id array (shared with future-index.html).
+  function readSaved(){ const o = readStore(); return Array.isArray(o.saved) ? o.saved.slice() : null; }
+  function writeSaved(arr){ const o = readStore(); o.saved = arr.slice(); writeStore(o); }
+
+  // Email-updates (follow) state — decoupled from saving; shared with future-index.html.
+  function readFollowing(){ const o = readStore(); return Array.isArray(o.following) ? o.following : []; }
+  function isFollowing(id){ return readFollowing().indexOf(id) >= 0; }
+  function setFollowing(id, on){ const f = readFollowing(); const i = f.indexOf(id); if (on && i < 0) f.push(id); if (!on && i >= 0) f.splice(i, 1); const o = readStore(); o.following = f; writeStore(o); }
+
+  // User-set relationships — override the demo defaults. Stored as a full path
+  // { category, relation, detail, badge } so selections can be restored on
+  // revisit; a legacy plain string is treated as the badge.
+  const readRelationships = window.LEGACY_REL.readRelationships;
+  const relBadge = window.LEGACY_REL.relBadge;
+  const setRelationship = window.LEGACY_REL.setRelationship;
+
+  function personData(id){
+    const d = P[id];
+    const badge = relBadge(readRelationships()[id]);
+    if (!d) return { id: id, name: 'New Person', photo: null, relation: badge || null };
+    return { id: id, name: d.full, photo: window.LEGACY_PHOTO(d.photo, 'card'), relation: badge || d.relation };
+  }
+
+  function initials(name){
+    const parts = name.trim().split(/\s+/);
+    return ((parts[0]||'')[0] || '' ) + ((parts[parts.length-1]||'')[0] || '');
+  }
+
+  // No-photo panel background: random per person from navy/coral/seafoam/gold/wb 400s
+  const NOPHOTO_COLORS = ['#728ab0','#e77d91','#81b8ae','#e2ba60','#afadaa'];
+  function pickColor(){ return NOPHOTO_COLORS[Math.floor(Math.random() * NOPHOTO_COLORS.length)]; }
+
+  // Photo panel background = dominant (average) color of the photo.
+  const colorCache = {};
+  function dominantColor(url){
+    return new Promise(resolve => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        try {
+          const s = 24, c = document.createElement('canvas');
+          c.width = s; c.height = s;
+          const ctx = c.getContext('2d');
+          ctx.drawImage(img, 0, 0, s, s);
+          const d = ctx.getImageData(0, 0, s, s).data;
+          let r=0,g=0,b=0,n=0;
+          for (let i=0;i<d.length;i+=4){ if (d[i+3] < 128) continue; r+=d[i]; g+=d[i+1]; b+=d[i+2]; n++; }
+          resolve(n ? 'rgb('+Math.round(r/n)+','+Math.round(g/n)+','+Math.round(b/n)+')' : null);
+        } catch(_) { resolve(null); }
+      };
+      img.onerror = () => resolve(null);
+      img.src = url;
+    });
+  }
+  function applyPhotoColors(){
+    $$('.card-photo[data-photo]').forEach(el => {
+      const url = el.dataset.photo;
+      if (colorCache[url]) { el.style.background = colorCache[url]; return; }
+      dominantColor(url).then(c => { if (c) colorCache[url] = c; el.style.background = c || '#627d85'; });
+    });
+  }
+
+  function buildPeople(){
+    people = savedIds.map(personData);
+    people.forEach(p => { if (!p.photo && !p._color) p._color = pickColor(); });
+  }
+
+  // ===== rendering =====
+  const root = $('#grid-root');
+  const countPill = $('#count-pill');
+  const subtitle = $('#page-subtitle');
+
+  function personCardHTML(p){
+    const panel = p.photo
+      ? '<div class="card-photo h-[172px] w-full flex items-center justify-center p-1 overflow-hidden" data-photo="'+esc(p.photo)+'" style="background:#627d85">' +
+          '<img src="'+esc(p.photo)+'" alt="" class="h-full w-auto max-w-full object-contain" />' +
+        '</div>'
+      : '<div class="h-[172px] w-full flex items-center justify-center overflow-hidden" style="background:'+(p._color||'#728ab0')+'">' +
+          '<span class="font-serif-heading text-6xl text-white leading-none">'+esc(initials(p.name))+'</span>' +
+        '</div>';
+    const badge = p.relation
+      ? '<span class="inline-block mt-1 rounded-full bg-gold-100 text-gold-900 text-sm px-3 py-0.5">'+esc(p.relation)+'</span>'
+      : '<button type="button" class="add-rel-chip inline-flex items-center gap-1 mt-1 px-3 py-0.5 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-900 text-sm transition-colors"><i class="ph ph-plus-circle text-sm" aria-hidden="true"></i><span>Add Relationship</span></button>';
+    return '<article class="person-card transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
+      panel +
+      '<div class="flex-1 min-h-[100px] flex flex-col items-center justify-center text-center gap-1 px-2 pb-3">' +
+        '<a href="future-index.html?id='+esc(p.id)+'" class="text-base font-semibold text-wb-900 leading-tight">'+esc(p.name)+'</a>' + badge +
+      '</div>' +
+      '<button class="more-btn absolute top-[7px] right-[7px]" aria-label="More options for '+esc(p.name)+'"><i class="ph-bold ph-list" aria-hidden="true"></i></button>' +
+    '</article>';
+  }
+
+  // Add More People — a single grid cell when people exist; spans all
+  // columns (and shows a fuller message) when the grid is empty.
+  function addCardHTML(full){
+    const cls = full ? 'col-span-2 lg:col-span-3 min-h-[220px] py-10' : 'min-h-[288px] py-6';
+    return '<button id="add-more" class="'+cls+' transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
+      '<span class="w-14 h-14 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-magnifying-glass text-2xl"></i></span>' +
+      '<span class="text-base font-semibold text-wb-900 mt-1">Add More People</span>' +
+      '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Search our database to find the people you care about and add them here.</span>' +
+    '</button>';
+  }
+
+  function render(){
+    const n = people.length;
+    countPill.textContent = '• (' + n + ')';
+    subtitle.innerHTML = n === 0
+      ? 'You haven’t added anyone yet.'
+      : 'Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.';
+    root.innerHTML =
+      '<div class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">' +
+        people.map(personCardHTML).join('') +
+        addCardHTML(n === 0) +
+      '</div>';
+    applyPhotoColors();
+  }
+
+  // ===== Collections =====
+  function readCollections(){ const o = readStore(); return Array.isArray(o.collections) ? o.collections : []; }
+  function writeCollections(arr){ const o = readStore(); o.collections = arr; writeStore(o); }
+  // Deterministic no-photo avatar color (stable per person across renders).
+  function colorFor(id){ let h = 0; for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(id.length - 1 - i)) >>> 0; return NOPHOTO_COLORS[h % NOPHOTO_COLORS.length]; }
+  function avatarHTML(id){
+    const p = personData(id);
+    return p.photo
+      ? '<span class="w-10 h-10 rounded-full border-2 border-white bg-center bg-cover -ml-2 first:ml-0" style="background-image:url(' + esc(p.photo) + ')" title="' + esc(p.name) + '"></span>'
+      : '<span class="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center font-serif-heading text-white text-lg -ml-2 first:ml-0" style="background:' + colorFor(id) + '" title="' + esc(p.name) + '">' + esc(initials(p.name)) + '</span>';
+  }
+  function collectionCardHTML(c){
+    const ids = (c.people || []);
+    const shown = ids.slice(0, 4);
+    const extra = ids.length - shown.length;
+    const avatars = ids.length
+      ? '<div class="flex items-center">' + shown.map(avatarHTML).join('') +
+        (extra > 0 ? '<span class="w-10 h-10 rounded-full border-2 border-white bg-wb-200 text-wb-700 text-sm font-semibold flex items-center justify-center -ml-2">+' + extra + '</span>' : '') +
+        '</div>'
+      : '';
+    const count = ids.length + ' ' + (ids.length === 1 ? 'person' : 'people');
+    return '<button type="button" data-coll-id="' + esc(c.id) + '" class="transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg text-left bg-white border border-wb-300 rounded-lg p-3 flex flex-col cursor-pointer">' +
+      '<div class="flex flex-col gap-1">' +
+        '<h3 class="font-serif-heading text-xl text-wb-900 leading-tight">' + esc(c.name) + '</h3>' +
+        (c.description ? '<p class="text-sm text-wb-700 leading-snug">' + esc(c.description) + '</p>' : '') +
+      '</div>' +
+      '<div class="flex items-center gap-2 mt-4">' + avatars + '<span class="text-sm text-wb-700">' + count + '</span></div>' +
+    '</button>';
+  }
+  function createCollectionTileHTML(){
+    return '<button id="create-collection" type="button" class="transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full min-h-[132px] rounded-lg border-2 border-dashed border-gold-700 bg-transparent flex flex-col items-center justify-center text-center gap-2 p-4">' +
+      '<span class="w-10 h-10 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center"><i class="ph ph-plus text-xl"></i></span>' +
+      '<span class="text-base font-semibold text-wb-900">Create a Collection</span>' +
+    '</button>';
+  }
+  function renderCollections(){
+    const grid = $('#collections-grid');
+    if (!grid) return;
+    const colls = readCollections();
+    const cnt = $('#collections-count'); if (cnt) cnt.textContent = '• (' + colls.length + ')';
+    grid.innerHTML = createCollectionTileHTML() + colls.map(collectionCardHTML).join('');
+  }
+
+  // ===== Collection detail view =====
+  let currentCollId = null;
+
+  // Suggestion card for the collection detail's "Suggested for this collection" row.
+  function suggestCardHTML(s){
+    const p = personData(s.id);
+    const d = P[s.id];
+    const av = p.photo
+      ? '<span class="w-12 h-12 rounded-full bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
+      : '<span class="w-12 h-12 rounded-full flex items-center justify-center font-serif-heading text-white text-lg flex-shrink-0" style="background:' + colorFor(s.id) + '">' + esc(initials(p.name)) + '</span>';
+    return '<div class="suggest-card shrink-0 basis-[85%] sm:basis-[288px] snap-start bg-white border border-wb-300 rounded-lg p-4 flex flex-col gap-3" data-id="' + esc(s.id) + '">' +
+      '<div class="flex items-start gap-3">' + av +
+        '<div class="flex-1 min-w-0"><p class="text-base font-semibold text-wb-900 leading-tight truncate">' + esc(p.name) + '</p><p class="text-sm text-wb-600">' + esc(d ? d.dates : '') + '</p></div>' +
+        '<button class="suggest-dismiss w-7 h-7 -mr-1 -mt-1 rounded-full text-wb-400 hover:text-wb-700 hover:bg-wb-100 flex items-center justify-center flex-shrink-0" aria-label="Dismiss suggestion"><i class="ph ph-x"></i></button>' +
+      '</div>' +
+      '<p class="flex items-start gap-1.5 text-sm text-wb-700 leading-snug"><i class="' + s.icon + ' text-base text-gold-700 flex-shrink-0 mt-0.5"></i> <span class="min-w-0">' + esc(s.reason) + '</span></p>' +
+      '<button class="suggest-add mt-auto w-full h-10 rounded-full border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors inline-flex items-center justify-center gap-2"><i class="ph ph-plus-circle text-lg"></i> Add to collection</button>' +
+    '</div>';
+  }
+
+  function updateDetailHeader(c){
+    $('#detail-title').textContent = c.name;
+    $('#detail-desc').textContent = c.description || '';  // empty shows the placeholder via CSS
+    const n = (c.people || []).length;
+    $('#detail-people-count').textContent = '· ' + n;
+    paintCollMine(!!c.mine);
+  }
+  function detailAddTileHTML(full){
+    const cls = full ? 'col-span-2 lg:col-span-3 min-h-[220px] py-10' : 'min-h-[288px] py-6';
+    return '<button id="detail-add-person" type="button" class="' + cls + ' transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
+      '<span class="w-14 h-14 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-plus text-2xl"></i></span>' +
+      '<span class="text-base font-semibold text-wb-900 mt-1">Add a person</span>' +
+      '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Add someone from the people you’ve saved.</span>' +
+    '</button>';
+  }
+  function renderDetailPeople(c){
+    const wrap = $('#detail-people');
+    const ppl = (c.people || []).map(personData);
+    ppl.forEach(p => { if (!p.photo && !p._color) p._color = colorFor(p.id); });
+    wrap.innerHTML = (ppl.length ? ppl.map(personCardHTML).join('') : '') + detailAddTileHTML(ppl.length === 0);
+    applyPhotoColors();
+  }
+  function renderDetailSuggestions(c){
+    const sec = $('#detail-suggest-section'), row = $('#detail-suggest-row');
+    const items = window.LEGACY_SUGGEST.forCollection(c);
+    sec.style.display = items.length ? 'flex' : 'none';
+    row.innerHTML = items.map(suggestCardHTML).join('');
+  }
+  function refreshDetail(){
+    const c = readCollections().find(x => x.id === currentCollId);
+    if (!c) { hideCollection(); return; }
+    updateDetailHeader(c); renderDetailPeople(c); renderDetailSuggestions(c);
+  }
+  function showCollection(id){
+    const c = readCollections().find(x => x.id === id); if (!c) return;
+    currentCollId = id;
+    updateDetailHeader(c); renderDetailPeople(c); renderDetailSuggestions(c);
+    $('#list-view').style.display = 'none';
+    $('#detail-view').style.display = '';
+    window.scrollTo(0, 0);
+  }
+  function hideCollection(){
+    currentCollId = null;
+    $('#detail-view').style.display = 'none';
+    $('#list-view').style.display = '';
+    renderCollections();
+  }
+  $('#detail-back').addEventListener('click', hideCollection);
+  $('#collections-grid').addEventListener('click', (e) => {
+    if (e.target.closest('#create-collection')) { openCreateCollection(); return; }
+    const card = e.target.closest('[data-coll-id]'); if (!card) return;
+    showCollection(card.dataset.collId);
+  });
+  $('#detail-suggest-row').addEventListener('click', (e) => {
+    const card = e.target.closest('.suggest-card'); if (!card) return;
+    const id = card.dataset.id;
+    if (e.target.closest('.suggest-dismiss')) { window.LEGACY_SUGGEST.dismiss(id); refreshDetail(); return; }
+    if (e.target.closest('.suggest-add')) { addToCurrentCollection(id); }
+  });
+  function currentColl(){ return readCollections().find(x => x.id === currentCollId); }
+  function addToCurrentCollection(id){
+    const colls = readCollections();
+    const c = colls.find(x => x.id === currentCollId); if (!c) return;
+    c.people = c.people || [];
+    if (c.people.indexOf(id) < 0) c.people.push(id);
+    if (savedIds.indexOf(id) < 0) { savedIds.push(id); writeSaved(savedIds); buildPeople(); render(); }  // adding to a collection also saves them
+    writeCollections(colls);
+    refreshDetail();
+    toast(personData(id).name + ' added to “' + c.name + '”');
+  }
+
+  // ----- Editable name + description (contenteditable, commit on blur) -----
+  const detTitle = $('#detail-title'), detDesc = $('#detail-desc');
+  function commitCollField(field, el, fallback){
+    const c = currentColl(); if (!c) return;
+    let v = (el.textContent || '').replace(/\s+/g, ' ').trim();
+    if (field === 'name' && !v) { v = c.name; el.textContent = c.name; }  // name can't be empty
+    const colls = readCollections(); const cc = colls.find(x => x.id === currentCollId); if (!cc) return;
+    cc[field] = v; writeCollections(colls); renderCollections();
+    if (field === 'name') { /* keep as typed */ }
+  }
+  detTitle.addEventListener('blur', () => commitCollField('name', detTitle));
+  detTitle.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); detTitle.blur(); } });
+  detDesc.addEventListener('blur', () => commitCollField('description', detDesc));
+  $('#edit-title').addEventListener('click', () => { detTitle.focus(); document.getSelection().selectAllChildren(detTitle); });
+  $('#edit-desc').addEventListener('click', () => { detDesc.focus(); });
+
+  // ----- Share -----
+  $('#coll-share').addEventListener('click', () => {
+    const c = currentColl(); if (!c) return;
+    $('#share-sub').textContent = 'Invite others to see the “' + c.name + '” collection';
+    $('#share-link').value = 'https://www.legacy.com/my-people/collections/' + c.id;
+    openOverlay(overlays.share);
+  });
+
+  // ----- ••• menu → Delete (with confirmation) -----
+  $('#coll-more').addEventListener('click', () => openOverlay(overlays.collMenu));
+  $('#coll-delete-open').addEventListener('click', () => {
+    overlays.collMenu.classList.remove('open');
+    const c = currentColl(); $('#coll-delete-name').textContent = c ? c.name : 'this collection';
+    openOverlay(overlays.collDelete);
+  });
+  $('#coll-delete-confirm').addEventListener('click', () => {
+    const colls = readCollections().filter(x => x.id !== currentCollId);
+    const name = (currentColl() || {}).name || 'Collection';
+    writeCollections(colls);
+    closeAll();
+    hideCollection();
+    toast('“' + name + '” deleted');
+  });
+
+  // ----- Add a person -----
+  function renderAddPeopleList(){
+    const c = currentColl(); if (!c) return;
+    const inColl = c.people || [];
+    $('#coll-addpeople-list').innerHTML = savedIds.map(id => {
+      const p = personData(id);
+      const on = inColl.indexOf(id) >= 0;
+      const av = p.photo
+        ? '<span class="w-9 h-9 rounded-full bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
+        : '<span class="w-9 h-9 rounded-full flex items-center justify-center font-serif-heading text-white text-sm flex-shrink-0" style="background:' + colorFor(id) + '">' + esc(initials(p.name)) + '</span>';
+      return '<button type="button" class="addperson-row w-full flex items-center gap-3 py-3 px-1 rounded-lg hover:bg-wb-50 text-left" data-id="' + esc(id) + '">' +
+        av + '<span class="flex-1 min-w-0 truncate text-base text-wb-900">' + esc(p.name) + '</span>' +
+        (on ? '<i class="ph-fill ph-check-circle text-2xl text-seafoam-600 flex-shrink-0"></i>' : '<i class="ph ph-circle text-2xl text-wb-400 flex-shrink-0"></i>') +
+      '</button>';
+    }).join('') || '<p class="text-sm text-wb-600 py-2">You haven’t saved anyone yet.</p>';
+  }
+  function openAddPeople(){ renderAddPeopleList(); openOverlay(overlays.collAddPeople); }
+  $('#coll-addpeople-list').addEventListener('click', (e) => {
+    const row = e.target.closest('.addperson-row'); if (!row) return;
+    const id = row.dataset.id;
+    const colls = readCollections(); const c = colls.find(x => x.id === currentCollId); if (!c) return;
+    c.people = c.people || [];
+    const i = c.people.indexOf(id);
+    if (i < 0) c.people.push(id); else c.people.splice(i, 1);
+    writeCollections(colls);
+    renderAddPeopleList();
+    refreshDetail();
+  });
+  $('#coll-addpeople-done').addEventListener('click', closeAll);
+
+  // ----- Make my relationship to this group -----
+  function paintCollMine(on){
+    const t = $('#coll-mine'), knob = $('#coll-mine-knob'), sub = $('#coll-mine-sub');
+    t.setAttribute('aria-checked', String(on));
+    t.style.backgroundColor = on ? '#216e6a' : '#dbdad7';
+    knob.style.transform = on ? 'translateX(28px)' : 'translateX(0)';
+    sub.textContent = on ? 'On · Your relationship to this group is public' : 'Off · Your relationship to this group stays private';
+  }
+  $('#coll-mine').addEventListener('click', () => {
+    const colls = readCollections(); const c = colls.find(x => x.id === currentCollId); if (!c) return;
+    c.mine = !c.mine; writeCollections(colls); paintCollMine(c.mine);
+  });
+
+  function loadScenario(name){
+    savedIds = name === 'zero' ? [] : name === 'one' ? ['mohammad'] : DEFAULT_SAVED.slice();
+    writeSaved(savedIds);
+    buildPeople();
+    render();
+  }
+
+  // "Add More People" takes the user to an (unsaved) person's page so they can
+  // add from there — a more complete experience than a silent add. Carries
+  // from=account so the person page opens signed-in.
+  function goAddMore(){
+    const next = POOL_IDS.find(id => !savedIds.includes(id)) || POOL_IDS[0];
+    window.location.href = 'future-index.html?id=' + next + '&from=account';
+  }
+
+  // ===== modal plumbing =====
+  let activeId = null, activeName = null, lastFocus = null;
+  const overlays = { options:$('#options-overlay'), share:$('#share-overlay'), remove:$('#remove-overlay'), collection:$('#collection-overlay'), collMenu:$('#coll-menu-overlay'), collDelete:$('#coll-delete-overlay'), collAddPeople:$('#coll-addpeople-overlay') };
+
+  // Wizard inside the options sheet: a stack of panes slides horizontally
+  // while the container stays put and the viewport height animates. Panes
+  // earlier in the stack sit off-screen left (prev); unvisited panes sit off
+  // -screen right (next); the top of the stack is active.
+  const WIZ_PANES = ['menu', 'relationship', 'family', 'familyDetail', 'collections'];
+  let wizStack = ['menu'];
+  function wizRender(instant){
+    const vp = $('#opt-viewport');
+    const top = wizStack[wizStack.length - 1];
+    WIZ_PANES.forEach(name => {
+      const pane = vp.querySelector('[data-pane="' + name + '"]');
+      pane.dataset.state = (name === top) ? 'active' : (wizStack.indexOf(name) !== -1 ? 'prev' : 'next');
+      pane.setAttribute('aria-hidden', String(name !== top));
+    });
+    const active = vp.querySelector('[data-pane="' + top + '"]');
+    vp.scrollTop = 0;  // a focus() inside an off-screen pane can scroll the viewport; keep panes aligned to the top
+    const applyHeight = () => { vp.style.height = active.offsetHeight + 'px'; };
+    if (instant) { const t = vp.style.transition; vp.style.transition = 'none'; applyHeight(); void vp.offsetHeight; vp.style.transition = t; }
+    else applyHeight();
+  }
+  function wizGo(name){ wizStack.push(name); wizRender(); }
+  function wizBack(){ if (wizStack.length > 1) { wizStack.pop(); wizRender(); } }
+  function wizReset(){ wizStack = ['menu']; wizRender(true); }
+  function activeFirst(){ return (P[activeId] && P[activeId].first) || String(activeName || '').split(/\s+/)[0]; }
+  function openOverlay(o){ lastFocus = document.activeElement; o.classList.add('open'); document.body.style.overflow='hidden'; const f=o.querySelector('button,[href],input'); if(f) f.focus({ preventScroll: true }); }
+  function closeAll(){ Object.values(overlays).forEach(o=>o.classList.remove('open')); document.body.style.overflow=''; if(lastFocus&&document.contains(lastFocus)) lastFocus.focus(); }
+
+  function populateOptions(card){
+    activeId = card.dataset.id; activeName = card.dataset.name;
+    $('#opt-title').textContent = activeName;
+    const av = $('#opt-avatar');
+    if (card.dataset.photo) { av.style.backgroundImage = 'url('+card.dataset.photo+')'; av.style.backgroundSize='cover'; av.style.backgroundPosition='center'; av.textContent=''; }
+    else { av.style.backgroundImage=''; av.textContent = initials(activeName); }
+    const view = $('#opt-view'); if (view) view.href = 'future-index.html?id=' + activeId;
+    $('#share-link').value = 'https://www.legacy.com/obituaries/' + activeId;
+    paintUpdatesToggle(isFollowing(activeId));
+  }
+
+  // Email-updates toggle inside the options sheet. State-dependent styles are
+  // set inline (token values) so they render instantly, independent of the
+  // Tailwind CDN's async class generation.
+  function paintUpdatesToggle(on){
+    const t = $('#opt-updates'), knob = $('#opt-updates-knob'), sub = $('#opt-updates-sub');
+    t.setAttribute('aria-checked', String(on));
+    t.style.backgroundColor = on ? '#216e6a' : '#dbdad7';   // seafoam-700 / wb-300
+    knob.style.transform = on ? 'translateX(28px)' : 'translateX(0)';
+    sub.textContent = on ? 'On • Receive updates for this page' : 'Off • You won’t receive updates';
+  }
+  $('#opt-updates').addEventListener('click', () => {
+    const next = !isFollowing(activeId);
+    setFollowing(activeId, next);
+    paintUpdatesToggle(next);
+    toast(next ? 'Email updates on for ' + activeName : 'Email updates off for ' + activeName);
+  });
+
+  // ===== delegated clicks (main grid + collection-detail people) =====
+  function handleCardArea(e){
+    const addPerson = e.target.closest('#detail-add-person');
+    if (addPerson) { openAddPeople(); return; }
+    const add = e.target.closest('#add-more');
+    if (add) { goAddMore(); return; }
+    const more = e.target.closest('.more-btn');
+    if (more) { e.preventDefault(); populateOptions(more.closest('.person-card')); openOverlay(overlays.options); wizReset(); return; }
+    // "Add Relationship" chip opens the relationship pane directly.
+    const chip = e.target.closest('.add-rel-chip');
+    if (chip) { e.preventDefault(); e.stopPropagation(); populateOptions(chip.closest('.person-card')); openOverlay(overlays.options); openRelationship(true); return; }
+    // Tapping anywhere else on a card opens that person's page.
+    const card = e.target.closest('.person-card');
+    if (card) { window.location.href = 'future-index.html?id=' + card.dataset.id; }
+  }
+  root.addEventListener('click', handleCardArea);
+  $('#detail-people').addEventListener('click', handleCardArea);
+
+  overlays.options.addEventListener('click', (e) => {
+    const action = e.target.closest('[data-action]'); if(!action) return;
+    if (action.dataset.action === 'relationship') openRelationship();
+    if (action.dataset.action === 'addcollection') openAddToCollection();
+    if (action.dataset.action === 'share') openShare();
+    if (action.dataset.action === 'remove') openRemove();
+  });
+
+  // ----- Add to collection (slides in as a wizard pane) -----
+  function openAddToCollection(){
+    $('#addcoll-name').textContent = activeName;
+    renderAddCollList();
+    wizGo('collections');
+  }
+  function renderAddCollList(){
+    const wrap = $('#addcoll-list');
+    const colls = readCollections();
+    const rows = colls.map(c => {
+      const inIt = (c.people || []).indexOf(activeId) >= 0;
+      const n = (c.people || []).length;
+      return '<button type="button" class="coll-toggle w-full flex items-center gap-3 py-4 border-b border-wb-300 text-left" data-coll="' + esc(c.id) + '">' +
+        '<span class="w-9 h-9 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center flex-shrink-0"><i class="ph ph-folders text-lg"></i></span>' +
+        '<span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight truncate">' + esc(c.name) + '</span><span class="block text-xs text-wb-700 mt-0.5">' + n + ' ' + (n === 1 ? 'person' : 'people') + '</span></span>' +
+        (inIt
+          ? '<i class="ph-fill ph-check-circle text-2xl text-seafoam-600 flex-shrink-0"></i>'
+          : '<i class="ph ph-circle text-2xl text-wb-400 flex-shrink-0"></i>') +
+      '</button>';
+    }).join('');
+    const createRow = '<button type="button" id="addcoll-create" class="w-full flex items-center gap-3 py-4 text-left">' +
+      '<span class="w-9 h-9 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center flex-shrink-0"><i class="ph ph-plus text-lg"></i></span>' +
+      '<span class="flex-1 text-base font-semibold text-navy-700">Create a new collection</span>' +
+    '</button>';
+    wrap.innerHTML = (colls.length ? rows : '<p class="text-sm text-wb-600 py-2">No collections yet — create your first one.</p>') + createRow;
+  }
+  $('#addcoll-list').addEventListener('click', (e) => {
+    const create = e.target.closest('#addcoll-create');
+    if (create) { closeAll(); openCreateCollection([activeId]); return; }
+    const row = e.target.closest('.coll-toggle'); if (!row) return;
+    const id = row.dataset.coll;
+    const colls = readCollections();
+    const c = colls.find(x => x.id === id); if (!c) return;
+    c.people = c.people || [];
+    const i = c.people.indexOf(activeId);
+    const nowIn = i < 0;
+    if (nowIn) c.people.push(activeId); else c.people.splice(i, 1);
+    writeCollections(colls);
+    renderCollections();
+    renderAddCollList();
+    toast(nowIn ? activeName + ' added to “' + c.name + '”' : activeName + ' removed from “' + c.name + '”');
+  });
+
+  // Current selection path — loaded from the store on open, updated on taps, and
+  // used to pre-highlight pills so a back-out or revisit shows prior choices.
+  let sel = { category: null, relation: null, detail: null };
+  function paintPressed(selector, key, value){ $$(selector).forEach(b => b.setAttribute('aria-pressed', String(b.dataset[key] === value))); }
+
+  // Section 4 — slide across to the relationship category selector.
+  function openRelationship(instant){
+    $('#rel-name').textContent = activeName;
+    const saved = readRelationships()[activeId];
+    sel = (saved && typeof saved === 'object')
+      ? { category: saved.category || null, relation: saved.relation || null, detail: saved.detail || null }
+      : { category: null, relation: null, detail: null };
+    paintPressed('.rel-option', 'rel', sel.category);
+    if (instant) { wizStack = ['menu', 'relationship']; wizRender(true); }  // open straight to the pane (back → menu)
+    else wizGo('relationship');
+  }
+  // Back arrows slide one pane back through the stack.
+  $$('[data-wiz-back]').forEach(b => b.addEventListener('click', wizBack));
+  // Category taps: Family drills into sub-relationships; others are pending frames.
+  $$('.rel-option').forEach(b => b.addEventListener('click', () => {
+    const cat = b.dataset.rel;
+    if (sel.category !== cat) { sel.category = cat; sel.relation = null; sel.detail = null; }  // changing category clears deeper choices
+    paintPressed('.rel-option', 'rel', sel.category);
+    if (cat === 'Family') openFamily();
+    else toast(cat + ' options — coming next');
+  }));
+
+  function openFamily(){
+    const first = activeFirst();
+    $('#fam-name').textContent = first;
+    $('#fam-sub-name').textContent = first;
+    paintPressed('.fam-option', 'fam', sel.relation);
+    wizGo('family');
+  }
+  // Family connection types (shared with the person page).
+  const FAM_DETAIL = window.LEGACY_REL.FAM_DETAIL;
+  let pendingFamRel = null;
+
+  // Family relation taps drill into the connection-type step for that relation.
+  $$('.fam-option').forEach(b => b.addEventListener('click', () => {
+    const rel = b.dataset.fam;
+    if (sel.relation !== rel) { sel.relation = rel; sel.detail = null; }  // changing relation clears the detail
+    paintPressed('.fam-option', 'fam', sel.relation);
+    if (FAM_DETAIL[rel]) openFamilyDetail(rel);
+    else finalizeRelationship(rel, null);
+  }));
+
+  function openFamilyDetail(rel){
+    pendingFamRel = rel;
+    $('#famdetail-title').textContent = 'How should we connect ' + activeFirst() + ' as your ' + rel.toLowerCase() + '?';
+    $('#famdetail-options').innerHTML = FAM_DETAIL[rel].map(opt =>
+      '<button class="famdetail-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" aria-pressed="' + (opt === sel.detail) + '" data-detail="' + opt + '">' + opt + '</button>'
+    ).join('');
+    wizGo('familyDetail');
+  }
+  $('#famdetail-options').addEventListener('click', (e) => {
+    const b = e.target.closest('.famdetail-option'); if (!b) return;
+    sel.detail = b.dataset.detail;
+    paintPressed('.famdetail-option', 'detail', sel.detail);
+    finalizeRelationship(pendingFamRel, b.dataset.detail);
+  });
+
+  // Persist the full selection path, close, and confirm. The badge shows the
+  // base relation, EXCEPT for step-relations, which stay explicit on the badge
+  // (e.g. "Stepfather") — the most sensitive distinction to surface.
+  function finalizeRelationship(base, detail){
+    const badge = window.LEGACY_REL.computeBadge(base, detail);
+    setRelationship(activeId, { category: sel.category || 'Family', relation: base, detail: detail || null, badge: badge });
+    buildPeople(); render();
+    closeAll();
+    const shown = (detail && detail !== 'Skip This') ? detail : base;
+    toast(activeFirst() + ' saved as your ' + shown.toLowerCase());
+  }
+
+  function openShare(){ overlays.options.classList.remove('open'); $('#share-sub').textContent = 'Invite others to visit ' + activeName + '’s page'; openOverlay(overlays.share); }
+  $('#copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('#share-link').value); } catch(_){} closeAll(); toast('Link copied to clipboard'); });
+  $$('.share-channel').forEach(b => b.addEventListener('click', () => { closeAll(); toast('Opening ' + b.dataset.channel + '…'); }));
+
+  function openRemove(){
+    overlays.options.classList.remove('open');
+    $('#rm-title').textContent = 'Are you sure you want to remove ' + activeName + '?';
+    $('#rm-body').textContent = 'You’ll no longer receive updates about this page. You can always save them again if you change your mind.';
+    openOverlay(overlays.remove);
+  }
+  $('#rm-confirm').addEventListener('click', () => {
+    const id = activeId;
+    const idx = savedIds.indexOf(id);
+    closeAll();
+    if (idx === -1) return;
+    savedIds.splice(idx, 1); writeSaved(savedIds); buildPeople(); render();
+    toast('Removed from My People', () => {
+      savedIds.splice(Math.min(idx, savedIds.length), 0, id); writeSaved(savedIds); buildPeople(); render();
+      toast('Restored to My People');
+    });
+  });
+
+  // ===== close handlers =====
+  $$('[data-close]').forEach(b => b.addEventListener('click', closeAll));
+  const backBtn = $('[data-back]'); if (backBtn) backBtn.addEventListener('click', () => { overlays.share.classList.remove('open'); openOverlay(overlays.options); });
+  Object.values(overlays).forEach(o => o.addEventListener('mousedown', e => { if(e.target===o) closeAll(); }));
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeAll(); });
+
+  // ===== toast =====
+  const toastEl=$('#toast'), toastText=$('#toast-text'), toastAction=$('#toast-action');
+  let toastTimer=null;
+  function toast(msg, undoFn){
+    clearTimeout(toastTimer);
+    toastText.textContent = msg;
+    if (undoFn) { toastAction.classList.remove('hidden'); toastAction.textContent='Undo'; toastAction.onclick = () => { clearTimeout(toastTimer); toastEl.classList.remove('show'); undoFn(); }; }
+    else { toastAction.classList.add('hidden'); toastAction.onclick = null; }
+    toastEl.classList.add('show');
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), undoFn ? 6000 : 2600);
+  }
+
+  // ===== mobile account accordion =====
+  const acct=$('#acct-accordion'), acctToggle=$('#acct-toggle');
+  acctToggle.addEventListener('click', () => {
+    const open = acct.dataset.acctOpen === 'true';
+    acct.dataset.acctOpen = String(!open);
+    acctToggle.setAttribute('aria-expanded', String(!open));
+  });
+
+  // ===== demo switcher =====
+  $$('.demo-switcher [data-scenario]').forEach(b => b.addEventListener('click', () => {
+    $$('.demo-switcher [data-scenario]').forEach(x => x.classList.toggle('active', x===b));
+    loadScenario(b.dataset.scenario);
+  }));
+  const demoReset = $('[data-demo-reset]');
+  if (demoReset) demoReset.addEventListener('click', () => {
+    try { localStorage.removeItem('legacyMyPeople.v0'); } catch(_){}
+    location.href = location.pathname;  // clean URL, default demo state
+  });
+
+  // ===== Create collection modal =====
+  const collName = $('#coll-name'), collDesc = $('#coll-desc'), collCreate = $('#coll-create'), collCount = $('#coll-count');
+  function refreshCollForm(){
+    const selected = $$('.coll-person:checked').length;
+    collCount.textContent = '(' + selected + ' selected)';
+    collCreate.disabled = collName.value.trim().length === 0;
+  }
+  function openCreateCollection(preselect){
+    const pre = Array.isArray(preselect) ? preselect : [];  // guard: click handler passes an Event, not an array
+    collName.value = ''; collDesc.value = '';
+    $('#coll-people').innerHTML = savedIds.map(id => {
+      const p = personData(id);
+      const av = p.photo
+        ? '<span class="w-8 h-8 rounded-full bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
+        : '<span class="w-8 h-8 rounded-full flex items-center justify-center font-serif-heading text-white text-sm flex-shrink-0" style="background:' + colorFor(id) + '">' + esc(initials(p.name)) + '</span>';
+      return '<label class="flex items-center gap-3 py-2 px-1 rounded-lg hover:bg-wb-50 cursor-pointer">' +
+        av +
+        '<span class="flex-1 min-w-0 truncate text-base text-wb-900">' + esc(p.name) + '</span>' +
+        '<input type="checkbox" class="coll-person w-5 h-5 accent-navy-700" value="' + esc(id) + '"' + (pre.indexOf(id) >= 0 ? ' checked' : '') + ' />' +
+      '</label>';
+    }).join('');
+    refreshCollForm();
+    openOverlay(overlays.collection);
+  }
+  collName.addEventListener('input', refreshCollForm);
+  $('#coll-people').addEventListener('change', refreshCollForm);
+  $('#coll-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = collName.value.trim(); if (!name) return;
+    const chosen = $$('.coll-person:checked').map(c => c.value);
+    const colls = readCollections();
+    colls.push({ id: 'coll-' + (colls.length + 1) + '-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24), name: name, description: collDesc.value.trim(), people: chosen });
+    writeCollections(colls);
+    renderCollections();
+    closeAll();
+    toast('Collection “' + name + '” created');
+  });
+
+  // ===== init =====
+  // Use the persisted saved list if present (so person-page adds/removes carry
+  // over); otherwise seed the default demo set.
+  savedIds = readSaved();
+  if (!savedIds) { savedIds = DEFAULT_SAVED.slice(); writeSaved(savedIds); }
+  buildPeople();
+  render();
+  renderCollections();
+  const activeKey = savedIds.length === 0 ? 'zero'
+    : (savedIds.length === 1 && savedIds[0] === 'mohammad') ? 'one'
+    : (JSON.stringify(savedIds) === JSON.stringify(DEFAULT_SAVED) ? 'full' : null);
+  $$('.demo-switcher [data-scenario]').forEach(b => b.classList.toggle('active', b.dataset.scenario === activeKey));
+})();
+</script>
+</body>
+</html>

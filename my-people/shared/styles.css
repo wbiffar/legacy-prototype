@@ -31,6 +31,20 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   @keyframes slideup { from { transform: translateY(100%); } to { transform: none; } }
 }
 
+/* Wizard sheet: multiple panes slide horizontally inside a stable sheet
+   container (the container stays put; only the content slides). The viewport
+   height animates to the active pane. Reused for sheet drill-in navigation. */
+.wiz-viewport { position: relative; overflow: hidden; transition: height .3s ease; }
+.wiz-pane { position: absolute; top: 0; left: 0; width: 100%; transition: transform .3s ease, opacity .25s ease; }
+.wiz-pane[data-state="active"] { transform: translateX(0); opacity: 1; }
+.wiz-pane[data-state="prev"]   { transform: translateX(-100%); opacity: 0; pointer-events: none; }
+.wiz-pane[data-state="next"]   { transform: translateX(100%); opacity: 0; pointer-events: none; }
+
+/* Selectable pill (relationship wizard): filled navy when chosen. The
+   button+attribute selector outranks Tailwind's hover:, so it stays filled. */
+button.rel-pill[aria-pressed="true"] { background: #293548; border-color: #293548; color: #fff; }
+button.rel-pill[aria-pressed="true"] i { color: #fff; }
+
 /* =================== Toast (Figma Toast component) =================== */
 .toast {
   position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-16px);
@@ -99,5 +113,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .demo-switcher button { padding: 6px 12px; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.14); background: transparent; color: rgba(255,255,255,0.72); font-size: 12.5px; font-weight: 500; cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 6px; }
 .demo-switcher button:hover { background: rgba(255,255,255,0.08); color: #fff; }
 .demo-switcher button.active { background: #dcb05e; color: #262116; font-weight: 600; border-color: #dcb05e; }
+.demo-switcher-divider { width: 1px; align-self: stretch; margin: 2px 4px; background: rgba(255,255,255,0.14); }
+.demo-switcher [data-demo-reset]:hover { background: rgba(220,176,94,0.16); color: #f0d78d; border-color: rgba(220,176,94,0.5); }
 
 @media print { .demo-switcher, .sticky-actions { display: none; } }
