@@ -119,6 +119,15 @@
           </div>
           <div id="grid-root"></div>
         </section>
+
+        <!-- =================== Possible matches =================== -->
+        <section id="matches-section" class="mt-10 md:mt-12 flex-col gap-5" style="display:none">
+          <div class="flex flex-col gap-2">
+            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Possible matches <span id="matches-count"></span></h2>
+            <p class="text-base text-wb-700 leading-relaxed">People you may want to save — based on family names, the people you’ve saved, and places you follow.</p>
+          </div>
+          <div id="matches-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5"></div>
+        </section>
       </div>
 
       <!-- ---------- COLLECTION DETAIL VIEW ---------- -->
@@ -661,6 +670,46 @@
     applyPhotoColors();
   }
 
+  // ===== Possible matches (user-level suggestions) =====
+  // A clickable card that opens the person's page; the button saves them to
+  // My People (and drops them from this list). Mirrors the collection-detail
+  // suggestion card, restyled to sit in the dashboard grid.
+  function matchCardHTML(s){
+    const p = personData(s.id);
+    const d = P[s.id];
+    const av = p.photo
+      ? '<span class="w-12 h-12 rounded-full bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
+      : '<span class="w-12 h-12 rounded-full flex items-center justify-center font-serif-heading text-white text-lg flex-shrink-0" style="background:' + colorFor(s.id) + '">' + esc(initials(p.name)) + '</span>';
+    return '<article class="match-card transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg bg-white border border-wb-300 rounded-lg p-4 flex flex-col gap-3 cursor-pointer" data-id="' + esc(s.id) + '">' +
+      '<div class="flex items-start gap-3">' + av +
+        '<div class="flex-1 min-w-0"><p class="text-base font-semibold text-wb-900 leading-tight truncate">' + esc(p.name) + '</p><p class="text-sm text-wb-600">' + esc(d ? d.dates : '') + '</p></div>' +
+        '<button class="match-dismiss w-7 h-7 -mr-1 -mt-1 rounded-full text-wb-400 hover:text-wb-700 hover:bg-wb-100 flex items-center justify-center flex-shrink-0" aria-label="Dismiss suggestion"><i class="ph ph-x"></i></button>' +
+      '</div>' +
+      '<p class="flex items-start gap-1.5 text-sm text-wb-700 leading-snug"><i class="' + s.icon + ' text-base text-gold-700 flex-shrink-0 mt-0.5"></i> <span class="min-w-0">' + esc(s.reason) + '</span></p>' +
+      '<button class="match-add mt-auto w-full h-10 rounded-full border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors inline-flex items-center justify-center gap-2"><i class="ph ph-plus-circle text-lg"></i> Add to My People</button>' +
+    '</article>';
+  }
+  function renderMatches(){
+    const sec = $('#matches-section'), grid = $('#matches-grid');
+    if (!sec || !grid) return;
+    const items = window.LEGACY_SUGGEST.list(savedIds);
+    sec.style.display = items.length ? 'flex' : 'none';
+    const cnt = $('#matches-count'); if (cnt) cnt.textContent = '• (' + items.length + ')';
+    grid.innerHTML = items.map(matchCardHTML).join('');
+  }
+  $('#matches-grid').addEventListener('click', (e) => {
+    const card = e.target.closest('.match-card'); if (!card) return;
+    const id = card.dataset.id;
+    if (e.target.closest('.match-dismiss')) { window.LEGACY_SUGGEST.dismiss(id); renderMatches(); return; }
+    if (e.target.closest('.match-add')) {
+      if (savedIds.indexOf(id) < 0) { savedIds.push(id); writeSaved(savedIds); buildPeople(); render(); }
+      renderMatches();
+      toast(personData(id).name + ' added to My People');
+      return;
+    }
+    window.location.href = 'future-index.html?id=' + id;
+  });
+
   // ===== Collections =====
   function readCollections(){ const o = readStore(); return Array.isArray(o.collections) ? o.collections : []; }
   function writeCollections(arr){ const o = readStore(); o.collections = arr; writeStore(o); }
@@ -1110,9 +1159,9 @@
     const idx = savedIds.indexOf(id);
     closeAll();
     if (idx === -1) return;
-    savedIds.splice(idx, 1); writeSaved(savedIds); buildPeople(); render();
+    savedIds.splice(idx, 1); writeSaved(savedIds); buildPeople(); render(); renderMatches();
     toast('Removed from My People', () => {
-      savedIds.splice(Math.min(idx, savedIds.length), 0, id); writeSaved(savedIds); buildPeople(); render();
+      savedIds.splice(Math.min(idx, savedIds.length), 0, id); writeSaved(savedIds); buildPeople(); render(); renderMatches();
       toast('Restored to My People');
     });
   });
@@ -1200,6 +1249,7 @@
   buildPeople();
   render();
   renderCollections();
+  renderMatches();
   const activeKey = savedIds.length === 0 ? 'zero'
     : (savedIds.length === 1 && savedIds[0] === 'mohammad') ? 'one'
     : (JSON.stringify(savedIds) === JSON.stringify(DEFAULT_SAVED) ? 'full' : null);
