@@ -18,18 +18,18 @@
   // Every family relation drills into a connection-type step. Options are
   // relation-appropriate and inclusive of blended, adoptive, and chosen family.
   var FAM_DETAIL = {
-    Father:      ['Biological father', 'Adoptive father', 'Stepfather', 'Foster father', 'Guardian', 'Skip This'],
-    Mother:      ['Biological mother', 'Adoptive mother', 'Stepmother', 'Foster mother', 'Guardian', 'Skip This'],
-    Brother:     ['Biological brother', 'Half-brother', 'Stepbrother', 'Adoptive brother', 'Foster brother', 'Skip This'],
-    Sister:      ['Biological sister', 'Half-sister', 'Stepsister', 'Adoptive sister', 'Foster sister', 'Skip This'],
-    Grandfather: ['Biological grandfather', 'Step-grandfather', 'Adoptive grandfather', 'Skip This'],
-    Grandmother: ['Biological grandmother', 'Step-grandmother', 'Adoptive grandmother', 'Skip This'],
-    Grandchild:  ['Biological grandchild', 'Step-grandchild', 'Adoptive grandchild', 'Skip This'],
-    Aunt:        ['Aunt by birth', 'Aunt by marriage', 'Great-aunt', 'Skip This'],
-    Uncle:       ['Uncle by birth', 'Uncle by marriage', 'Great-uncle', 'Skip This'],
-    Cousin:      ['First cousin', 'Second cousin', 'Cousin by marriage', 'Skip This'],
-    Niece:       ['Niece by birth', 'Niece by marriage', 'Great-niece', 'Skip This'],
-    Nephew:      ['Nephew by birth', 'Nephew by marriage', 'Great-nephew', 'Skip This'],
+    Father:      ['Biological father', 'Adoptive father', 'Stepfather', 'Foster father', 'Guardian', 'Other'],
+    Mother:      ['Biological mother', 'Adoptive mother', 'Stepmother', 'Foster mother', 'Guardian', 'Other'],
+    Brother:     ['Biological brother', 'Half-brother', 'Stepbrother', 'Adoptive brother', 'Foster brother', 'Other'],
+    Sister:      ['Biological sister', 'Half-sister', 'Stepsister', 'Adoptive sister', 'Foster sister', 'Other'],
+    Grandfather: ['Biological grandfather', 'Step-grandfather', 'Adoptive grandfather', 'Other'],
+    Grandmother: ['Biological grandmother', 'Step-grandmother', 'Adoptive grandmother', 'Other'],
+    Grandchild:  ['Biological grandchild', 'Step-grandchild', 'Adoptive grandchild', 'Other'],
+    Aunt:        ['Aunt by birth', 'Aunt by marriage', 'Great-aunt', 'Other'],
+    Uncle:       ['Uncle by birth', 'Uncle by marriage', 'Great-uncle', 'Other'],
+    Cousin:      ['First cousin', 'Second cousin', 'Cousin by marriage', 'Other'],
+    Niece:       ['Niece by birth', 'Niece by marriage', 'Great-niece', 'Other'],
+    Nephew:      ['Nephew by birth', 'Nephew by marriage', 'Great-nephew', 'Other'],
   };
   // Family relations (first pane after Family), in display order.
   var FAMILY_RELATIONS = ['Father', 'Mother', 'Brother', 'Sister', 'Grandfather', 'Grandmother', 'Grandchild', 'Aunt', 'Uncle', 'Cousin', 'Niece', 'Nephew'];

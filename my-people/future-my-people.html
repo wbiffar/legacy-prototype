@@ -281,14 +281,14 @@
             <!-- Add your relationship (Section 4 entry point) -->
             <button data-action="relationship" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
               <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-tree-structure text-xl"></i></span>
-              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Add your relationship</span><span class="block text-xs text-wb-700 mt-1">Connect and organize your family tree</span></span>
+              <span class="flex-1 min-w-0"><span id="opt-rel-title" class="block text-base font-semibold text-wb-900 leading-tight">Add your relationship</span><span id="opt-rel-sub" class="block text-xs text-wb-700 mt-1">Connect and organize your family tree</span></span>
               <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
             </button>
 
             <!-- Add to collection -->
             <button data-action="addcollection" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
               <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-folders text-xl"></i></span>
-              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Add to collection</span><span class="block text-xs text-wb-700 mt-1">Group them with people who belong together</span></span>
+              <span class="flex-1 min-w-0"><span id="opt-coll-title" class="block text-base font-semibold text-wb-900 leading-tight">Add to collection</span><span id="opt-coll-sub" class="block text-xs text-wb-700 mt-1">Group them with people who belong together</span></span>
               <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
             </button>
 
@@ -328,10 +328,10 @@
               <p class="text-base text-wb-700 leading-normal">Adding your relationship helps build your connections and family tree.</p>
             </div>
             <div class="flex flex-col gap-4 pt-4">
-              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Family">Family <i class="ph ph-caret-right text-2xl"></i></button>
-              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Friend/Acquaintance">Friend/Acquaintance <i class="ph ph-caret-right text-2xl"></i></button>
-              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="School">School <i class="ph ph-caret-right text-2xl"></i></button>
-              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Work">Work <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="Family">Family <i class="ph ph-caret-right text-lg"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="Friend/Acquaintance">Friend/Acquaintance <i class="ph ph-caret-right text-lg"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="School">School <i class="ph ph-caret-right text-lg"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="Work">Work <i class="ph ph-caret-right text-lg"></i></button>
             </div>
           </div>
         </div>
@@ -347,18 +347,18 @@
               <p class="text-base text-wb-700 leading-normal">Choose the role <span id="fam-sub-name">this person</span> had in your family. We’ll help you refine it next.</p>
             </div>
             <div class="grid grid-cols-2 gap-4 pt-4">
-              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Father">Father</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Mother">Mother</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Brother">Brother</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Sister">Sister</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandfather">Grandfather</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandmother">Grandmother</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Grandchild">Grandchild</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Aunt">Aunt</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Uncle">Uncle</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Cousin">Cousin</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Niece">Niece</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="Nephew">Nephew</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Father">Father</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Mother">Mother</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Brother">Brother</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Sister">Sister</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Grandfather">Grandfather</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Grandmother">Grandmother</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Grandchild">Grandchild</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Aunt">Aunt</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Uncle">Uncle</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Cousin">Cousin</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Niece">Niece</button>
+              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Nephew">Nephew</button>
             </div>
           </div>
         </div>
@@ -374,6 +374,13 @@
               <p class="text-base text-wb-700 leading-normal">Choose what best fits your family story.</p>
             </div>
             <div id="famdetail-options" class="grid grid-cols-2 gap-4 pt-4"></div>
+            <!-- Submit button group (mirrors Figma 6270-10287): confirm the choice
+                 instead of committing on the first tap. Submit is disabled until a
+                 connection type is picked. -->
+            <div class="flex items-center gap-4 pt-4 mt-4 border-t border-wb-300">
+              <button type="button" id="famdetail-cancel" class="inline-flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50 shrink-0">Cancel</button>
+              <button type="button" id="famdetail-submit" disabled class="flex-1 min-w-0 inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-semibold">Add Relationship</button>
+            </div>
           </div>
         </div>
       </div>
@@ -384,7 +391,7 @@
           <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
           <div class="flex flex-col gap-3">
             <div class="flex flex-col gap-1">
-              <h2 class="text-xl font-bold text-navy-700 leading-tight">Add <span id="addcoll-name">this person</span> to a collection</h2>
+              <h2 id="addcoll-title" class="text-xl font-bold text-navy-700 leading-tight">Add <span id="addcoll-name">this person</span> to a collection</h2>
               <p class="text-base text-wb-700 leading-normal">Tap a collection to add or remove them.</p>
             </div>
             <div id="addcoll-list" class="flex flex-col pt-1"></div>
@@ -550,7 +557,6 @@
 
   const P = window.LEGACY_PEOPLE || {};
   const DEFAULT_SAVED = (window.LEGACY_DEFAULT_SAVED || ['mohammad','douglas','jennifer']).slice();
-  const POOL_IDS = ['ralph','eleanor','marcus','robert','veronica','patricia','george','margaret','gloria','james','dorothy'];
 
   let savedIds = [];
   let people = [];
@@ -935,12 +941,12 @@
     renderMatches();
   }
 
-  // "Add More People" takes the user to an (unsaved) person's page so they can
-  // add from there — a more complete experience than a silent add. Carries
-  // from=account so the person page opens signed-in.
+  // "Add More People" — in the real product this launches the search
+  // experience. The prototype doesn't include search, so we surface a toast
+  // explaining the intended flow rather than jumping to an arbitrary person
+  // page (which testers read as the wrong behavior).
   function goAddMore(){
-    const next = POOL_IDS.find(id => !savedIds.includes(id)) || POOL_IDS[0];
-    window.location.href = 'future-index.html?id=' + next + '&from=account';
+    toast('Users will be brought to our search experience so they can find the person they want to add.', null, { variant: 'info' });
   }
 
   // ===== modal plumbing =====
@@ -967,6 +973,20 @@
     if (instant) { const t = vp.style.transition; vp.style.transition = 'none'; applyHeight(); void vp.offsetHeight; vp.style.transition = t; }
     else applyHeight();
   }
+  // The viewport is overflow-hidden with an explicit (animated) height, so it
+  // clips if the active pane grows AFTER the initial measure — late icon-font
+  // load, a long name wrapping the title, or rows added/removed by the
+  // collection toggle. Re-sync the height whenever the active pane resizes.
+  function syncWizHeight(){
+    const vp = $('#opt-viewport'); if (!vp) return;
+    const active = vp.querySelector('.wiz-pane[data-state="active"]');
+    if (active) vp.style.height = active.offsetHeight + 'px';
+  }
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => syncWizHeight());
+    $$('#opt-viewport .wiz-pane').forEach(p => ro.observe(p));
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncWizHeight);
   function wizGo(name){ wizStack.push(name); wizRender(); }
   function wizBack(){ if (wizStack.length > 1) { wizStack.pop(); wizRender(); } }
   function wizReset(){ wizStack = ['menu']; wizRender(true); }
@@ -983,6 +1003,20 @@
     const view = $('#opt-view'); if (view) view.href = 'future-index.html?id=' + activeId;
     $('#share-link').value = 'https://www.legacy.com/obituaries/' + activeId;
     paintUpdatesToggle(isFollowing(activeId));
+
+    // Relationship menu item reflects whether a relationship is already set
+    // (user-added badge, or the demo default): "Add" → "Edit".
+    const hasRel = !!(relBadge(readRelationships()[activeId]) || (P[activeId] && P[activeId].relation));
+    $('#opt-rel-title').textContent = hasRel ? 'Edit your relationship' : 'Add your relationship';
+    $('#opt-rel-sub').textContent = hasRel ? 'Update how you’re connected' : 'Connect and organize your family tree';
+
+    // Collection menu item reflects whether they're in any collection yet:
+    // "Add to collection" → "Manage their collections".
+    const inColls = readCollections().filter(c => (c.people || []).indexOf(activeId) >= 0).length;
+    $('#opt-coll-title').textContent = inColls ? 'Manage their collections' : 'Add to collection';
+    $('#opt-coll-sub').textContent = inColls
+      ? 'In ' + inColls + ' collection' + (inColls === 1 ? '' : 's') + ' • add or remove'
+      : 'Group them with people who belong together';
   }
 
   // Email-updates toggle inside the options sheet. State-dependent styles are
@@ -1030,7 +1064,10 @@
 
   // ----- Add to collection (slides in as a wizard pane) -----
   function openAddToCollection(){
-    $('#addcoll-name').textContent = activeName;
+    const inColls = readCollections().filter(c => (c.people || []).indexOf(activeId) >= 0).length;
+    $('#addcoll-title').innerHTML = inColls
+      ? 'Manage <span id="addcoll-name">' + esc(activeName) + '</span>’s collections'
+      : 'Add <span id="addcoll-name">' + esc(activeName) + '</span> to a collection';
     renderAddCollList();
     wizGo('collections');
   }
@@ -1122,16 +1159,34 @@
     pendingFamRel = rel;
     $('#famdetail-title').textContent = 'How should we connect ' + activeFirst() + ' as your ' + rel.toLowerCase() + '?';
     $('#famdetail-options').innerHTML = FAM_DETAIL[rel].map(opt =>
-      '<button class="famdetail-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" aria-pressed="' + (opt === sel.detail) + '" data-detail="' + opt + '">' + opt + '</button>'
+      '<button class="famdetail-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" aria-pressed="' + (opt === sel.detail) + '" data-detail="' + opt + '">' + opt + '</button>'
     ).join('');
+    paintFamSubmit();
     wizGo('familyDetail');
   }
+  // Submit button state — inline colors so the enabled/disabled swap renders
+  // instantly (independent of the Tailwind CDN's async class generation).
+  function paintFamSubmit(){
+    const b = $('#famdetail-submit'); if (!b) return;
+    const on = !!sel.detail;
+    b.disabled = !on;
+    b.style.cursor = on ? 'pointer' : 'not-allowed';
+    b.style.backgroundColor = on ? '#e2ba60' : '#ebe9e9';   // gold-400 / wb-200
+    b.style.color = on ? '#262116' : '#807e7a';             // wb-900 / wb-500
+    b.style.border = on ? '1px solid #e2ba60' : '1px solid #dbdad7'; // gold-400 / wb-300
+  }
+  // Tapping a connection type now only selects it — the user confirms with Submit.
   $('#famdetail-options').addEventListener('click', (e) => {
     const b = e.target.closest('.famdetail-option'); if (!b) return;
     sel.detail = b.dataset.detail;
     paintPressed('.famdetail-option', 'detail', sel.detail);
-    finalizeRelationship(pendingFamRel, b.dataset.detail);
+    paintFamSubmit();
   });
+  $('#famdetail-submit').addEventListener('click', () => {
+    if (!sel.detail) return;
+    finalizeRelationship(pendingFamRel, sel.detail);
+  });
+  $('#famdetail-cancel').addEventListener('click', closeAll);
 
   // Persist the full selection path, close, and confirm. The badge shows the
   // base relation, EXCEPT for step-relations, which stay explicit on the badge
@@ -1141,7 +1196,7 @@
     setRelationship(activeId, { category: sel.category || 'Family', relation: base, detail: detail || null, badge: badge });
     buildPeople(); render();
     closeAll();
-    const shown = (detail && detail !== 'Skip This') ? detail : base;
+    const shown = (detail && detail !== 'Other') ? detail : base;
     toast(activeFirst() + ' saved as your ' + shown.toLowerCase());
   }
 
@@ -1174,15 +1229,23 @@
   document.addEventListener('keydown', e => { if(e.key==='Escape') closeAll(); });
 
   // ===== toast =====
+  // Default is a success toast (seafoam + bookmark). Pass opts.variant='info'
+  // for a neutral, informational toast (navy + info icon). Variant styling is
+  // set inline so it renders reliably regardless of stylesheet caching.
   const toastEl=$('#toast'), toastText=$('#toast-text'), toastAction=$('#toast-action');
+  const toastIco=toastEl.querySelector('.toast-ico');
   let toastTimer=null;
-  function toast(msg, undoFn){
+  function toast(msg, undoFn, opts){
+    opts = opts || {};
+    const info = opts.variant === 'info';
     clearTimeout(toastTimer);
     toastText.textContent = msg;
+    toastEl.style.background = info ? '#293548' : '';   // navy-700 for info; '' falls back to the CSS seafoam
+    toastIco.className = (info ? 'ph-fill ph-info' : 'ph ph-bookmark-simple') + ' toast-ico';
     if (undoFn) { toastAction.classList.remove('hidden'); toastAction.textContent='Undo'; toastAction.onclick = () => { clearTimeout(toastTimer); toastEl.classList.remove('show'); undoFn(); }; }
     else { toastAction.classList.add('hidden'); toastAction.onclick = null; }
     toastEl.classList.add('show');
-    toastTimer = setTimeout(() => toastEl.classList.remove('show'), undoFn ? 6000 : 2600);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), (undoFn || info) ? 6000 : 2600);
   }
 
   // ===== mobile account accordion =====

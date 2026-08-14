@@ -587,10 +587,10 @@
               <p class="text-base text-wb-700 leading-normal">Adding your relationship helps build your connections and family tree.</p>
             </div>
             <div class="flex flex-col gap-4 pt-4">
-              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Family">Family <i class="ph ph-caret-right text-2xl"></i></button>
-              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Friend/Acquaintance">Friend/Acquaintance <i class="ph ph-caret-right text-2xl"></i></button>
-              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="School">School <i class="ph ph-caret-right text-2xl"></i></button>
-              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Work">Work <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="Family">Family <i class="ph ph-caret-right text-lg"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="Friend/Acquaintance">Friend/Acquaintance <i class="ph ph-caret-right text-lg"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="School">School <i class="ph ph-caret-right text-lg"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="Work">Work <i class="ph ph-caret-right text-lg"></i></button>
             </div>
           </div>
         </div>
@@ -620,6 +620,13 @@
               <p class="text-base text-wb-700 leading-normal">Choose what best fits your family story.</p>
             </div>
             <div id="famdetail-options" class="grid grid-cols-2 gap-4 pt-4"></div>
+            <!-- Submit button group (mirrors Figma 6270-10287): confirm the choice
+                 instead of committing on the first tap. Submit is disabled until a
+                 connection type is picked. -->
+            <div class="flex items-center gap-4 pt-4 mt-4 border-t border-wb-300">
+              <button type="button" id="famdetail-cancel" class="inline-flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50 shrink-0">Cancel</button>
+              <button type="button" id="famdetail-submit" disabled class="flex-1 min-w-0 inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-semibold">Add Relationship</button>
+            </div>
           </div>
         </div>
       </div>
@@ -883,7 +890,7 @@
 
   // Render the family relations grid once from the shared list.
   $('#fam-options').innerHTML = REL.FAMILY_RELATIONS.map(r =>
-    '<button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="' + r + '">' + r + '</button>'
+    '<button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="' + r + '">' + r + '</button>'
   ).join('');
 
   function paintPressed(selector, key, value){ $$(selector).forEach(b => b.setAttribute('aria-pressed', String(b.dataset[key] === value))); }
@@ -943,16 +950,34 @@
     pendingFamRel = rel;
     $('#famdetail-title').textContent = 'How should we connect ' + PERSON.first + ' as your ' + rel.toLowerCase() + '?';
     $('#famdetail-options').innerHTML = REL.FAM_DETAIL[rel].map(opt =>
-      '<button class="famdetail-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" aria-pressed="' + (opt === sel.detail) + '" data-detail="' + esc(opt) + '">' + esc(opt) + '</button>'
+      '<button class="famdetail-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" aria-pressed="' + (opt === sel.detail) + '" data-detail="' + esc(opt) + '">' + esc(opt) + '</button>'
     ).join('');
+    paintFamSubmit();
     relGo('familyDetail');
   }
+  // Submit button state — inline colors so the enabled/disabled swap renders
+  // instantly (independent of the Tailwind CDN's async class generation).
+  function paintFamSubmit(){
+    const b = $('#famdetail-submit'); if (!b) return;
+    const on = !!sel.detail;
+    b.disabled = !on;
+    b.style.cursor = on ? 'pointer' : 'not-allowed';
+    b.style.backgroundColor = on ? '#e2ba60' : '#ebe9e9';   // gold-400 / wb-200
+    b.style.color = on ? '#262116' : '#807e7a';             // wb-900 / wb-500
+    b.style.border = on ? '1px solid #e2ba60' : '1px solid #dbdad7'; // gold-400 / wb-300
+  }
+  // Tapping a connection type now only selects it — the user confirms with Submit.
   $('#famdetail-options').addEventListener('click', (e) => {
     const b = e.target.closest('.famdetail-option'); if (!b) return;
     sel.detail = b.dataset.detail;
     paintPressed('.famdetail-option', 'detail', sel.detail);
-    finalizeRelationship(pendingFamRel, b.dataset.detail);
+    paintFamSubmit();
   });
+  $('#famdetail-submit').addEventListener('click', () => {
+    if (!sel.detail) return;
+    finalizeRelationship(pendingFamRel, sel.detail);
+  });
+  $('#famdetail-cancel').addEventListener('click', closeAll);
 
   function finalizeRelationship(base, detail){
     const badge = REL.computeBadge(base, detail);
@@ -963,7 +988,7 @@
     closeAll();
     paintHeroRel();
     paintAdded();
-    const shown = (detail && detail !== 'Skip This') ? detail : base;
+    const shown = (detail && detail !== 'Other') ? detail : base;
     toast(wasSaved
       ? 'Saved as your ' + shown.toLowerCase()
       : PERSON.first + ' added to My People as your ' + shown.toLowerCase(),
