@@ -557,7 +557,6 @@
 
   const P = window.LEGACY_PEOPLE || {};
   const DEFAULT_SAVED = (window.LEGACY_DEFAULT_SAVED || ['mohammad','douglas','jennifer']).slice();
-  const POOL_IDS = ['ralph','eleanor','marcus','robert','veronica','patricia','george','margaret','gloria','james','dorothy'];
 
   let savedIds = [];
   let people = [];
@@ -942,12 +941,12 @@
     renderMatches();
   }
 
-  // "Add More People" takes the user to an (unsaved) person's page so they can
-  // add from there — a more complete experience than a silent add. Carries
-  // from=account so the person page opens signed-in.
+  // "Add More People" — in the real product this launches the search
+  // experience. The prototype doesn't include search, so we surface a toast
+  // explaining the intended flow rather than jumping to an arbitrary person
+  // page (which testers read as the wrong behavior).
   function goAddMore(){
-    const next = POOL_IDS.find(id => !savedIds.includes(id)) || POOL_IDS[0];
-    window.location.href = 'future-index.html?id=' + next + '&from=account';
+    toast('Users will be brought to our search experience so they can find the person they want to add.');
   }
 
   // ===== modal plumbing =====
