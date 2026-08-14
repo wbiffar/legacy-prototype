@@ -587,10 +587,10 @@
               <p class="text-base text-wb-700 leading-normal">Adding your relationship helps build your connections and family tree.</p>
             </div>
             <div class="flex flex-col gap-4 pt-4">
-              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Family">Family <i class="ph ph-caret-right text-2xl"></i></button>
-              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Friend/Acquaintance">Friend/Acquaintance <i class="ph ph-caret-right text-2xl"></i></button>
-              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="School">School <i class="ph ph-caret-right text-2xl"></i></button>
-              <button class="rel-option rel-pill w-full flex items-center justify-between px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-rel="Work">Work <i class="ph ph-caret-right text-2xl"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="Family">Family <i class="ph ph-caret-right text-lg"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="Friend/Acquaintance">Friend/Acquaintance <i class="ph ph-caret-right text-lg"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="School">School <i class="ph ph-caret-right text-lg"></i></button>
+              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="Work">Work <i class="ph ph-caret-right text-lg"></i></button>
             </div>
           </div>
         </div>
@@ -890,7 +890,7 @@
 
   // Render the family relations grid once from the shared list.
   $('#fam-options').innerHTML = REL.FAMILY_RELATIONS.map(r =>
-    '<button class="fam-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" data-fam="' + r + '">' + r + '</button>'
+    '<button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="' + r + '">' + r + '</button>'
   ).join('');
 
   function paintPressed(selector, key, value){ $$(selector).forEach(b => b.setAttribute('aria-pressed', String(b.dataset[key] === value))); }
@@ -950,7 +950,7 @@
     pendingFamRel = rel;
     $('#famdetail-title').textContent = 'How should we connect ' + PERSON.first + ' as your ' + rel.toLowerCase() + '?';
     $('#famdetail-options').innerHTML = REL.FAM_DETAIL[rel].map(opt =>
-      '<button class="famdetail-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" aria-pressed="' + (opt === sel.detail) + '" data-detail="' + esc(opt) + '">' + esc(opt) + '</button>'
+      '<button class="famdetail-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" aria-pressed="' + (opt === sel.detail) + '" data-detail="' + esc(opt) + '">' + esc(opt) + '</button>'
     ).join('');
     paintFamSubmit();
     relGo('familyDetail');
