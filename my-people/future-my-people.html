@@ -281,14 +281,14 @@
             <!-- Add your relationship (Section 4 entry point) -->
             <button data-action="relationship" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
               <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-tree-structure text-xl"></i></span>
-              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Add your relationship</span><span class="block text-xs text-wb-700 mt-1">Connect and organize your family tree</span></span>
+              <span class="flex-1 min-w-0"><span id="opt-rel-title" class="block text-base font-semibold text-wb-900 leading-tight">Add your relationship</span><span id="opt-rel-sub" class="block text-xs text-wb-700 mt-1">Connect and organize your family tree</span></span>
               <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
             </button>
 
             <!-- Add to collection -->
             <button data-action="addcollection" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
               <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-folders text-xl"></i></span>
-              <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Add to collection</span><span class="block text-xs text-wb-700 mt-1">Group them with people who belong together</span></span>
+              <span class="flex-1 min-w-0"><span id="opt-coll-title" class="block text-base font-semibold text-wb-900 leading-tight">Add to collection</span><span id="opt-coll-sub" class="block text-xs text-wb-700 mt-1">Group them with people who belong together</span></span>
               <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
             </button>
 
@@ -384,7 +384,7 @@
           <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
           <div class="flex flex-col gap-3">
             <div class="flex flex-col gap-1">
-              <h2 class="text-xl font-bold text-navy-700 leading-tight">Add <span id="addcoll-name">this person</span> to a collection</h2>
+              <h2 id="addcoll-title" class="text-xl font-bold text-navy-700 leading-tight">Add <span id="addcoll-name">this person</span> to a collection</h2>
               <p class="text-base text-wb-700 leading-normal">Tap a collection to add or remove them.</p>
             </div>
             <div id="addcoll-list" class="flex flex-col pt-1"></div>
@@ -983,6 +983,20 @@
     const view = $('#opt-view'); if (view) view.href = 'future-index.html?id=' + activeId;
     $('#share-link').value = 'https://www.legacy.com/obituaries/' + activeId;
     paintUpdatesToggle(isFollowing(activeId));
+
+    // Relationship menu item reflects whether a relationship is already set
+    // (user-added badge, or the demo default): "Add" → "Edit".
+    const hasRel = !!(relBadge(readRelationships()[activeId]) || (P[activeId] && P[activeId].relation));
+    $('#opt-rel-title').textContent = hasRel ? 'Edit your relationship' : 'Add your relationship';
+    $('#opt-rel-sub').textContent = hasRel ? 'Update how you’re connected' : 'Connect and organize your family tree';
+
+    // Collection menu item reflects whether they're in any collection yet:
+    // "Add to collection" → "Manage their collections".
+    const inColls = readCollections().filter(c => (c.people || []).indexOf(activeId) >= 0).length;
+    $('#opt-coll-title').textContent = inColls ? 'Manage their collections' : 'Add to collection';
+    $('#opt-coll-sub').textContent = inColls
+      ? 'In ' + inColls + ' collection' + (inColls === 1 ? '' : 's') + ' • add or remove'
+      : 'Group them with people who belong together';
   }
 
   // Email-updates toggle inside the options sheet. State-dependent styles are
@@ -1030,7 +1044,10 @@
 
   // ----- Add to collection (slides in as a wizard pane) -----
   function openAddToCollection(){
-    $('#addcoll-name').textContent = activeName;
+    const inColls = readCollections().filter(c => (c.people || []).indexOf(activeId) >= 0).length;
+    $('#addcoll-title').innerHTML = inColls
+      ? 'Manage <span id="addcoll-name">' + esc(activeName) + '</span>’s collections'
+      : 'Add <span id="addcoll-name">' + esc(activeName) + '</span> to a collection';
     renderAddCollList();
     wizGo('collections');
   }
