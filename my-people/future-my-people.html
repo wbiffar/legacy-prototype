@@ -946,7 +946,7 @@
   // explaining the intended flow rather than jumping to an arbitrary person
   // page (which testers read as the wrong behavior).
   function goAddMore(){
-    toast('Users will be brought to our search experience so they can find the person they want to add.');
+    toast('Users will be brought to our search experience so they can find the person they want to add.', null, { variant: 'info' });
   }
 
   // ===== modal plumbing =====
@@ -1215,15 +1215,23 @@
   document.addEventListener('keydown', e => { if(e.key==='Escape') closeAll(); });
 
   // ===== toast =====
+  // Default is a success toast (seafoam + bookmark). Pass opts.variant='info'
+  // for a neutral, informational toast (navy + info icon). Variant styling is
+  // set inline so it renders reliably regardless of stylesheet caching.
   const toastEl=$('#toast'), toastText=$('#toast-text'), toastAction=$('#toast-action');
+  const toastIco=toastEl.querySelector('.toast-ico');
   let toastTimer=null;
-  function toast(msg, undoFn){
+  function toast(msg, undoFn, opts){
+    opts = opts || {};
+    const info = opts.variant === 'info';
     clearTimeout(toastTimer);
     toastText.textContent = msg;
+    toastEl.style.background = info ? '#293548' : '';   // navy-700 for info; '' falls back to the CSS seafoam
+    toastIco.className = (info ? 'ph-fill ph-info' : 'ph ph-bookmark-simple') + ' toast-ico';
     if (undoFn) { toastAction.classList.remove('hidden'); toastAction.textContent='Undo'; toastAction.onclick = () => { clearTimeout(toastTimer); toastEl.classList.remove('show'); undoFn(); }; }
     else { toastAction.classList.add('hidden'); toastAction.onclick = null; }
     toastEl.classList.add('show');
-    toastTimer = setTimeout(() => toastEl.classList.remove('show'), undoFn ? 6000 : 2600);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), (undoFn || info) ? 6000 : 2600);
   }
 
   // ===== mobile account accordion =====
