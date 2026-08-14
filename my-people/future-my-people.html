@@ -374,6 +374,13 @@
               <p class="text-base text-wb-700 leading-normal">Choose what best fits your family story.</p>
             </div>
             <div id="famdetail-options" class="grid grid-cols-2 gap-4 pt-4"></div>
+            <!-- Submit button group (mirrors Figma 6270-10287): confirm the choice
+                 instead of committing on the first tap. Submit is disabled until a
+                 connection type is picked. -->
+            <div class="flex items-center gap-4 pt-4 mt-4 border-t border-wb-300">
+              <button type="button" id="famdetail-cancel" class="inline-flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50 shrink-0">Cancel</button>
+              <button type="button" id="famdetail-submit" disabled class="flex-1 min-w-0 inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-semibold">Add Relationship</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1141,14 +1148,32 @@
     $('#famdetail-options').innerHTML = FAM_DETAIL[rel].map(opt =>
       '<button class="famdetail-option rel-pill w-full flex items-center justify-center px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50" aria-pressed="' + (opt === sel.detail) + '" data-detail="' + opt + '">' + opt + '</button>'
     ).join('');
+    paintFamSubmit();
     wizGo('familyDetail');
   }
+  // Submit button state — inline colors so the enabled/disabled swap renders
+  // instantly (independent of the Tailwind CDN's async class generation).
+  function paintFamSubmit(){
+    const b = $('#famdetail-submit'); if (!b) return;
+    const on = !!sel.detail;
+    b.disabled = !on;
+    b.style.cursor = on ? 'pointer' : 'not-allowed';
+    b.style.backgroundColor = on ? '#293548' : '#ebe9e9';   // navy-700 / wb-200
+    b.style.color = on ? '#ffffff' : '#807e7a';             // white / wb-500
+    b.style.border = on ? '1px solid #293548' : '1px solid #dbdad7'; // navy-700 / wb-300
+  }
+  // Tapping a connection type now only selects it — the user confirms with Submit.
   $('#famdetail-options').addEventListener('click', (e) => {
     const b = e.target.closest('.famdetail-option'); if (!b) return;
     sel.detail = b.dataset.detail;
     paintPressed('.famdetail-option', 'detail', sel.detail);
-    finalizeRelationship(pendingFamRel, b.dataset.detail);
+    paintFamSubmit();
   });
+  $('#famdetail-submit').addEventListener('click', () => {
+    if (!sel.detail) return;
+    finalizeRelationship(pendingFamRel, sel.detail);
+  });
+  $('#famdetail-cancel').addEventListener('click', closeAll);
 
   // Persist the full selection path, close, and confirm. The badge shows the
   // base relation, EXCEPT for step-relations, which stay explicit on the badge
@@ -1158,7 +1183,7 @@
     setRelationship(activeId, { category: sel.category || 'Family', relation: base, detail: detail || null, badge: badge });
     buildPeople(); render();
     closeAll();
-    const shown = (detail && detail !== 'Skip This') ? detail : base;
+    const shown = (detail && detail !== 'Other') ? detail : base;
     toast(activeFirst() + ' saved as your ' + shown.toLowerCase());
   }
 
