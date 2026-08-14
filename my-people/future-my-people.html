@@ -973,6 +973,20 @@
     if (instant) { const t = vp.style.transition; vp.style.transition = 'none'; applyHeight(); void vp.offsetHeight; vp.style.transition = t; }
     else applyHeight();
   }
+  // The viewport is overflow-hidden with an explicit (animated) height, so it
+  // clips if the active pane grows AFTER the initial measure — late icon-font
+  // load, a long name wrapping the title, or rows added/removed by the
+  // collection toggle. Re-sync the height whenever the active pane resizes.
+  function syncWizHeight(){
+    const vp = $('#opt-viewport'); if (!vp) return;
+    const active = vp.querySelector('.wiz-pane[data-state="active"]');
+    if (active) vp.style.height = active.offsetHeight + 'px';
+  }
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => syncWizHeight());
+    $$('#opt-viewport .wiz-pane').forEach(p => ro.observe(p));
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncWizHeight);
   function wizGo(name){ wizStack.push(name); wizRender(); }
   function wizBack(){ if (wizStack.length > 1) { wizStack.pop(); wizRender(); } }
   function wizReset(){ wizStack = ['menu']; wizRender(true); }
