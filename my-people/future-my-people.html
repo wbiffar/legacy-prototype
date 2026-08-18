@@ -513,7 +513,12 @@
     <h2 id="coll-addpeople-title" class="text-xl font-bold text-navy-700 leading-tight pr-10">Add people to this collection</h2>
     <p class="text-sm text-wb-700 mt-1 leading-relaxed">Tap to add or remove people you’ve saved.</p>
     <div id="coll-addpeople-list" class="mt-4 flex flex-col gap-1 max-h-[300px] overflow-y-auto -mx-1 px-1"></div>
-    <button id="coll-addpeople-done" type="button" class="w-full h-12 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold mt-4">Done</button>
+    <!-- Sticky submit/cancel lockup: edits stage in a draft and only persist on
+         Save; Cancel (or dismissing) discards them. -->
+    <div class="flex items-center gap-4 pt-4 mt-4 border-t border-wb-300">
+      <button id="coll-addpeople-cancel" type="button" class="inline-flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50 shrink-0">Cancel</button>
+      <button id="coll-addpeople-save" type="button" disabled class="flex-1 min-w-0 inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-semibold">Save changes</button>
+    </div>
   </div>
 </div>
 
@@ -882,9 +887,27 @@
   });
 
   // ----- Add a person -----
+  // Edits stage in a draft so the whole batch can be saved or discarded via the
+  // sticky footer lockup, rather than each tap writing straight to the store.
+  let addPeopleDraft = null, addPeopleOrig = null;
+  function addPeopleDirty(){
+    if (!addPeopleDraft || !addPeopleOrig) return false;
+    if (addPeopleDraft.length !== addPeopleOrig.length) return true;
+    return addPeopleOrig.some(id => addPeopleDraft.indexOf(id) < 0);
+  }
+  // Gold primary when there are changes to save; disabled otherwise. Inline
+  // colors so the state swap renders instantly regardless of CSS caching.
+  function paintAddPeopleSave(){
+    const b = $('#coll-addpeople-save'); if (!b) return;
+    const on = addPeopleDirty();
+    b.disabled = !on;
+    b.style.cursor = on ? 'pointer' : 'not-allowed';
+    b.style.backgroundColor = on ? '#e2ba60' : '#ebe9e9';   // gold-400 / wb-200
+    b.style.color = on ? '#262116' : '#807e7a';             // wb-900 / wb-500
+    b.style.border = on ? '1px solid #e2ba60' : '1px solid #dbdad7'; // gold-400 / wb-300
+  }
   function renderAddPeopleList(){
-    const c = currentColl(); if (!c) return;
-    const inColl = c.people || [];
+    const inColl = addPeopleDraft || [];
     $('#coll-addpeople-list').innerHTML = savedIds.map(id => {
       const p = personData(id);
       const on = inColl.indexOf(id) >= 0;
@@ -897,19 +920,34 @@
       '</button>';
     }).join('') || '<p class="text-sm text-wb-600 py-2">You haven’t saved anyone yet.</p>';
   }
-  function openAddPeople(){ renderAddPeopleList(); openOverlay(overlays.collAddPeople); }
-  $('#coll-addpeople-list').addEventListener('click', (e) => {
-    const row = e.target.closest('.addperson-row'); if (!row) return;
-    const id = row.dataset.id;
-    const colls = readCollections(); const c = colls.find(x => x.id === currentCollId); if (!c) return;
-    c.people = c.people || [];
-    const i = c.people.indexOf(id);
-    if (i < 0) c.people.push(id); else c.people.splice(i, 1);
-    writeCollections(colls);
+  function openAddPeople(){
+    const c = currentColl(); if (!c) return;
+    addPeopleOrig = (c.people || []).slice();
+    addPeopleDraft = addPeopleOrig.slice();
     renderAddPeopleList();
-    refreshDetail();
+    paintAddPeopleSave();
+    openOverlay(overlays.collAddPeople);
+  }
+  $('#coll-addpeople-list').addEventListener('click', (e) => {
+    const row = e.target.closest('.addperson-row'); if (!row || !addPeopleDraft) return;
+    const id = row.dataset.id;
+    const i = addPeopleDraft.indexOf(id);
+    if (i < 0) addPeopleDraft.push(id); else addPeopleDraft.splice(i, 1);
+    renderAddPeopleList();
+    paintAddPeopleSave();
   });
-  $('#coll-addpeople-done').addEventListener('click', closeAll);
+  // Save persists the whole draft; Cancel (and any other dismissal) discards it.
+  $('#coll-addpeople-save').addEventListener('click', () => {
+    if (!addPeopleDirty()) return;
+    const colls = readCollections(); const c = colls.find(x => x.id === currentCollId); if (!c) return;
+    c.people = addPeopleDraft.slice();
+    writeCollections(colls);
+    addPeopleDraft = addPeopleOrig = null;
+    refreshDetail();
+    closeAll();
+    toast('“' + c.name + '” updated');
+  });
+  $('#coll-addpeople-cancel').addEventListener('click', () => { addPeopleDraft = addPeopleOrig = null; closeAll(); });
 
   // ----- Make my relationship to this group -----
   function paintCollMine(on){
