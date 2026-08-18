@@ -395,6 +395,12 @@
               <p class="text-base text-wb-700 leading-normal">Tap a collection to add or remove them.</p>
             </div>
             <div id="addcoll-list" class="flex flex-col pt-1"></div>
+            <!-- Sticky submit/cancel lockup: membership edits stage in a draft and
+                 only persist on Save; Cancel (or dismissing) discards them. -->
+            <div class="flex items-center gap-4 pt-4 mt-1 border-t border-wb-300">
+              <button id="addcoll-cancel" type="button" class="inline-flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50 shrink-0">Cancel</button>
+              <button id="addcoll-save" type="button" disabled class="flex-1 min-w-0 inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-semibold">Save changes</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1101,20 +1107,44 @@
   });
 
   // ----- Add to collection (slides in as a wizard pane) -----
+  // Membership across collections stages in a draft (a list of collection ids
+  // this person belongs to) so the batch can be saved or discarded via the
+  // sticky footer lockup, rather than each tap writing straight to the store.
+  let manageCollDraft = null, manageCollOrig = null;
+  function manageCollDirty(){
+    if (!manageCollDraft || !manageCollOrig) return false;
+    if (manageCollDraft.length !== manageCollOrig.length) return true;
+    return manageCollOrig.some(id => manageCollDraft.indexOf(id) < 0);
+  }
+  function paintManageCollSave(){
+    const b = $('#addcoll-save'); if (!b) return;
+    const on = manageCollDirty();
+    b.disabled = !on;
+    b.style.cursor = on ? 'pointer' : 'not-allowed';
+    b.style.backgroundColor = on ? '#e2ba60' : '#ebe9e9';   // gold-400 / wb-200
+    b.style.color = on ? '#262116' : '#807e7a';             // wb-900 / wb-500
+    b.style.border = on ? '1px solid #e2ba60' : '1px solid #dbdad7'; // gold-400 / wb-300
+  }
   function openAddToCollection(){
-    const inColls = readCollections().filter(c => (c.people || []).indexOf(activeId) >= 0).length;
-    $('#addcoll-title').innerHTML = inColls
+    const inColls = readCollections().filter(c => (c.people || []).indexOf(activeId) >= 0);
+    manageCollOrig = inColls.map(c => c.id);
+    manageCollDraft = manageCollOrig.slice();
+    $('#addcoll-title').innerHTML = manageCollOrig.length
       ? 'Manage <span id="addcoll-name">' + esc(activeName) + '</span>’s collections'
       : 'Add <span id="addcoll-name">' + esc(activeName) + '</span> to a collection';
     renderAddCollList();
+    paintManageCollSave();
     wizGo('collections');
   }
   function renderAddCollList(){
     const wrap = $('#addcoll-list');
     const colls = readCollections();
+    const draft = manageCollDraft || [];
     const rows = colls.map(c => {
-      const inIt = (c.people || []).indexOf(activeId) >= 0;
-      const n = (c.people || []).length;
+      const inIt = draft.indexOf(c.id) >= 0;
+      const storeHas = (c.people || []).indexOf(activeId) >= 0;
+      // Reflect the pending (unsaved) change in the count so it feels live.
+      const n = (c.people || []).length + (inIt && !storeHas ? 1 : 0) + (!inIt && storeHas ? -1 : 0);
       return '<button type="button" class="coll-toggle w-full flex items-center gap-3 py-4 border-b border-wb-300 text-left" data-coll="' + esc(c.id) + '">' +
         '<span class="w-9 h-9 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center flex-shrink-0"><i class="ph ph-folders text-lg"></i></span>' +
         '<span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight truncate">' + esc(c.name) + '</span><span class="block text-xs text-wb-700 mt-0.5">' + n + ' ' + (n === 1 ? 'person' : 'people') + '</span></span>' +
@@ -1132,19 +1162,32 @@
   $('#addcoll-list').addEventListener('click', (e) => {
     const create = e.target.closest('#addcoll-create');
     if (create) { closeAll(); openCreateCollection([activeId]); return; }
-    const row = e.target.closest('.coll-toggle'); if (!row) return;
+    const row = e.target.closest('.coll-toggle'); if (!row || !manageCollDraft) return;
     const id = row.dataset.coll;
-    const colls = readCollections();
-    const c = colls.find(x => x.id === id); if (!c) return;
-    c.people = c.people || [];
-    const i = c.people.indexOf(activeId);
-    const nowIn = i < 0;
-    if (nowIn) c.people.push(activeId); else c.people.splice(i, 1);
-    writeCollections(colls);
-    renderCollections();
+    const i = manageCollDraft.indexOf(id);
+    if (i < 0) manageCollDraft.push(id); else manageCollDraft.splice(i, 1);
     renderAddCollList();
-    toast(nowIn ? activeName + ' added to “' + c.name + '”' : activeName + ' removed from “' + c.name + '”');
+    paintManageCollSave();
   });
+  // Save applies the whole draft across collections; Cancel (and any other
+  // dismissal) discards it.
+  $('#addcoll-save').addEventListener('click', () => {
+    if (!manageCollDirty()) return;
+    const colls = readCollections();
+    colls.forEach(c => {
+      c.people = c.people || [];
+      const should = manageCollDraft.indexOf(c.id) >= 0;
+      const idx = c.people.indexOf(activeId);
+      if (should && idx < 0) c.people.push(activeId);
+      if (!should && idx >= 0) c.people.splice(idx, 1);
+    });
+    writeCollections(colls);
+    manageCollDraft = manageCollOrig = null;
+    renderCollections();
+    closeAll();
+    toast(activeName + '’s collections updated');
+  });
+  $('#addcoll-cancel').addEventListener('click', () => { manageCollDraft = manageCollOrig = null; closeAll(); });
 
   // Current selection path — loaded from the store on open, updated on taps, and
   // used to pre-highlight pills so a back-out or revisit shows prior choices.
