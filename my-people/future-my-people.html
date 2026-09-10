@@ -1055,11 +1055,11 @@
     $('#opt-rel-sub').textContent = hasRel ? 'Update how you’re connected' : 'Connect and organize your family tree';
 
     // Collection menu item reflects whether they're in any collection yet:
-    // "Add to collection" → "Manage their collections".
+    // "Add to collection" → "View their collections".
     const inColls = readCollections().filter(c => (c.people || []).indexOf(activeId) >= 0).length;
-    $('#opt-coll-title').textContent = inColls ? 'Manage their collections' : 'Add to collection';
+    $('#opt-coll-title').textContent = inColls ? 'View their collections' : 'Add to collection';
     $('#opt-coll-sub').textContent = inColls
-      ? 'In ' + inColls + ' collection' + (inColls === 1 ? '' : 's') + ' • add or remove'
+      ? 'All the collections they belong to'
       : 'Group them with people who belong together';
   }
 
