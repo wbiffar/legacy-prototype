@@ -140,14 +140,12 @@
             <button id="coll-more" type="button" class="w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-50 flex items-center justify-center flex-shrink-0" aria-label="More options"><i class="ph-bold ph-list text-lg"></i></button>
           </div>
         </div>
+        <!-- Read-only: the title and description are edited from the •••
+             menu's "Edit this collection", not in place. -->
         <header class="mb-5">
-          <div class="flex items-center gap-2">
-            <h1 id="detail-title" contenteditable="true" spellcheck="false" class="min-w-0 font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight rounded px-1 -mx-1 focus:outline-none focus:bg-wb-100">Collection</h1>
-            <button id="edit-title" type="button" class="text-wb-400 hover:text-navy-700 flex-shrink-0" aria-label="Edit name"><i class="ph ph-pencil-simple text-xl"></i></button>
-          </div>
+          <h1 id="detail-title" class="font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight">Collection</h1>
           <div class="mt-2">
-            <p id="detail-desc" contenteditable="true" spellcheck="false" data-placeholder="Add a description…" class="inline text-base md:text-lg text-wb-700 leading-relaxed rounded focus:outline-none focus:bg-wb-100 empty:before:content-[attr(data-placeholder)] empty:before:text-wb-400"></p>
-            <button id="edit-desc" type="button" class="inline-flex align-middle ml-1 text-wb-400 hover:text-navy-700" aria-label="Edit description"><i class="ph ph-pencil-simple text-lg"></i></button>
+            <p id="detail-desc" class="text-base md:text-lg text-wb-700 leading-relaxed"></p>
           </div>
         </header>
 
@@ -850,7 +848,7 @@
 
   function updateDetailHeader(c){
     $('#detail-title').textContent = c.name;
-    $('#detail-desc').textContent = c.description || '';  // empty shows the placeholder via CSS
+    $('#detail-desc').textContent = c.description || '';   // no description simply renders nothing
     const n = (c.people || []).length;
     $('#detail-people-count').textContent = '· ' + n;
     paintCollMine(!!c.mine);
@@ -927,22 +925,6 @@
     refreshDetail();
     toast(personData(id).name + ' added to “' + c.name + '”');
   }
-
-  // ----- Editable name + description (contenteditable, commit on blur) -----
-  const detTitle = $('#detail-title'), detDesc = $('#detail-desc');
-  function commitCollField(field, el, fallback){
-    const c = currentColl(); if (!c) return;
-    let v = (el.textContent || '').replace(/\s+/g, ' ').trim();
-    if (field === 'name' && !v) { v = c.name; el.textContent = c.name; }  // name can't be empty
-    const colls = readCollections(); const cc = colls.find(x => x.id === currentCollId); if (!cc) return;
-    cc[field] = v; writeCollections(colls); renderCollections();
-    if (field === 'name') { /* keep as typed */ }
-  }
-  detTitle.addEventListener('blur', () => commitCollField('name', detTitle));
-  detTitle.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); detTitle.blur(); } });
-  detDesc.addEventListener('blur', () => commitCollField('description', detDesc));
-  $('#edit-title').addEventListener('click', () => { detTitle.focus(); document.getSelection().selectAllChildren(detTitle); });
-  $('#edit-desc').addEventListener('click', () => { detDesc.focus(); });
 
   // ----- Share -----
   $('#coll-share').addEventListener('click', () => {
