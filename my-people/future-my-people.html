@@ -105,7 +105,7 @@
         <!-- =================== Collections =================== -->
         <section class="flex flex-col gap-8">
           <div class="flex flex-col gap-2">
-            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">My collections <span id="collections-count"></span></h2>
+            <h2 class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700"><i class="ph ph-cards text-2xl" aria-hidden="true"></i><span>My collections</span><span id="collections-count" class="contents"></span></h2>
             <p class="text-base text-wb-700 leading-relaxed">Organize the people you’ve saved into groups that matter to you.</p>
           </div>
           <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
@@ -115,7 +115,7 @@
         <!-- =================== All of my people =================== -->
         <section id="people-section" class="mt-10 md:mt-12 flex flex-col gap-5">
           <div class="flex flex-col gap-2">
-            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">All of my people <span id="count-pill"></span></h2>
+            <h2 class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700"><i class="ph ph-users-three text-2xl" aria-hidden="true"></i><span>All of my people</span><span id="count-pill" class="contents"></span></h2>
             <p id="page-subtitle" class="text-base text-wb-700 leading-relaxed">Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.</p>
           </div>
           <div id="grid-root"></div>
@@ -124,7 +124,7 @@
         <!-- =================== Possible matches =================== -->
         <section id="matches-section" class="mt-10 md:mt-12 flex-col gap-5" style="display:none">
           <div class="flex flex-col gap-2">
-            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Possible matches <span id="matches-count"></span></h2>
+            <h2 class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700"><i class="ph ph-user-plus text-2xl" aria-hidden="true"></i><span>Possible matches</span></h2>
             <p class="text-base text-wb-700 leading-relaxed">People you may want to save — based on family names, the people you’ve saved, and groups you follow.</p>
           </div>
           <div id="matches-grid" class="flex gap-2 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 -my-3 px-1 py-3"></div>
@@ -158,13 +158,13 @@
           <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Make my relationship to this group public</span><span id="coll-mine-sub" class="block text-sm text-wb-600 mt-0.5">Off · Your relationship to this group stays private</span></span>
         </div>
 
-        <h2 id="detail-people-heading" class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700 mb-4">People <span id="detail-people-count"></span></h2>
+        <h2 id="detail-people-heading" class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700 mb-4"><i class="ph ph-users-three text-2xl" aria-hidden="true"></i><span>People</span><span id="detail-people-count" class="contents"></span></h2>
         <div id="detail-people"></div>
 
         <!-- Tailored suggestions for this collection (moved here from the root) -->
         <section id="detail-suggest-section" class="mt-10 md:mt-12 flex-col gap-5" style="display:none">
           <div class="flex flex-col gap-1">
-            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Suggested for this collection</h2>
+            <h2 class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700"><i class="ph ph-user-plus text-2xl" aria-hidden="true"></i><span>Suggested for this collection</span></h2>
             <p class="text-base text-wb-700 leading-relaxed">People who may belong here — based on family names, hometowns, and where they’re remembered.</p>
           </div>
           <div id="detail-suggest-row" class="flex gap-2 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 -my-3 px-1 py-3"></div>
@@ -648,7 +648,6 @@
 
   // ===== rendering =====
   const root = $('#grid-root');
-  const countPill = $('#count-pill');
   const subtitle = $('#page-subtitle');
 
   function personCardHTML(p){
@@ -680,6 +679,17 @@
       '<span class="text-base font-semibold text-wb-900 mt-1">Add More People</span>' +
       '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Search our database to find the people you care about and add them here.</span>' +
     '</button>';
+  }
+
+  // ===== Section eyebrow count badge =====
+  // The eyebrow reads: icon · TITLE · • · badge (Figma 6525:14346). The wrapper
+  // span is display:contents so the bullet and badge sit in the heading's own
+  // flex row. Pass null for a section that shouldn't carry a count.
+  function setSectionCount(sel, n){
+    const el = $(sel); if (!el) return;
+    el.innerHTML = (n === null || n === undefined) ? '' :
+      '<span aria-hidden="true">•</span>' +
+      '<span class="inline-flex items-center justify-center h-5 px-2.5 py-0.5 rounded-[80px] bg-gold-100 text-gold-800 text-xs font-semibold tracking-normal">' + n + '</span>';
   }
 
   // ===== Pagination =====
@@ -739,7 +749,7 @@
   let peoplePage = 1;
   function render(){
     const n = people.length;
-    countPill.textContent = '• (' + n + ')';
+    setSectionCount('#count-pill', n);
     subtitle.innerHTML = n === 0
       ? 'You haven’t added anyone yet.'
       : 'Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.';
@@ -780,7 +790,6 @@
     if (!sec || !grid) return;
     const items = window.LEGACY_SUGGEST.list(savedIds);
     sec.style.display = items.length ? 'flex' : 'none';
-    const cnt = $('#matches-count'); if (cnt) cnt.textContent = '• (' + items.length + ')';
     grid.innerHTML = items.map(s => suggestPersonCardHTML(s, 'match')).join('');
   }
   $('#matches-grid').addEventListener('click', (e) => {
@@ -841,7 +850,7 @@
     const grid = $('#collections-grid');
     if (!grid) return;
     const colls = readCollections();
-    const cnt = $('#collections-count'); if (cnt) cnt.textContent = '• (' + colls.length + ')';
+    setSectionCount('#collections-count', colls.length);
     collShown = Math.max(PAGE_SIZE, Math.min(collShown, colls.length));
     grid.innerHTML = createCollectionTileHTML() + colls.slice(0, collShown).map(collectionCardHTML).join('');
     const more = $('#collections-more');
@@ -862,7 +871,7 @@
     $('#detail-title').textContent = c.name;
     $('#detail-desc').textContent = c.description || '';   // no description simply renders nothing
     const n = (c.people || []).length;
-    $('#detail-people-count').textContent = '· ' + n;
+    setSectionCount('#detail-people-count', n);
     paintCollMine(!!c.mine);
   }
   function detailAddTileHTML(full){
