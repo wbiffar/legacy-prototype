@@ -54,7 +54,10 @@
      MAIN
      ==================================================================== -->
 <main class="max-w-[1440px] mx-auto px-3 md:px-8 lg:px-12 pt-6 md:pt-10 pb-16">
-  <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-4 lg:gap-12">
+  <!-- At lg+ the nav + content lockup is centred rather than left-hugging:
+       260 (nav) + 48 (gap) + 800 (content cap) = 1108. Below that width the
+       cap doesn't bind and the content track just takes what's left. -->
+  <div class="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-4 lg:gap-12 lg:max-w-[1108px] lg:mx-auto">
 
     <!-- =================== LEFT: My Account =================== -->
     <aside class="hidden lg:block">
@@ -94,7 +97,7 @@
     </div>
 
     <!-- =================== RIGHT: My People =================== -->
-    <div class="max-w-[840px]">
+    <div class="max-w-[800px]">
 
       <!-- ---------- LIST VIEW ---------- -->
       <div id="list-view">
@@ -105,16 +108,20 @@
         <!-- =================== Collections =================== -->
         <section class="flex flex-col gap-8">
           <div class="flex flex-col gap-2">
-            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">My collections <span id="collections-count"></span></h2>
+            <h2 class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700"><i class="ph ph-cards text-2xl" aria-hidden="true"></i><span>My collections</span><span id="collections-count" class="contents"></span></h2>
             <p class="text-base text-wb-700 leading-relaxed">Organize the people you’ve saved into groups that matter to you.</p>
           </div>
-          <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          <div class="flex flex-col gap-4">
+            <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3"></div>
+            <div id="collections-create"></div>
+          </div>
+          <div id="collections-more" class="flex justify-center"></div>
         </section>
 
         <!-- =================== All of my people =================== -->
-        <section class="mt-10 md:mt-12 flex flex-col gap-5">
+        <section id="people-section" class="mt-10 md:mt-12 flex flex-col gap-5">
           <div class="flex flex-col gap-2">
-            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">All of my people <span id="count-pill"></span></h2>
+            <h2 class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700"><i class="ph ph-users-three text-2xl" aria-hidden="true"></i><span>All of my people</span><span id="count-pill" class="contents"></span></h2>
             <p id="page-subtitle" class="text-base text-wb-700 leading-relaxed">Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.</p>
           </div>
           <div id="grid-root"></div>
@@ -123,7 +130,7 @@
         <!-- =================== Possible matches =================== -->
         <section id="matches-section" class="mt-10 md:mt-12 flex-col gap-5" style="display:none">
           <div class="flex flex-col gap-2">
-            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Possible matches <span id="matches-count"></span></h2>
+            <h2 class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700"><i class="ph ph-user-plus text-2xl" aria-hidden="true"></i><span>Possible matches</span></h2>
             <p class="text-base text-wb-700 leading-relaxed">People you may want to save — based on family names, the people you’ve saved, and groups you follow.</p>
           </div>
           <div id="matches-grid" class="flex gap-2 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 -my-3 px-1 py-3"></div>
@@ -139,30 +146,31 @@
             <button id="coll-more" type="button" class="w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-50 flex items-center justify-center flex-shrink-0" aria-label="More options"><i class="ph-bold ph-list text-lg"></i></button>
           </div>
         </div>
+        <!-- Read-only: the title and description are edited from the •••
+             menu's "Edit this collection", not in place. -->
         <header class="mb-5">
-          <div class="flex items-center gap-2">
-            <h1 id="detail-title" contenteditable="true" spellcheck="false" class="min-w-0 font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight rounded px-1 -mx-1 focus:outline-none focus:bg-wb-100">Collection</h1>
-            <button id="edit-title" type="button" class="text-wb-400 hover:text-navy-700 flex-shrink-0" aria-label="Edit name"><i class="ph ph-pencil-simple text-xl"></i></button>
-          </div>
+          <h1 id="detail-title" class="font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight">Collection</h1>
           <div class="mt-2">
-            <p id="detail-desc" contenteditable="true" spellcheck="false" data-placeholder="Add a description…" class="inline text-base md:text-lg text-wb-700 leading-relaxed rounded focus:outline-none focus:bg-wb-100 empty:before:content-[attr(data-placeholder)] empty:before:text-wb-400"></p>
-            <button id="edit-desc" type="button" class="inline-flex align-middle ml-1 text-wb-400 hover:text-navy-700" aria-label="Edit description"><i class="ph ph-pencil-simple text-lg"></i></button>
+            <p id="detail-desc" class="text-base md:text-lg text-wb-700 leading-relaxed"></p>
           </div>
         </header>
 
-        <!-- Make my relationship to this group public -->
-        <div class="flex items-center gap-3 p-4 rounded-xl bg-wb-50 border border-wb-200 mb-5">
+        <!-- Make my relationship to this group public — HIDDEN for now: the
+             feature is a long way off, so it's out of the demo rather than
+             deleted. Drop the inline display:none to bring it back; the
+             `mine` flag and its toggle logic are still wired underneath. -->
+        <div style="display:none" class="flex items-center gap-3 p-4 rounded-xl bg-wb-50 border border-wb-200 mb-5">
           <button id="coll-mine" role="switch" aria-checked="false" aria-label="Make my relationship to this group public" class="relative w-14 h-7 rounded-full transition-colors flex-shrink-0"><span id="coll-mine-knob" class="absolute top-[3px] left-[3px] w-[22px] h-[22px] rounded-full bg-white shadow transition-transform"></span></button>
           <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Make my relationship to this group public</span><span id="coll-mine-sub" class="block text-sm text-wb-600 mt-0.5">Off · Your relationship to this group stays private</span></span>
         </div>
 
-        <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700 mb-4">People <span id="detail-people-count"></span></h2>
-        <div id="detail-people" class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5"></div>
+        <h2 id="detail-people-heading" class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700 mb-4"><i class="ph ph-users-three text-2xl" aria-hidden="true"></i><span>People</span><span id="detail-people-count" class="contents"></span></h2>
+        <div id="detail-people"></div>
 
         <!-- Tailored suggestions for this collection (moved here from the root) -->
         <section id="detail-suggest-section" class="mt-10 md:mt-12 flex-col gap-5" style="display:none">
           <div class="flex flex-col gap-1">
-            <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">Suggested for this collection</h2>
+            <h2 class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700"><i class="ph ph-user-plus text-2xl" aria-hidden="true"></i><span>Suggested for this collection</span></h2>
             <p class="text-base text-wb-700 leading-relaxed">People who may belong here — based on family names, hometowns, and where they’re remembered.</p>
           </div>
           <div id="detail-suggest-row" class="flex gap-2 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 -my-3 px-1 py-3"></div>
@@ -287,8 +295,8 @@
 
             <!-- Add to collection -->
             <button data-action="addcollection" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
-              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-folders text-xl"></i></span>
-              <span class="flex-1 min-w-0"><span id="opt-coll-title" class="block text-base font-semibold text-wb-900 leading-tight">Add to collection</span><span id="opt-coll-sub" class="block text-xs text-wb-700 mt-1">Group them with people who belong together</span></span>
+              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-cards text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span id="opt-coll-title" class="block text-base font-semibold text-wb-900 leading-tight">View their collections</span><span id="opt-coll-sub" class="block text-xs text-wb-700 mt-1">All the collections they belong to</span></span>
               <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
             </button>
 
@@ -385,22 +393,18 @@
         </div>
       </div>
 
-      <!-- Pane: add to collection -->
+      <!-- Pane: view their collections (read-only nav list — replaced the
+           earlier manage/toggle model; membership is edited on the collection
+           detail page). Figma 6551:19832. -->
       <div class="wiz-pane" data-pane="collections" data-state="next">
         <div class="pt-16 pb-8 px-6">
           <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
           <div class="flex flex-col gap-3">
             <div class="flex flex-col gap-1">
-              <h2 id="addcoll-title" class="text-xl font-bold text-navy-700 leading-tight">Add <span id="addcoll-name">this person</span> to a collection</h2>
-              <p class="text-base text-wb-700 leading-normal">Tap a collection to add or remove them.</p>
+              <h2 id="addcoll-title" class="text-xl font-bold text-navy-700 leading-tight">View <span id="addcoll-name">this person</span>’s collections</h2>
+              <p id="addcoll-sub" class="text-base text-wb-700 leading-normal">Tap a collection to view it.</p>
             </div>
-            <div id="addcoll-list" class="flex flex-col pt-1"></div>
-            <!-- Sticky submit/cancel lockup: membership edits stage in a draft and
-                 only persist on Save; Cancel (or dismissing) discards them. -->
-            <div class="flex items-center gap-4 pt-4 mt-1 border-t border-wb-300">
-              <button id="addcoll-cancel" type="button" class="inline-flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50 shrink-0">Cancel</button>
-              <button id="addcoll-save" type="button" disabled class="flex-1 min-w-0 inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-semibold">Save changes</button>
-            </div>
+            <div id="addcoll-list" class="flex flex-col"></div>
           </div>
         </div>
       </div>
@@ -455,16 +459,22 @@
   <div class="sheet-card p-6 md:p-8 !pb-[72px] md:!pb-8">
     <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
     <h2 id="coll-title" class="text-xl font-bold text-navy-700 leading-tight pr-10">Create a collection</h2>
-    <p class="text-sm text-wb-700 mt-1 leading-relaxed">Name it whatever you like and choose who belongs.</p>
+    <p id="coll-sub" class="text-sm text-wb-700 mt-1 leading-relaxed">Name it whatever you like and choose who belongs.</p>
 
     <form id="coll-form" class="mt-5 flex flex-col gap-4">
       <label class="flex flex-col gap-1.5">
-        <span class="text-sm font-semibold text-wb-900">Name</span>
-        <input id="coll-name" type="text" required maxlength="60" placeholder="e.g. College Friends" class="h-12 px-3 rounded-lg border border-wb-300 bg-white text-base text-wb-900 placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
+        <span class="flex items-baseline justify-between gap-3">
+          <span class="text-sm font-semibold text-wb-900">Name</span>
+          <span id="coll-name-count" class="text-sm text-wb-600 tabular-nums flex-shrink-0">0/60</span>
+        </span>
+        <input id="coll-name" type="text" required maxlength="60" aria-describedby="coll-name-count" placeholder="e.g. College Friends" class="h-12 px-3 rounded-lg border border-wb-300 bg-white text-base text-wb-900 placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
       </label>
       <label class="flex flex-col gap-1.5">
-        <span class="text-sm font-semibold text-wb-900">Description <span class="font-normal text-wb-500">(optional)</span></span>
-        <textarea id="coll-desc" rows="2" maxlength="140" placeholder="What ties these people together?" class="px-3 py-2.5 rounded-lg border border-wb-300 bg-white text-base text-wb-900 placeholder:text-wb-400 leading-snug resize-none focus:outline-none focus:border-navy-500"></textarea>
+        <span class="flex items-baseline justify-between gap-3">
+          <span class="text-sm font-semibold text-wb-900">Description <span class="font-normal text-wb-500">(optional)</span></span>
+          <span id="coll-desc-count" class="text-sm text-wb-600 tabular-nums flex-shrink-0">0/140</span>
+        </span>
+        <textarea id="coll-desc" rows="2" maxlength="140" aria-describedby="coll-desc-count" placeholder="What ties these people together?" class="px-3 py-2.5 rounded-lg border border-wb-300 bg-white text-base text-wb-900 placeholder:text-wb-400 leading-snug resize-none focus:outline-none focus:border-navy-500"></textarea>
       </label>
       <div class="flex flex-col gap-2">
         <span class="text-sm font-semibold text-wb-900">Add people <span id="coll-count" class="font-normal text-wb-500">(0 selected)</span></span>
@@ -472,7 +482,7 @@
       </div>
       <div class="flex flex-row gap-3 mt-2">
         <button type="button" data-close class="flex-1 h-12 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Cancel</button>
-        <button id="coll-create" type="submit" class="flex-1 h-12 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold disabled:opacity-40 disabled:cursor-not-allowed">Create collection</button>
+        <button id="coll-create" type="submit" class="flex-1 h-12 rounded-full border border-navy-700 bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold disabled:bg-wb-200 disabled:border-wb-300 disabled:text-wb-500 disabled:cursor-not-allowed">Create collection</button>
       </div>
     </form>
   </div>
@@ -488,6 +498,11 @@
       <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
     </div>
     <div class="px-6">
+      <button id="coll-edit-open" type="button" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
+        <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-note-pencil text-xl"></i></span>
+        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Edit this collection</span><span class="block text-xs text-wb-700 mt-1">Change the title, description, and who belongs to it</span></span>
+        <i class="ph-bold ph-caret-right text-2xl text-wb-900 flex-shrink-0"></i>
+      </button>
       <button id="coll-delete-open" type="button" class="w-full flex items-center gap-2 py-6 hover:bg-coral-50 text-left">
         <span class="w-8 h-8 rounded-full bg-coral-100 text-coral-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-trash text-xl"></i></span>
         <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-coral-700 leading-tight">Delete collection</span><span class="block text-xs text-wb-700 mt-1">Removes the collection — people stay in My People</span></span>
@@ -639,7 +654,6 @@
 
   // ===== rendering =====
   const root = $('#grid-root');
-  const countPill = $('#count-pill');
   const subtitle = $('#page-subtitle');
 
   function personCardHTML(p){
@@ -653,7 +667,7 @@
     const badge = p.relation
       ? '<span class="inline-block mt-1 rounded-full bg-gold-100 text-gold-900 text-sm px-3 py-0.5">'+esc(p.relation)+'</span>'
       : '<button type="button" class="add-rel-chip inline-flex items-center gap-1 mt-1 px-3 py-0.5 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-900 text-sm transition-colors"><i class="ph ph-plus-circle text-sm" aria-hidden="true"></i><span>Add Relationship</span></button>';
-    return '<article class="person-card transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
+    return '<article class="person-card w-full mx-auto min-w-[172px] max-w-[288px] transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
       panel +
       '<div class="flex-1 min-h-[100px] flex flex-col items-center justify-center text-center gap-1 px-2 pb-3">' +
         '<a href="future-index.html?id='+esc(p.id)+'" class="text-base font-semibold text-wb-900 leading-tight">'+esc(p.name)+'</a>' + badge +
@@ -662,28 +676,113 @@
     '</article>';
   }
 
+  // Full-width dashed action bar that sits beneath a grid (Figma 6589:29616):
+  // 56px tall, 1px dashed gold border on the page surface, gold-100 icon chip
+  // + label centred. Shared by Add More People / Add a person / Create a
+  // Collection so the three read as one control.
+  function addBarHTML(id, icon, label){
+    return '<button id="' + id + '" type="button" class="w-full h-14 px-3 rounded-lg border border-dashed border-gold-700 bg-gold-50 flex items-center justify-center gap-2 transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg">' +
+      '<span class="w-8 h-8 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center flex-shrink-0"><i class="ph ' + icon + ' text-xl"></i></span>' +
+      '<span class="text-base font-semibold text-wb-900">' + label + '</span>' +
+    '</button>';
+  }
+
   // Add More People — a single grid cell when people exist; spans all
   // columns (and shows a fuller message) when the grid is empty.
+  // With people saved it's the shared bar; the empty state keeps the taller
+  // block so the explanatory copy still has somewhere to live.
   function addCardHTML(full){
-    const cls = full ? 'col-span-2 lg:col-span-3 min-h-[220px] py-10' : 'min-h-[288px] py-6';
-    return '<button id="add-more" class="'+cls+' transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
+    if (!full) return addBarHTML('add-more', 'ph-magnifying-glass', 'Add More People');
+    return '<button id="add-more" class="w-full min-h-[220px] py-10 transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
       '<span class="w-14 h-14 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-magnifying-glass text-2xl"></i></span>' +
       '<span class="text-base font-semibold text-wb-900 mt-1">Add More People</span>' +
       '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Search our database to find the people you care about and add them here.</span>' +
     '</button>';
   }
 
+  // ===== Section eyebrow count badge =====
+  // The eyebrow reads: icon · TITLE · • · badge (Figma 6525:14346). The wrapper
+  // span is display:contents so the bullet and badge sit in the heading's own
+  // flex row. Pass null for a section that shouldn't carry a count.
+  function setSectionCount(sel, n){
+    const el = $(sel); if (!el) return;
+    el.innerHTML = (n === null || n === undefined) ? '' :
+      '<span aria-hidden="true">•</span>' +
+      '<span class="inline-flex items-center justify-center h-5 px-2.5 py-0.5 rounded-[80px] bg-gold-100 text-gold-800 text-xs font-semibold tracking-normal">' + n + '</span>';
+  }
+
+  // ===== Pagination =====
+  // Each section caps at PAGE_SIZE results; the add/create tile sits alongside
+  // them (11 + 1 = a full 12-cell grid at every column count). People grids use
+  // numbered pages; the collections grid uses a "Show more" that appends.
+  const PAGE_SIZE = 11;
+  function pageCount(n){ return Math.max(1, Math.ceil(n / PAGE_SIZE)); }
+  function clampPage(p, n){ return Math.min(Math.max(1, p), pageCount(n)); }
+  function pageSlice(arr, p){ const s = (p - 1) * PAGE_SIZE; return arr.slice(s, s + PAGE_SIZE); }
+
+  // Page numbers for the strip: every page when there are few, otherwise
+  // first / last / a window around the current one, with '…' for the gaps.
+  function pageNumbers(current, total){
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const out = [1];
+    const from = Math.max(2, current - 1), to = Math.min(total - 1, current + 1);
+    if (from > 2) out.push('…');
+    for (let i = from; i <= to; i++) out.push(i);
+    if (to < total - 1) out.push('…');
+    out.push(total);
+    return out;
+  }
+
+  // Joined pill strip — matches the Legacy pagination pattern (navy-100 active
+  // cell, wb-300 dividers). Cells are 44px to clear the 44x44 tap-target floor.
+  // Renders nothing until the section actually overflows one page.
+  function paginationHTML(current, n, ns, noun){
+    const total = pageCount(n);
+    if (total <= 1) return '';
+    const cell = (label, opts) => {
+      const o = opts || {};
+      if (label === '…') return '<span class="bg-white text-wb-500 w-11 h-11 border-r border-wb-300 flex items-center justify-center text-sm font-medium select-none">…</span>';
+      const active = !!o.active, disabled = !!o.disabled;
+      return '<button type="button" data-page-ns="' + ns + '" data-page="' + o.page + '"' +
+        (active ? ' aria-current="page"' : '') + (disabled ? ' disabled' : '') +
+        (o.label ? ' aria-label="' + o.label + '"' : '') +
+        ' class="' + (active ? 'bg-navy-100 text-navy-700' : 'bg-white text-wb-500') +
+        (disabled ? ' opacity-40 cursor-not-allowed' : ' hover:bg-wb-100') +
+        ' w-11 h-11' + (o.last ? '' : ' border-r border-wb-300') +
+        ' flex items-center justify-center text-sm font-medium">' + label + '</button>';
+    };
+    const cells = [cell('<i class="ph ph-caret-left text-xs"></i>', { page: current - 1, disabled: current === 1, label: 'Previous page' })];
+    pageNumbers(current, total).forEach(x => {
+      cells.push(x === '…' ? cell('…') : cell(String(x), { page: x, active: x === current }));
+    });
+    cells.push(cell('<i class="ph ph-caret-right text-xs"></i>', { page: current + 1, disabled: current === total, last: true, label: 'Next page' }));
+    const from = (current - 1) * PAGE_SIZE + 1, to = Math.min(current * PAGE_SIZE, n);
+    // The strip can exceed a 375px viewport once there are enough pages for the
+    // ellipsis window, so it scrolls horizontally rather than breaking the grid.
+    return '<nav aria-label="Pagination" class="flex flex-col items-center gap-3 pt-8">' +
+      '<div class="max-w-full overflow-x-auto no-scrollbar"><div class="inline-flex border border-wb-300 rounded overflow-hidden">' + cells.join('') + '</div></div>' +
+      '<p class="text-base text-wb-900 text-center">Showing ' + from + ' – ' + to + ' of ' + n + ' ' + noun + '</p>' +
+    '</nav>';
+  }
+
+  let peoplePage = 1;
   function render(){
     const n = people.length;
-    countPill.textContent = '• (' + n + ')';
+    setSectionCount('#count-pill', n);
     subtitle.innerHTML = n === 0
       ? 'You haven’t added anyone yet.'
       : 'Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.';
+    peoplePage = clampPage(peoplePage, n);   // removals can shrink the list past the current page
+    // Grid, then the full-width add bar 16px beneath it, then the pagination
+    // strip. The bar is outside the grid and repeats on every page.
     root.innerHTML =
-      '<div class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">' +
-        people.map(personCardHTML).join('') +
+      '<div class="flex flex-col gap-4">' +
+        (n ? '<div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,171px),1fr))] gap-2 sm:gap-3">' +
+          pageSlice(people, peoplePage).map(personCardHTML).join('') +
+        '</div>' : '') +
         addCardHTML(n === 0) +
-      '</div>';
+      '</div>' +
+      paginationHTML(peoplePage, n, 'people', 'people');
     applyPhotoColors();
   }
 
@@ -714,7 +813,6 @@
     if (!sec || !grid) return;
     const items = window.LEGACY_SUGGEST.list(savedIds);
     sec.style.display = items.length ? 'flex' : 'none';
-    const cnt = $('#matches-count'); if (cnt) cnt.textContent = '• (' + items.length + ')';
     grid.innerHTML = items.map(s => suggestPersonCardHTML(s, 'match')).join('');
   }
   $('#matches-grid').addEventListener('click', (e) => {
@@ -751,26 +849,40 @@
         '</div>'
       : '';
     const count = ids.length + ' ' + (ids.length === 1 ? 'person' : 'people');
-    return '<button type="button" data-coll-id="' + esc(c.id) + '" class="transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg text-left bg-white border border-wb-300 rounded-lg p-3 flex flex-col cursor-pointer">' +
-      '<div class="flex flex-col gap-1">' +
-        '<h3 class="font-serif-heading text-xl text-wb-900 leading-tight">' + esc(c.name) + '</h3>' +
-        (c.description ? '<p class="text-sm text-wb-700 leading-snug">' + esc(c.description) + '</p>' : '') +
+    // Fixed 174px so every card is the same block regardless of how much
+    // copy it carries: title and description each clamp to two lines, and the
+    // avatar row is pinned to the bottom with mt-auto.
+    return '<button type="button" data-coll-id="' + esc(c.id) + '" class="h-[174px] overflow-hidden transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg text-left bg-white border border-wb-300 rounded-lg p-3 flex flex-col cursor-pointer">' +
+      '<div class="flex flex-col gap-1 min-h-0">' +
+        '<h3 class="font-serif-heading text-xl text-wb-900 leading-tight line-clamp-2">' + esc(c.name) + '</h3>' +
+        (c.description ? '<p class="text-sm text-wb-700 leading-snug line-clamp-2">' + esc(c.description) + '</p>' : '') +
       '</div>' +
-      '<div class="flex items-center gap-2 mt-4">' + avatars + '<span class="text-sm text-wb-700">' + count + '</span></div>' +
+      '<div class="flex items-center gap-2 mt-auto pt-3">' + avatars + '<span class="text-sm text-wb-700">' + count + '</span></div>' +
     '</button>';
   }
   function createCollectionTileHTML(){
-    return '<button id="create-collection" type="button" class="transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full min-h-[132px] rounded-lg border-2 border-dashed border-gold-700 bg-transparent flex flex-col items-center justify-center text-center gap-2 p-4">' +
-      '<span class="w-10 h-10 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center"><i class="ph ph-plus text-xl"></i></span>' +
-      '<span class="text-base font-semibold text-wb-900">Create a Collection</span>' +
-    '</button>';
+    return addBarHTML('create-collection', 'ph-plus', 'Create a Collection');
   }
+  // Collections page in with a "Show more" that appends the next PAGE_SIZE
+  // rather than swapping pages, so earlier collections stay on screen.
+  let collShown = PAGE_SIZE;
   function renderCollections(){
     const grid = $('#collections-grid');
     if (!grid) return;
     const colls = readCollections();
-    const cnt = $('#collections-count'); if (cnt) cnt.textContent = '• (' + colls.length + ')';
-    grid.innerHTML = createCollectionTileHTML() + colls.map(collectionCardHTML).join('');
+    setSectionCount('#collections-count', colls.length);
+    collShown = Math.max(PAGE_SIZE, Math.min(collShown, colls.length));
+    grid.innerHTML = colls.slice(0, collShown).map(collectionCardHTML).join('');
+    grid.style.display = colls.length ? '' : 'none';   // an empty grid would still take the 16px stack gap
+    $('#collections-create').innerHTML = createCollectionTileHTML();
+    const more = $('#collections-more');
+    const rest = colls.length - collShown;
+    more.innerHTML = rest > 0
+      ? '<button id="collections-show-more" type="button" class="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Show ' + rest + ' more</button>'
+      : '';
+    // Collapse the wrapper when there's no button — an empty flex child still
+    // takes the section's gap-8, which reads as stray padding under the grid.
+    more.style.display = rest > 0 ? '' : 'none';
   }
 
   // ===== Collection detail view =====
@@ -782,24 +894,33 @@
 
   function updateDetailHeader(c){
     $('#detail-title').textContent = c.name;
-    $('#detail-desc').textContent = c.description || '';  // empty shows the placeholder via CSS
+    $('#detail-desc').textContent = c.description || '';   // no description simply renders nothing
     const n = (c.people || []).length;
-    $('#detail-people-count').textContent = '· ' + n;
+    setSectionCount('#detail-people-count', n);
     paintCollMine(!!c.mine);
   }
   function detailAddTileHTML(full){
-    const cls = full ? 'col-span-2 lg:col-span-3 min-h-[220px] py-10' : 'min-h-[288px] py-6';
-    return '<button id="detail-add-person" type="button" class="' + cls + ' transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
+    if (!full) return addBarHTML('detail-add-person', 'ph-plus', 'Add a person');
+    return '<button id="detail-add-person" type="button" class="w-full min-h-[220px] py-10 transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
       '<span class="w-14 h-14 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-plus text-2xl"></i></span>' +
       '<span class="text-base font-semibold text-wb-900 mt-1">Add a person</span>' +
       '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Add someone from the people you’ve saved.</span>' +
     '</button>';
   }
+  let detailPage = 1;
   function renderDetailPeople(c){
     const wrap = $('#detail-people');
     const ppl = (c.people || []).map(personData);
     ppl.forEach(p => { if (!p.photo && !p._color) p._color = colorFor(p.id); });
-    wrap.innerHTML = (ppl.length ? ppl.map(personCardHTML).join('') : '') + detailAddTileHTML(ppl.length === 0);
+    detailPage = clampPage(detailPage, ppl.length);
+    wrap.innerHTML =
+      '<div class="flex flex-col gap-4">' +
+        (ppl.length ? '<div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,171px),1fr))] gap-2 sm:gap-3">' +
+          pageSlice(ppl, detailPage).map(personCardHTML).join('') +
+        '</div>' : '') +
+        detailAddTileHTML(ppl.length === 0) +
+      '</div>' +
+      paginationHTML(detailPage, ppl.length, 'detail', 'people');
     applyPhotoColors();
   }
   function renderDetailSuggestions(c){
@@ -816,6 +937,7 @@
   function showCollection(id){
     const c = readCollections().find(x => x.id === id); if (!c) return;
     currentCollId = id;
+    detailPage = 1;
     updateDetailHeader(c); renderDetailPeople(c); renderDetailSuggestions(c);
     $('#list-view').style.display = 'none';
     $('#detail-view').style.display = '';
@@ -828,7 +950,8 @@
     renderCollections();
   }
   $('#detail-back').addEventListener('click', hideCollection);
-  $('#collections-grid').addEventListener('click', (e) => {
+  // Create a Collection now lives beneath the grid, so listen on the wrapper.
+  $('#collections-grid').parentElement.addEventListener('click', (e) => {
     if (e.target.closest('#create-collection')) { openCreateCollection(); return; }
     const card = e.target.closest('[data-coll-id]'); if (!card) return;
     showCollection(card.dataset.collId);
@@ -852,22 +975,6 @@
     toast(personData(id).name + ' added to “' + c.name + '”');
   }
 
-  // ----- Editable name + description (contenteditable, commit on blur) -----
-  const detTitle = $('#detail-title'), detDesc = $('#detail-desc');
-  function commitCollField(field, el, fallback){
-    const c = currentColl(); if (!c) return;
-    let v = (el.textContent || '').replace(/\s+/g, ' ').trim();
-    if (field === 'name' && !v) { v = c.name; el.textContent = c.name; }  // name can't be empty
-    const colls = readCollections(); const cc = colls.find(x => x.id === currentCollId); if (!cc) return;
-    cc[field] = v; writeCollections(colls); renderCollections();
-    if (field === 'name') { /* keep as typed */ }
-  }
-  detTitle.addEventListener('blur', () => commitCollField('name', detTitle));
-  detTitle.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); detTitle.blur(); } });
-  detDesc.addEventListener('blur', () => commitCollField('description', detDesc));
-  $('#edit-title').addEventListener('click', () => { detTitle.focus(); document.getSelection().selectAllChildren(detTitle); });
-  $('#edit-desc').addEventListener('click', () => { detDesc.focus(); });
-
   // ----- Share -----
   $('#coll-share').addEventListener('click', () => {
     const c = currentColl(); if (!c) return;
@@ -878,6 +985,7 @@
 
   // ----- ••• menu → Delete (with confirmation) -----
   $('#coll-more').addEventListener('click', () => openOverlay(overlays.collMenu));
+  $('#coll-edit-open').addEventListener('click', () => { closeAll(); openEditCollection(); });
   $('#coll-delete-open').addEventListener('click', () => {
     overlays.collMenu.classList.remove('open');
     const c = currentColl(); $('#coll-delete-name').textContent = c ? c.name : 'this collection';
@@ -980,6 +1088,7 @@
     savedIds = name === 'zero' ? [] : name === 'one' ? ['mohammad'] : name === 'family' ? familySavedSet() : DEFAULT_SAVED.slice();
     writeSaved(savedIds);
     buildPeople();
+    peoplePage = 1; collShown = PAGE_SIZE;   // a different data set starts over at page 1
     render();
     renderCollections();
     renderMatches();
@@ -1054,13 +1163,10 @@
     $('#opt-rel-title').textContent = hasRel ? 'Edit your relationship' : 'Add your relationship';
     $('#opt-rel-sub').textContent = hasRel ? 'Update how you’re connected' : 'Connect and organize your family tree';
 
-    // Collection menu item reflects whether they're in any collection yet:
-    // "Add to collection" → "Manage their collections".
-    const inColls = readCollections().filter(c => (c.people || []).indexOf(activeId) >= 0).length;
-    $('#opt-coll-title').textContent = inColls ? 'Manage their collections' : 'Add to collection';
-    $('#opt-coll-sub').textContent = inColls
-      ? 'In ' + inColls + ' collection' + (inColls === 1 ? '' : 's') + ' • add or remove'
-      : 'Group them with people who belong together';
+    // Collection menu item is not state-dependent — it always reads the same,
+    // whether or not they're in a collection yet.
+    $('#opt-coll-title').textContent = 'View their collections';
+    $('#opt-coll-sub').textContent = 'All the collections they belong to';
   }
 
   // Email-updates toggle inside the options sheet. State-dependent styles are
@@ -1098,6 +1204,25 @@
   root.addEventListener('click', handleCardArea);
   $('#detail-people').addEventListener('click', handleCardArea);
 
+  // ----- Pagination controls -----
+  // Changing page re-renders in place, then brings the section heading back
+  // into view so the user isn't left mid-grid.
+  function goToPage(ns, page){
+    if (ns === 'people') { peoplePage = page; render(); $('#people-section').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    if (ns === 'detail') { const c = currentColl(); if (!c) return; detailPage = page; renderDetailPeople(c); $('#detail-people-heading').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  }
+  function handlePageClick(e){
+    const b = e.target.closest('[data-page]'); if (!b || b.disabled) return;
+    goToPage(b.dataset.pageNs, Number(b.dataset.page));
+  }
+  root.addEventListener('click', handlePageClick);
+  $('#detail-people').addEventListener('click', handlePageClick);
+  $('#collections-more').addEventListener('click', (e) => {
+    if (!e.target.closest('#collections-show-more')) return;
+    collShown += PAGE_SIZE;
+    renderCollections();
+  });
+
   overlays.options.addEventListener('click', (e) => {
     const action = e.target.closest('[data-action]'); if(!action) return;
     if (action.dataset.action === 'relationship') openRelationship();
@@ -1106,88 +1231,43 @@
     if (action.dataset.action === 'remove') openRemove();
   });
 
-  // ----- Add to collection (slides in as a wizard pane) -----
-  // Membership across collections stages in a draft (a list of collection ids
-  // this person belongs to) so the batch can be saved or discarded via the
-  // sticky footer lockup, rather than each tap writing straight to the store.
-  let manageCollDraft = null, manageCollOrig = null;
-  function manageCollDirty(){
-    if (!manageCollDraft || !manageCollOrig) return false;
-    if (manageCollDraft.length !== manageCollOrig.length) return true;
-    return manageCollOrig.some(id => manageCollDraft.indexOf(id) < 0);
-  }
-  function paintManageCollSave(){
-    const b = $('#addcoll-save'); if (!b) return;
-    const on = manageCollDirty();
-    b.disabled = !on;
-    b.style.cursor = on ? 'pointer' : 'not-allowed';
-    b.style.backgroundColor = on ? '#e2ba60' : '#ebe9e9';   // gold-400 / wb-200
-    b.style.color = on ? '#262116' : '#807e7a';             // wb-900 / wb-500
-    b.style.border = on ? '1px solid #e2ba60' : '1px solid #dbdad7'; // gold-400 / wb-300
-  }
+  // ----- View their collections (slides in as a wizard pane) -----
+  // A read-only navigation list of the collections this person belongs to —
+  // tapping one opens that collection's detail view. Membership is edited on
+  // the collection detail page, so there's no staged draft or save lockup here.
+  // Figma 6551:19832.
   function openAddToCollection(){
     const inColls = readCollections().filter(c => (c.people || []).indexOf(activeId) >= 0);
-    manageCollOrig = inColls.map(c => c.id);
-    manageCollDraft = manageCollOrig.slice();
-    $('#addcoll-title').innerHTML = manageCollOrig.length
-      ? 'Manage <span id="addcoll-name">' + esc(activeName) + '</span>’s collections'
-      : 'Add <span id="addcoll-name">' + esc(activeName) + '</span> to a collection';
-    renderAddCollList();
-    paintManageCollSave();
+    $('#addcoll-title').innerHTML = 'View <span id="addcoll-name">' + esc(activeName) + '</span>\u2019s collections';
+    $('#addcoll-sub').textContent = inColls.length
+      ? 'Tap a collection to view it.'
+      : 'Not added to any collections yet.';
+    renderAddCollList(inColls);
     wizGo('collections');
   }
-  function renderAddCollList(){
+  function renderAddCollList(colls){
     const wrap = $('#addcoll-list');
-    const colls = readCollections();
-    const draft = manageCollDraft || [];
     const rows = colls.map(c => {
-      const inIt = draft.indexOf(c.id) >= 0;
-      const storeHas = (c.people || []).indexOf(activeId) >= 0;
-      // Reflect the pending (unsaved) change in the count so it feels live.
-      const n = (c.people || []).length + (inIt && !storeHas ? 1 : 0) + (!inIt && storeHas ? -1 : 0);
-      return '<button type="button" class="coll-toggle w-full flex items-center gap-3 py-4 border-b border-wb-300 text-left" data-coll="' + esc(c.id) + '">' +
-        '<span class="w-9 h-9 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center flex-shrink-0"><i class="ph ph-folders text-lg"></i></span>' +
-        '<span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight truncate">' + esc(c.name) + '</span><span class="block text-xs text-wb-700 mt-0.5">' + n + ' ' + (n === 1 ? 'person' : 'people') + '</span></span>' +
-        (inIt
-          ? '<i class="ph-fill ph-check-circle text-2xl text-seafoam-600 flex-shrink-0"></i>'
-          : '<i class="ph ph-circle text-2xl text-wb-400 flex-shrink-0"></i>') +
+      const n = (c.people || []).length;
+      return '<button type="button" class="coll-open w-full flex items-center gap-2 py-6 border-b border-wb-300 text-left hover:bg-wb-50" data-coll="' + esc(c.id) + '">' +
+        '<span class="w-8 h-8 rounded-full bg-gold-100 text-wb-900 flex items-center justify-center flex-shrink-0"><i class="ph ph-cards text-xl"></i></span>' +
+        '<span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight truncate">' + esc(c.name) + '</span><span class="block text-sm text-wb-700 leading-tight mt-1">' + n + ' ' + (n === 1 ? 'person' : 'people') + '</span></span>' +
+        '<i class="ph-bold ph-arrow-right text-2xl text-wb-900 flex-shrink-0"></i>' +
       '</button>';
     }).join('');
-    const createRow = '<button type="button" id="addcoll-create" class="w-full flex items-center gap-3 py-4 text-left">' +
-      '<span class="w-9 h-9 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center flex-shrink-0"><i class="ph ph-plus text-lg"></i></span>' +
-      '<span class="flex-1 text-base font-semibold text-navy-700">Create a new collection</span>' +
+    const createRow = '<button type="button" id="addcoll-create" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 text-left hover:bg-wb-50">' +
+      '<span class="w-8 h-8 rounded-full bg-seafoam-100 text-seafoam-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-plus text-xl"></i></span>' +
+      '<span class="flex-1 min-w-0 text-base font-semibold text-wb-900 leading-tight">Create a new collection</span>' +
     '</button>';
-    wrap.innerHTML = (colls.length ? rows : '<p class="text-sm text-wb-600 py-2">No collections yet — create your first one.</p>') + createRow;
+    wrap.innerHTML = rows + createRow;
   }
   $('#addcoll-list').addEventListener('click', (e) => {
     const create = e.target.closest('#addcoll-create');
     if (create) { closeAll(); openCreateCollection([activeId]); return; }
-    const row = e.target.closest('.coll-toggle'); if (!row || !manageCollDraft) return;
-    const id = row.dataset.coll;
-    const i = manageCollDraft.indexOf(id);
-    if (i < 0) manageCollDraft.push(id); else manageCollDraft.splice(i, 1);
-    renderAddCollList();
-    paintManageCollSave();
-  });
-  // Save applies the whole draft across collections; Cancel (and any other
-  // dismissal) discards it.
-  $('#addcoll-save').addEventListener('click', () => {
-    if (!manageCollDirty()) return;
-    const colls = readCollections();
-    colls.forEach(c => {
-      c.people = c.people || [];
-      const should = manageCollDraft.indexOf(c.id) >= 0;
-      const idx = c.people.indexOf(activeId);
-      if (should && idx < 0) c.people.push(activeId);
-      if (!should && idx >= 0) c.people.splice(idx, 1);
-    });
-    writeCollections(colls);
-    manageCollDraft = manageCollOrig = null;
-    renderCollections();
+    const row = e.target.closest('.coll-open'); if (!row) return;
     closeAll();
-    toast(activeName + '’s collections updated');
+    showCollection(row.dataset.coll);
   });
-  $('#addcoll-cancel').addEventListener('click', () => { manageCollDraft = manageCollOrig = null; closeAll(); });
 
   // Current selection path — loaded from the store on open, updated on taps, and
   // used to pre-highlight pills so a back-out or revisit shows prior choices.
@@ -1348,17 +1428,54 @@
     location.href = location.pathname;  // clean URL, default demo state
   });
 
-  // ===== Create collection modal =====
+  // ===== Create / edit collection modal =====
+  // One modal, two modes: 'create' builds a new collection, 'edit' (Figma
+  // 6547:18493) reopens it against an existing one. Same controls throughout —
+  // only the title, blurb, and submit label change, plus edit's Save Updates
+  // stays disabled until something actually differs from what's stored.
   const collName = $('#coll-name'), collDesc = $('#coll-desc'), collCreate = $('#coll-create'), collCount = $('#coll-count');
+  // Length caps. The inputs carry these as maxlength so typing/pasting stops at
+  // the limit; they're re-applied on write so a value that arrives some other
+  // way (seeded demo data, an older store) can't exceed them either. Cards clamp
+  // whatever fits to two lines on top of this.
+  const COLL_NAME_MAX = 60, COLL_DESC_MAX = 140;
+  collName.maxLength = COLL_NAME_MAX; collDesc.maxLength = COLL_DESC_MAX;
+  let collMode = 'create', collEditId = null, collEditOrig = null;
+  function collFormState(){
+    return {
+      name: collName.value.trim().slice(0, COLL_NAME_MAX),
+      description: collDesc.value.trim().slice(0, COLL_DESC_MAX),
+      people: $$('.coll-person:checked').map(c => c.value)
+    };
+  }
+  function collFormDirty(){
+    if (!collEditOrig) return true;
+    const cur = collFormState();
+    if (cur.name !== collEditOrig.name || cur.description !== collEditOrig.description) return true;
+    if (cur.people.length !== collEditOrig.people.length) return true;
+    return collEditOrig.people.some(id => cur.people.indexOf(id) < 0);
+  }
+  // Live "used/limit" readouts so the cap is visible before it's hit. The
+  // at-limit colour is set inline (token values) rather than via a class, so it
+  // paints immediately without waiting on the Tailwind CDN's class generation.
+  const collNameCount = $('#coll-name-count'), collDescCount = $('#coll-desc-count');
+  function paintCharCount(el, used, max){
+    el.textContent = used + '/' + max;
+    el.style.color = used >= max ? '#993b4d' : '#63605b';   // coral-700 at the limit / wb-600
+  }
   function refreshCollForm(){
     const selected = $$('.coll-person:checked').length;
     collCount.textContent = '(' + selected + ' selected)';
-    collCreate.disabled = collName.value.trim().length === 0;
+    paintCharCount(collNameCount, collName.value.length, COLL_NAME_MAX);
+    paintCharCount(collDescCount, collDesc.value.length, COLL_DESC_MAX);
+    collCreate.disabled = collName.value.trim().length === 0 || (collMode === 'edit' && !collFormDirty());
   }
-  function openCreateCollection(preselect){
-    const pre = Array.isArray(preselect) ? preselect : [];  // guard: click handler passes an Event, not an array
-    collName.value = ''; collDesc.value = '';
-    $('#coll-people').innerHTML = savedIds.map(id => {
+  // Checklist of everyone who could belong — the saved list, plus any current
+  // member who somehow isn't in it, so editing can never silently drop someone.
+  function renderCollPeople(checked){
+    const ids = savedIds.slice();
+    checked.forEach(id => { if (ids.indexOf(id) < 0) ids.push(id); });
+    $('#coll-people').innerHTML = ids.map(id => {
       const p = personData(id);
       const av = p.photo
         ? '<span class="w-8 h-8 rounded-full bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
@@ -1366,24 +1483,55 @@
       return '<label class="flex items-center gap-3 py-2 px-1 rounded-lg hover:bg-wb-50 cursor-pointer">' +
         av +
         '<span class="flex-1 min-w-0 truncate text-base text-wb-900">' + esc(p.name) + '</span>' +
-        '<input type="checkbox" class="coll-person w-5 h-5 accent-navy-700" value="' + esc(id) + '"' + (pre.indexOf(id) >= 0 ? ' checked' : '') + ' />' +
+        '<input type="checkbox" class="coll-person w-5 h-5 accent-navy-700" value="' + esc(id) + '"' + (checked.indexOf(id) >= 0 ? ' checked' : '') + ' />' +
       '</label>';
     }).join('');
+  }
+  function openEditCollection(){
+    const c = currentColl(); if (!c) return;
+    collMode = 'edit'; collEditId = c.id;
+    collEditOrig = { name: (c.name || '').slice(0, COLL_NAME_MAX), description: (c.description || '').slice(0, COLL_DESC_MAX), people: (c.people || []).slice() };
+    $('#coll-title').textContent = 'Edit this collection';
+    $('#coll-sub').textContent = 'You can make changes to the title, description, and who belongs to it.';
+    collCreate.textContent = 'Save Updates';
+    collName.value = (c.name || '').slice(0, COLL_NAME_MAX); collDesc.value = (c.description || '').slice(0, COLL_DESC_MAX);
+    renderCollPeople(collEditOrig.people);
+    refreshCollForm();
+    openOverlay(overlays.collection);
+  }
+  function openCreateCollection(preselect){
+    const pre = Array.isArray(preselect) ? preselect : [];  // guard: click handler passes an Event, not an array
+    collMode = 'create'; collEditId = null; collEditOrig = null;
+    $('#coll-title').textContent = 'Create a collection';
+    $('#coll-sub').textContent = 'Name it whatever you like and choose who belongs.';
+    collCreate.textContent = 'Create collection';
+    collName.value = ''; collDesc.value = '';
+    renderCollPeople(pre);
     refreshCollForm();
     openOverlay(overlays.collection);
   }
   collName.addEventListener('input', refreshCollForm);
+  collDesc.addEventListener('input', refreshCollForm);
   $('#coll-people').addEventListener('change', refreshCollForm);
   $('#coll-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = collName.value.trim(); if (!name) return;
-    const chosen = $$('.coll-person:checked').map(c => c.value);
+    const f = collFormState(); if (!f.name) return;
     const colls = readCollections();
-    colls.push({ id: 'coll-' + (colls.length + 1) + '-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24), name: name, description: collDesc.value.trim(), people: chosen });
+    if (collMode === 'edit') {
+      const c = colls.find(x => x.id === collEditId); if (!c) return;
+      c.name = f.name; c.description = f.description; c.people = f.people;
+      writeCollections(colls);
+      renderCollections();
+      if (currentCollId === c.id) refreshDetail();   // detail header, people grid and suggestions all move with it
+      closeAll();
+      toast('“' + f.name + '” updated');
+      return;
+    }
+    colls.push({ id: 'coll-' + (colls.length + 1) + '-' + f.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24), name: f.name, description: f.description, people: f.people });
     writeCollections(colls);
     renderCollections();
     closeAll();
-    toast('Collection “' + name + '” created');
+    toast('Collection “' + f.name + '” created');
   });
 
   // ===== init =====
