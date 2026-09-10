@@ -149,8 +149,11 @@
           </div>
         </header>
 
-        <!-- Make my relationship to this group public -->
-        <div class="flex items-center gap-3 p-4 rounded-xl bg-wb-50 border border-wb-200 mb-5">
+        <!-- Make my relationship to this group public — HIDDEN for now: the
+             feature is a long way off, so it's out of the demo rather than
+             deleted. Drop the inline display:none to bring it back; the
+             `mine` flag and its toggle logic are still wired underneath. -->
+        <div style="display:none" class="flex items-center gap-3 p-4 rounded-xl bg-wb-50 border border-wb-200 mb-5">
           <button id="coll-mine" role="switch" aria-checked="false" aria-label="Make my relationship to this group public" class="relative w-14 h-7 rounded-full transition-colors flex-shrink-0"><span id="coll-mine-knob" class="absolute top-[3px] left-[3px] w-[22px] h-[22px] rounded-full bg-white shadow transition-transform"></span></button>
           <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Make my relationship to this group public</span><span id="coll-mine-sub" class="block text-sm text-wb-600 mt-0.5">Off · Your relationship to this group stays private</span></span>
         </div>
