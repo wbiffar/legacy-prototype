@@ -457,12 +457,18 @@
 
     <form id="coll-form" class="mt-5 flex flex-col gap-4">
       <label class="flex flex-col gap-1.5">
-        <span class="text-sm font-semibold text-wb-900">Name</span>
-        <input id="coll-name" type="text" required maxlength="60" placeholder="e.g. College Friends" class="h-12 px-3 rounded-lg border border-wb-300 bg-white text-base text-wb-900 placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
+        <span class="flex items-baseline justify-between gap-3">
+          <span class="text-sm font-semibold text-wb-900">Name</span>
+          <span id="coll-name-count" class="text-sm text-wb-600 tabular-nums flex-shrink-0">0/60</span>
+        </span>
+        <input id="coll-name" type="text" required maxlength="60" aria-describedby="coll-name-count" placeholder="e.g. College Friends" class="h-12 px-3 rounded-lg border border-wb-300 bg-white text-base text-wb-900 placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
       </label>
       <label class="flex flex-col gap-1.5">
-        <span class="text-sm font-semibold text-wb-900">Description <span class="font-normal text-wb-500">(optional)</span></span>
-        <textarea id="coll-desc" rows="2" maxlength="140" placeholder="What ties these people together?" class="px-3 py-2.5 rounded-lg border border-wb-300 bg-white text-base text-wb-900 placeholder:text-wb-400 leading-snug resize-none focus:outline-none focus:border-navy-500"></textarea>
+        <span class="flex items-baseline justify-between gap-3">
+          <span class="text-sm font-semibold text-wb-900">Description <span class="font-normal text-wb-500">(optional)</span></span>
+          <span id="coll-desc-count" class="text-sm text-wb-600 tabular-nums flex-shrink-0">0/140</span>
+        </span>
+        <textarea id="coll-desc" rows="2" maxlength="140" aria-describedby="coll-desc-count" placeholder="What ties these people together?" class="px-3 py-2.5 rounded-lg border border-wb-300 bg-white text-base text-wb-900 placeholder:text-wb-400 leading-snug resize-none focus:outline-none focus:border-navy-500"></textarea>
       </label>
       <div class="flex flex-col gap-2">
         <span class="text-sm font-semibold text-wb-900">Add people <span id="coll-count" class="font-normal text-wb-500">(0 selected)</span></span>
@@ -1391,11 +1397,17 @@
   // only the title, blurb, and submit label change, plus edit's Save Updates
   // stays disabled until something actually differs from what's stored.
   const collName = $('#coll-name'), collDesc = $('#coll-desc'), collCreate = $('#coll-create'), collCount = $('#coll-count');
+  // Length caps. The inputs carry these as maxlength so typing/pasting stops at
+  // the limit; they're re-applied on write so a value that arrives some other
+  // way (seeded demo data, an older store) can't exceed them either. Cards clamp
+  // whatever fits to two lines on top of this.
+  const COLL_NAME_MAX = 60, COLL_DESC_MAX = 140;
+  collName.maxLength = COLL_NAME_MAX; collDesc.maxLength = COLL_DESC_MAX;
   let collMode = 'create', collEditId = null, collEditOrig = null;
   function collFormState(){
     return {
-      name: collName.value.trim(),
-      description: collDesc.value.trim(),
+      name: collName.value.trim().slice(0, COLL_NAME_MAX),
+      description: collDesc.value.trim().slice(0, COLL_DESC_MAX),
       people: $$('.coll-person:checked').map(c => c.value)
     };
   }
@@ -1406,9 +1418,19 @@
     if (cur.people.length !== collEditOrig.people.length) return true;
     return collEditOrig.people.some(id => cur.people.indexOf(id) < 0);
   }
+  // Live "used/limit" readouts so the cap is visible before it's hit. The
+  // at-limit colour is set inline (token values) rather than via a class, so it
+  // paints immediately without waiting on the Tailwind CDN's class generation.
+  const collNameCount = $('#coll-name-count'), collDescCount = $('#coll-desc-count');
+  function paintCharCount(el, used, max){
+    el.textContent = used + '/' + max;
+    el.style.color = used >= max ? '#993b4d' : '#63605b';   // coral-700 at the limit / wb-600
+  }
   function refreshCollForm(){
     const selected = $$('.coll-person:checked').length;
     collCount.textContent = '(' + selected + ' selected)';
+    paintCharCount(collNameCount, collName.value.length, COLL_NAME_MAX);
+    paintCharCount(collDescCount, collDesc.value.length, COLL_DESC_MAX);
     collCreate.disabled = collName.value.trim().length === 0 || (collMode === 'edit' && !collFormDirty());
   }
   // Checklist of everyone who could belong — the saved list, plus any current
@@ -1431,11 +1453,11 @@
   function openEditCollection(){
     const c = currentColl(); if (!c) return;
     collMode = 'edit'; collEditId = c.id;
-    collEditOrig = { name: c.name, description: c.description || '', people: (c.people || []).slice() };
+    collEditOrig = { name: (c.name || '').slice(0, COLL_NAME_MAX), description: (c.description || '').slice(0, COLL_DESC_MAX), people: (c.people || []).slice() };
     $('#coll-title').textContent = 'Edit this collection';
     $('#coll-sub').textContent = 'You can make changes to the title, description, and who belongs to it.';
     collCreate.textContent = 'Save Updates';
-    collName.value = c.name; collDesc.value = c.description || '';
+    collName.value = (c.name || '').slice(0, COLL_NAME_MAX); collDesc.value = (c.description || '').slice(0, COLL_DESC_MAX);
     renderCollPeople(collEditOrig.people);
     refreshCollForm();
     openOverlay(overlays.collection);
