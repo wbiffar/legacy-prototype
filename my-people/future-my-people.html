@@ -452,7 +452,7 @@
   <div class="sheet-card p-6 md:p-8 !pb-[72px] md:!pb-8">
     <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
     <h2 id="coll-title" class="text-xl font-bold text-navy-700 leading-tight pr-10">Create a collection</h2>
-    <p class="text-sm text-wb-700 mt-1 leading-relaxed">Name it whatever you like and choose who belongs.</p>
+    <p id="coll-sub" class="text-sm text-wb-700 mt-1 leading-relaxed">Name it whatever you like and choose who belongs.</p>
 
     <form id="coll-form" class="mt-5 flex flex-col gap-4">
       <label class="flex flex-col gap-1.5">
@@ -469,7 +469,7 @@
       </div>
       <div class="flex flex-row gap-3 mt-2">
         <button type="button" data-close class="flex-1 h-12 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Cancel</button>
-        <button id="coll-create" type="submit" class="flex-1 h-12 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold disabled:opacity-40 disabled:cursor-not-allowed">Create collection</button>
+        <button id="coll-create" type="submit" class="flex-1 h-12 rounded-full border border-navy-700 bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold disabled:bg-wb-200 disabled:border-wb-300 disabled:text-wb-500 disabled:cursor-not-allowed">Create collection</button>
       </div>
     </form>
   </div>
@@ -485,6 +485,11 @@
       <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
     </div>
     <div class="px-6">
+      <button id="coll-edit-open" type="button" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
+        <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-note-pencil text-xl"></i></span>
+        <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Edit this collection</span><span class="block text-xs text-wb-700 mt-1">Change the title, description, and who belongs to it</span></span>
+        <i class="ph-bold ph-caret-right text-2xl text-wb-900 flex-shrink-0"></i>
+      </button>
       <button id="coll-delete-open" type="button" class="w-full flex items-center gap-2 py-6 hover:bg-coral-50 text-left">
         <span class="w-8 h-8 rounded-full bg-coral-100 text-coral-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-trash text-xl"></i></span>
         <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-coral-700 leading-tight">Delete collection</span><span class="block text-xs text-wb-700 mt-1">Removes the collection — people stay in My People</span></span>
@@ -949,6 +954,7 @@
 
   // ----- ••• menu → Delete (with confirmation) -----
   $('#coll-more').addEventListener('click', () => openOverlay(overlays.collMenu));
+  $('#coll-edit-open').addEventListener('click', () => { closeAll(); openEditCollection(); });
   $('#coll-delete-open').addEventListener('click', () => {
     overlays.collMenu.classList.remove('open');
     const c = currentColl(); $('#coll-delete-name').textContent = c ? c.name : 'this collection';
@@ -1391,17 +1397,38 @@
     location.href = location.pathname;  // clean URL, default demo state
   });
 
-  // ===== Create collection modal =====
+  // ===== Create / edit collection modal =====
+  // One modal, two modes: 'create' builds a new collection, 'edit' (Figma
+  // 6547:18493) reopens it against an existing one. Same controls throughout —
+  // only the title, blurb, and submit label change, plus edit's Save Updates
+  // stays disabled until something actually differs from what's stored.
   const collName = $('#coll-name'), collDesc = $('#coll-desc'), collCreate = $('#coll-create'), collCount = $('#coll-count');
+  let collMode = 'create', collEditId = null, collEditOrig = null;
+  function collFormState(){
+    return {
+      name: collName.value.trim(),
+      description: collDesc.value.trim(),
+      people: $$('.coll-person:checked').map(c => c.value)
+    };
+  }
+  function collFormDirty(){
+    if (!collEditOrig) return true;
+    const cur = collFormState();
+    if (cur.name !== collEditOrig.name || cur.description !== collEditOrig.description) return true;
+    if (cur.people.length !== collEditOrig.people.length) return true;
+    return collEditOrig.people.some(id => cur.people.indexOf(id) < 0);
+  }
   function refreshCollForm(){
     const selected = $$('.coll-person:checked').length;
     collCount.textContent = '(' + selected + ' selected)';
-    collCreate.disabled = collName.value.trim().length === 0;
+    collCreate.disabled = collName.value.trim().length === 0 || (collMode === 'edit' && !collFormDirty());
   }
-  function openCreateCollection(preselect){
-    const pre = Array.isArray(preselect) ? preselect : [];  // guard: click handler passes an Event, not an array
-    collName.value = ''; collDesc.value = '';
-    $('#coll-people').innerHTML = savedIds.map(id => {
+  // Checklist of everyone who could belong — the saved list, plus any current
+  // member who somehow isn't in it, so editing can never silently drop someone.
+  function renderCollPeople(checked){
+    const ids = savedIds.slice();
+    checked.forEach(id => { if (ids.indexOf(id) < 0) ids.push(id); });
+    $('#coll-people').innerHTML = ids.map(id => {
       const p = personData(id);
       const av = p.photo
         ? '<span class="w-8 h-8 rounded-full bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
@@ -1409,24 +1436,55 @@
       return '<label class="flex items-center gap-3 py-2 px-1 rounded-lg hover:bg-wb-50 cursor-pointer">' +
         av +
         '<span class="flex-1 min-w-0 truncate text-base text-wb-900">' + esc(p.name) + '</span>' +
-        '<input type="checkbox" class="coll-person w-5 h-5 accent-navy-700" value="' + esc(id) + '"' + (pre.indexOf(id) >= 0 ? ' checked' : '') + ' />' +
+        '<input type="checkbox" class="coll-person w-5 h-5 accent-navy-700" value="' + esc(id) + '"' + (checked.indexOf(id) >= 0 ? ' checked' : '') + ' />' +
       '</label>';
     }).join('');
+  }
+  function openEditCollection(){
+    const c = currentColl(); if (!c) return;
+    collMode = 'edit'; collEditId = c.id;
+    collEditOrig = { name: c.name, description: c.description || '', people: (c.people || []).slice() };
+    $('#coll-title').textContent = 'Edit this collection';
+    $('#coll-sub').textContent = 'You can make changes to the title, description, and who belongs to it.';
+    collCreate.textContent = 'Save Updates';
+    collName.value = c.name; collDesc.value = c.description || '';
+    renderCollPeople(collEditOrig.people);
+    refreshCollForm();
+    openOverlay(overlays.collection);
+  }
+  function openCreateCollection(preselect){
+    const pre = Array.isArray(preselect) ? preselect : [];  // guard: click handler passes an Event, not an array
+    collMode = 'create'; collEditId = null; collEditOrig = null;
+    $('#coll-title').textContent = 'Create a collection';
+    $('#coll-sub').textContent = 'Name it whatever you like and choose who belongs.';
+    collCreate.textContent = 'Create collection';
+    collName.value = ''; collDesc.value = '';
+    renderCollPeople(pre);
     refreshCollForm();
     openOverlay(overlays.collection);
   }
   collName.addEventListener('input', refreshCollForm);
+  collDesc.addEventListener('input', refreshCollForm);
   $('#coll-people').addEventListener('change', refreshCollForm);
   $('#coll-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = collName.value.trim(); if (!name) return;
-    const chosen = $$('.coll-person:checked').map(c => c.value);
+    const f = collFormState(); if (!f.name) return;
     const colls = readCollections();
-    colls.push({ id: 'coll-' + (colls.length + 1) + '-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24), name: name, description: collDesc.value.trim(), people: chosen });
+    if (collMode === 'edit') {
+      const c = colls.find(x => x.id === collEditId); if (!c) return;
+      c.name = f.name; c.description = f.description; c.people = f.people;
+      writeCollections(colls);
+      renderCollections();
+      if (currentCollId === c.id) refreshDetail();   // detail header, people grid and suggestions all move with it
+      closeAll();
+      toast('“' + f.name + '” updated');
+      return;
+    }
+    colls.push({ id: 'coll-' + (colls.length + 1) + '-' + f.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24), name: f.name, description: f.description, people: f.people });
     writeCollections(colls);
     renderCollections();
     closeAll();
-    toast('Collection “' + name + '” created');
+    toast('Collection “' + f.name + '” created');
   });
 
   // ===== init =====
