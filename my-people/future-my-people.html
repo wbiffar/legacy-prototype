@@ -287,8 +287,8 @@
 
             <!-- Add to collection -->
             <button data-action="addcollection" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 hover:bg-wb-50 text-left">
-              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-folders text-xl"></i></span>
-              <span class="flex-1 min-w-0"><span id="opt-coll-title" class="block text-base font-semibold text-wb-900 leading-tight">Add to collection</span><span id="opt-coll-sub" class="block text-xs text-wb-700 mt-1">Group them with people who belong together</span></span>
+              <span class="w-8 h-8 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-cards text-xl"></i></span>
+              <span class="flex-1 min-w-0"><span id="opt-coll-title" class="block text-base font-semibold text-wb-900 leading-tight">View their collections</span><span id="opt-coll-sub" class="block text-xs text-wb-700 mt-1">All the collections they belong to</span></span>
               <i class="ph ph-caret-right text-2xl text-navy-700 flex-shrink-0"></i>
             </button>
 
@@ -385,22 +385,18 @@
         </div>
       </div>
 
-      <!-- Pane: add to collection -->
+      <!-- Pane: view their collections (read-only nav list — replaced the
+           earlier manage/toggle model; membership is edited on the collection
+           detail page). Figma 6551:19832. -->
       <div class="wiz-pane" data-pane="collections" data-state="next">
         <div class="pt-16 pb-8 px-6">
           <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
           <div class="flex flex-col gap-3">
             <div class="flex flex-col gap-1">
-              <h2 id="addcoll-title" class="text-xl font-bold text-navy-700 leading-tight">Add <span id="addcoll-name">this person</span> to a collection</h2>
-              <p class="text-base text-wb-700 leading-normal">Tap a collection to add or remove them.</p>
+              <h2 id="addcoll-title" class="text-xl font-bold text-navy-700 leading-tight">View <span id="addcoll-name">this person</span>’s collections</h2>
+              <p id="addcoll-sub" class="text-base text-wb-700 leading-normal">Tap a collection to view it.</p>
             </div>
-            <div id="addcoll-list" class="flex flex-col pt-1"></div>
-            <!-- Sticky submit/cancel lockup: membership edits stage in a draft and
-                 only persist on Save; Cancel (or dismissing) discards them. -->
-            <div class="flex items-center gap-4 pt-4 mt-1 border-t border-wb-300">
-              <button id="addcoll-cancel" type="button" class="inline-flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50 shrink-0">Cancel</button>
-              <button id="addcoll-save" type="button" disabled class="flex-1 min-w-0 inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-semibold">Save changes</button>
-            </div>
+            <div id="addcoll-list" class="flex flex-col"></div>
           </div>
         </div>
       </div>
@@ -1054,13 +1050,10 @@
     $('#opt-rel-title').textContent = hasRel ? 'Edit your relationship' : 'Add your relationship';
     $('#opt-rel-sub').textContent = hasRel ? 'Update how you’re connected' : 'Connect and organize your family tree';
 
-    // Collection menu item reflects whether they're in any collection yet:
-    // "Add to collection" → "View their collections".
-    const inColls = readCollections().filter(c => (c.people || []).indexOf(activeId) >= 0).length;
-    $('#opt-coll-title').textContent = inColls ? 'View their collections' : 'Add to collection';
-    $('#opt-coll-sub').textContent = inColls
-      ? 'All the collections they belong to'
-      : 'Group them with people who belong together';
+    // Collection menu item is not state-dependent — it always reads the same,
+    // whether or not they're in a collection yet.
+    $('#opt-coll-title').textContent = 'View their collections';
+    $('#opt-coll-sub').textContent = 'All the collections they belong to';
   }
 
   // Email-updates toggle inside the options sheet. State-dependent styles are
@@ -1106,88 +1099,43 @@
     if (action.dataset.action === 'remove') openRemove();
   });
 
-  // ----- Add to collection (slides in as a wizard pane) -----
-  // Membership across collections stages in a draft (a list of collection ids
-  // this person belongs to) so the batch can be saved or discarded via the
-  // sticky footer lockup, rather than each tap writing straight to the store.
-  let manageCollDraft = null, manageCollOrig = null;
-  function manageCollDirty(){
-    if (!manageCollDraft || !manageCollOrig) return false;
-    if (manageCollDraft.length !== manageCollOrig.length) return true;
-    return manageCollOrig.some(id => manageCollDraft.indexOf(id) < 0);
-  }
-  function paintManageCollSave(){
-    const b = $('#addcoll-save'); if (!b) return;
-    const on = manageCollDirty();
-    b.disabled = !on;
-    b.style.cursor = on ? 'pointer' : 'not-allowed';
-    b.style.backgroundColor = on ? '#e2ba60' : '#ebe9e9';   // gold-400 / wb-200
-    b.style.color = on ? '#262116' : '#807e7a';             // wb-900 / wb-500
-    b.style.border = on ? '1px solid #e2ba60' : '1px solid #dbdad7'; // gold-400 / wb-300
-  }
+  // ----- View their collections (slides in as a wizard pane) -----
+  // A read-only navigation list of the collections this person belongs to —
+  // tapping one opens that collection's detail view. Membership is edited on
+  // the collection detail page, so there's no staged draft or save lockup here.
+  // Figma 6551:19832.
   function openAddToCollection(){
     const inColls = readCollections().filter(c => (c.people || []).indexOf(activeId) >= 0);
-    manageCollOrig = inColls.map(c => c.id);
-    manageCollDraft = manageCollOrig.slice();
-    $('#addcoll-title').innerHTML = manageCollOrig.length
-      ? 'Manage <span id="addcoll-name">' + esc(activeName) + '</span>’s collections'
-      : 'Add <span id="addcoll-name">' + esc(activeName) + '</span> to a collection';
-    renderAddCollList();
-    paintManageCollSave();
+    $('#addcoll-title').innerHTML = 'View <span id="addcoll-name">' + esc(activeName) + '</span>\u2019s collections';
+    $('#addcoll-sub').textContent = inColls.length
+      ? 'Tap a collection to view it.'
+      : 'Not added to any collections yet.';
+    renderAddCollList(inColls);
     wizGo('collections');
   }
-  function renderAddCollList(){
+  function renderAddCollList(colls){
     const wrap = $('#addcoll-list');
-    const colls = readCollections();
-    const draft = manageCollDraft || [];
     const rows = colls.map(c => {
-      const inIt = draft.indexOf(c.id) >= 0;
-      const storeHas = (c.people || []).indexOf(activeId) >= 0;
-      // Reflect the pending (unsaved) change in the count so it feels live.
-      const n = (c.people || []).length + (inIt && !storeHas ? 1 : 0) + (!inIt && storeHas ? -1 : 0);
-      return '<button type="button" class="coll-toggle w-full flex items-center gap-3 py-4 border-b border-wb-300 text-left" data-coll="' + esc(c.id) + '">' +
-        '<span class="w-9 h-9 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center flex-shrink-0"><i class="ph ph-folders text-lg"></i></span>' +
-        '<span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight truncate">' + esc(c.name) + '</span><span class="block text-xs text-wb-700 mt-0.5">' + n + ' ' + (n === 1 ? 'person' : 'people') + '</span></span>' +
-        (inIt
-          ? '<i class="ph-fill ph-check-circle text-2xl text-seafoam-600 flex-shrink-0"></i>'
-          : '<i class="ph ph-circle text-2xl text-wb-400 flex-shrink-0"></i>') +
+      const n = (c.people || []).length;
+      return '<button type="button" class="coll-open w-full flex items-center gap-2 py-6 border-b border-wb-300 text-left hover:bg-wb-50" data-coll="' + esc(c.id) + '">' +
+        '<span class="w-8 h-8 rounded-full bg-gold-100 text-wb-900 flex items-center justify-center flex-shrink-0"><i class="ph ph-cards text-xl"></i></span>' +
+        '<span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight truncate">' + esc(c.name) + '</span><span class="block text-sm text-wb-700 leading-tight mt-1">' + n + ' ' + (n === 1 ? 'person' : 'people') + '</span></span>' +
+        '<i class="ph-bold ph-arrow-right text-2xl text-wb-900 flex-shrink-0"></i>' +
       '</button>';
     }).join('');
-    const createRow = '<button type="button" id="addcoll-create" class="w-full flex items-center gap-3 py-4 text-left">' +
-      '<span class="w-9 h-9 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center flex-shrink-0"><i class="ph ph-plus text-lg"></i></span>' +
-      '<span class="flex-1 text-base font-semibold text-navy-700">Create a new collection</span>' +
+    const createRow = '<button type="button" id="addcoll-create" class="w-full flex items-center gap-2 py-6 border-b border-wb-300 text-left hover:bg-wb-50">' +
+      '<span class="w-8 h-8 rounded-full bg-seafoam-100 text-seafoam-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-plus text-xl"></i></span>' +
+      '<span class="flex-1 min-w-0 text-base font-semibold text-wb-900 leading-tight">Create a new collection</span>' +
     '</button>';
-    wrap.innerHTML = (colls.length ? rows : '<p class="text-sm text-wb-600 py-2">No collections yet — create your first one.</p>') + createRow;
+    wrap.innerHTML = rows + createRow;
   }
   $('#addcoll-list').addEventListener('click', (e) => {
     const create = e.target.closest('#addcoll-create');
     if (create) { closeAll(); openCreateCollection([activeId]); return; }
-    const row = e.target.closest('.coll-toggle'); if (!row || !manageCollDraft) return;
-    const id = row.dataset.coll;
-    const i = manageCollDraft.indexOf(id);
-    if (i < 0) manageCollDraft.push(id); else manageCollDraft.splice(i, 1);
-    renderAddCollList();
-    paintManageCollSave();
-  });
-  // Save applies the whole draft across collections; Cancel (and any other
-  // dismissal) discards it.
-  $('#addcoll-save').addEventListener('click', () => {
-    if (!manageCollDirty()) return;
-    const colls = readCollections();
-    colls.forEach(c => {
-      c.people = c.people || [];
-      const should = manageCollDraft.indexOf(c.id) >= 0;
-      const idx = c.people.indexOf(activeId);
-      if (should && idx < 0) c.people.push(activeId);
-      if (!should && idx >= 0) c.people.splice(idx, 1);
-    });
-    writeCollections(colls);
-    manageCollDraft = manageCollOrig = null;
-    renderCollections();
+    const row = e.target.closest('.coll-open'); if (!row) return;
     closeAll();
-    toast(activeName + '’s collections updated');
+    showCollection(row.dataset.coll);
   });
-  $('#addcoll-cancel').addEventListener('click', () => { manageCollDraft = manageCollOrig = null; closeAll(); });
 
   // Current selection path — loaded from the store on open, updated on taps, and
   // used to pre-highlight pills so a back-out or revisit shows prior choices.
