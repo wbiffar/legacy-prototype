@@ -864,6 +864,9 @@
     more.innerHTML = rest > 0
       ? '<button id="collections-show-more" type="button" class="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Show ' + rest + ' more</button>'
       : '';
+    // Collapse the wrapper when there's no button — an empty flex child still
+    // takes the section's gap-8, which reads as stray padding under the grid.
+    more.style.display = rest > 0 ? '' : 'none';
   }
 
   // ===== Collection detail view =====
