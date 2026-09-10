@@ -54,7 +54,10 @@
      MAIN
      ==================================================================== -->
 <main class="max-w-[1440px] mx-auto px-3 md:px-8 lg:px-12 pt-6 md:pt-10 pb-16">
-  <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-4 lg:gap-12">
+  <!-- At lg+ the nav + content lockup is centred rather than left-hugging:
+       260 (nav) + 48 (gap) + 800 (content cap) = 1108. Below that width the
+       cap doesn't bind and the content track just takes what's left. -->
+  <div class="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-4 lg:gap-12 lg:max-w-[1108px] lg:mx-auto">
 
     <!-- =================== LEFT: My Account =================== -->
     <aside class="hidden lg:block">
@@ -94,7 +97,7 @@
     </div>
 
     <!-- =================== RIGHT: My People =================== -->
-    <div class="max-w-[840px]">
+    <div class="max-w-[800px]">
 
       <!-- ---------- LIST VIEW ---------- -->
       <div id="list-view">
@@ -108,7 +111,7 @@
             <h2 class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700"><i class="ph ph-cards text-2xl" aria-hidden="true"></i><span>My collections</span><span id="collections-count" class="contents"></span></h2>
             <p class="text-base text-wb-700 leading-relaxed">Organize the people you’ve saved into groups that matter to you.</p>
           </div>
-          <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3"></div>
           <div id="collections-more" class="flex justify-center"></div>
         </section>
 
@@ -661,7 +664,7 @@
     const badge = p.relation
       ? '<span class="inline-block mt-1 rounded-full bg-gold-100 text-gold-900 text-sm px-3 py-0.5">'+esc(p.relation)+'</span>'
       : '<button type="button" class="add-rel-chip inline-flex items-center gap-1 mt-1 px-3 py-0.5 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-900 text-sm transition-colors"><i class="ph ph-plus-circle text-sm" aria-hidden="true"></i><span>Add Relationship</span></button>';
-    return '<article class="person-card transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
+    return '<article class="person-card w-full mx-auto min-w-[172px] max-w-[288px] transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
       panel +
       '<div class="flex-1 min-h-[100px] flex flex-col items-center justify-center text-center gap-1 px-2 pb-3">' +
         '<a href="future-index.html?id='+esc(p.id)+'" class="text-base font-semibold text-wb-900 leading-tight">'+esc(p.name)+'</a>' + badge +
@@ -673,8 +676,11 @@
   // Add More People — a single grid cell when people exist; spans all
   // columns (and shows a fuller message) when the grid is empty.
   function addCardHTML(full){
-    const cls = full ? 'col-span-2 lg:col-span-3 min-h-[220px] py-10' : 'min-h-[288px] py-6';
-    return '<button id="add-more" class="'+cls+' transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
+    // Full-span is an inline style, not col-span-full: the Tailwind CDN's JIT
+    // generates classes on mutation, so a class here can miss the first paint.
+    const cls = full ? 'min-h-[220px] py-10' : 'w-full mx-auto min-w-[172px] max-w-[288px] min-h-[288px] py-6';
+    const span = full ? ' style="grid-column:1/-1"' : '';
+    return '<button id="add-more"'+span+' class="'+cls+' transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
       '<span class="w-14 h-14 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-magnifying-glass text-2xl"></i></span>' +
       '<span class="text-base font-semibold text-wb-900 mt-1">Add More People</span>' +
       '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Search our database to find the people you care about and add them here.</span>' +
@@ -755,7 +761,7 @@
       : 'Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.';
     peoplePage = clampPage(peoplePage, n);   // removals can shrink the list past the current page
     root.innerHTML =
-      '<div class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">' +
+      '<div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,171px),1fr))] gap-2 sm:gap-3">' +
         pageSlice(people, peoplePage).map(personCardHTML).join('') +
         addCardHTML(n === 0) +
       '</div>' +
@@ -875,8 +881,9 @@
     paintCollMine(!!c.mine);
   }
   function detailAddTileHTML(full){
-    const cls = full ? 'col-span-2 lg:col-span-3 min-h-[220px] py-10' : 'min-h-[288px] py-6';
-    return '<button id="detail-add-person" type="button" class="' + cls + ' transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
+    const cls = full ? 'min-h-[220px] py-10' : 'w-full mx-auto min-w-[172px] max-w-[288px] min-h-[288px] py-6';
+    const span = full ? ' style="grid-column:1/-1"' : '';
+    return '<button id="detail-add-person"' + span + ' type="button" class="' + cls + ' transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
       '<span class="w-14 h-14 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-plus text-2xl"></i></span>' +
       '<span class="text-base font-semibold text-wb-900 mt-1">Add a person</span>' +
       '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Add someone from the people you’ve saved.</span>' +
@@ -889,7 +896,7 @@
     ppl.forEach(p => { if (!p.photo && !p._color) p._color = colorFor(p.id); });
     detailPage = clampPage(detailPage, ppl.length);
     wrap.innerHTML =
-      '<div class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">' +
+      '<div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,171px),1fr))] gap-2 sm:gap-3">' +
         pageSlice(ppl, detailPage).map(personCardHTML).join('') +
         detailAddTileHTML(ppl.length === 0) +
       '</div>' +
