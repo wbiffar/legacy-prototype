@@ -111,7 +111,10 @@
             <h2 class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700"><i class="ph ph-cards text-2xl" aria-hidden="true"></i><span>My collections</span><span id="collections-count" class="contents"></span></h2>
             <p class="text-base text-wb-700 leading-relaxed">Organize the people you’ve saved into groups that matter to you.</p>
           </div>
-          <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3"></div>
+          <div class="flex flex-col gap-4">
+            <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3"></div>
+            <div id="collections-create"></div>
+          </div>
           <div id="collections-more" class="flex justify-center"></div>
         </section>
 
@@ -673,14 +676,24 @@
     '</article>';
   }
 
+  // Full-width dashed action bar that sits beneath a grid (Figma 6589:29616):
+  // 56px tall, 1px dashed gold border on the page surface, gold-100 icon chip
+  // + label centred. Shared by Add More People / Add a person / Create a
+  // Collection so the three read as one control.
+  function addBarHTML(id, icon, label){
+    return '<button id="' + id + '" type="button" class="w-full h-14 px-3 rounded-lg border border-dashed border-gold-700 bg-gold-50 flex items-center justify-center gap-2 transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg">' +
+      '<span class="w-8 h-8 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center flex-shrink-0"><i class="ph ' + icon + ' text-xl"></i></span>' +
+      '<span class="text-base font-semibold text-wb-900">' + label + '</span>' +
+    '</button>';
+  }
+
   // Add More People — a single grid cell when people exist; spans all
   // columns (and shows a fuller message) when the grid is empty.
+  // With people saved it's the shared bar; the empty state keeps the taller
+  // block so the explanatory copy still has somewhere to live.
   function addCardHTML(full){
-    // Full-span is an inline style, not col-span-full: the Tailwind CDN's JIT
-    // generates classes on mutation, so a class here can miss the first paint.
-    const cls = full ? 'min-h-[220px] py-10' : 'w-full mx-auto min-w-[172px] max-w-[288px] min-h-[288px] py-6';
-    const span = full ? ' style="grid-column:1/-1"' : '';
-    return '<button id="add-more"'+span+' class="'+cls+' transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
+    if (!full) return addBarHTML('add-more', 'ph-magnifying-glass', 'Add More People');
+    return '<button id="add-more" class="w-full min-h-[220px] py-10 transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
       '<span class="w-14 h-14 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-magnifying-glass text-2xl"></i></span>' +
       '<span class="text-base font-semibold text-wb-900 mt-1">Add More People</span>' +
       '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Search our database to find the people you care about and add them here.</span>' +
@@ -760,9 +773,13 @@
       ? 'You haven’t added anyone yet.'
       : 'Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.';
     peoplePage = clampPage(peoplePage, n);   // removals can shrink the list past the current page
+    // Grid, then the full-width add bar 16px beneath it, then the pagination
+    // strip. The bar is outside the grid and repeats on every page.
     root.innerHTML =
-      '<div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,171px),1fr))] gap-2 sm:gap-3">' +
-        pageSlice(people, peoplePage).map(personCardHTML).join('') +
+      '<div class="flex flex-col gap-4">' +
+        (n ? '<div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,171px),1fr))] gap-2 sm:gap-3">' +
+          pageSlice(people, peoplePage).map(personCardHTML).join('') +
+        '</div>' : '') +
         addCardHTML(n === 0) +
       '</div>' +
       paginationHTML(peoplePage, n, 'people', 'people');
@@ -844,10 +861,7 @@
     '</button>';
   }
   function createCollectionTileHTML(){
-    return '<button id="create-collection" type="button" class="transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-[174px] rounded-lg border-2 border-dashed border-gold-700 bg-transparent flex flex-col items-center justify-center text-center gap-2 p-4">' +
-      '<span class="w-10 h-10 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center"><i class="ph ph-plus text-xl"></i></span>' +
-      '<span class="text-base font-semibold text-wb-900">Create a Collection</span>' +
-    '</button>';
+    return addBarHTML('create-collection', 'ph-plus', 'Create a Collection');
   }
   // Collections page in with a "Show more" that appends the next PAGE_SIZE
   // rather than swapping pages, so earlier collections stay on screen.
@@ -858,7 +872,9 @@
     const colls = readCollections();
     setSectionCount('#collections-count', colls.length);
     collShown = Math.max(PAGE_SIZE, Math.min(collShown, colls.length));
-    grid.innerHTML = createCollectionTileHTML() + colls.slice(0, collShown).map(collectionCardHTML).join('');
+    grid.innerHTML = colls.slice(0, collShown).map(collectionCardHTML).join('');
+    grid.style.display = colls.length ? '' : 'none';   // an empty grid would still take the 16px stack gap
+    $('#collections-create').innerHTML = createCollectionTileHTML();
     const more = $('#collections-more');
     const rest = colls.length - collShown;
     more.innerHTML = rest > 0
@@ -884,9 +900,8 @@
     paintCollMine(!!c.mine);
   }
   function detailAddTileHTML(full){
-    const cls = full ? 'min-h-[220px] py-10' : 'w-full mx-auto min-w-[172px] max-w-[288px] min-h-[288px] py-6';
-    const span = full ? ' style="grid-column:1/-1"' : '';
-    return '<button id="detail-add-person"' + span + ' type="button" class="' + cls + ' transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
+    if (!full) return addBarHTML('detail-add-person', 'ph-plus', 'Add a person');
+    return '<button id="detail-add-person" type="button" class="w-full min-h-[220px] py-10 transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg rounded-lg border-2 border-dashed border-gold-700 bg-transparent px-4 flex flex-col items-center justify-center text-center gap-2">' +
       '<span class="w-14 h-14 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph ph-plus text-2xl"></i></span>' +
       '<span class="text-base font-semibold text-wb-900 mt-1">Add a person</span>' +
       '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Add someone from the people you’ve saved.</span>' +
@@ -899,8 +914,10 @@
     ppl.forEach(p => { if (!p.photo && !p._color) p._color = colorFor(p.id); });
     detailPage = clampPage(detailPage, ppl.length);
     wrap.innerHTML =
-      '<div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,171px),1fr))] gap-2 sm:gap-3">' +
-        pageSlice(ppl, detailPage).map(personCardHTML).join('') +
+      '<div class="flex flex-col gap-4">' +
+        (ppl.length ? '<div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,171px),1fr))] gap-2 sm:gap-3">' +
+          pageSlice(ppl, detailPage).map(personCardHTML).join('') +
+        '</div>' : '') +
         detailAddTileHTML(ppl.length === 0) +
       '</div>' +
       paginationHTML(detailPage, ppl.length, 'detail', 'people');
@@ -933,7 +950,8 @@
     renderCollections();
   }
   $('#detail-back').addEventListener('click', hideCollection);
-  $('#collections-grid').addEventListener('click', (e) => {
+  // Create a Collection now lives beneath the grid, so listen on the wrapper.
+  $('#collections-grid').parentElement.addEventListener('click', (e) => {
     if (e.target.closest('#create-collection')) { openCreateCollection(); return; }
     const card = e.target.closest('[data-coll-id]'); if (!card) return;
     showCollection(card.dataset.collId);
