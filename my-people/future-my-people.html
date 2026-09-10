@@ -811,16 +811,19 @@
         '</div>'
       : '';
     const count = ids.length + ' ' + (ids.length === 1 ? 'person' : 'people');
-    return '<button type="button" data-coll-id="' + esc(c.id) + '" class="transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg text-left bg-white border border-wb-300 rounded-lg p-3 flex flex-col cursor-pointer">' +
-      '<div class="flex flex-col gap-1">' +
-        '<h3 class="font-serif-heading text-xl text-wb-900 leading-tight">' + esc(c.name) + '</h3>' +
-        (c.description ? '<p class="text-sm text-wb-700 leading-snug">' + esc(c.description) + '</p>' : '') +
+    // Fixed 174px so every card is the same block regardless of how much
+    // copy it carries: title and description each clamp to two lines, and the
+    // avatar row is pinned to the bottom with mt-auto.
+    return '<button type="button" data-coll-id="' + esc(c.id) + '" class="h-[174px] overflow-hidden transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg text-left bg-white border border-wb-300 rounded-lg p-3 flex flex-col cursor-pointer">' +
+      '<div class="flex flex-col gap-1 min-h-0">' +
+        '<h3 class="font-serif-heading text-xl text-wb-900 leading-tight line-clamp-2">' + esc(c.name) + '</h3>' +
+        (c.description ? '<p class="text-sm text-wb-700 leading-snug line-clamp-2">' + esc(c.description) + '</p>' : '') +
       '</div>' +
-      '<div class="flex items-center gap-2 mt-4">' + avatars + '<span class="text-sm text-wb-700">' + count + '</span></div>' +
+      '<div class="flex items-center gap-2 mt-auto pt-3">' + avatars + '<span class="text-sm text-wb-700">' + count + '</span></div>' +
     '</button>';
   }
   function createCollectionTileHTML(){
-    return '<button id="create-collection" type="button" class="transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-full min-h-[132px] rounded-lg border-2 border-dashed border-gold-700 bg-transparent flex flex-col items-center justify-center text-center gap-2 p-4">' +
+    return '<button id="create-collection" type="button" class="transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg h-[174px] rounded-lg border-2 border-dashed border-gold-700 bg-transparent flex flex-col items-center justify-center text-center gap-2 p-4">' +
       '<span class="w-10 h-10 rounded-full bg-gold-100 text-gold-800 flex items-center justify-center"><i class="ph ph-plus text-xl"></i></span>' +
       '<span class="text-base font-semibold text-wb-900">Create a Collection</span>' +
     '</button>';
