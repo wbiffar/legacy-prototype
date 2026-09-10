@@ -109,10 +109,11 @@
             <p class="text-base text-wb-700 leading-relaxed">Organize the people you’ve saved into groups that matter to you.</p>
           </div>
           <div id="collections-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          <div id="collections-more" class="flex justify-center"></div>
         </section>
 
         <!-- =================== All of my people =================== -->
-        <section class="mt-10 md:mt-12 flex flex-col gap-5">
+        <section id="people-section" class="mt-10 md:mt-12 flex flex-col gap-5">
           <div class="flex flex-col gap-2">
             <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700">All of my people <span id="count-pill"></span></h2>
             <p id="page-subtitle" class="text-base text-wb-700 leading-relaxed">Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.</p>
@@ -156,8 +157,8 @@
           <span class="flex-1 min-w-0"><span class="block text-base font-semibold text-wb-900 leading-tight">Make my relationship to this group public</span><span id="coll-mine-sub" class="block text-sm text-wb-600 mt-0.5">Off · Your relationship to this group stays private</span></span>
         </div>
 
-        <h2 class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700 mb-4">People <span id="detail-people-count"></span></h2>
-        <div id="detail-people" class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5"></div>
+        <h2 id="detail-people-heading" class="text-base font-semibold uppercase tracking-[0.07em] text-gold-700 mb-4">People <span id="detail-people-count"></span></h2>
+        <div id="detail-people"></div>
 
         <!-- Tailored suggestions for this collection (moved here from the root) -->
         <section id="detail-suggest-section" class="mt-10 md:mt-12 flex-col gap-5" style="display:none">
@@ -669,17 +670,74 @@
     '</button>';
   }
 
+  // ===== Pagination =====
+  // Each section caps at PAGE_SIZE results; the add/create tile sits alongside
+  // them (11 + 1 = a full 12-cell grid at every column count). People grids use
+  // numbered pages; the collections grid uses a "Show more" that appends.
+  const PAGE_SIZE = 11;
+  function pageCount(n){ return Math.max(1, Math.ceil(n / PAGE_SIZE)); }
+  function clampPage(p, n){ return Math.min(Math.max(1, p), pageCount(n)); }
+  function pageSlice(arr, p){ const s = (p - 1) * PAGE_SIZE; return arr.slice(s, s + PAGE_SIZE); }
+
+  // Page numbers for the strip: every page when there are few, otherwise
+  // first / last / a window around the current one, with '…' for the gaps.
+  function pageNumbers(current, total){
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const out = [1];
+    const from = Math.max(2, current - 1), to = Math.min(total - 1, current + 1);
+    if (from > 2) out.push('…');
+    for (let i = from; i <= to; i++) out.push(i);
+    if (to < total - 1) out.push('…');
+    out.push(total);
+    return out;
+  }
+
+  // Joined pill strip — matches the Legacy pagination pattern (navy-100 active
+  // cell, wb-300 dividers). Cells are 44px to clear the 44x44 tap-target floor.
+  // Renders nothing until the section actually overflows one page.
+  function paginationHTML(current, n, ns, noun){
+    const total = pageCount(n);
+    if (total <= 1) return '';
+    const cell = (label, opts) => {
+      const o = opts || {};
+      if (label === '…') return '<span class="bg-white text-wb-500 w-11 h-11 border-r border-wb-300 flex items-center justify-center text-sm font-medium select-none">…</span>';
+      const active = !!o.active, disabled = !!o.disabled;
+      return '<button type="button" data-page-ns="' + ns + '" data-page="' + o.page + '"' +
+        (active ? ' aria-current="page"' : '') + (disabled ? ' disabled' : '') +
+        (o.label ? ' aria-label="' + o.label + '"' : '') +
+        ' class="' + (active ? 'bg-navy-100 text-navy-700' : 'bg-white text-wb-500') +
+        (disabled ? ' opacity-40 cursor-not-allowed' : ' hover:bg-wb-100') +
+        ' w-11 h-11' + (o.last ? '' : ' border-r border-wb-300') +
+        ' flex items-center justify-center text-sm font-medium">' + label + '</button>';
+    };
+    const cells = [cell('<i class="ph ph-caret-left text-xs"></i>', { page: current - 1, disabled: current === 1, label: 'Previous page' })];
+    pageNumbers(current, total).forEach(x => {
+      cells.push(x === '…' ? cell('…') : cell(String(x), { page: x, active: x === current }));
+    });
+    cells.push(cell('<i class="ph ph-caret-right text-xs"></i>', { page: current + 1, disabled: current === total, last: true, label: 'Next page' }));
+    const from = (current - 1) * PAGE_SIZE + 1, to = Math.min(current * PAGE_SIZE, n);
+    // The strip can exceed a 375px viewport once there are enough pages for the
+    // ellipsis window, so it scrolls horizontally rather than breaking the grid.
+    return '<nav aria-label="Pagination" class="flex flex-col items-center gap-3 pt-8">' +
+      '<div class="max-w-full overflow-x-auto no-scrollbar"><div class="inline-flex border border-wb-300 rounded overflow-hidden">' + cells.join('') + '</div></div>' +
+      '<p class="text-base text-wb-900 text-center">Showing ' + from + ' – ' + to + ' of ' + n + ' ' + noun + '</p>' +
+    '</nav>';
+  }
+
+  let peoplePage = 1;
   function render(){
     const n = people.length;
     countPill.textContent = '• (' + n + ')';
     subtitle.innerHTML = n === 0
       ? 'You haven’t added anyone yet.'
       : 'Pages for people you have saved. Tap the menu <i class="ph-bold ph-list align-middle"></i> on a card to manage updates or remove a page.';
+    peoplePage = clampPage(peoplePage, n);   // removals can shrink the list past the current page
     root.innerHTML =
       '<div class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">' +
-        people.map(personCardHTML).join('') +
+        pageSlice(people, peoplePage).map(personCardHTML).join('') +
         addCardHTML(n === 0) +
-      '</div>';
+      '</div>' +
+      paginationHTML(peoplePage, n, 'people', 'people');
     applyPhotoColors();
   }
 
@@ -761,12 +819,21 @@
       '<span class="text-base font-semibold text-wb-900">Create a Collection</span>' +
     '</button>';
   }
+  // Collections page in with a "Show more" that appends the next PAGE_SIZE
+  // rather than swapping pages, so earlier collections stay on screen.
+  let collShown = PAGE_SIZE;
   function renderCollections(){
     const grid = $('#collections-grid');
     if (!grid) return;
     const colls = readCollections();
     const cnt = $('#collections-count'); if (cnt) cnt.textContent = '• (' + colls.length + ')';
-    grid.innerHTML = createCollectionTileHTML() + colls.map(collectionCardHTML).join('');
+    collShown = Math.max(PAGE_SIZE, Math.min(collShown, colls.length));
+    grid.innerHTML = createCollectionTileHTML() + colls.slice(0, collShown).map(collectionCardHTML).join('');
+    const more = $('#collections-more');
+    const rest = colls.length - collShown;
+    more.innerHTML = rest > 0
+      ? '<button id="collections-show-more" type="button" class="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Show ' + rest + ' more</button>'
+      : '';
   }
 
   // ===== Collection detail view =====
@@ -791,11 +858,18 @@
       '<span class="text-sm text-wb-600 max-w-[420px] leading-snug">Add someone from the people you’ve saved.</span>' +
     '</button>';
   }
+  let detailPage = 1;
   function renderDetailPeople(c){
     const wrap = $('#detail-people');
     const ppl = (c.people || []).map(personData);
     ppl.forEach(p => { if (!p.photo && !p._color) p._color = colorFor(p.id); });
-    wrap.innerHTML = (ppl.length ? ppl.map(personCardHTML).join('') : '') + detailAddTileHTML(ppl.length === 0);
+    detailPage = clampPage(detailPage, ppl.length);
+    wrap.innerHTML =
+      '<div class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">' +
+        pageSlice(ppl, detailPage).map(personCardHTML).join('') +
+        detailAddTileHTML(ppl.length === 0) +
+      '</div>' +
+      paginationHTML(detailPage, ppl.length, 'detail', 'people');
     applyPhotoColors();
   }
   function renderDetailSuggestions(c){
@@ -812,6 +886,7 @@
   function showCollection(id){
     const c = readCollections().find(x => x.id === id); if (!c) return;
     currentCollId = id;
+    detailPage = 1;
     updateDetailHeader(c); renderDetailPeople(c); renderDetailSuggestions(c);
     $('#list-view').style.display = 'none';
     $('#detail-view').style.display = '';
@@ -976,6 +1051,7 @@
     savedIds = name === 'zero' ? [] : name === 'one' ? ['mohammad'] : name === 'family' ? familySavedSet() : DEFAULT_SAVED.slice();
     writeSaved(savedIds);
     buildPeople();
+    peoplePage = 1; collShown = PAGE_SIZE;   // a different data set starts over at page 1
     render();
     renderCollections();
     renderMatches();
@@ -1090,6 +1166,25 @@
   }
   root.addEventListener('click', handleCardArea);
   $('#detail-people').addEventListener('click', handleCardArea);
+
+  // ----- Pagination controls -----
+  // Changing page re-renders in place, then brings the section heading back
+  // into view so the user isn't left mid-grid.
+  function goToPage(ns, page){
+    if (ns === 'people') { peoplePage = page; render(); $('#people-section').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    if (ns === 'detail') { const c = currentColl(); if (!c) return; detailPage = page; renderDetailPeople(c); $('#detail-people-heading').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  }
+  function handlePageClick(e){
+    const b = e.target.closest('[data-page]'); if (!b || b.disabled) return;
+    goToPage(b.dataset.pageNs, Number(b.dataset.page));
+  }
+  root.addEventListener('click', handlePageClick);
+  $('#detail-people').addEventListener('click', handlePageClick);
+  $('#collections-more').addEventListener('click', (e) => {
+    if (!e.target.closest('#collections-show-more')) return;
+    collShown += PAGE_SIZE;
+    renderCollections();
+  });
 
   overlays.options.addEventListener('click', (e) => {
     const action = e.target.closest('[data-action]'); if(!action) return;
