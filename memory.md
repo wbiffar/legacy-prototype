@@ -127,3 +127,10 @@ Each entry should include:
 ### An animated-height pane needs both a ResizeObserver and a transitionend sync
 - **What went wrong:** `.wiz-viewport` is `overflow:hidden` with an explicit animated height. Measuring the active pane's height on click landed mid-transition while the inline qualifier reveal was still expanding, so the pane clipped. A ResizeObserver alone converged, but a beat late — visible as a clipped sheet.
 - **What to do instead:** For a sheet whose content animates open, sync the viewport height from three triggers: the ResizeObserver, `document.fonts.ready`, and the reveal's own `transitionend` (filtered to the animating property, e.g. `grid-template-rows`). Also cap `.sheet-card` with `max-height` + `overflow-y:auto` in `dvh` (not `vh`) so mobile browser chrome can't hide the submit button.
+
+### The Jira ticket is the starting point, not the current design
+- **What went wrong:** Built the whole DES-2265 taxonomy and picker from the ticket description. Wes then supplied two Figma links that had superseded it — the structure had moved on (seven flat top-level options instead of six with two de-emphasized; and the third tier isn't removed, it's relocated to an optional step *after* the save). The full build had to be redone.
+- **What to do instead:** Read the ticket for intent and constraints, then get the current Figma before writing code — ask for it, or check the ticket's attachments and comments for anything added since it was filed. For relationships the sources are the "Relationships" FigJam board (data model, node 5:222) and "Saved Person Future Board Presentation" (front end, node 6621:23844).
+
+### FigJam boards need get_figjam, not get_metadata/get_design_context
+- **Note:** A `/board/` URL is FigJam and only `get_figjam` reads it; `get_metadata` and `get_design_context` are `/design/` only. For a `/design/` URL where the node is a *section*, `get_design_context` returns a sparse outline and tells you to call it again per child frame — `get_screenshot` on the section first is the cheapest way to see the whole flow and decide which frames are worth pulling in full.

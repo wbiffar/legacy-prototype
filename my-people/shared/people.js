@@ -11,25 +11,25 @@
     },
     mohammad: {
       first: 'Anthony', last: 'Thomas', full: 'Anthony Maxwell Thomas', dates: '1940 – 2024',
-      photo: 'assets/people/anthony.png', relation: 'grandfather',
+      photo: 'assets/people/anthony.png', relation: 'Grandfather',
       source: 'The Sacramento Bee', home: 'Green Valley Funeral Home', location: 'Sacramento, CA',
       obit: 'Anthony Maxwell Thomas passed away on June 2, 2024, at the age of 84. A devoted grandfather and lifelong teacher, he is remembered for his warmth, his patience, and the countless students whose lives he shaped over four decades in the classroom.'
     },
     douglas: {
       first: 'Douglas', last: 'Whitfield', full: 'Douglas Michael Whitfield', dates: '1948 – 2023',
-      photo: null, relation: 'uncle',
+      photo: null, relation: 'Uncle',
       source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
       obit: 'Douglas Michael Whitfield passed away on November 12, 2023, at the age of 75. Doug was a proud Chicagoan, a Navy veteran, and a friend to everyone he met. He never missed a Cubs game and never met a stranger.'
     },
     jennifer: {
       first: 'Jennifer', last: 'Sanderson', full: 'Jennifer Sanderson', dates: '1951 – 2024',
-      photo: 'assets/people/jennifer.png', relation: 'friend',
+      photo: 'assets/people/jennifer.png', relation: 'Friend',
       source: 'The Boston Globe', home: 'Fairview Memorial Chapel', location: 'Boston, MA',
       obit: 'Jennifer Sanderson passed away on March 8, 2024, at the age of 72. A gifted gardener and tireless community volunteer, Jennifer brought color and kindness to everyone around her, and her front-porch conversations were legendary.'
     },
     eleanor: {
       first: 'Eleanor', last: 'Whitfield', full: 'Eleanor Whitfield', dates: '1938 – 2024',
-      photo: 'assets/people/eleanor.png', relation: 'aunt',
+      photo: 'assets/people/eleanor.png', relation: 'Aunt',
       source: 'The Denver Post', home: 'Whitfield Chapel', location: 'Denver, CO',
       obit: 'Eleanor Whitfield passed away on August 1, 2024, at the age of 86. Known to all as Aunt Ellie, she was the heart of every family gathering and kept the stories — and the recipes — that held the family together.'
     },
@@ -43,31 +43,31 @@
     // ---- Extended family (DES-2251 §5 relationship tree, see FAMILY-TREE.md) ----
     robert: {
       first: 'Robert', last: 'Thomas', full: 'Robert Thomas', dates: '1904 – 1979',
-      photo: null, relation: 'great-grandfather',
+      photo: null, relation: 'Great-grandfather',
       source: 'The Fresno Bee', home: 'Fresno Memorial Gardens', location: 'Fresno, CA',
       obit: 'Robert Thomas passed away in 1979 at the age of 75. A railroad man and father of five, he raised his family in Fresno alongside his wife, Veronica, and was known for a steady hand and a good story.'
     },
     veronica: {
       first: 'Veronica', last: 'Delgado', full: 'Veronica Delgado Thomas', dates: '1908 – 1986',
-      photo: null, relation: 'great-grandmother',
+      photo: null, relation: 'Great-grandmother',
       source: 'The Fresno Bee', home: 'Fresno Memorial Gardens', location: 'Fresno, CA',
       obit: 'Veronica (Delgado) Thomas passed away in 1986 at the age of 78. The heart of the Thomas home in Fresno, she kept the family close, the kitchen full, and every grandchild remembered by name.'
     },
     patricia: {
       first: 'Patricia', last: 'Thomas', full: 'Patricia (Ramirez) Thomas', dates: '1938 – 2019',
-      photo: null, relation: 'great-aunt',
+      photo: null, relation: 'Aunt',
       source: 'Chicago Sun-Times', home: 'Eternal Springs Funeral Home', location: 'Dixon, IL',
       obit: 'Patricia (Ramirez) Thomas passed away in 2019 at the age of 81. She married Ralph Thomas in 1958 and shared six decades with him in Dixon, where her garden and her generosity were local legend.'
     },
     george: {
       first: 'George', last: 'Whitfield', full: 'George Whitfield', dates: '1912 – 1988',
-      photo: null, relation: 'grandfather',
+      photo: null, relation: 'Grandfather',
       source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
       obit: 'George Whitfield passed away in 1988 at the age of 76. A lifelong Chicagoan and union machinist, he and his wife Margaret raised three children on the South Side and never missed a Sunday dinner.'
     },
     margaret: {
       first: 'Margaret', last: 'Whitfield', full: 'Margaret Whitfield', dates: '1916 – 1994',
-      photo: null, relation: 'grandmother',
+      photo: null, relation: 'Grandmother',
       source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
       obit: 'Margaret Whitfield passed away in 1994 at the age of 78. A schoolteacher for thirty years, she gave the Whitfield family its love of books, its sharp humor, and its Sunday-dinner traditions.'
     },

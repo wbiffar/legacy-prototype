@@ -577,58 +577,61 @@
   <div class="sheet-card">
     <div class="wiz-viewport" id="rel-viewport">
 
-      <!-- Pane 1: top-level category (DES-2265). Six options: four primary
-           pills, then a ruled-off pair that stays deliberately quiet so
-           "Other" and "I didn't know them" aren't the path of least
-           resistance. Only Family carries a caret — the asymmetry is the
-           point, since it's the only branch that drills in. -->
+      <!-- Pane 1: top level (Figma 6619:23724). Seven flat options at equal
+           weight — the board's "Other" bucket is not shown, so School, Work,
+           Faith Community and Military Service sit as peers of Family. Select,
+           then confirm with the CTA. -->
       <div class="wiz-pane" data-pane="relationship" data-state="active">
-        <div class="pt-16 pb-8 px-6">
+        <div class="pt-16 pb-8 px-3">
           <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
-          <div class="flex flex-col gap-3">
+          <div class="max-w-[480px] mx-auto flex flex-col gap-3">
             <div class="flex flex-col gap-1">
-              <h2 id="rel-title" class="text-xl font-bold text-navy-700 leading-tight">How are you related to <span id="rel-name">this person</span>?</h2>
+              <h2 id="rel-title" class="text-xl font-bold text-navy-700 leading-tight">How did you know <span id="rel-name">this person</span>?</h2>
               <p class="text-base text-wb-700 leading-normal">Adding your relationship helps build your connections and family tree.</p>
             </div>
             <div id="rel-options" class="flex flex-col gap-4 pt-4" role="group" aria-labelledby="rel-title"></div>
-            <div id="rel-options-quiet" class="rel-muted-group flex flex-col gap-1" role="group" aria-label="Other options"></div>
+            <div class="pt-4">
+              <button type="button" id="rel-submit" class="rel-cta" disabled>Add Relationship</button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Pane 2: family second tier — the only branch that drills in. The
-           biological / step / adoptive / foster / guardian qualifiers reveal
-           INLINE beneath the chosen relation. Deliberately not a third pane:
-           DES-2265 caps the taxonomy at two tiers. The qualifier is optional,
-           so "Mother" on its own is a complete answer. -->
+      <!-- Pane 2: family groups (Figma 6618:23313). Six gender-neutral groups.
+           The group is a complete answer — we save here. Specific roles come
+           after, optionally. -->
       <div class="wiz-pane" data-pane="family" data-state="next">
-        <div class="pt-16 pb-8 px-6">
+        <div class="pt-16 pb-8 px-3">
           <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
-          <div class="flex flex-col gap-3">
+          <div class="max-w-[480px] mx-auto flex flex-col gap-3">
             <div class="flex flex-col gap-1">
-              <h2 class="text-xl font-bold text-navy-700 leading-tight"><span id="fam-name">This person</span> is my&hellip;</h2>
-              <p class="text-base text-wb-700 leading-normal">Choose the role <span id="fam-sub-name">this person</span> had in your family.</p>
+              <h2 id="fam-title" class="text-xl font-bold text-navy-700 leading-tight"><span id="fam-name">This person</span> was my&hellip;</h2>
+              <p class="text-base text-wb-700 leading-normal">Choose the role <span id="fam-sub-name">this person</span> had in your family. This is all we need &mdash; you can add detail after.</p>
             </div>
-            <div id="fam-options" class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4" role="group" aria-label="Family relationships"></div>
-            <div class="pt-1">
-              <button type="button" id="fam-more" class="rel-more" aria-expanded="false" aria-controls="fam-options-more">More family relationships <i class="ph-bold ph-caret-down text-sm" aria-hidden="true"></i></button>
+            <div id="fam-options" class="grid grid-cols-2 gap-4 py-4" role="group" aria-labelledby="fam-title"></div>
+            <div>
+              <button type="button" id="fam-submit" class="rel-cta" disabled>Add Relationship</button>
             </div>
-            <div id="fam-options-more" class="grid grid-cols-2 sm:grid-cols-3 gap-3" role="group" aria-label="More family relationships" hidden></div>
+          </div>
+        </div>
+      </div>
 
-            <!-- Inline qualifier reveal (no third tier) -->
-            <div class="rel-reveal" id="fam-qual-reveal" data-open="false">
-              <div>
-                <div class="pt-4 mt-4 border-t border-wb-300">
-                  <p id="fam-qual-title" class="text-base font-semibold text-wb-900 leading-tight">How were you connected?</p>
-                  <p class="text-sm text-wb-700 mt-0.5 mb-3">Optional &mdash; choose one if it fits your family.</p>
-                  <div id="fam-qual-options" class="flex flex-wrap gap-2" role="group" aria-labelledby="fam-qual-title"></div>
-                </div>
-              </div>
+      <!-- Pane 3: optional refinement (Figma 6618:23378). Reached only AFTER
+           the group has been saved, which is why the note reads in the past
+           tense and why skipping is a plain link rather than a button. -->
+      <div class="wiz-pane" data-pane="refine" data-state="next">
+        <div class="pt-16 pb-8 px-3">
+          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <div class="max-w-[480px] mx-auto flex flex-col gap-3">
+            <p class="rel-note" id="refine-note" role="status">Saved.</p>
+            <div class="flex flex-col gap-1">
+              <h2 id="refine-title" class="text-xl font-bold text-navy-700 leading-tight">Want to be more specific?</h2>
+              <p class="text-base text-wb-700 leading-normal">Optional. A more exact role helps us place <span id="refine-name">this person</span> in the family tree.</p>
             </div>
-
-            <div class="flex items-center gap-4 pt-4 mt-4 border-t border-wb-300">
-              <button type="button" id="fam-cancel" class="inline-flex items-center justify-center h-11 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50 shrink-0">Cancel</button>
-              <button type="button" id="fam-submit" disabled class="flex-1 min-w-0 inline-flex items-center justify-center h-11 px-5 rounded-full text-sm font-semibold">Add Relationship</button>
+            <div id="refine-options" class="grid grid-cols-2 gap-4 py-4" role="group" aria-labelledby="refine-title"></div>
+            <div class="flex flex-col items-center gap-6">
+              <button type="button" id="refine-submit" class="rel-cta" disabled>Save</button>
+              <button type="button" id="refine-skip" class="rel-skip">No thanks, <span id="refine-skip-group">Parent</span> is right</button>
             </div>
           </div>
         </div>
@@ -870,21 +873,18 @@
   }
 
   // ===== Hero relationship chip + relationship picker (DES-2265) =====
-  // Taxonomy, labels and badge rules all live in shared/relationships.js —
-  // this file only renders them. Two panes: category, then the family second
-  // tier. Nothing drills deeper.
+  // Taxonomy, labels and badge rules live in shared/relationships.js — this
+  // only renders them. Three panes: top level, family groups, then the
+  // optional post-save refinement.
   const REL = window.LEGACY_REL;
   const esc = (v) => String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-  // The stored value wins outright when present — including when it's a
-  // deliberate "no label" answer (Other / I didn't know them). Only fall back
-  // to the demo default when the user has never answered.
+  // A stored answer wins outright — including a deliberate no-label answer
+  // ("I didn't know them"). Only fall back to the demo default when the user
+  // has never answered.
   function storedRel(){ const r = REL.readRelationships()[PID]; return (r === undefined) ? null : r; }
   function currentRelValue(){ const s = storedRel(); return s !== null ? s : (PERSON.relation || null); }
 
-  // Chip above the name. "My mother" when there's a label, a quiet edit
-  // affordance when the answer has no natural "My X" form, and the invitation
-  // when nothing has been declared.
   function paintHeroRel(){
     const el = $('#hero-rel'); if (!el) return;
     const v = currentRelValue();
@@ -892,8 +892,8 @@
     if (label) {
       el.innerHTML = '<button type="button" class="hero-rel-chip inline-flex items-center px-3 py-0.5 rounded-full bg-navy-600 border border-navy-300 text-navy-300 text-sm">' + esc(label) + '</button>';
     } else if (REL.isSilent(v)) {
-      // Answered, but there is no label to show. Keep the state reachable
-      // without printing an awkward possessive.
+      // Answered, but with no label to show. Keep the state reachable without
+      // printing an awkward possessive.
       el.innerHTML = '<button type="button" class="hero-rel-chip inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-navy-200 text-sm underline underline-offset-2"><i class="ph ph-pencil-simple text-sm" aria-hidden="true"></i>Edit your relationship</button>';
     } else {
       el.innerHTML = '<button type="button" class="hero-rel-chip inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-navy-100 text-navy-800 text-sm"><i class="ph ph-plus-circle text-sm" aria-hidden="true"></i>Add your relationship</button>';
@@ -901,56 +901,45 @@
   }
   $('#hero-rel').addEventListener('click', (e) => { if (e.target.closest('.hero-rel-chip')) openRelationshipFlow(); });
 
-  // ----- Picker (category -> family second tier) -----
+  // ----- Picker -----
   const relVp = $('#rel-viewport');
-  const REL_PANES = ['relationship', 'family'];
+  const REL_PANES = ['relationship', 'family', 'refine'];
   let relStack = ['relationship'];
-  let sel = { category: null, relation: null, detail: null };
+  let sel = { top: null, group: null, specific: null };
 
-  const PILL_CLS  = 'rel-option rel-pill w-full flex items-center justify-between min-h-11 px-5 py-2 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50';
-  const QUIET_CLS = 'rel-option rel-quiet';
-  const FAM_CLS   = 'fam-option rel-pill w-full flex items-center justify-center min-h-11 px-4 py-2 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50';
+  const PILL_LG = 'rel-option rel-pill w-full flex items-center justify-center min-h-11 px-5 py-3 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50';
+  const PILL_SM = 'rel-pill w-full flex items-center justify-center min-h-11 px-5 py-2.5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50';
 
-  // Categories render straight from the shared list so the six options — and
-  // their tone — can never drift between this page and the dashboard.
-  function renderCategories(){
-    const caret = ' <i class="ph ph-caret-right text-lg" aria-hidden="true"></i>';
-    $('#rel-options').innerHTML = REL.CATEGORIES.filter(c => c.tone === 'primary').map(c =>
-      '<button type="button" class="' + PILL_CLS + '" data-rel="' + c.id + '" aria-pressed="false">' + esc(c.label) + (c.drills ? caret : '') + '</button>'
-    ).join('');
-    $('#rel-options-quiet').innerHTML = REL.CATEGORIES.filter(c => c.tone === 'muted').map(c =>
-      '<button type="button" class="' + QUIET_CLS + '" data-rel="' + c.id + '" aria-pressed="false">' + esc(c.label) + '</button>'
+  function renderTop(){
+    $('#rel-options').innerHTML = REL.TOP.map(t =>
+      '<button type="button" class="' + PILL_LG + '" data-top="' + t.id + '" aria-pressed="false">' + esc(t.label) + '</button>'
     ).join('');
   }
-  function renderFamily(){
-    const cell = (r) => '<button type="button" class="' + FAM_CLS + '" data-fam="' + r.id + '" aria-pressed="false">' + esc(r.label) + '</button>';
-    $('#fam-options').innerHTML = REL.familyDefaults().map(cell).join('');
-    $('#fam-options-more').innerHTML = REL.familyMore().map(cell).join('');
+  function renderGroups(){
+    $('#fam-options').innerHTML = REL.GROUPS.map(g =>
+      '<button type="button" class="' + PILL_SM + ' fam-option" data-group="' + g.id + '" aria-pressed="false">' + esc(g.label) + '</button>'
+    ).join('');
   }
-  renderCategories(); renderFamily();
+  renderTop(); renderGroups();
 
   function paintPressed(selector, key, value){ $$(selector).forEach(b => b.setAttribute('aria-pressed', String(b.dataset[key] === value))); }
 
   function relRender(instant){
-    const top = relStack[relStack.length - 1];
+    const topPane = relStack[relStack.length - 1];
     REL_PANES.forEach(name => {
       const pane = relVp.querySelector('[data-pane="' + name + '"]');
-      pane.dataset.state = (name === top) ? 'active' : (relStack.indexOf(name) !== -1 ? 'prev' : 'next');
-      pane.setAttribute('aria-hidden', String(name !== top));
+      pane.dataset.state = (name === topPane) ? 'active' : (relStack.indexOf(name) !== -1 ? 'prev' : 'next');
+      pane.setAttribute('aria-hidden', String(name !== topPane));
     });
-    const active = relVp.querySelector('[data-pane="' + top + '"]');
+    const active = relVp.querySelector('[data-pane="' + topPane + '"]');
     relVp.scrollTop = 0;
     const applyHeight = () => { relVp.style.height = active.offsetHeight + 'px'; };
     if (instant) { const t = relVp.style.transition; relVp.style.transition = 'none'; applyHeight(); void relVp.offsetHeight; relVp.style.transition = t; }
     else applyHeight();
   }
-  // The inline reveal and the "more" expand both change the pane's height, so
-  // re-measure after their transitions rather than guessing.
-  function reflow(){ relRender(true); }
-
-  // The inline qualifier reveal animates its height, so a single measurement
-  // taken on click lands mid-transition and clips the pane. Track the active
-  // pane's real height instead.
+  // The viewport is overflow-hidden with an explicit animated height, so it
+  // clips if the active pane grows after the initial measure (a late icon-font
+  // load, or a longer specifics grid than the pane it replaced).
   function syncRelHeight(){
     const active = relVp.querySelector('.wiz-pane[data-state="active"]');
     if (active) relVp.style.height = active.offsetHeight + 'px';
@@ -959,133 +948,114 @@
     const ro = new ResizeObserver(() => syncRelHeight());
     relVp.querySelectorAll('.wiz-pane').forEach(p => ro.observe(p));
   }
-  // A late icon-font load also changes the pane height, same as on the dashboard.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncRelHeight);
-  // The ResizeObserver alone settles a beat late, which shows as a clipped
-  // pane while the reveal animates. Sync on the transition's own end too.
-  $('#fam-qual-reveal').addEventListener('transitionend', (e) => {
-    if (e.propertyName === 'grid-template-rows') syncRelHeight();
-  });
+
   function relGo(name){ relStack.push(name); relRender(); }
   function relBack(){ if (relStack.length > 1) { relStack.pop(); relRender(); } else closeAll(); }
+  $$('#rel-overlay [data-wiz-back]').forEach(b => b.addEventListener('click', relBack));
 
   function openRelationshipFlow(){
     $('#rel-name').textContent = PERSON.full;
+    $('#fam-name').textContent = PERSON.first;
+    $('#fam-sub-name').textContent = PERSON.first;
+    $('#refine-name').textContent = PERSON.first;
     const saved = storedRel();
-    sel = (saved && typeof saved === 'object')
-      ? { category: saved.category || null, relation: saved.relation || null, detail: saved.detail || null }
-      : { category: null, relation: null, detail: null };
-    paintPressed('.rel-option', 'rel', sel.category);
-    relStack = ['relationship'];
+    sel = (saved && typeof saved === 'object' && saved.top)
+      ? { top: saved.top, group: saved.group || null, specific: saved.specific || null }
+      : { top: null, group: null, specific: null };
+    paintPressed('.rel-option', 'top', sel.top);
+    paintPressed('.fam-option', 'group', sel.group);
+    paintTopSubmit(); paintFamSubmit();
+    // Re-opening an existing family answer lands on the group tier with that
+    // group selected — the "change" state.
+    relStack = (sel.top === 'family' && sel.group) ? ['relationship', 'family'] : ['relationship'];
     openOverlay(overlays.relationship);
-    // Re-opening on an existing family answer lands on the family tier with
-    // that answer already selected — the "change" state.
-    if (sel.category === 'family' && sel.relation) { primeFamily(); relStack = ['relationship', 'family']; }
     relRender(true);
   }
 
-  $$('#rel-overlay [data-wiz-back]').forEach(b => b.addEventListener('click', relBack));
-
-  // Category taps. Family drills in; every other option is a complete answer
-  // on its own, so it commits immediately.
-  $('#rel-overlay').addEventListener('click', (e) => {
+  // ----- Pane 1: top level. Select, then confirm. -----
+  $('#rel-options').addEventListener('click', (e) => {
     const b = e.target.closest('.rel-option'); if (!b) return;
-    const id = b.dataset.rel;
-    if (sel.category !== id) { sel.category = id; sel.relation = null; sel.detail = null; }
-    paintPressed('.rel-option', 'rel', sel.category);
-    if (REL.category(id) && REL.category(id).drills) { primeFamily(); relGo('family'); }
-    else finalizeRelationship();
+    const id = b.dataset.top;
+    if (sel.top !== id) { sel.top = id; sel.group = null; sel.specific = null; }
+    paintPressed('.rel-option', 'top', sel.top);
+    paintTopSubmit();
+  });
+  function paintTopSubmit(){
+    const b = $('#rel-submit'); if (!b) return;
+    b.disabled = !sel.top;
+    // Family is the one option that continues rather than commits — say so.
+    b.textContent = (sel.top === 'family') ? 'Continue' : 'Add Relationship';
+  }
+  $('#rel-submit').addEventListener('click', () => {
+    if (!sel.top) return;
+    if (REL.top(sel.top).drills) { paintPressed('.fam-option', 'group', sel.group); paintFamSubmit(); relGo('family'); }
+    else commit(false);
   });
 
-  function primeFamily(){
-    $('#fam-name').textContent = PERSON.first;
-    $('#fam-sub-name').textContent = PERSON.first;
-    // If the stored answer lives in the expanded set, open it so the selection
-    // is visible rather than hidden behind the toggle.
-    if (sel.relation && REL.familyMore().some(r => r.id === sel.relation)) setMoreOpen(true);
-    paintPressed('.fam-option', 'fam', sel.relation);
-    if (sel.relation) renderQualifiers(sel.relation); else closeQualifiers();
-    paintFamSubmit();
-  }
-
-  // "More family relationships" expand.
-  function setMoreOpen(open){
-    const btn = $('#fam-more'), more = $('#fam-options-more');
-    btn.setAttribute('aria-expanded', String(open));
-    more.hidden = !open;
-    btn.firstChild.nodeValue = open ? 'Fewer family relationships ' : 'More family relationships ';
-  }
-  $('#fam-more').addEventListener('click', () => {
-    setMoreOpen($('#fam-more').getAttribute('aria-expanded') !== 'true');
-    reflow();
-  });
-
-  // Family relation taps reveal the qualifier row inline — no new pane.
-  $('#rel-overlay').addEventListener('click', (e) => {
+  // ----- Pane 2: family groups. The group is a complete answer. -----
+  $('#fam-options').addEventListener('click', (e) => {
     const b = e.target.closest('.fam-option'); if (!b) return;
-    const id = b.dataset.fam;
-    if (sel.relation !== id) { sel.relation = id; sel.detail = null; }
-    paintPressed('.fam-option', 'fam', sel.relation);
-    renderQualifiers(id);
-    paintFamSubmit();
-    reflow();
-  });
-
-  function closeQualifiers(){ $('#fam-qual-reveal').dataset.open = 'false'; $('#fam-qual-options').innerHTML = ''; }
-  function renderQualifiers(relId){
-    const list = REL.qualifiersFor(relId);
-    const rel = REL.familyRelation(relId);
-    if (!list.length) { closeQualifiers(); return; }
-    $('#fam-qual-title').textContent = 'How were you connected as ' + PERSON.first + '’s ' + rel.label.toLowerCase() + '?';
-    $('#fam-qual-options').innerHTML = list.map(q =>
-      '<button type="button" class="qual-option rel-chip" data-detail="' + q.id + '" aria-pressed="' + (q.id === sel.detail) + '">' + esc(q.label) + '</button>'
-    ).join('');
-    $('#fam-qual-reveal').dataset.open = 'true';
-  }
-  // Qualifiers are a toggle — tapping the selected one clears it, because the
-  // plain term is a valid answer and users need a way back to it.
-  $('#fam-qual-options').addEventListener('click', (e) => {
-    const b = e.target.closest('.qual-option'); if (!b) return;
-    sel.detail = (sel.detail === b.dataset.detail) ? null : b.dataset.detail;
-    paintPressed('.qual-option', 'detail', sel.detail);
+    const id = b.dataset.group;
+    if (sel.group !== id) { sel.group = id; sel.specific = null; }
+    paintPressed('.fam-option', 'group', sel.group);
     paintFamSubmit();
   });
-
-  // Submit unlocks on the relation alone — the qualifier is optional, so
-  // "Mother" is a complete answer. Inline colors so the enabled/disabled swap
-  // renders instantly (independent of the Tailwind CDN's async class pass).
   function paintFamSubmit(){
     const b = $('#fam-submit'); if (!b) return;
-    const on = !!sel.relation;
-    b.disabled = !on;
-    b.style.cursor = on ? 'pointer' : 'not-allowed';
-    b.style.backgroundColor = on ? '#e2ba60' : '#ebe9e9';   // gold-400 / wb-200
-    b.style.color = on ? '#262116' : '#807e7a';             // wb-900 / wb-500
-    b.style.border = on ? '1px solid #e2ba60' : '1px solid #dbdad7'; // gold-400 / wb-300
-    b.textContent = (storedRel() ? 'Save relationship' : 'Add Relationship');
+    b.disabled = !sel.group;
+    b.textContent = storedRel() ? 'Save relationship' : 'Add Relationship';
   }
-  $('#fam-submit').addEventListener('click', () => { if (sel.relation) finalizeRelationship(); });
-  $('#fam-cancel').addEventListener('click', closeAll);
+  $('#fam-submit').addEventListener('click', () => { if (sel.group) commit(true); });
 
-  // Persist the whole path. Capture is decoupled from "Add to My People"
-  // (DES-2265): a signed-out visitor can still declare a relationship — we
-  // just don't silently save the person to an account they don't have.
-  function finalizeRelationship(){
-    const badge = REL.computeBadge(sel.category, sel.relation, sel.detail);
-    REL.setRelationship(PID, { category: sel.category, relation: sel.relation, detail: sel.detail, badge: badge });
+  // ----- Pane 3: optional refinement, shown only after the group is saved. -----
+  function openRefine(){
+    const g = REL.group(sel.group);
+    // The note and the skip link quote the CHIP wording, not the button's —
+    // "my Relative", never "my Other family".
+    const gLabel = g.badge || g.label;
+    $('#refine-note').textContent = 'Saved. ' + PERSON.first + ' is my ' + gLabel + '.';
+    $('#refine-skip-group').textContent = gLabel;
+    $('#refine-options').innerHTML = REL.specificsFor(sel.group).map(s =>
+      '<button type="button" class="' + PILL_SM + ' refine-option" data-specific="' + esc(s) + '" aria-pressed="' + (s === sel.specific) + '">' + esc(s) + '</button>'
+    ).join('');
+    paintRefineSubmit();
+    relGo('refine');
+  }
+  $('#refine-options').addEventListener('click', (e) => {
+    const b = e.target.closest('.refine-option'); if (!b) return;
+    // Tapping the selected one clears it — the group alone stays valid.
+    sel.specific = (sel.specific === b.dataset.specific) ? null : b.dataset.specific;
+    paintPressed('.refine-option', 'specific', sel.specific);
+    paintRefineSubmit();
+  });
+  function paintRefineSubmit(){
+    const b = $('#refine-submit'); if (!b) return;
+    b.disabled = !sel.specific;
+    b.textContent = sel.specific ? 'Save as “' + sel.specific + '”' : 'Save';
+  }
+  $('#refine-submit').addEventListener('click', () => { if (sel.specific) commit(false); });
+  $('#refine-skip').addEventListener('click', () => { sel.specific = null; closeAll(); });
+
+  // Persist the answer. `offerRefine` is true only when we've just saved a
+  // family group and a more specific role exists to offer. Capture is
+  // decoupled from "Add to My People" — a signed-out visitor can declare a
+  // relationship without being saved to an account they don't have.
+  function commit(offerRefine){
+    const badge = REL.computeBadge(sel.top, sel.group, sel.specific);
+    REL.setRelationship(PID, { top: sel.top, group: sel.group, specific: sel.specific, badge: badge });
     const alsoSave = isSignedIn() && !isSaved(PID);
     if (alsoSave) setSaved(PID, true);
-    closeAll();
     paintHeroRel();
     paintAdded();
-    const label = REL.displayLabel({ badge: badge });
-    if (!label) {
-      toast('Thanks — that helps us understand your connection.', null, null, 'ph ph-check');
-    } else if (alsoSave) {
-      toast(PERSON.first + ' added to My People as ' + label.toLowerCase(), 'future-my-people.html', 'View', 'ph ph-check');
-    } else {
-      toast('Saved as ' + label.toLowerCase(), null, null, 'ph ph-check');
-    }
+
+    if (offerRefine && REL.specificsFor(sel.group).length) { openRefine(); return; }
+
+    closeAll();
+    const label = REL.displayLabel({ top: sel.top, badge: badge });
+    if (!label) toast('Thanks — that helps us understand your connection.', null, null, 'ph ph-check');
+    else if (alsoSave) toast(PERSON.first + ' added to My People as ' + label.toLowerCase(), 'future-my-people.html', 'View', 'ph ph-check');
+    else toast('Saved as ' + label.toLowerCase(), null, null, 'ph ph-check');
   }
 
   // ===== Suggested people ("You may also be interested in") =====

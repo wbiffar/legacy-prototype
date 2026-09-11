@@ -54,50 +54,37 @@ button.rel-pill[aria-pressed="true"] { background: #293548; border-color: #29354
 button.rel-pill[aria-pressed="true"] i { color: #fff; }
 
 /* =============== Relationship picker (DES-2265) =============== */
-/* De-emphasized top-level options ("Other", "I didn't know them"). They stay
-   full-size tap targets (44px min) for accessibility — the de-emphasis is
-   tonal, not dimensional, so they read as available but not as the default
-   path. Sit below a rule that separates them from the four real answers. */
-.rel-muted-group { border-top: 1px solid #dbdad7; margin-top: 4px; padding-top: 16px; }
-button.rel-quiet {
-  width: 100%; min-height: 44px; padding: 10px 20px;
-  display: flex; align-items: center; justify-content: space-between;
-  border-radius: 9999px; background: transparent; border: 1px solid transparent;
-  color: #58564f; font-size: 14px; font-weight: 500; text-align: left;
-}
-button.rel-quiet:hover { background: #f4f3f1; color: #262116; }
-button.rel-quiet[aria-pressed="true"] { background: #ebe9e9; border-color: #dbdad7; color: #262116; font-weight: 600; }
+/* Tokens taken from Figma 6621:23844 (Saved Person Future Board Presentation).
+   The picker is three panes: seven flat top-level options, then the six family
+   groups, then an OPTIONAL post-save refinement to the specific role. */
 
-/* Inline qualifier reveal — the "no third tier" rule. Choosing a family
-   relation expands this row *inside* the second-tier pane instead of pushing
-   another screen. Grid-rows animation keeps it height-agnostic. */
-.rel-reveal { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .26s ease, opacity .2s ease; opacity: 0; }
-.rel-reveal > * { overflow: hidden; min-height: 0; }
-.rel-reveal[data-open="true"] { grid-template-rows: 1fr; opacity: 1; }
-
-/* Qualifier chips read as "refinement", not "another choice of equal weight" —
-   lighter than the relation pills above them, but still a 44px tap target.
-   Our users skew older, so the de-emphasis is tonal, never dimensional. */
-button.rel-chip {
-  min-height: 44px; padding: 10px 16px; border-radius: 9999px;
-  background: #fff; border: 1px solid #dbdad7; color: #58564f;
-  font-size: 14px; font-weight: 600;
+/* Primary CTA — gold/400 on warmBlack/900, full width, disabled = wb-200. */
+button.rel-cta {
+  width: 100%; min-height: 44px; padding: 10px 20px; border-radius: 9999px;
+  background: #e2ba60; border: 1px solid #e2ba60; color: #262116;
+  font-size: 14px; font-weight: 600; line-height: 1.5; cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
 }
-button.rel-chip:hover { background: #f4f3f1; color: #262116; }
-button.rel-chip[aria-pressed="true"] { background: #293548; border-color: #293548; color: #fff; }
+button.rel-cta:hover:not(:disabled) { background: #dcb05e; border-color: #dcb05e; }
+button.rel-cta:disabled { background: #ebe9e9; border-color: #dbdad7; color: #807e7a; cursor: not-allowed; }
 
-/* "More family relationships" expand toggle. */
-button.rel-more {
-  display: inline-flex; align-items: center; gap: 6px; min-height: 44px;
-  color: #42608f; font-size: 14px; font-weight: 600; background: none; border: 0;
+/* Success note above the refinement step — seafoam/100 on seafoam/700. */
+.rel-note {
+  width: 100%; padding: 12px; border-radius: 4px;
+  background: #ebf2f1; color: #216e6a;
+  font-size: 14px; font-weight: 400; line-height: 1.25;
 }
-button.rel-more:hover { color: #293548; text-decoration: underline; }
-button.rel-more i { transition: transform .2s ease; }
-button.rel-more[aria-expanded="true"] i { transform: rotate(180deg); }
+
+/* "No thanks, Parent is right" — a text link, not a second button, so it
+   never competes with the gold CTA above it. */
+button.rel-skip {
+  background: none; border: 0; min-height: 44px; padding: 0 8px;
+  color: #42608f; font-size: 16px; font-weight: 600; letter-spacing: -0.32px; cursor: pointer;
+}
+button.rel-skip:hover { color: #293548; text-decoration: underline; text-underline-offset: 2px; }
 
 /* Focus states — our users skew older, so keep these unmissable (WCAG 2.1 AA). */
-button.rel-pill:focus-visible, button.rel-quiet:focus-visible,
-button.rel-chip:focus-visible, button.rel-more:focus-visible {
+button.rel-pill:focus-visible, button.rel-cta:focus-visible, button.rel-skip:focus-visible {
   outline: 2px solid #42608f; outline-offset: 2px;
 }
 

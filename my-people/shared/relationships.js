@@ -1,24 +1,32 @@
 /* Shared relationship taxonomy + store logic for the My People FUTURE prototype.
-   DES-2265 — single source of truth for the selector on every surface that
-   captures a relationship: the person page modal (future-index.html), the
-   My People dashboard sheet (future-my-people.html), and the post-save flow.
-   Collections don't capture a relationship — they render the resulting badge
-   on person cards, so they inherit whatever this file produces.
+   DES-2265. Single source of truth for every surface that captures a
+   relationship: the person page modal (future-index.html), the My People
+   dashboard sheet (future-my-people.html), and the post-save flow. Collections
+   don't capture — they render the resulting badge on person cards.
 
-   SHAPE (DES-2265):
-     - Six top-level categories. Family is the ONLY one that drills in.
-     - One second tier, under family only. There is NO third tier: the
-       biological / step / adoptive / foster / guardian variants are an inline
-       reveal *inside* the second tier, not another pane.
-     - Non-blood is first class — social, adoptive, step, guardian and
-       gender-neutral terms sit alongside the gendered ones, not behind them.
-     - "Other" is an escape hatch with no free-text field. We accept learning
-       nothing from it.
+   SOURCES
+     Data model : Figma board "Relationships" 5:222 (the Type 0/1/2 table)
+     Front end  : Figma "Saved Person Future Board Presentation" 6621:23844
 
-   Relationships persist in the same localStorage store as saved/following,
-   under `relationships[id] = { category, relation, detail, badge }`.
-   `detail` holds the qualifier id ('step', 'foster'…) or null. A legacy plain
-   string is still read as a bare badge. */
+   SHAPE
+     - Seven flat top-level options. The board nests School / Work / Faith
+       Community / Military Service under an "Other" bucket; the front end does
+       NOT show that bucket, so they surface as peers of Family and Friend.
+       There is no "Other" option in the UI.
+     - Family is the only option that drills in, to six gender-neutral GROUPS
+       (Grandparent, Parent, Sibling, Child, Spouse, Other family).
+     - The group IS a complete answer — we save there ("Saved. Douglas is my
+       Parent."). The specific role (Father, Step-father, Father-in-law...) is
+       an OPTIONAL refinement offered after the save. That's how the third tier
+       exists without adding a required step to the flow.
+     - Step / half / in-law variants are peers of the base term inside a group,
+       not modifiers of it.
+
+   STORE
+     relationships[id] = { top, group, specific, badge }
+     `group` and `specific` are null for non-family answers. A legacy plain
+     string, or the earlier { category, relation, detail, badge } shape, is
+     still read for its badge so older demo state doesn't break. */
 (function () {
   var STORE_KEY = 'legacyMyPeople.v0';
 
@@ -30,171 +38,95 @@
   function clearRelationship(id){ var o = readStore(); o.relationships = readRelationships(); delete o.relationships[id]; writeStore(o); }
 
   /* ------------------------------------------------------------------ *
-   * Top level — six options, one tier deep except family.
-   *   drills : family alone opens a second tier. The asymmetry is
-   *            deliberate, so only family gets a caret.
-   *   tone   : 'primary' = full pill. 'muted' = de-emphasized, so "other"
-   *            and "I didn't know them" aren't the path of least resistance.
-   *   badge  : the noun used in the "My ___" person-page label, or null when
-   *            the category has no natural "My X" form and shows nothing.
+   * Top level — seven options, shown flat and at equal weight.
+   *   drills : Family alone opens the group tier.
+   *   badge      : the label shown on the chip, or null to show nothing.
+   *   possessive : false where "My ___" doesn't work. You can have a friend
+   *                or a colleague, but not "my faith community" as a person —
+   *                those chips read as a shared context, not a possessive.
    * ------------------------------------------------------------------ */
-  var CATEGORIES = [
-    { id: 'family',  label: 'Family',              drills: true,  tone: 'primary', badge: null      },
-    { id: 'friends', label: 'Friend',              drills: false, tone: 'primary', badge: 'friend'  },
-    { id: 'school',  label: 'School',              drills: false, tone: 'primary', badge: 'classmate' },
-    { id: 'work',    label: 'Work',                drills: false, tone: 'primary', badge: 'colleague' },
-    { id: 'other',   label: 'Other',               drills: false, tone: 'muted',   badge: null      },
-    { id: 'unknown', label: 'I didn’t know them',  drills: false, tone: 'muted',   badge: null      },
+  var TOP = [
+    { id: 'family',   label: 'Family',             drills: true,  badge: null },
+    { id: 'friend',   label: 'Friend',             drills: false, badge: 'Friend',    possessive: true },
+    // COPY TO CONFIRM: the board defines no display labels for the tier-less
+    // categories. These are stand-ins — DES-2265 flags the same open question
+    // ("school could be 'My classmate' or 'My schoolmate'").
+    { id: 'school',   label: 'School',             drills: false, badge: 'Classmate', possessive: true },
+    { id: 'work',     label: 'Work',               drills: false, badge: 'Colleague', possessive: true },
+    // No person-noun works for these two without inventing one, so the chip
+    // states the shared context instead of forcing an awkward possessive.
+    { id: 'faith',    label: 'Faith Community',    drills: false, badge: 'Faith community',  possessive: false },
+    { id: 'military', label: 'Military Service',   drills: false, badge: 'Military service', possessive: false },
+    { id: 'unknown',  label: 'I didn’t know them', drills: false, badge: null },
   ];
-  function category(id){ for (var i=0;i<CATEGORIES.length;i++) if (CATEGORIES[i].id === id) return CATEGORIES[i]; return null; }
+  function top(id){ for (var i=0;i<TOP.length;i++) if (TOP[i].id === id) return TOP[i]; return null; }
 
   /* ------------------------------------------------------------------ *
-   * Qualifier sets — the inline reveal under a chosen family relation.
-   *   badge : the full display noun when this qualifier changes the word.
-   *           null means "use the base relation", which is the point for
-   *           adoptive: adoption makes you the mother, so it reads "My
-   *           mother". Step and foster stay explicit because the distinction
-   *           is the one people actually mean to draw.
+   * Family groups, in the Figma grid's reading order (2 columns):
+   *   Grandparent | Parent
+   *   Sibling     | Child
+   *   Spouse      | Other family
+   *
+   * Board spellings "Grand father" / "Great-grand mother" are normalized to
+   * the closed-up forms here — they read as spacing typos in the source table.
    * ------------------------------------------------------------------ */
-  var Q = {
-    parent: [
-      { id: 'bio',      label: 'Biological', badge: null },
-      { id: 'step',     label: 'Step',       badge: 'step{base}' },
-      { id: 'adoptive', label: 'Adoptive',   badge: null },
-      { id: 'foster',   label: 'Foster',     badge: 'foster {base}' },
-      { id: 'guardian', label: 'Guardian',   badge: 'guardian' },
-    ],
-    child: [
-      { id: 'bio',      label: 'Biological', badge: null },
-      { id: 'step',     label: 'Step',       badge: 'step{base}' },
-      { id: 'adoptive', label: 'Adoptive',   badge: null },
-      { id: 'foster',   label: 'Foster',     badge: 'foster {base}' },
-    ],
-    sibling: [
-      { id: 'bio',      label: 'Biological', badge: null },
-      { id: 'half',     label: 'Half',       badge: 'half-{base}' },
-      { id: 'step',     label: 'Step',       badge: 'step{base}' },
-      { id: 'adoptive', label: 'Adoptive',   badge: null },
-      { id: 'foster',   label: 'Foster',     badge: 'foster {base}' },
-    ],
-    grand: [
-      { id: 'bio',      label: 'Biological', badge: null },
-      { id: 'step',     label: 'Step',       badge: 'step-{base}' },
-      { id: 'adoptive', label: 'Adoptive',   badge: null },
-      { id: 'great',    label: 'Great-',     badge: 'great-{base}' },
-    ],
-    extended: [
-      { id: 'birth',    label: 'By birth',    badge: null },
-      { id: 'marriage', label: 'By marriage', badge: null },
-      { id: 'great',    label: 'Great-',      badge: 'great-{base}' },
-    ],
-    cousin: [
-      { id: 'first',    label: 'First cousin',  badge: null },
-      { id: 'second',   label: 'Second cousin', badge: 'second cousin' },
-      { id: 'marriage', label: 'By marriage',   badge: null },
-    ],
-    // In-law is a catch-all, so its qualifier does real work: it's the
-    // difference between a mother-in-law and a son-in-law. Keeping it as an
-    // inline reveal avoids spending a dozen second-tier slots on in-laws.
-    inlaw: [
-      { id: 'parent',  label: 'Parent-in-law',  badge: 'parent-in-law'  },
-      { id: 'child',   label: 'Child-in-law',   badge: 'child-in-law'   },
-      { id: 'sibling', label: 'Sibling-in-law', badge: 'sibling-in-law' },
-    ],
-    // Spouses and partners take no qualifier — the term already says it.
-    none: [],
-  };
-
-  /* ------------------------------------------------------------------ *
-   * Family second tier. `more:true` sits behind "More family relationships"
-   * so the collapsed state stays short; the ticket's default-vs-expanded
-   * split. Gender-neutral terms sit inline with the gendered pair, never
-   * demoted to the expanded set.
-   * ------------------------------------------------------------------ */
-  var FAMILY = [
-    { id: 'mother',      label: 'Mother',      q: 'parent',   more: false },
-    { id: 'father',      label: 'Father',      q: 'parent',   more: false },
-    { id: 'parent',      label: 'Parent',      q: 'parent',   more: false },
-    { id: 'daughter',    label: 'Daughter',    q: 'child',    more: false },
-    { id: 'son',         label: 'Son',         q: 'child',    more: false },
-    { id: 'child',       label: 'Child',       q: 'child',    more: false },
-    { id: 'sister',      label: 'Sister',      q: 'sibling',  more: false },
-    { id: 'brother',     label: 'Brother',     q: 'sibling',  more: false },
-    { id: 'sibling',     label: 'Sibling',     q: 'sibling',  more: false },
-    { id: 'grandmother', label: 'Grandmother', q: 'grand',    more: false },
-    { id: 'grandfather', label: 'Grandfather', q: 'grand',    more: false },
-    { id: 'grandparent', label: 'Grandparent', q: 'grand',    more: false },
-
-    { id: 'wife',        label: 'Wife',        q: 'none',     more: true },
-    { id: 'husband',     label: 'Husband',     q: 'none',     more: true },
-    { id: 'spouse',      label: 'Spouse',      q: 'none',     more: true },
-    { id: 'partner',     label: 'Partner',     q: 'none',     more: true },
-    { id: 'granddaughter', label: 'Granddaughter', q: 'grand', more: true },
-    { id: 'grandson',    label: 'Grandson',    q: 'grand',    more: true },
-    { id: 'grandchild',  label: 'Grandchild',  q: 'grand',    more: true },
-    { id: 'aunt',        label: 'Aunt',        q: 'extended', more: true },
-    { id: 'uncle',       label: 'Uncle',       q: 'extended', more: true },
-    { id: 'cousin',      label: 'Cousin',      q: 'cousin',   more: true },
-    { id: 'niece',       label: 'Niece',       q: 'extended', more: true },
-    { id: 'nephew',      label: 'Nephew',      q: 'extended', more: true },
-    { id: 'inlaw',       label: 'In-law',      q: 'inlaw',    more: true },
-    // Escape hatch inside family. "My other family" doesn't read, so it
-    // displays as the one word that covers anyone: relative.
-    { id: 'famother',    label: 'Other family', q: 'none',     more: true, badge: 'relative' },
+  var GROUPS = [
+    { id: 'grandparent', label: 'Grandparent',  specifics: ['Grandfather', 'Grandmother', 'Great-grandfather', 'Great-grandmother'] },
+    { id: 'parent',      label: 'Parent',       specifics: ['Father', 'Mother', 'Step-father', 'Step-mother', 'Father-in-law', 'Mother-in-law'] },
+    { id: 'sibling',     label: 'Sibling',      specifics: ['Brother', 'Sister', 'Step-brother', 'Step-sister', 'Brother-in-law', 'Sister-in-law', 'Half-brother', 'Half-sister'] },
+    { id: 'child',       label: 'Child',        specifics: ['Son', 'Daughter', 'Step-son', 'Step-daughter', 'Son-in-law', 'Daughter-in-law'] },
+    { id: 'spouse',      label: 'Spouse',       specifics: ['Husband', 'Wife', 'Partner'] },
+    // "Other family" is the button's label; "My Other family" isn't a phrase,
+    // so the chip says Relative instead.
+    { id: 'otherfamily', label: 'Other family', badge: 'Relative', specifics: ['Uncle', 'Aunt', 'Cousin', 'Nephew', 'Niece'] },
   ];
-  function familyRelation(id){ for (var i=0;i<FAMILY.length;i++) if (FAMILY[i].id === id) return FAMILY[i]; return null; }
-  function familyDefaults(){ return FAMILY.filter(function (r) { return !r.more; }); }
-  function familyMore(){ return FAMILY.filter(function (r) { return r.more; }); }
-  function qualifiersFor(relId){ var r = familyRelation(relId); return r ? (Q[r.q] || []) : []; }
-  function qualifier(relId, qId){ var list = qualifiersFor(relId); for (var i=0;i<list.length;i++) if (list[i].id === qId) return list[i]; return null; }
+  function group(id){ for (var i=0;i<GROUPS.length;i++) if (GROUPS[i].id === id) return GROUPS[i]; return null; }
+  function specificsFor(groupId){ var g = group(groupId); return g ? g.specifics.slice() : []; }
 
   /* ------------------------------------------------------------------ *
-   * Value → display label. Every selectable value maps to exactly one
-   * badge noun, or to null when nothing should display. Family labels come
-   * from the second tier, never the bucket.
+   * Value -> display label. Every selectable value resolves to exactly one
+   * badge noun, or to null when nothing should display.
    * ------------------------------------------------------------------ */
-  function computeBadge(catId, relId, qId) {
-    var cat = category(catId);
-    if (!cat) return null;
-    if (cat.id !== 'family') return cat.badge;          // friend / classmate / colleague, or null
-    var rel = familyRelation(relId);
-    if (!rel) return null;
-    var base = rel.badge || rel.label.toLowerCase();
-    var q = qualifier(relId, qId);
-    if (!q || !q.badge) return base;                     // biological / adoptive / by birth → the plain term
-    return q.badge.replace('{base}', base);
+  function computeBadge(topId, groupId, specific) {
+    var t = top(topId);
+    if (!t) return null;
+    if (!t.drills) return t.badge;              // Friend / Classmate / ... or null
+    if (specific) return specific;              // the refined role wins
+    var g = group(groupId);
+    return g ? (g.badge || g.label) : null;     // the group is a complete answer
   }
 
-  // "My mother" / "My step-grandfather" — or null for the categories with no
-  // natural possessive form (other, I didn't know them), which display nothing.
+  // "My Parent" / "My Step-father" for the possessive answers, the bare label
+  // ("Faith community") for the ones that aren't, and null for "I didn't know
+  // them", which displays nothing. Pass the whole stored object, not just the
+  // badge — the possessive rule lives on the top-level option.
   function displayLabel(v) {
     var badge = relBadge(v);
-    return badge ? 'My ' + String(badge).toLowerCase() : null;
+    if (!badge) return null;
+    var t = (v && typeof v === 'object') ? top(v.top || v.category) : null;
+    if (t && t.possessive === false) return badge;
+    return 'My ' + badge;
   }
 
-  // Badges are stored canonically lowercase so each surface can case them to
-  // fit: "My great-aunt" inline on the person page, "Great-aunt" as a card
-  // chip. Only the first letter moves — "great-aunt" must not become
-  // "Great-Aunt".
-  function sentenceCase(s){ s = String(s || ''); return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
-
-  // True when a stored value is a real selection that simply has no label to
-  // show. Lets a surface tell "set, but silent" apart from "never asked".
+  // True when a stored value is a real answer that simply has no label to
+  // show. Lets a surface tell "answered, silent" apart from "never asked".
   function isSilent(v) {
     if (!v || typeof v === 'string') return false;
-    return (v.category === 'other' || v.category === 'unknown');
+    var t = v.top || v.category;               // tolerate the earlier shape
+    return t === 'unknown' || t === 'other';
   }
+
+  // Only the first letter moves -- "Step-father" must not become "Step-Father".
+  function sentenceCase(s){ s = String(s || ''); return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 
   window.LEGACY_REL = {
     STORE_KEY: STORE_KEY,
     readStore: readStore, writeStore: writeStore,
     readRelationships: readRelationships, relBadge: relBadge,
     setRelationship: setRelationship, clearRelationship: clearRelationship,
-    CATEGORIES: CATEGORIES, FAMILY: FAMILY, QUALIFIERS: Q,
-    category: category, familyRelation: familyRelation,
-    familyDefaults: familyDefaults, familyMore: familyMore,
-    qualifiersFor: qualifiersFor, qualifier: qualifier,
-    computeBadge: computeBadge, displayLabel: displayLabel, isSilent: isSilent,
-    sentenceCase: sentenceCase,
+    TOP: TOP, GROUPS: GROUPS,
+    top: top, group: group, specificsFor: specificsFor,
+    computeBadge: computeBadge, displayLabel: displayLabel,
+    isSilent: isSilent, sentenceCase: sentenceCase,
   };
 })();
