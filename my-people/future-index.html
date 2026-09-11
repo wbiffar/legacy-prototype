@@ -1016,7 +1016,7 @@
   function openRefine(){
     const g = REL.group(sel.group);
     // The note and the skip link quote the CHIP wording, not the button's —
-    // "my Relative", never "my Other family".
+    // "my Relative", never "my Other relative".
     const gLabel = g.badge || g.label;
     $('#refine-note').textContent = 'Saved. ' + PERSON.first + ' is my ' + gLabel + '.';
     $('#refine-skip-group').textContent = gLabel;

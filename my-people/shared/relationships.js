@@ -14,7 +14,7 @@
        NOT show that bucket, so they surface as peers of Family and Friend.
        There is no "Other" option in the UI.
      - Family is the only option that drills in, to six gender-neutral GROUPS
-       (Grandparent, Parent, Sibling, Child, Spouse, Other family).
+       (Grandparent, Parent, Sibling, Child, Spouse, Other relative).
      - The group IS a complete answer — we save there ("Saved. Douglas is my
        Parent."). The specific role (Father, Step-father, Father-in-law...) is
        an OPTIONAL refinement offered after the save. That's how the third tier
@@ -65,7 +65,7 @@
    * Family groups, in the Figma grid's reading order (2 columns):
    *   Grandparent | Parent
    *   Sibling     | Child
-   *   Spouse      | Other family
+   *   Spouse      | Other relative
    *
    * Board spellings "Grand father" / "Great-grand mother" are normalized to
    * the closed-up forms here — they read as spacing typos in the source table.
@@ -76,9 +76,9 @@
     { id: 'sibling',     label: 'Sibling',      specifics: ['Brother', 'Sister', 'Step-brother', 'Step-sister', 'Brother-in-law', 'Sister-in-law', 'Half-brother', 'Half-sister'] },
     { id: 'child',       label: 'Child',        specifics: ['Son', 'Daughter', 'Step-son', 'Step-daughter', 'Son-in-law', 'Daughter-in-law'] },
     { id: 'spouse',      label: 'Spouse',       specifics: ['Husband', 'Wife', 'Partner'] },
-    // "Other family" is the button's label; "My Other family" isn't a phrase,
-    // so the chip says Relative instead.
-    { id: 'otherfamily', label: 'Other family', badge: 'Relative', specifics: ['Uncle', 'Aunt', 'Cousin', 'Nephew', 'Niece'] },
+    // Wes's wording, deliberately diverging from the board's "Other Family".
+    // The chip still says Relative, since "My Other relative" isn't a phrase.
+    { id: 'otherfamily', label: 'Other relative', badge: 'Relative', specifics: ['Uncle', 'Aunt', 'Cousin', 'Nephew', 'Niece'] },
   ];
   function group(id){ for (var i=0;i<GROUPS.length;i++) if (GROUPS[i].id === id) return GROUPS[i]; return null; }
   function specificsFor(groupId){ var g = group(groupId); return g ? g.specifics.slice() : []; }
