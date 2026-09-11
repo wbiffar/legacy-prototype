@@ -43,23 +43,19 @@
   /* ------------------------------------------------------------------ *
    * Top level — seven options, shown flat and at equal weight.
    *   drills : Family alone opens the group tier.
-   *   badge      : the label shown on the chip, or null to show nothing.
-   *   possessive : false where "My ___" doesn't work. You can have a friend
-   *                or a colleague, but not "my faith community" as a person —
-   *                those chips read as a shared context, not a possessive.
+   *   badge : the noun for the "My ___" chip, or null to show nothing at all
+   *           ("I didn't know them" — the card shows just the name).
    * ------------------------------------------------------------------ */
   var TOP = [
     { id: 'family',   label: 'Family',             drills: true,  badge: null },
-    { id: 'friend',   label: 'Friend',             drills: false, badge: 'Friend',    possessive: true },
-    // COPY TO CONFIRM: the board defines no display labels for the tier-less
-    // categories. These are stand-ins — DES-2265 flags the same open question
-    // ("school could be 'My classmate' or 'My schoolmate'").
-    { id: 'school',   label: 'School',             drills: false, badge: 'Classmate', possessive: true },
-    { id: 'work',     label: 'Work',               drills: false, badge: 'Colleague', possessive: true },
-    // No person-noun works for these two without inventing one, so the chip
-    // states the shared context instead of forcing an awkward possessive.
-    { id: 'faith',    label: 'Faith Community',    drills: false, badge: 'Faith community',  possessive: false },
-    { id: 'military', label: 'Military Service',   drills: false, badge: 'Military service', possessive: false },
+    { id: 'friend',   label: 'Friend',             drills: false, badge: 'Friend' },
+    { id: 'school',   label: 'School',             drills: false, badge: 'Classmate' },
+    { id: 'work',     label: 'Work',               drills: false, badge: 'Coworker' },
+    // Both of these get a person-noun rather than a bare context label, so
+    // every badge in the taxonomy reads as "My ___".
+    { id: 'faith',    label: 'Faith Community',    drills: false, badge: 'Friend in Faith' },
+    { id: 'military', label: 'Military Service',   drills: false, badge: 'Fellow Service Member' },
+    // The one option that shows no badge at all — the card shows just the name.
     { id: 'unknown',  label: 'I didn’t know them', drills: false, badge: null },
   ];
   function top(id){ for (var i=0;i<TOP.length;i++) if (TOP[i].id === id) return TOP[i]; return null; }
@@ -78,15 +74,15 @@
    * ------------------------------------------------------------------ */
   var GROUPS = [
     { id: 'grandparent', label: 'Grandparent',  specifics: ['Grandfather', 'Grandmother', 'Great-grandfather', 'Great-grandmother'] },
-    { id: 'parent',      label: 'Parent',       specifics: ['Father', 'Mother', 'Step-father', 'Step-mother'] },
-    { id: 'sibling',     label: 'Sibling',      specifics: ['Brother', 'Sister', 'Step-brother', 'Step-sister', 'Half-brother', 'Half-sister'] },
-    { id: 'child',       label: 'Child',        specifics: ['Son', 'Daughter', 'Step-son', 'Step-daughter'] },
+    { id: 'parent',      label: 'Parent',       specifics: ['Father', 'Mother', 'Stepfather', 'Stepmother'] },
+    { id: 'sibling',     label: 'Sibling',      specifics: ['Brother', 'Sister', 'Stepbrother', 'Stepsister', 'Half-brother', 'Half-sister'] },
+    { id: 'child',       label: 'Child',        specifics: ['Son', 'Daughter', 'Stepson', 'Stepdaughter'] },
     { id: 'grandchild',  label: 'Grandchild',   specifics: ['Grandson', 'Granddaughter', 'Great-grandson', 'Great-granddaughter'] },
     { id: 'spouse',      label: 'Spouse',       specifics: ['Husband', 'Wife', 'Partner'] },
     // In-laws are a relation by marriage, not a blood relation with a suffix,
     // so they're their own group rather than scattered across Parent / Child /
     // Sibling. The board has since been updated to match.
-    { id: 'inlaw',       label: 'In-law',       specifics: ['Father-in-law', 'Mother-in-law', 'Brother-in-law', 'Sister-in-law', 'Son-in-law', 'Daughter-in-law'] },
+    { id: 'inlaw',       label: 'In-law',       specifics: ['Parent-in-law', 'Father-in-law', 'Mother-in-law', 'Sibling-in-law', 'Brother-in-law', 'Sister-in-law', 'Child-in-law', 'Son-in-law', 'Daughter-in-law'] },
     // Wes's wording, deliberately diverging from the board's "Other Family".
     // The chip still says Relative, since "My Other relative" isn't a phrase.
     { id: 'otherfamily', label: 'Other relative', badge: 'Relative', specifics: ['Uncle', 'Aunt', 'Cousin', 'Nephew', 'Niece'] },
@@ -107,16 +103,12 @@
     return g ? (g.badge || g.label) : null;     // the group is a complete answer
   }
 
-  // "My Parent" / "My Step-father" for the possessive answers, the bare label
-  // ("Faith community") for the ones that aren't, and null for "I didn't know
-  // them", which displays nothing. Pass the whole stored object, not just the
-  // badge — the possessive rule lives on the top-level option.
+  // "My Parent" / "My Stepfather" / "My Fellow Service Member" — every badge
+  // reads as a possessive. null only for "I didn't know them", which shows no
+  // badge at all.
   function displayLabel(v) {
     var badge = relBadge(v);
-    if (!badge) return null;
-    var t = (v && typeof v === 'object') ? top(v.top || v.category) : null;
-    if (t && t.possessive === false) return badge;
-    return 'My ' + badge;
+    return badge ? 'My ' + badge : null;
   }
 
   // True when a stored value is a real answer that simply has no label to
