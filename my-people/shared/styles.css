@@ -4,6 +4,10 @@
 
 /* ============================ Base ============================ */
 *, *::before, *::after { box-sizing: border-box; }
+/* Tailwind's display utilities (.grid, .flex, .block) are the same specificity
+   as [hidden] and load after it, so they silently win and a hidden element
+   stays visible. Anything toggled with el.hidden needs this. */
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 body { font-family: 'DM Sans', system-ui, sans-serif; color: #262116; background: #fbf7ef; }
 .font-serif-heading { font-family: 'DM Serif Text', Georgia, serif; font-weight: 400; }
@@ -23,11 +27,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   background: #fff; width: 100%; max-width: 512px;
   border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
   position: relative; animation: pop .18s ease;
+  /* The family tier is taller than a phone screen, so the card scrolls rather
+     than clipping. dvh (not vh) so mobile browser chrome doesn't hide the
+     submit button behind the URL bar. */
+  max-height: calc(100dvh - 48px); overflow-y: auto; overscroll-behavior: contain;
 }
 @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
 @media (max-width: 639px) {
   .sheet-overlay { align-items: flex-end; padding: 0; }
-  .sheet-card { max-width: 100%; border-radius: 20px 20px 0 0; animation: slideup .22s ease; }
+  .sheet-card { max-width: 100%; border-radius: 20px 20px 0 0; animation: slideup .22s ease; max-height: 88dvh; }
   @keyframes slideup { from { transform: translateY(100%); } to { transform: none; } }
 }
 
@@ -44,6 +52,41 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
    button+attribute selector outranks Tailwind's hover:, so it stays filled. */
 button.rel-pill[aria-pressed="true"] { background: #293548; border-color: #293548; color: #fff; }
 button.rel-pill[aria-pressed="true"] i { color: #fff; }
+
+/* =============== Relationship picker (DES-2265) =============== */
+/* Tokens taken from Figma 6621:23844 (Saved Person Future Board Presentation).
+   The picker is three panes: seven flat top-level options, then the six family
+   groups, then an OPTIONAL post-save refinement to the specific role. */
+
+/* Primary CTA — gold/400 on warmBlack/900, full width, disabled = wb-200. */
+button.rel-cta {
+  width: 100%; min-height: 44px; padding: 10px 20px; border-radius: 9999px;
+  background: #e2ba60; border: 1px solid #e2ba60; color: #262116;
+  font-size: 14px; font-weight: 600; line-height: 1.5; cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+button.rel-cta:hover:not(:disabled) { background: #dcb05e; border-color: #dcb05e; }
+button.rel-cta:disabled { background: #ebe9e9; border-color: #dbdad7; color: #807e7a; cursor: not-allowed; }
+
+/* Success note above the refinement step — seafoam/100 on seafoam/700. */
+.rel-note {
+  width: 100%; padding: 12px; border-radius: 4px;
+  background: #ebf2f1; color: #216e6a;
+  font-size: 14px; font-weight: 400; line-height: 1.25;
+}
+
+/* "No thanks, Parent is right" — a text link, not a second button, so it
+   never competes with the gold CTA above it. */
+button.rel-skip {
+  background: none; border: 0; min-height: 44px; padding: 0 8px;
+  color: #42608f; font-size: 16px; font-weight: 600; letter-spacing: -0.32px; cursor: pointer;
+}
+button.rel-skip:hover { color: #293548; text-decoration: underline; text-underline-offset: 2px; }
+
+/* Focus states — our users skew older, so keep these unmissable (WCAG 2.1 AA). */
+button.rel-pill:focus-visible, button.rel-cta:focus-visible, button.rel-skip:focus-visible {
+  outline: 2px solid #42608f; outline-offset: 2px;
+}
 
 /* =================== Toast (Figma Toast component) =================== */
 .toast {

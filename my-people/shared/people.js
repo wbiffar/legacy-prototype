@@ -55,7 +55,7 @@
     },
     patricia: {
       first: 'Patricia', last: 'Thomas', full: 'Patricia (Ramirez) Thomas', dates: '1938 – 2019',
-      photo: null, relation: 'Great-aunt',
+      photo: null, relation: 'Aunt',
       source: 'Chicago Sun-Times', home: 'Eternal Springs Funeral Home', location: 'Dixon, IL',
       obit: 'Patricia (Ramirez) Thomas passed away in 2019 at the age of 81. She married Ralph Thomas in 1958 and shared six decades with him in Dixon, where her garden and her generosity were local legend.'
     },
