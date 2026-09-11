@@ -590,8 +590,11 @@
               <p class="text-base text-wb-700 leading-normal">Adding your relationship helps build your connections and family tree.</p>
             </div>
             <div id="rel-options" class="flex flex-col gap-4 pt-4" role="group" aria-labelledby="rel-title"></div>
-            <div class="pt-4">
-              <button type="button" id="rel-submit" class="rel-cta" disabled>Add Relationship</button>
+            <!-- Hidden until a non-family option is picked. Family never shows
+                 it — tapping Family slides straight to the group pane, because
+                 "Family" on its own isn't an answer yet. -->
+            <div class="pt-4" id="rel-submit-wrap" hidden>
+              <button type="button" id="rel-submit" class="rel-cta">Add Relationship</button>
             </div>
           </div>
         </div>
@@ -980,17 +983,18 @@
     if (sel.top !== id) { sel.top = id; sel.group = null; sel.specific = null; }
     paintPressed('.rel-option', 'top', sel.top);
     paintTopSubmit();
+    // Family has more to ask, so it opens the group pane on tap. Asking the
+    // user to confirm "Family" would be confirming a choice that isn't yet an
+    // answer; every other option IS the answer, so those wait for the CTA.
+    if (REL.top(id).drills) { paintPressed('.fam-option', 'group', sel.group); paintFamSubmit(); relGo('family'); }
   });
   function paintTopSubmit(){
-    const b = $('#rel-submit'); if (!b) return;
-    b.disabled = !sel.top;
-    // Family is the one option that continues rather than commits — say so.
-    b.textContent = (sel.top === 'family') ? 'Continue' : 'Add Relationship';
+    const wrap = $('#rel-submit-wrap'); if (!wrap) return;
+    wrap.hidden = !(sel.top && sel.top !== 'family');
+    syncRelHeight();   // showing or hiding the CTA changes the pane's height
   }
   $('#rel-submit').addEventListener('click', () => {
-    if (!sel.top) return;
-    if (REL.top(sel.top).drills) { paintPressed('.fam-option', 'group', sel.group); paintFamSubmit(); relGo('family'); }
-    else commit(false);
+    if (sel.top && sel.top !== 'family') commit(false);
   });
 
   // ----- Pane 2: family groups. The group is a complete answer. -----
