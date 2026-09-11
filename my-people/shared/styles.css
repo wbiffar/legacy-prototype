@@ -4,6 +4,10 @@
 
 /* ============================ Base ============================ */
 *, *::before, *::after { box-sizing: border-box; }
+/* Tailwind's display utilities (.grid, .flex, .block) are the same specificity
+   as [hidden] and load after it, so they silently win and a hidden element
+   stays visible. Anything toggled with el.hidden needs this. */
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 body { font-family: 'DM Sans', system-ui, sans-serif; color: #262116; background: #fbf7ef; }
 .font-serif-heading { font-family: 'DM Serif Text', Georgia, serif; font-weight: 400; }
@@ -23,11 +27,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   background: #fff; width: 100%; max-width: 512px;
   border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
   position: relative; animation: pop .18s ease;
+  /* The family tier is taller than a phone screen, so the card scrolls rather
+     than clipping. dvh (not vh) so mobile browser chrome doesn't hide the
+     submit button behind the URL bar. */
+  max-height: calc(100dvh - 48px); overflow-y: auto; overscroll-behavior: contain;
 }
 @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
 @media (max-width: 639px) {
   .sheet-overlay { align-items: flex-end; padding: 0; }
-  .sheet-card { max-width: 100%; border-radius: 20px 20px 0 0; animation: slideup .22s ease; }
+  .sheet-card { max-width: 100%; border-radius: 20px 20px 0 0; animation: slideup .22s ease; max-height: 88dvh; }
   @keyframes slideup { from { transform: translateY(100%); } to { transform: none; } }
 }
 
@@ -44,6 +52,54 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
    button+attribute selector outranks Tailwind's hover:, so it stays filled. */
 button.rel-pill[aria-pressed="true"] { background: #293548; border-color: #293548; color: #fff; }
 button.rel-pill[aria-pressed="true"] i { color: #fff; }
+
+/* =============== Relationship picker (DES-2265) =============== */
+/* De-emphasized top-level options ("Other", "I didn't know them"). They stay
+   full-size tap targets (44px min) for accessibility — the de-emphasis is
+   tonal, not dimensional, so they read as available but not as the default
+   path. Sit below a rule that separates them from the four real answers. */
+.rel-muted-group { border-top: 1px solid #dbdad7; margin-top: 4px; padding-top: 16px; }
+button.rel-quiet {
+  width: 100%; min-height: 44px; padding: 10px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-radius: 9999px; background: transparent; border: 1px solid transparent;
+  color: #58564f; font-size: 14px; font-weight: 500; text-align: left;
+}
+button.rel-quiet:hover { background: #f4f3f1; color: #262116; }
+button.rel-quiet[aria-pressed="true"] { background: #ebe9e9; border-color: #dbdad7; color: #262116; font-weight: 600; }
+
+/* Inline qualifier reveal — the "no third tier" rule. Choosing a family
+   relation expands this row *inside* the second-tier pane instead of pushing
+   another screen. Grid-rows animation keeps it height-agnostic. */
+.rel-reveal { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .26s ease, opacity .2s ease; opacity: 0; }
+.rel-reveal > * { overflow: hidden; min-height: 0; }
+.rel-reveal[data-open="true"] { grid-template-rows: 1fr; opacity: 1; }
+
+/* Qualifier chips read as "refinement", not "another choice of equal weight" —
+   lighter than the relation pills above them, but still a 44px tap target.
+   Our users skew older, so the de-emphasis is tonal, never dimensional. */
+button.rel-chip {
+  min-height: 44px; padding: 10px 16px; border-radius: 9999px;
+  background: #fff; border: 1px solid #dbdad7; color: #58564f;
+  font-size: 14px; font-weight: 600;
+}
+button.rel-chip:hover { background: #f4f3f1; color: #262116; }
+button.rel-chip[aria-pressed="true"] { background: #293548; border-color: #293548; color: #fff; }
+
+/* "More family relationships" expand toggle. */
+button.rel-more {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px;
+  color: #42608f; font-size: 14px; font-weight: 600; background: none; border: 0;
+}
+button.rel-more:hover { color: #293548; text-decoration: underline; }
+button.rel-more i { transition: transform .2s ease; }
+button.rel-more[aria-expanded="true"] i { transform: rotate(180deg); }
+
+/* Focus states — our users skew older, so keep these unmissable (WCAG 2.1 AA). */
+button.rel-pill:focus-visible, button.rel-quiet:focus-visible,
+button.rel-chip:focus-visible, button.rel-more:focus-visible {
+  outline: 2px solid #42608f; outline-offset: 2px;
+}
 
 /* =================== Toast (Figma Toast component) =================== */
 .toast {

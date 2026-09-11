@@ -326,7 +326,11 @@
         </div>
       </div>
 
-      <!-- Pane: relationship selector -->
+      <!-- Pane 1: top-level category (DES-2265). Six options: four primary
+           pills, then a ruled-off pair that stays deliberately quiet so
+           "Other" and "I didn't know them" aren't the path of least
+           resistance. Only Family carries a caret — the asymmetry is the
+           point, since it's the only branch that drills in. -->
       <div class="wiz-pane" data-pane="relationship" data-state="next">
         <div class="pt-16 pb-8 px-6">
           <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
@@ -335,59 +339,45 @@
               <h2 id="rel-title" class="text-xl font-bold text-navy-700 leading-tight">How are you related to <span id="rel-name">this person</span>?</h2>
               <p class="text-base text-wb-700 leading-normal">Adding your relationship helps build your connections and family tree.</p>
             </div>
-            <div class="flex flex-col gap-4 pt-4">
-              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="Family">Family <i class="ph ph-caret-right text-lg"></i></button>
-              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="Friend/Acquaintance">Friend/Acquaintance <i class="ph ph-caret-right text-lg"></i></button>
-              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="School">School <i class="ph ph-caret-right text-lg"></i></button>
-              <button class="rel-option rel-pill w-full flex items-center justify-between h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-rel="Work">Work <i class="ph ph-caret-right text-lg"></i></button>
-            </div>
+            <div id="rel-options" class="flex flex-col gap-4 pt-4" role="group" aria-labelledby="rel-title"></div>
+            <div id="rel-options-quiet" class="rel-muted-group flex flex-col gap-1" role="group" aria-label="Other options"></div>
           </div>
         </div>
       </div>
 
-      <!-- Pane: family sub-relationships -->
+      <!-- Pane 2: family second tier — the only branch that drills in. The
+           biological / step / adoptive / foster / guardian qualifiers reveal
+           INLINE beneath the chosen relation. Deliberately not a third pane:
+           DES-2265 caps the taxonomy at two tiers. The qualifier is optional,
+           so "Mother" on its own is a complete answer. -->
       <div class="wiz-pane" data-pane="family" data-state="next">
         <div class="pt-16 pb-8 px-6">
           <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
           <div class="flex flex-col gap-3">
             <div class="flex flex-col gap-1">
-              <h2 class="text-xl font-bold text-navy-700 leading-tight"><span id="fam-name">This person</span> is my…</h2>
-              <p class="text-base text-wb-700 leading-normal">Choose the role <span id="fam-sub-name">this person</span> had in your family. We’ll help you refine it next.</p>
+              <h2 class="text-xl font-bold text-navy-700 leading-tight"><span id="fam-name">This person</span> is my&hellip;</h2>
+              <p class="text-base text-wb-700 leading-normal">Choose the role <span id="fam-sub-name">this person</span> had in your family.</p>
             </div>
-            <div class="grid grid-cols-2 gap-4 pt-4">
-              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Father">Father</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Mother">Mother</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Brother">Brother</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Sister">Sister</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Grandfather">Grandfather</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Grandmother">Grandmother</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Grandchild">Grandchild</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Aunt">Aunt</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Uncle">Uncle</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Cousin">Cousin</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Niece">Niece</button>
-              <button class="fam-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" data-fam="Nephew">Nephew</button>
+            <div id="fam-options" class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4" role="group" aria-label="Family relationships"></div>
+            <div class="pt-1">
+              <button type="button" id="fam-more" class="rel-more" aria-expanded="false" aria-controls="fam-options-more">More family relationships <i class="ph-bold ph-caret-down text-sm" aria-hidden="true"></i></button>
             </div>
-          </div>
-        </div>
-      </div>
+            <div id="fam-options-more" class="grid grid-cols-2 sm:grid-cols-3 gap-3" role="group" aria-label="More family relationships" hidden></div>
 
-      <!-- Pane: family connection detail (e.g. parent type) -->
-      <div class="wiz-pane" data-pane="familyDetail" data-state="next">
-        <div class="pt-16 pb-8 px-6">
-          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
-          <div class="flex flex-col gap-3">
-            <div class="flex flex-col gap-1">
-              <h2 id="famdetail-title" class="text-xl font-bold text-navy-700 leading-tight">How should we connect them?</h2>
-              <p class="text-base text-wb-700 leading-normal">Choose what best fits your family story.</p>
+            <!-- Inline qualifier reveal (no third tier) -->
+            <div class="rel-reveal" id="fam-qual-reveal" data-open="false">
+              <div>
+                <div class="pt-4 mt-4 border-t border-wb-300">
+                  <p id="fam-qual-title" class="text-base font-semibold text-wb-900 leading-tight">How were you connected?</p>
+                  <p class="text-sm text-wb-700 mt-0.5 mb-3">Optional &mdash; choose one if it fits your family.</p>
+                  <div id="fam-qual-options" class="flex flex-wrap gap-2" role="group" aria-labelledby="fam-qual-title"></div>
+                </div>
+              </div>
             </div>
-            <div id="famdetail-options" class="grid grid-cols-2 gap-4 pt-4"></div>
-            <!-- Submit button group (mirrors Figma 6270-10287): confirm the choice
-                 instead of committing on the first tap. Submit is disabled until a
-                 connection type is picked. -->
+
             <div class="flex items-center gap-4 pt-4 mt-4 border-t border-wb-300">
-              <button type="button" id="famdetail-cancel" class="inline-flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50 shrink-0">Cancel</button>
-              <button type="button" id="famdetail-submit" disabled class="flex-1 min-w-0 inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-semibold">Add Relationship</button>
+              <button type="button" id="fam-cancel" class="inline-flex items-center justify-center h-11 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50 shrink-0">Cancel</button>
+              <button type="button" id="fam-submit" disabled class="flex-1 min-w-0 inline-flex items-center justify-center h-11 px-5 rounded-full text-sm font-semibold">Add Relationship</button>
             </div>
           </div>
         </div>
@@ -605,9 +595,17 @@
 
   function personData(id){
     const d = P[id];
-    const badge = relBadge(readRelationships()[id]);
-    if (!d) return { id: id, name: 'New Person', photo: null, relation: badge || null };
-    return { id: id, name: d.full, photo: window.LEGACY_PHOTO(d.photo, 'card'), relation: badge || d.relation };
+    // A stored answer wins outright — including a deliberate no-badge answer
+    // ("Other" / "I didn't know them"), which must not fall through to the
+    // demo default (DES-2265).
+    const stored = readRelationships()[id];
+    const badge = (stored !== undefined) ? relBadge(stored) : (d ? d.relation : null);
+    // `silent` = answered, but with a value that has no label ("Other" / "I
+    // didn't know them"). Those cards show no chip at all rather than nagging
+    // with "Add Relationship" for a question already answered (DES-2265).
+    const silent = window.LEGACY_REL.isSilent(stored);
+    if (!d) return { id: id, name: 'New Person', photo: null, relation: badge || null, silent: silent };
+    return { id: id, name: d.full, photo: window.LEGACY_PHOTO(d.photo, 'card'), relation: badge || null, silent: silent };
   }
 
   function initials(name){
@@ -665,7 +663,8 @@
           '<span class="font-serif-heading text-6xl text-white leading-none">'+esc(initials(p.name))+'</span>' +
         '</div>';
     const badge = p.relation
-      ? '<span class="inline-block mt-1 rounded-full bg-gold-100 text-gold-900 text-sm px-3 py-0.5">'+esc(p.relation)+'</span>'
+      ? '<span class="inline-block mt-1 rounded-full bg-gold-100 text-gold-900 text-sm px-3 py-0.5">'+esc(window.LEGACY_REL.sentenceCase(p.relation))+'</span>'
+      : p.silent ? ''
       : '<button type="button" class="add-rel-chip inline-flex items-center gap-1 mt-1 px-3 py-0.5 rounded-full bg-wb-100 hover:bg-wb-200 text-wb-900 text-sm transition-colors"><i class="ph ph-plus-circle text-sm" aria-hidden="true"></i><span>Add Relationship</span></button>';
     return '<article class="person-card w-full mx-auto min-w-[172px] max-w-[288px] transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg relative bg-white border border-wb-300 rounded-lg overflow-hidden flex flex-col gap-2 cursor-pointer" data-id="'+esc(p.id)+'" data-name="'+esc(p.name)+'"'+(p.photo?' data-photo="'+esc(p.photo)+'"':'')+'>' +
       panel +
@@ -1110,7 +1109,7 @@
   // while the container stays put and the viewport height animates. Panes
   // earlier in the stack sit off-screen left (prev); unvisited panes sit off
   // -screen right (next); the top of the stack is active.
-  const WIZ_PANES = ['menu', 'relationship', 'family', 'familyDetail', 'collections'];
+  const WIZ_PANES = ['menu', 'relationship', 'family', 'collections'];
   let wizStack = ['menu'];
   function wizRender(instant){
     const vp = $('#opt-viewport');
@@ -1129,7 +1128,8 @@
   // The viewport is overflow-hidden with an explicit (animated) height, so it
   // clips if the active pane grows AFTER the initial measure — late icon-font
   // load, a long name wrapping the title, or rows added/removed by the
-  // collection toggle. Re-sync the height whenever the active pane resizes.
+  // collection toggle, or the inline relationship-qualifier reveal animating
+  // open. Re-sync the height whenever the active pane resizes.
   function syncWizHeight(){
     const vp = $('#opt-viewport'); if (!vp) return;
     const active = vp.querySelector('.wiz-pane[data-state="active"]');
@@ -1140,6 +1140,12 @@
     $$('#opt-viewport .wiz-pane').forEach(p => ro.observe(p));
   }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncWizHeight);
+  // The ResizeObserver alone settles a beat late, which shows as a clipped
+  // pane while the relationship qualifier reveal animates. Sync on the
+  // transition's own end too.
+  $('#fam-qual-reveal').addEventListener('transitionend', (e) => {
+    if (e.propertyName === 'grid-template-rows') syncWizHeight();
+  });
   function wizGo(name){ wizStack.push(name); wizRender(); }
   function wizBack(){ if (wizStack.length > 1) { wizStack.pop(); wizRender(); } }
   function wizReset(){ wizStack = ['menu']; wizRender(true); }
@@ -1158,8 +1164,11 @@
     paintUpdatesToggle(isFollowing(activeId));
 
     // Relationship menu item reflects whether a relationship is already set
-    // (user-added badge, or the demo default): "Add" → "Edit".
-    const hasRel = !!(relBadge(readRelationships()[activeId]) || (P[activeId] && P[activeId].relation));
+    // (user-added badge, or the demo default): "Add" → "Edit". A stored
+    // "Other" / "I didn't know them" answer has no badge but is still an
+    // answer, so it counts as set (DES-2265).
+    const storedRelV = readRelationships()[activeId];
+    const hasRel = !!(relBadge(storedRelV) || window.LEGACY_REL.isSilent(storedRelV) || (P[activeId] && P[activeId].relation));
     $('#opt-rel-title').textContent = hasRel ? 'Edit your relationship' : 'Add your relationship';
     $('#opt-rel-sub').textContent = hasRel ? 'Update how you’re connected' : 'Connect and organize your family tree';
 
@@ -1274,6 +1283,31 @@
   let sel = { category: null, relation: null, detail: null };
   function paintPressed(selector, key, value){ $$(selector).forEach(b => b.setAttribute('aria-pressed', String(b.dataset[key] === value))); }
 
+  // ----- Relationship picker (DES-2265) -----
+  // Same two-tier taxonomy as the person page, rendered from the same shared
+  // module. Category, then the family second tier with an inline qualifier
+  // reveal. No third pane.
+  const RELM = window.LEGACY_REL;
+  const PILL_CLS  = 'rel-option rel-pill w-full flex items-center justify-between min-h-11 px-5 py-2 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50';
+  const QUIET_CLS = 'rel-option rel-quiet';
+  const FAM_CLS   = 'fam-option rel-pill w-full flex items-center justify-center min-h-11 px-4 py-2 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50';
+
+  function renderCategories(){
+    const caret = ' <i class="ph ph-caret-right text-lg" aria-hidden="true"></i>';
+    $('#rel-options').innerHTML = RELM.CATEGORIES.filter(c => c.tone === 'primary').map(c =>
+      '<button type="button" class="' + PILL_CLS + '" data-rel="' + c.id + '" aria-pressed="false">' + esc(c.label) + (c.drills ? caret : '') + '</button>'
+    ).join('');
+    $('#rel-options-quiet').innerHTML = RELM.CATEGORIES.filter(c => c.tone === 'muted').map(c =>
+      '<button type="button" class="' + QUIET_CLS + '" data-rel="' + c.id + '" aria-pressed="false">' + esc(c.label) + '</button>'
+    ).join('');
+  }
+  function renderFamily(){
+    const cell = (r) => '<button type="button" class="' + FAM_CLS + '" data-fam="' + r.id + '" aria-pressed="false">' + esc(r.label) + '</button>';
+    $('#fam-options').innerHTML = RELM.familyDefaults().map(cell).join('');
+    $('#fam-options-more').innerHTML = RELM.familyMore().map(cell).join('');
+  }
+  renderCategories(); renderFamily();
+
   // Section 4 — slide across to the relationship category selector.
   function openRelationship(instant){
     $('#rel-name').textContent = activeName;
@@ -1282,83 +1316,103 @@
       ? { category: saved.category || null, relation: saved.relation || null, detail: saved.detail || null }
       : { category: null, relation: null, detail: null };
     paintPressed('.rel-option', 'rel', sel.category);
-    if (instant) { wizStack = ['menu', 'relationship']; wizRender(true); }  // open straight to the pane (back → menu)
+    // Re-opening an existing family answer lands on the family tier with that
+    // answer selected — the "change" state.
+    const deep = (sel.category === 'family' && sel.relation);
+    if (deep) primeFamily();
+    if (instant) { wizStack = deep ? ['menu', 'relationship', 'family'] : ['menu', 'relationship']; wizRender(true); }
+    else if (deep) { wizGo('relationship'); wizGo('family'); }
     else wizGo('relationship');
   }
   // Back arrows slide one pane back through the stack.
   $$('[data-wiz-back]').forEach(b => b.addEventListener('click', wizBack));
-  // Category taps: Family drills into sub-relationships; others are pending frames.
-  $$('.rel-option').forEach(b => b.addEventListener('click', () => {
-    const cat = b.dataset.rel;
-    if (sel.category !== cat) { sel.category = cat; sel.relation = null; sel.detail = null; }  // changing category clears deeper choices
+
+  // Category taps. Family drills in; everything else is a complete answer.
+  $('#options-overlay').addEventListener('click', (e) => {
+    const b = e.target.closest('.rel-option'); if (!b) return;
+    const id = b.dataset.rel;
+    if (sel.category !== id) { sel.category = id; sel.relation = null; sel.detail = null; }
     paintPressed('.rel-option', 'rel', sel.category);
-    if (cat === 'Family') openFamily();
-    else toast(cat + ' options — coming next');
-  }));
+    if (RELM.category(id) && RELM.category(id).drills) { primeFamily(); wizGo('family'); }
+    else finalizeRelationship();
+  });
 
-  function openFamily(){
-    const first = activeFirst();
-    $('#fam-name').textContent = first;
-    $('#fam-sub-name').textContent = first;
+  function primeFamily(){
+    $('#fam-name').textContent = activeFirst();
+    $('#fam-sub-name').textContent = activeFirst();
+    if (sel.relation && RELM.familyMore().some(r => r.id === sel.relation)) setMoreOpen(true);
     paintPressed('.fam-option', 'fam', sel.relation);
-    wizGo('family');
-  }
-  // Family connection types (shared with the person page).
-  const FAM_DETAIL = window.LEGACY_REL.FAM_DETAIL;
-  let pendingFamRel = null;
-
-  // Family relation taps drill into the connection-type step for that relation.
-  $$('.fam-option').forEach(b => b.addEventListener('click', () => {
-    const rel = b.dataset.fam;
-    if (sel.relation !== rel) { sel.relation = rel; sel.detail = null; }  // changing relation clears the detail
-    paintPressed('.fam-option', 'fam', sel.relation);
-    if (FAM_DETAIL[rel]) openFamilyDetail(rel);
-    else finalizeRelationship(rel, null);
-  }));
-
-  function openFamilyDetail(rel){
-    pendingFamRel = rel;
-    $('#famdetail-title').textContent = 'How should we connect ' + activeFirst() + ' as your ' + rel.toLowerCase() + '?';
-    $('#famdetail-options').innerHTML = FAM_DETAIL[rel].map(opt =>
-      '<button class="famdetail-option rel-pill w-full flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50" aria-pressed="' + (opt === sel.detail) + '" data-detail="' + opt + '">' + opt + '</button>'
-    ).join('');
+    if (sel.relation) renderQualifiers(sel.relation); else closeQualifiers();
     paintFamSubmit();
-    wizGo('familyDetail');
   }
-  // Submit button state — inline colors so the enabled/disabled swap renders
-  // instantly (independent of the Tailwind CDN's async class generation).
+
+  function setMoreOpen(open){
+    const btn = $('#fam-more'), more = $('#fam-options-more');
+    btn.setAttribute('aria-expanded', String(open));
+    more.hidden = !open;
+    btn.firstChild.nodeValue = open ? 'Fewer family relationships ' : 'More family relationships ';
+  }
+  $('#fam-more').addEventListener('click', () => {
+    setMoreOpen($('#fam-more').getAttribute('aria-expanded') !== 'true');
+    wizRender(true);
+  });
+
+  // Family relation taps reveal the qualifier row inline — no new pane.
+  $('#options-overlay').addEventListener('click', (e) => {
+    const b = e.target.closest('.fam-option'); if (!b) return;
+    const id = b.dataset.fam;
+    if (sel.relation !== id) { sel.relation = id; sel.detail = null; }
+    paintPressed('.fam-option', 'fam', sel.relation);
+    renderQualifiers(id);
+    paintFamSubmit();
+    wizRender(true);
+  });
+
+  function closeQualifiers(){ $('#fam-qual-reveal').dataset.open = 'false'; $('#fam-qual-options').innerHTML = ''; }
+  function renderQualifiers(relId){
+    const list = RELM.qualifiersFor(relId);
+    const rel = RELM.familyRelation(relId);
+    if (!list.length) { closeQualifiers(); return; }
+    $('#fam-qual-title').textContent = 'How were you connected as ' + activeFirst() + '’s ' + rel.label.toLowerCase() + '?';
+    $('#fam-qual-options').innerHTML = list.map(q =>
+      '<button type="button" class="qual-option rel-chip" data-detail="' + q.id + '" aria-pressed="' + (q.id === sel.detail) + '">' + esc(q.label) + '</button>'
+    ).join('');
+    $('#fam-qual-reveal').dataset.open = 'true';
+  }
+  // Tapping the selected qualifier clears it — the plain term is a valid answer.
+  $('#fam-qual-options').addEventListener('click', (e) => {
+    const b = e.target.closest('.qual-option'); if (!b) return;
+    sel.detail = (sel.detail === b.dataset.detail) ? null : b.dataset.detail;
+    paintPressed('.qual-option', 'detail', sel.detail);
+    paintFamSubmit();
+  });
+
+  // Submit unlocks on the relation alone — the qualifier is optional.
   function paintFamSubmit(){
-    const b = $('#famdetail-submit'); if (!b) return;
-    const on = !!sel.detail;
+    const b = $('#fam-submit'); if (!b) return;
+    const on = !!sel.relation;
     b.disabled = !on;
     b.style.cursor = on ? 'pointer' : 'not-allowed';
     b.style.backgroundColor = on ? '#e2ba60' : '#ebe9e9';   // gold-400 / wb-200
     b.style.color = on ? '#262116' : '#807e7a';             // wb-900 / wb-500
     b.style.border = on ? '1px solid #e2ba60' : '1px solid #dbdad7'; // gold-400 / wb-300
+    b.textContent = readRelationships()[activeId] ? 'Save relationship' : 'Add Relationship';
   }
-  // Tapping a connection type now only selects it — the user confirms with Submit.
-  $('#famdetail-options').addEventListener('click', (e) => {
-    const b = e.target.closest('.famdetail-option'); if (!b) return;
-    sel.detail = b.dataset.detail;
-    paintPressed('.famdetail-option', 'detail', sel.detail);
-    paintFamSubmit();
-  });
-  $('#famdetail-submit').addEventListener('click', () => {
-    if (!sel.detail) return;
-    finalizeRelationship(pendingFamRel, sel.detail);
-  });
-  $('#famdetail-cancel').addEventListener('click', closeAll);
+  $('#fam-submit').addEventListener('click', () => { if (sel.relation) finalizeRelationship(); });
+  $('#fam-cancel').addEventListener('click', closeAll);
 
-  // Persist the full selection path, close, and confirm. The badge shows the
-  // base relation, EXCEPT for step-relations, which stay explicit on the badge
-  // (e.g. "Stepfather") — the most sensitive distinction to surface.
-  function finalizeRelationship(base, detail){
-    const badge = window.LEGACY_REL.computeBadge(base, detail);
-    setRelationship(activeId, { category: sel.category || 'Family', relation: base, detail: detail || null, badge: badge });
+  // Persist the whole path. The badge comes from the second tier for family,
+  // and from the category for friend/school/work; "Other" and "I didn't know
+  // them" store the answer but produce no badge.
+  function finalizeRelationship(){
+    const badge = RELM.computeBadge(sel.category, sel.relation, sel.detail);
+    setRelationship(activeId, { category: sel.category, relation: sel.relation, detail: sel.detail, badge: badge });
     buildPeople(); render();
     closeAll();
-    const shown = (detail && detail !== 'Other') ? detail : base;
-    toast(activeFirst() + ' saved as your ' + shown.toLowerCase());
+    const label = RELM.displayLabel({ badge: badge });
+    toast(label
+      ? activeFirst() + ' saved as ' + label.toLowerCase()
+      : 'Thanks — that helps us understand your connection.');
   }
 
   function openShare(){ overlays.options.classList.remove('open'); $('#share-sub').textContent = 'Invite others to visit ' + activeName + '’s page'; openOverlay(overlays.share); }

@@ -107,3 +107,23 @@ Each entry should include:
 ### The "suggested follows" feature appears after ANY successful follow — including soft-follow
 - **What went wrong:** Only showed the nearby-locations widget in the authenticated flow. Assumed soft-follow (email capture) ended at the success modal.
 - **What to do instead:** The suggested-locations-to-follow prompt is triggered by *successfully following the page*, regardless of auth method. In the soft-follow flow the frame order is Follow → email modal → "You're all set!" modal → **Suggested Follows widget** → Suggested Follows Success. After the soft-follow success modal is dismissed, animate the same widget in (the user is now following via email).
+
+---
+
+## 2026-09-11 — Relationship taxonomy + selector (DES-2265)
+
+### Don't declare MCP connectors unavailable based on the session-start notice — try them
+- **What went wrong:** The startup notice listed Figma and Atlassian as needing auth, so I told Wes they were unavailable and asked him to authorize them. He said "try again those connectors should be working" — and both worked immediately on the first call. I had burned a turn and asked him to do something he didn't need to do.
+- **What to do instead:** The session-start auth/connection notice is a snapshot that can be stale. Before reporting any connector as unavailable, actually call it (`getAccessibleAtlassianResources`, Figma `whoami`) and let the *call* fail. Only report unavailability from a real error. This matters most for Figma and Jira, which nearly every task here depends on.
+
+### Read the Jira ticket before asking the user what they want
+- **What went wrong:** Asked Wes a three-part AskUserQuestion about which direction to take the taxonomy. He dismissed it. The branch name (`tune/des-2265-relationship-selector`) named the ticket, and DES-2265 already specified the answer to every question I asked — six top-level categories, second tier under family only, no third tier, no free-text on "Other".
+- **What to do instead:** When the branch name, commit messages, or prototype comments reference a DES ticket, pull it with the Atlassian MCP *first*. Ask only about what the ticket leaves genuinely open, and make the routine calls yourself.
+
+### `[hidden]` loses to Tailwind display utilities — add an explicit override
+- **What went wrong:** Toggled the "More family relationships" grid with `el.hidden = true`. The element has `class="grid ..."`, and Tailwind's `.grid { display: grid }` has the same specificity as `[hidden] { display: none }` but loads later, so it won the cascade. The expanded set was permanently visible; the collapsed default state silently never existed. Cost several debug cycles because `el.hidden` read back as `true` while the element rendered.
+- **What to do instead:** Any prototype loading the Tailwind CDN needs `[hidden] { display: none !important; }` in the base layer of shared/styles.css (it's there now). Symptom to recognize: `el.hidden === true` but `getBoundingClientRect().height > 0`. Related to the `.collapse` entry above — same root cause, Tailwind utilities outranking expected defaults.
+
+### An animated-height pane needs both a ResizeObserver and a transitionend sync
+- **What went wrong:** `.wiz-viewport` is `overflow:hidden` with an explicit animated height. Measuring the active pane's height on click landed mid-transition while the inline qualifier reveal was still expanding, so the pane clipped. A ResizeObserver alone converged, but a beat late — visible as a clipped sheet.
+- **What to do instead:** For a sheet whose content animates open, sync the viewport height from three triggers: the ResizeObserver, `document.fonts.ready`, and the reveal's own `transitionend` (filtered to the animating property, e.g. `grid-template-rows`). Also cap `.sheet-card` with `max-height` + `overflow-y:auto` in `dvh` (not `vh`) so mobile browser chrome can't hide the submit button.
