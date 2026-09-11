@@ -895,9 +895,11 @@
     if (label) {
       el.innerHTML = '<button type="button" class="hero-rel-chip inline-flex items-center px-3 py-0.5 rounded-full bg-navy-600 border border-navy-300 text-navy-300 text-sm">' + esc(label) + '</button>';
     } else if (REL.isSilent(v)) {
-      // Answered, but with no label to show. Keep the state reachable without
-      // printing an awkward possessive.
-      el.innerHTML = '<button type="button" class="hero-rel-chip inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-navy-200 text-sm underline underline-offset-2"><i class="ph ph-pencil-simple text-sm" aria-hidden="true"></i>Edit your relationship</button>';
+      // "I didn't know them" shows no badge at all — the hero is just the name.
+      // The answer is still stored, and still editable from the My People
+      // dashboard's options menu; this page deliberately offers no way back
+      // in, rather than re-asking a question the user has already answered.
+      el.innerHTML = '';
     } else {
       el.innerHTML = '<button type="button" class="hero-rel-chip inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-navy-100 text-navy-800 text-sm"><i class="ph ph-plus-circle text-sm" aria-hidden="true"></i>Add your relationship</button>';
     }
