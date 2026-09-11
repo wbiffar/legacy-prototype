@@ -14,13 +14,15 @@
        NOT show that bucket, so they surface as peers of Family and Friend.
        There is no "Other" option in the UI.
      - Family is the only option that drills in, to six gender-neutral GROUPS
-       (Grandparent, Parent, Sibling, Child, Spouse, Other relative).
+       (Grandparent, Parent, Sibling, Child, Spouse, In-law, Other relative).
      - The group IS a complete answer — we save there ("Saved. Douglas is my
        Parent."). The specific role (Father, Step-father, Father-in-law...) is
        an OPTIONAL refinement offered after the save. That's how the third tier
        exists without adding a required step to the flow.
-     - Step / half / in-law variants are peers of the base term inside a group,
-       not modifiers of it.
+     - Step / half variants are peers of the base term inside a group, not
+       modifiers of it. In-laws are pulled out into their own group rather
+       than sitting inside Parent / Child / Sibling as the board has them —
+       they're a relation by marriage, not a blood relation with a suffix.
 
    STORE
      relationships[id] = { top, group, specific, badge }
@@ -62,20 +64,26 @@
   function top(id){ for (var i=0;i<TOP.length;i++) if (TOP[i].id === id) return TOP[i]; return null; }
 
   /* ------------------------------------------------------------------ *
-   * Family groups, in the Figma grid's reading order (2 columns):
+   * Family groups, in the grid's reading order (2 columns):
    *   Grandparent | Parent
    *   Sibling     | Child
-   *   Spouse      | Other relative
+   *   Spouse      | In-law
+   *   Other relative
    *
    * Board spellings "Grand father" / "Great-grand mother" are normalized to
    * the closed-up forms here — they read as spacing typos in the source table.
    * ------------------------------------------------------------------ */
   var GROUPS = [
     { id: 'grandparent', label: 'Grandparent',  specifics: ['Grandfather', 'Grandmother', 'Great-grandfather', 'Great-grandmother'] },
-    { id: 'parent',      label: 'Parent',       specifics: ['Father', 'Mother', 'Step-father', 'Step-mother', 'Father-in-law', 'Mother-in-law'] },
-    { id: 'sibling',     label: 'Sibling',      specifics: ['Brother', 'Sister', 'Step-brother', 'Step-sister', 'Brother-in-law', 'Sister-in-law', 'Half-brother', 'Half-sister'] },
-    { id: 'child',       label: 'Child',        specifics: ['Son', 'Daughter', 'Step-son', 'Step-daughter', 'Son-in-law', 'Daughter-in-law'] },
+    { id: 'parent',      label: 'Parent',       specifics: ['Father', 'Mother', 'Step-father', 'Step-mother'] },
+    { id: 'sibling',     label: 'Sibling',      specifics: ['Brother', 'Sister', 'Step-brother', 'Step-sister', 'Half-brother', 'Half-sister'] },
+    { id: 'child',       label: 'Child',        specifics: ['Son', 'Daughter', 'Step-son', 'Step-daughter'] },
     { id: 'spouse',      label: 'Spouse',       specifics: ['Husband', 'Wife', 'Partner'] },
+    // Wes's grouping: the board scatters in-laws across Parent / Child /
+    // Sibling, which reads as blood relation with a suffix. They're a
+    // relation by marriage, so they get their own group. Sits next to Spouse
+    // because that's what creates them.
+    { id: 'inlaw',       label: 'In-law',       specifics: ['Father-in-law', 'Mother-in-law', 'Son-in-law', 'Daughter-in-law', 'Brother-in-law', 'Sister-in-law'] },
     // Wes's wording, deliberately diverging from the board's "Other Family".
     // The chip still says Relative, since "My Other relative" isn't a phrase.
     { id: 'otherfamily', label: 'Other relative', badge: 'Relative', specifics: ['Uncle', 'Aunt', 'Cousin', 'Nephew', 'Niece'] },
