@@ -134,3 +134,10 @@ Each entry should include:
 
 ### FigJam boards need get_figjam, not get_metadata/get_design_context
 - **Note:** A `/board/` URL is FigJam and only `get_figjam` reads it; `get_metadata` and `get_design_context` are `/design/` only. For a `/design/` URL where the node is a *section*, `get_design_context` returns a sparse outline and tells you to call it again per child frame — `get_screenshot` on the section first is the cheapest way to see the whole flow and decide which frames are worth pulling in full.
+
+## 2026-09-14 — Relationship selector, follow-up (DES-2265)
+
+### Capping a sheet with max-height hides any control revealed below the fold
+- **What went wrong:** Capping `.sheet-card` at `100dvh`/`88dvh` stopped the picker from clipping, but created the opposite failure: on a 667px-tall phone the top pane is 719px, so revealing the "Add Relationship" CTA pushed it 100px past the card's lower edge. `scrollTop` stayed 0, so the button was simply invisible — a dead end, with nothing on screen hinting a next step existed. Wes caught it; the reveal had only ever been checked at 812px, where it fits by ~4px.
+- **What to do instead:** Any control that *appears* inside a capped, scrollable sheet has to be scrolled into view as it appears. Pin the card to its own bottom (`scrollTop = scrollHeight`) so the content above slides up — and because the viewport's height is animated, the pin has to ride the transition: an rAF loop for the smooth travel, ended by a `transitionend` filtered to `height` that sets the final value. rAF is paused in a backgrounded tab, so the `transitionend` settle is load-bearing, not belt-and-braces. Also reset the scroll on pane change — the *card* is the scroller, so `viewport.scrollTop = 0` resets the wrong element.
+- **Verify at 375×667, not just 375×812.** The shorter phone is where a capped sheet actually overflows.

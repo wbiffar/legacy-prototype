@@ -908,6 +908,7 @@
 
   // ----- Picker -----
   const relVp = $('#rel-viewport');
+  const relCard = relVp.closest('.sheet-card');   // the scroller; the viewport itself is overflow-hidden
   const REL_PANES = ['relationship', 'family', 'refine'];
   let relStack = ['relationship'];
   let sel = { top: null, group: null, specific: null };
@@ -938,6 +939,9 @@
     });
     const active = relVp.querySelector('[data-pane="' + topPane + '"]');
     relVp.scrollTop = 0;
+    // The card is the scroller (the viewport is overflow-hidden), so a pane
+    // left scrolled down to its CTA must not hand that offset to the next one.
+    if (relCard) relCard.scrollTop = 0;
     const applyHeight = () => { relVp.style.height = active.offsetHeight + 'px'; };
     if (instant) { const t = relVp.style.transition; relVp.style.transition = 'none'; applyHeight(); void relVp.offsetHeight; relVp.style.transition = t; }
     else applyHeight();
@@ -954,6 +958,30 @@
     relVp.querySelectorAll('.wiz-pane').forEach(p => ro.observe(p));
   }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncRelHeight);
+
+  // The card is capped at the viewport height, so on a short screen revealing
+  // the CTA pushes it past the lower edge — invisible, with no hint that a
+  // next step exists. Pin the card to its own bottom instead: the options
+  // above slide up and the button settles just inside the edge. A no-op while
+  // the card still fits its content, which is the common case.
+  function pinSheetBottom(instant){
+    if (!relCard) return;
+    const stick = () => { relCard.scrollTop = relCard.scrollHeight; };
+    stick();
+    if (instant) return;
+    // scrollHeight only reaches its final value once the viewport has finished
+    // growing, so ride the height transition rather than measuring once up front.
+    let raf = requestAnimationFrame(function tick(){ stick(); raf = requestAnimationFrame(tick); });
+    const done = (e) => {
+      // The panes' own transform/opacity transitions bubble through here too.
+      if (e && e.propertyName !== 'height') return;
+      cancelAnimationFrame(raf); clearTimeout(timer);
+      relVp.removeEventListener('transitionend', done);
+      stick();   // land on the final value — rAF is paused in a backgrounded tab
+    };
+    relVp.addEventListener('transitionend', done);
+    const timer = setTimeout(done, 600);   // in case the transition never fires
+  }
 
   function relGo(name){ relStack.push(name); relRender(); }
   function relBack(){ if (relStack.length > 1) { relStack.pop(); relRender(); } else closeAll(); }
@@ -976,6 +1004,9 @@
     relStack = (sel.top === 'family' && sel.group) ? ['relationship', 'family'] : ['relationship'];
     openOverlay(overlays.relationship);
     relRender(true);
+    // A stored non-family answer opens with the CTA already showing, so it can
+    // start out below the edge. Jump, don't animate — nothing is moving yet.
+    if (!$('#rel-submit-wrap').hidden) pinSheetBottom(true);
   }
 
   // ----- Pane 1: top level. Select, then confirm. -----
@@ -992,8 +1023,13 @@
   });
   function paintTopSubmit(){
     const wrap = $('#rel-submit-wrap'); if (!wrap) return;
-    wrap.hidden = !(sel.top && sel.top !== 'family');
+    const show = !!(sel.top && sel.top !== 'family');
+    const revealing = show && wrap.hidden;
+    wrap.hidden = !show;
     syncRelHeight();   // showing or hiding the CTA changes the pane's height
+    // Only on the reveal — re-pinning every tap would yank a card the user had
+    // deliberately scrolled.
+    if (revealing) pinSheetBottom();
   }
   $('#rel-submit').addEventListener('click', () => {
     if (sel.top && sel.top !== 'family') commit(false);
