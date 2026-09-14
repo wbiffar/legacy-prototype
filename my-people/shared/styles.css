@@ -27,7 +27,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   background: #fff; width: 100%; max-width: 512px;
   border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
   position: relative; animation: pop .18s ease;
-  /* The family tier is taller than a phone screen, so the card scrolls rather
+  /* A cap, not a height: a short sheet never reaches it and is sized by its
+     own content, so only the tall ones (the relationship picker) are affected.
+     The family tier is taller than a phone screen, so the card scrolls rather
      than clipping. dvh (not vh) so mobile browser chrome doesn't hide the
      submit button behind the URL bar. */
   max-height: calc(100dvh - 48px); overflow-y: auto; overscroll-behavior: contain;
@@ -35,7 +37,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
 @media (max-width: 639px) {
   .sheet-overlay { align-items: flex-end; padding: 0; }
-  .sheet-card { max-width: 100%; border-radius: 20px 20px 0 0; animation: slideup .22s ease; max-height: 88dvh; }
+  /* Bottom-anchored here, so the cap is what sets the gap above the sheet:
+     32px of backdrop stays visible, enough to read as a layer over the page
+     and to give a thumb somewhere to dismiss. */
+  .sheet-card { max-width: 100%; border-radius: 20px 20px 0 0; animation: slideup .22s ease; max-height: calc(100dvh - 32px); }
   @keyframes slideup { from { transform: translateY(100%); } to { transform: none; } }
 }
 
