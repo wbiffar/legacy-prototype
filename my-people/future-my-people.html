@@ -1334,7 +1334,7 @@
 
   // Section 4 — slide across to the relationship picker.
   function openRelationship(instant){
-    $('#rel-name').textContent = activeName;
+    $('#rel-name').textContent = activeFirst();   // first name only — the question should sound like a person asking it
     $('#fam-name').textContent = activeFirst();
     $('#fam-sub-name').textContent = activeFirst();
     $('#refine-name').textContent = activeFirst();

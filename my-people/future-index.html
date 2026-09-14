@@ -988,7 +988,7 @@
   $$('#rel-overlay [data-wiz-back]').forEach(b => b.addEventListener('click', relBack));
 
   function openRelationshipFlow(){
-    $('#rel-name').textContent = PERSON.full;
+    $('#rel-name').textContent = PERSON.first;   // first name only — the question should sound like a person asking it
     $('#fam-name').textContent = PERSON.first;
     $('#fam-sub-name').textContent = PERSON.first;
     $('#refine-name').textContent = PERSON.first;
