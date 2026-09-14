@@ -949,38 +949,37 @@
   // The viewport is overflow-hidden with an explicit animated height, so it
   // clips if the active pane grows after the initial measure (a late icon-font
   // load, or a longer specifics grid than the pane it replaced).
-  function syncRelHeight(){
-    const active = relVp.querySelector('.wiz-pane[data-state="active"]');
-    if (active) relVp.style.height = active.offsetHeight + 'px';
+  function syncRelHeight(instant){
+    var active = relVp.querySelector('.wiz-pane[data-state="active"]');
+    if (!active) return;
+    if (!instant) { relVp.style.height = active.offsetHeight + 'px'; return; }
+    // Snap: no transition to wait on, so a caller can measure and scroll in
+    // this same frame.
+    var t = relVp.style.transition;
+    relVp.style.transition = 'none';
+    relVp.style.height = active.offsetHeight + 'px';
+    void relVp.offsetHeight;
+    relVp.style.transition = t;
   }
   if (window.ResizeObserver) {
     const ro = new ResizeObserver(() => syncRelHeight());
     relVp.querySelectorAll('.wiz-pane').forEach(p => ro.observe(p));
   }
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncRelHeight);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ syncRelHeight(); });
 
   // The card is capped at the viewport height, so on a short screen revealing
   // the CTA pushes it past the lower edge — invisible, with no hint that a
-  // next step exists. Pin the card to its own bottom instead: the options
-  // above slide up and the button settles just inside the edge. A no-op while
-  // the card still fits its content, which is the common case.
-  function pinSheetBottom(instant){
-    if (!relCard) return;
-    const stick = () => { relCard.scrollTop = relCard.scrollHeight; };
-    stick();
-    if (instant) return;
-    // scrollHeight only reaches its final value once the viewport has finished
-    // growing, so ride the height transition rather than measuring once up front.
-    let raf = requestAnimationFrame(function tick(){ stick(); raf = requestAnimationFrame(tick); });
-    const done = (e) => {
-      // The panes' own transform/opacity transitions bubble through here too.
-      if (e && e.propertyName !== 'height') return;
-      cancelAnimationFrame(raf); clearTimeout(timer);
-      relVp.removeEventListener('transitionend', done);
-      stick();   // land on the final value — rAF is paused in a backgrounded tab
-    };
-    relVp.addEventListener('transitionend', done);
-    const timer = setTimeout(done, 600);   // in case the transition never fires
+  // next step exists. Pin the card to its own bottom instead, so the options
+  // above shift up and the button sits just inside the edge. A no-op while the
+  // card still fits its content, which is the common case.
+  //
+  // Deliberately not animated. The caller snaps the pane's height first, so
+  // scrollHeight is already final and this one assignment cannot land short.
+  // Every animated version of this — rAF chasing the height transition, or
+  // scrollTo({behavior:'smooth'}) — strands the button off-screen whenever the
+  // animation clock stalls, and off-screen is the whole bug.
+  function pinSheetBottom(){
+    if (relCard) relCard.scrollTop = relCard.scrollHeight;
   }
 
   function relGo(name){ relStack.push(name); relRender(); }
@@ -1006,7 +1005,7 @@
     relRender(true);
     // A stored non-family answer opens with the CTA already showing, so it can
     // start out below the edge. Jump, don't animate — nothing is moving yet.
-    if (!$('#rel-submit-wrap').hidden) pinSheetBottom(true);
+    if (!$('#rel-submit-wrap').hidden) pinSheetBottom();
   }
 
   // ----- Pane 1: top level. Select, then confirm. -----
@@ -1026,7 +1025,11 @@
     const show = !!(sel.top && sel.top !== 'family');
     const revealing = show && wrap.hidden;
     wrap.hidden = !show;
-    syncRelHeight();   // showing or hiding the CTA changes the pane's height
+    // Snap the height when the CTA appears rather than animating it: the
+    // button pops in with no transition of its own, and an already-final
+    // height lets pinSheetBottom scroll to an exact target instead of
+    // chasing one that is still moving.
+    syncRelHeight(revealing);
     // Only on the reveal — re-pinning every tap would yank a card the user had
     // deliberately scrolled.
     if (revealing) pinSheetBottom();

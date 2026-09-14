@@ -1141,39 +1141,37 @@
   // load, a long name wrapping the title, or rows added/removed by the
   // collection toggle, or a specifics grid taller than the pane it replaced.
   // Re-sync the height whenever the active pane resizes.
-  function syncWizHeight(){
-    const vp = $('#opt-viewport'); if (!vp) return;
-    const active = vp.querySelector('.wiz-pane[data-state="active"]');
-    if (active) vp.style.height = active.offsetHeight + 'px';
+  function syncWizHeight(instant){
+    var active = optVp.querySelector('.wiz-pane[data-state="active"]');
+    if (!active) return;
+    if (!instant) { optVp.style.height = active.offsetHeight + 'px'; return; }
+    // Snap: no transition to wait on, so a caller can measure and scroll in
+    // this same frame.
+    var t = optVp.style.transition;
+    optVp.style.transition = 'none';
+    optVp.style.height = active.offsetHeight + 'px';
+    void optVp.offsetHeight;
+    optVp.style.transition = t;
   }
   if (window.ResizeObserver) {
     const ro = new ResizeObserver(() => syncWizHeight());
     $$('#opt-viewport .wiz-pane').forEach(p => ro.observe(p));
   }
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncWizHeight);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ syncWizHeight(); });
 
   // The card is capped at the viewport height, so on a short screen revealing
   // the CTA pushes it past the lower edge — invisible, with no hint that a
-  // next step exists. Pin the card to its own bottom instead: the options
-  // above slide up and the button settles just inside the edge. A no-op while
-  // the card still fits its content, which is the common case.
-  function pinSheetBottom(instant){
-    if (!optCard) return;
-    const stick = () => { optCard.scrollTop = optCard.scrollHeight; };
-    stick();
-    if (instant) return;
-    // scrollHeight only reaches its final value once the viewport has finished
-    // growing, so ride the height transition rather than measuring once up front.
-    let raf = requestAnimationFrame(function tick(){ stick(); raf = requestAnimationFrame(tick); });
-    const done = (e) => {
-      // The panes' own transform/opacity transitions bubble through here too.
-      if (e && e.propertyName !== 'height') return;
-      cancelAnimationFrame(raf); clearTimeout(timer);
-      optVp.removeEventListener('transitionend', done);
-      stick();   // land on the final value — rAF is paused in a backgrounded tab
-    };
-    optVp.addEventListener('transitionend', done);
-    const timer = setTimeout(done, 600);   // in case the transition never fires
+  // next step exists. Pin the card to its own bottom instead, so the options
+  // above shift up and the button sits just inside the edge. A no-op while the
+  // card still fits its content, which is the common case.
+  //
+  // Deliberately not animated. The caller snaps the pane's height first, so
+  // scrollHeight is already final and this one assignment cannot land short.
+  // Every animated version of this — rAF chasing the height transition, or
+  // scrollTo({behavior:'smooth'}) — strands the button off-screen whenever the
+  // animation clock stalls, and off-screen is the whole bug.
+  function pinSheetBottom(){
+    if (optCard) optCard.scrollTop = optCard.scrollHeight;
   }
 
   function wizGo(name){ wizStack.push(name); wizRender(); }
@@ -1350,8 +1348,10 @@
     else if (deep) { wizGo('relationship'); wizGo('family'); }
     else wizGo('relationship');
     // A stored non-family answer arrives with the CTA already showing, so it
-    // can start out below the edge. Jump when nothing is animating.
-    if (!$('#rel-submit-wrap').hidden) pinSheetBottom(instant);
+    // can start out below the edge. wizGo animates the height, which would
+    // leave scrollHeight mid-flight, so snap it first — the pane still slides
+    // in on its transform, only the container's height stops animating.
+    if (!$('#rel-submit-wrap').hidden) { syncWizHeight(true); pinSheetBottom(); }
   }
   // Back arrows slide one pane back through the stack.
   $$('[data-wiz-back]').forEach(b => b.addEventListener('click', wizBack));
@@ -1373,7 +1373,11 @@
     const show = !!(sel.top && sel.top !== 'family');
     const revealing = show && wrap.hidden;
     wrap.hidden = !show;
-    syncWizHeight();   // showing or hiding the CTA changes the pane's height
+    // Snap the height when the CTA appears rather than animating it: the
+    // button pops in with no transition of its own, and an already-final
+    // height lets pinSheetBottom scroll to an exact target instead of
+    // chasing one that is still moving.
+    syncWizHeight(revealing);
     // Only on the reveal — re-pinning every tap would yank a card the user had
     // deliberately scrolled.
     if (revealing) pinSheetBottom();
