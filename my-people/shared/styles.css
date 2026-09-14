@@ -63,9 +63,10 @@ button.rel-pill[aria-pressed="true"] i { color: #fff; }
    The picker is three panes: seven flat top-level options, then the six family
    groups, then an OPTIONAL post-save refinement to the specific role. */
 
-/* Primary CTA — gold/400 on warmBlack/900, full width, disabled = wb-200. */
+/* Primary CTA — gold/400 on warmBlack/900, full width, disabled = wb-200.
+   40px tall to match the pills and the design system's default button. */
 button.rel-cta {
-  width: 100%; min-height: 44px; padding: 10px 20px; border-radius: 9999px;
+  width: 100%; min-height: 40px; padding: 8px 20px; border-radius: 9999px;
   background: #e2ba60; border: 1px solid #e2ba60; color: #262116;
   font-size: 14px; font-weight: 600; line-height: 1.5; cursor: pointer;
   transition: background-color .15s ease, border-color .15s ease, color .15s ease;
@@ -83,7 +84,7 @@ button.rel-cta:disabled { background: #ebe9e9; border-color: #dbdad7; color: #80
 /* "No thanks, Parent is right" — a text link, not a second button, so it
    never competes with the gold CTA above it. */
 button.rel-skip {
-  background: none; border: 0; min-height: 44px; padding: 0 8px;
+  background: none; border: 0; min-height: 40px; padding: 0 8px;
   color: #42608f; font-size: 16px; font-weight: 600; letter-spacing: -0.32px; cursor: pointer;
 }
 button.rel-skip:hover { color: #293548; text-decoration: underline; text-underline-offset: 2px; }
