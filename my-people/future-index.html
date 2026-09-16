@@ -640,6 +640,100 @@
         </div>
       </div>
 
+      <!-- Pane 4: account gate (DES-2280). Signed-out visitors only.
+           NOTHING has been written by the time this shows. The answer is held
+           in `pending` and is lost if they dismiss — that is the decided trade,
+           not an oversight, so the copy here must never imply it was saved.
+           Back still works: it returns to the picker with the answer intact. -->
+      <div class="wiz-pane" data-pane="gate" data-state="next">
+        <div class="pt-16 pb-8 px-3">
+          <button data-wiz-back class="absolute top-2 left-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Back"><i class="ph-bold ph-arrow-left text-sm"></i></button>
+          <div class="max-w-[480px] mx-auto flex flex-col items-center gap-8 text-center">
+            <span class="inline-flex items-center gap-1 rounded-md bg-gold-100 px-3 py-0.5 text-sm text-gold-900"><i class="ph ph-user text-sm"></i> My People</span>
+            <div class="flex flex-col items-center gap-2 w-full">
+              <h2 id="gate-title" class="font-serif-heading text-3xl text-navy-700 leading-tight">Save your connection to <span class="gate-name">Ralph</span></h2>
+              <p class="text-sm text-wb-700 leading-relaxed" id="gate-lede">Sign in or create a free account and we&rsquo;ll keep it.</p>
+            </div>
+            <ul class="flex flex-col gap-3 w-full text-left">
+              <li class="flex items-start gap-2">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph-bold ph-check text-[13px]"></i></span>
+                <span class="flex-1 text-sm font-bold text-wb-700 leading-normal">The people who matter to you, kept in one place.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph-bold ph-check text-[13px]"></i></span>
+                <span class="flex-1 text-sm font-bold text-wb-700 leading-normal">Your connections build a family tree over time.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center"><i class="ph-bold ph-check text-[13px]"></i></span>
+                <span class="flex-1 text-sm font-bold text-wb-700 leading-normal">Free to create &mdash; and there whenever you want to come back.</span>
+              </li>
+            </ul>
+            <!-- Two buttons, matching the canonical frame (Figma 6199:91152).
+                 Dismiss carries data-close so Escape, the backdrop and this
+                 button all leave through closeAll and hit one handler. -->
+            <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center sm:justify-end gap-3 sm:gap-4 w-full">
+              <button type="button" data-close class="inline-flex items-center justify-center px-5 py-3 rounded-full border border-navy-700 bg-white text-base font-semibold text-navy-700 hover:bg-wb-50">Maybe Later</button>
+              <button type="button" id="gate-continue" class="inline-flex items-center justify-center px-5 py-3 rounded-full bg-gold-400 hover:bg-gold-500 text-base font-semibold text-wb-900">Sign In or Create an Account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     FIRST-SAVE CONFIRMATION (DES-2268)
+     Fires once per account, on whichever save happens to be their first,
+     from all four paths — with or without a relationship. In production two
+     of those paths arrive here after returning from an off-site sign-in;
+     the prototype simulates auth in-page, so it opens immediately instead.
+     ==================================================================== -->
+<div class="sheet-overlay" id="saved-overlay" role="dialog" aria-modal="true" aria-labelledby="saved-title">
+  <div class="sheet-card border border-wb-300 flex flex-col items-center gap-8 p-8 text-center">
+    <span class="inline-flex items-center gap-1 rounded-md bg-gold-100 px-3 py-0.5 text-sm text-gold-900"><i class="ph ph-user text-sm"></i> My People</span>
+
+    <div class="flex flex-col items-center gap-2 max-w-[480px] w-full">
+      <h2 id="saved-title" class="font-serif-heading text-3xl text-navy-700 leading-tight"><span class="saved-name">Ralph</span> is in My People</h2>
+      <!-- Only the relationship paths show a chip. Everything else about this
+           modal is identical either way. -->
+      <span id="saved-chip" class="inline-flex items-center px-3 py-0.5 rounded-full bg-navy-100 text-navy-800 text-sm hidden">My Father</span>
+      <p id="saved-lede" class="text-sm text-wb-700 leading-relaxed">He&rsquo;s saved to your account. Come back to him any time.</p>
+    </div>
+
+    <div class="w-full max-w-[480px] flex flex-col gap-4">
+      <p class="text-xs font-semibold tracking-wider text-wb-600 uppercase text-left">What you can do now</p>
+      <ul class="flex flex-col gap-4 text-left">
+        <li class="flex items-center gap-4">
+          <span class="feature-slot" aria-hidden="true">Image</span>
+          <span class="flex-1">
+            <span class="block text-base font-semibold text-wb-900 leading-snug">Everyone in one place</span>
+            <span class="block text-sm text-wb-700 leading-normal">Your saved people live together in My People, ready whenever you want to come back.</span>
+          </span>
+        </li>
+        <li class="flex items-center gap-4">
+          <span class="feature-slot" aria-hidden="true">Image</span>
+          <span class="flex-1">
+            <span class="block text-base font-semibold text-wb-900 leading-snug">Choose what you hear about</span>
+            <span class="block text-sm text-wb-700 leading-normal">Turn updates on or off for each person, so you only hear what you want to.</span>
+          </span>
+        </li>
+        <!-- Collections is mocks-only (DES-2264). This row is flagged off by
+             default so we never teach a screen the dashboard cannot show yet. -->
+        <li class="flex items-center gap-4" data-feature="collections" hidden>
+          <span class="feature-slot" aria-hidden="true">Image</span>
+          <span class="flex-1">
+            <span class="block text-base font-semibold text-wb-900 leading-snug">Group them into collections</span>
+            <span class="block text-sm text-wb-700 leading-normal">Family, friends, a hometown. However you think of them.</span>
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center sm:justify-end gap-3 sm:gap-4 w-full">
+      <button type="button" data-close class="inline-flex items-center justify-center px-5 py-3 rounded-full border border-navy-700 bg-white text-base font-semibold text-navy-700 hover:bg-wb-50">Done</button>
+      <button type="button" id="saved-go" class="inline-flex items-center justify-center px-5 py-3 rounded-full bg-gold-400 hover:bg-gold-500 text-base font-semibold text-wb-900">Go to My People</button>
     </div>
   </div>
 </div>
@@ -742,7 +836,7 @@
 
   // ===== Overlays =====
   let lastFocus = null;
-  const overlays = { auth: $('#auth-overlay'), updates: $('#updates-overlay'), share: $('#share-overlay'), relationship: $('#rel-overlay'), premium: $('#premium-overlay') };
+  const overlays = { auth: $('#auth-overlay'), updates: $('#updates-overlay'), share: $('#share-overlay'), relationship: $('#rel-overlay'), premium: $('#premium-overlay'), saved: $('#saved-overlay') };
   function openOverlay(o){ lastFocus = document.activeElement; o.classList.add('open'); document.body.style.overflow='hidden'; const f=o.querySelector('button,[href],input'); if(f) f.focus({ preventScroll: true }); }
   function closeAll(){ Object.values(overlays).forEach(o=>o.classList.remove('open')); document.body.style.overflow=''; if(lastFocus&&document.contains(lastFocus)) lastFocus.focus(); }
   $$('.js-share').forEach(b => b.addEventListener('click', () => openOverlay(overlays.share)));
@@ -773,6 +867,41 @@
   $('#copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText('https://www.legacy.com/obituaries/' + PID); } catch(_){} closeAll(); toast('Link copied to clipboard'); });
   $$('.share-channel').forEach(b => b.addEventListener('click', () => { closeAll(); toast('Opening ' + b.dataset.channel + '…'); }));
 
+  // ===== First-save confirmation (DES-2268) =====
+  // Fires once, on whichever save happens to be the user's first, from any of
+  // the four paths — relationship or not. PRODUCTION NOTE: this flag belongs on
+  // the ACCOUNT, not localStorage, or the confirmation re-fires on their next
+  // device. Same for the two paths that cross a real sign-in: there the modal
+  // opens on RETURN to the person page, not inline as it does here.
+  function hasSeenFirstSave(){ return !!readStore().seenFirstSave; }
+  function markFirstSave(){ const o = readStore(); o.seenFirstSave = true; writeStore(o); }
+  function firstSaveDue(added){ return !!added && !hasSeenFirstSave(); }
+
+  // Only teach what a user can actually go and find. Collections is mocks-only
+  // (DES-2264), so its row stays off until it ships.
+  const FEATURES = { collections: false };
+  $$('#saved-overlay [data-feature]').forEach(el => { el.hidden = !FEATURES[el.dataset.feature]; });
+
+  // "My Father" -> "your father", for sentences that address the user.
+  function yourLabel(label){ return label ? label.replace(/^My\s+/i, 'your ').toLowerCase() : null; }
+
+  function openSavedModal(relLabel){
+    $$('.saved-name').forEach(el => { el.textContent = PERSON.first; });
+    const chip = $('#saved-chip');
+    if (relLabel) { chip.textContent = relLabel; chip.classList.remove('hidden'); }
+    else chip.classList.add('hidden');
+    // One heading for both scenarios. The chip carries the only difference,
+    // so there is no second layout to maintain. Copy stays pronoun-free — we
+    // do not know the person's gender and must not guess it.
+    $('#saved-lede').textContent = relLabel
+      ? 'Saved to your account, along with your connection.'
+      : 'Saved to your account. You can come back any time.';
+    track('first_save_confirmation', { withRelationship: !!relLabel });
+    closeAll();
+    openOverlay(overlays.saved);
+  }
+  $('#saved-go').addEventListener('click', () => { window.location.href = 'future-my-people.html'; });
+
   // ===== Auth modal (My People value-prop save gate) =====
   function openAuth(){ openOverlay(overlays.auth); }
   // "Sign In or Create an Account" simulates success: become signed in and save Ralph.
@@ -781,6 +910,7 @@
     scenario = 'signed-in';
     setSaved(PID, true);
     paintScenario();
+    if (firstSaveDue(true)) { markFirstSave(); openSavedModal(REL.displayLabel(currentRelValue())); return; }
     toast(PERSON.first + ' added to My People', 'future-my-people.html', 'View');
   }
   $('#auth-continue').addEventListener('click', authSuccess);
@@ -792,8 +922,10 @@
     const added = !(addBtn.dataset.added === 'true');
     setSaved(PID, added);
     paintAdded();
-    if (added) toast('Added to My People', 'future-my-people.html', 'View');
-    else toast('Removed from My People');
+    if (!added) { toast('Removed from My People'); return; }
+    // They may already have declared a relationship; carry it into the chip.
+    if (firstSaveDue(true)) { markFirstSave(); openSavedModal(REL.displayLabel(currentRelValue())); return; }
+    toast('Added to My People', 'future-my-people.html', 'View');
   }
   function handleAdd(){
     if (!isSignedIn()) { openAuth(); return; }          // save gate
@@ -909,7 +1041,7 @@
   // ----- Picker -----
   const relVp = $('#rel-viewport');
   const relCard = relVp.closest('.sheet-card');   // the scroller; the viewport itself is overflow-hidden
-  const REL_PANES = ['relationship', 'family', 'refine'];
+  const REL_PANES = ['relationship', 'family', 'refine', 'gate'];
   let relStack = ['relationship'];
   let sel = { top: null, group: null, specific: null };
 
@@ -1002,6 +1134,7 @@
     $('#fam-name').textContent = PERSON.first;
     $('#fam-sub-name').textContent = PERSON.first;
     $('#refine-name').textContent = PERSON.first;
+    pending = null;
     const saved = storedRel();
     sel = (saved && typeof saved === 'object' && saved.top)
       ? { top: saved.top, group: saved.group || null, specific: saved.specific || null }
@@ -1070,7 +1203,15 @@
     // The note and the skip link quote the CHIP wording, not the button's —
     // "my Relative", never "my Other relative".
     const gLabel = g.badge || g.label;
-    $('#refine-note').textContent = 'Saved. ' + PERSON.first + ' is my ' + gLabel + '.';
+    // Signed in, the group is already in the store, so the note is past tense.
+    // Signed out nothing has been written yet (DES-2280) and "Saved" would be a
+    // claim the gate is about to contradict.
+    $('#refine-note').textContent = isSignedIn()
+      ? 'Saved. ' + PERSON.first + ' is my ' + gLabel + '.'
+      : PERSON.first + ' is my ' + gLabel + '.';
+    // Drop the seafoam success treatment too — green here would imply the save
+    // the gate is about to ask for.
+    $('#refine-note').classList.toggle('rel-note-pending', !isSignedIn());
     $('#refine-skip-group').textContent = gLabel;
     $('#refine-options').innerHTML = REL.specificsFor(sel.group).map(s =>
       '<button type="button" class="' + PILL + ' refine-option" data-specific="' + esc(s) + '" aria-pressed="' + (s === sel.specific) + '">' + esc(s) + '</button>'
@@ -1091,27 +1232,108 @@
     b.textContent = sel.specific ? 'Save as “' + sel.specific + '”' : 'Save';
   }
   $('#refine-submit').addEventListener('click', () => { if (sel.specific) commit(false); });
-  $('#refine-skip').addEventListener('click', () => { sel.specific = null; closeAll(); });
+  $('#refine-skip').addEventListener('click', () => {
+    sel.specific = null;
+    // Signed in the group is already saved, so skipping just closes. Signed out
+    // there is nothing in the store yet, so skipping still leads to the gate.
+    if (isSignedIn()) { closeAll(); return; }
+    openGate();
+  });
 
-  // Persist the answer. `offerRefine` is true only when we've just saved a
-  // family group and a more specific role exists to offer. Capture is
-  // decoupled from "Add to My People" — a signed-out visitor can declare a
-  // relationship without being saved to an account they don't have.
-  function commit(offerRefine){
+  // The completed answer, held in memory for a signed-out visitor and never
+  // written until the gate clears (DES-2280). In a real build this is what you
+  // would stash across an off-site auth round trip and re-apply on return.
+  let pending = null;
+
+  // Write the answer to the store. Only ever called when there is an account to
+  // write it to: already signed in, or just authenticated at the gate.
+  function writeRelationship(){
     const badge = REL.computeBadge(sel.top, sel.group, sel.specific);
     REL.setRelationship(PID, { top: sel.top, group: sel.group, specific: sel.specific, badge: badge });
-    const alsoSave = isSignedIn() && !isSaved(PID);
-    if (alsoSave) setSaved(PID, true);
+    const added = !isSaved(PID);
+    if (added) setSaved(PID, true);
+    pending = null;
     paintHeroRel();
     paintAdded();
+    return { badge: badge, added: added };
+  }
 
-    if (offerRefine && REL.specificsFor(sel.group).length) { openRefine(); return; }
-
+  // Write, close, confirm. The end of the flow.
+  function finishSave(){
+    const w = writeRelationship();
     closeAll();
-    const label = REL.displayLabel({ top: sel.top, badge: badge });
-    if (!label) toast('Thanks — that helps us understand your connection.', null, null, 'ph ph-check');
-    else if (alsoSave) toast(PERSON.first + ' added to My People as ' + label.toLowerCase(), 'future-my-people.html', 'View', 'ph ph-check');
+    const label = REL.displayLabel({ top: sel.top, badge: w.badge });
+    if (firstSaveDue(w.added)) { markFirstSave(); openSavedModal(label); return; }
+    if (!label) toast('Thanks \u2014 that helps us understand your connection.', null, null, 'ph ph-check');
+    else if (w.added) toast(PERSON.first + ' added to My People as ' + label.toLowerCase(), 'future-my-people.html', 'View', 'ph ph-check');
     else toast('Saved as ' + label.toLowerCase(), null, null, 'ph ph-check');
+  }
+
+  // Decide where the picker goes next. `offerRefine` is true only when a family
+  // group was just chosen and a more specific role exists to offer.
+  //
+  // Signed in, the group is written on the way to the refinement pane, which is
+  // why that pane reads in the past tense. Signed out, NOTHING is written here:
+  // the refinement is still offered first (it is part of the answer, not an
+  // afterthought), and only then does the account gate appear.
+  function commit(offerRefine){
+    const canRefine = offerRefine && REL.specificsFor(sel.group).length;
+    if (isSignedIn()) {
+      if (canRefine) { writeRelationship(); openRefine(); return; }
+      finishSave();
+      return;
+    }
+    if (canRefine) { openRefine(); return; }
+    openGate();
+  }
+
+  // ----- Pane 4: the account gate (DES-2280) -----
+  function openGate(){
+    pending = { top: sel.top, group: sel.group, specific: sel.specific };
+    const badge = REL.computeBadge(sel.top, sel.group, sel.specific);
+    const label = REL.displayLabel({ top: sel.top, badge: badge });
+    // "I didn't know them" has no badge, so the gate leads with the page rather
+    // than naming a relationship the visitor explicitly declined. They still
+    // get the ask \u2014 they may decide to create an account anyway.
+    // "I didn't know them" has no connection to name, so the gate falls back to
+    // the plain add. They still get the ask either way.
+    $('#gate-title').innerHTML = label
+      ? 'Save your connection to ' + esc(PERSON.first)
+      : 'Add ' + esc(PERSON.first) + ' to My People';
+    $('#gate-lede').innerHTML = label
+      ? 'You\u2019ve told us ' + esc(PERSON.first) + ' was <strong class="font-semibold text-navy-700">' + esc(yourLabel(label)) + '</strong>. Sign in or create a free account, and we\u2019ll keep it.'
+      : 'Sign in or create a free account, and we\u2019ll add ' + esc(PERSON.first) + ' to My People.';
+    track('gate_shown', { top: sel.top, group: sel.group, specific: sel.specific });
+    relGo('gate');
+  }
+
+  function gateAuth(how){
+    if (!pending) return;
+    // Re-apply the held answer, the way a real build would after the auth
+    // round trip returns.
+    sel = { top: pending.top, group: pending.group, specific: pending.specific };
+    track('gate_auth', { how: how, top: sel.top });
+    scenario = 'signed-in';
+    paintScenario();
+    finishSave();
+  }
+  $('#gate-continue').addEventListener('click', () => gateAuth('continue'));
+
+  // Dismissal is the expensive branch, so catch every route out of the gate,
+  // not just the "Not now" button \u2014 Escape and the backdrop go through
+  // closeAll too. A leftover `pending` here is an answer we deliberately drop.
+  new MutationObserver(() => {
+    if (overlays.relationship.classList.contains('open') || !pending) return;
+    track('gate_dismissed', { top: pending.top, group: pending.group, specific: pending.specific });
+    pending = null;
+    paintHeroRel();   // the chip goes back to asking; nothing was kept
+  }).observe(overlays.relationship, { attributes: true, attributeFilter: ['class'] });
+
+  // DES-2280 wants gate impressions and dismissals instrumented before launch.
+  // There is nothing to send them to yet, so this only logs \u2014 it marks the
+  // call sites so the real analytics call has an obvious home.
+  function track(event, detail){
+    try { console.log('[track]', event, detail); } catch (_) {}
   }
 
   // ===== Suggested people ("You may also be interested in") =====
