@@ -22,10 +22,10 @@
     </main>
   </div>
 
-  <!-- This screen is the whole reason the exercise exists: whether the visitor
-       lands back on the obituary or somewhere generic is the open question in
-       "Needs a call" on the board. -->
-  <p class="a0-cost">Everything the save needs has to survive this hop. If the return URL is not the page they started on, the relationship has nowhere to land.</p>
+  <!-- We control the return, so the visitor lands back on the page they started
+       on. What still has to hold is the handoff: the held answer must survive
+       this hop or there is nothing to save when they arrive. -->
+  <p class="a0-cost">Everything the save needs has to survive this hop. The return goes back to the page they started on, so the held answer has somewhere to land.</p>
 
   <script>
     var dest = window.LEGACY_AUTH.returnTo();
