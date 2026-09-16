@@ -1,0 +1,77 @@
+/* =============== Mock Auth0 screens (DES-2280) ===============
+   Deliberately NOT Legacy's design system. These pages exist to make the
+   auth round trip feel like what it is: leaving the site. If they looked
+   like us, the whole point of the exercise would be lost. */
+
+:root { --a0-ink:#1e212a; --a0-mid:#65676e; --a0-line:#d4d6dd; --a0-blue:#635dff; }
+
+body.a0 {
+  margin: 0; background: #f2f3f5; color: var(--a0-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+}
+
+/* The fake address bar does more work than anything else here — it is the
+   one element that says "you are not on legacy.com any more". */
+.a0-urlbar {
+  display: flex; align-items: center; gap: 8px;
+  background: #dfe1e5; padding: 10px 16px; font-size: 13px; color: #3c4043;
+}
+.a0-urlbar span { background: #fff; border-radius: 999px; padding: 6px 14px; flex: 1;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.a0-banner {
+  background: #fff4d6; border-bottom: 1px solid #f0dca6; color: #6b5400;
+  font-size: 12px; font-weight: 600; text-align: center; padding: 8px 16px;
+}
+
+.a0-wrap { display: flex; justify-content: center; padding: 40px 16px 64px; }
+.a0-card {
+  background: #fff; border-radius: 10px; box-shadow: 0 2px 14px rgba(0,0,0,.12);
+  width: 100%; max-width: 400px; padding: 32px 28px 28px; text-align: center;
+}
+.a0-step { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--a0-mid); margin-bottom: 20px; }
+.a0-logo { font-family: Georgia, "Times New Roman", serif; font-size: 26px; color: #293548; margin-bottom: 8px; }
+.a0-card h1 { font-size: 22px; margin: 0 0 6px; font-weight: 600; }
+.a0-card p.a0-sub { margin: 0 0 24px; font-size: 14px; color: var(--a0-mid); line-height: 1.5; }
+
+/* Fields are NON-INTERACTIVE on purpose. A convincing fake sign-in page with a
+   real password input is not something that should exist, even in a prototype. */
+.a0-field {
+  border: 1px solid var(--a0-line); border-radius: 5px; background: #fafafa;
+  padding: 13px 14px; margin-bottom: 12px; text-align: left;
+  font-size: 14px; color: #9aa0a6; user-select: none;
+}
+
+.a0-btn {
+  display: block; width: 100%; box-sizing: border-box; border: 0; cursor: pointer;
+  background: var(--a0-blue); color: #fff; border-radius: 5px;
+  padding: 13px 16px; font-size: 15px; font-weight: 600; margin-top: 8px;
+  font-family: inherit;
+}
+.a0-btn:hover { background: #524dcc; }
+.a0-btn.a0-alt { background: #fff; color: var(--a0-ink); border: 1px solid var(--a0-line); }
+.a0-btn.a0-alt:hover { background: #f5f5f7; }
+.a0-btn:focus-visible { outline: 2px solid #1e212a; outline-offset: 2px; }
+
+.a0-or { display: flex; align-items: center; gap: 12px; margin: 20px 0 14px; color: #9aa0a6; font-size: 12px; }
+.a0-or::before, .a0-or::after { content: ""; flex: 1; height: 1px; background: var(--a0-line); }
+
+.a0-foot { margin-top: 22px; font-size: 14px; color: var(--a0-mid); }
+.a0-foot a { color: var(--a0-blue); font-weight: 600; text-decoration: none; }
+.a0-foot a:hover { text-decoration: underline; }
+
+.a0-back { display: inline-block; margin-top: 18px; font-size: 13px; color: var(--a0-mid); text-decoration: none; }
+.a0-back:hover { text-decoration: underline; }
+
+/* Counts the screens between the obituary and getting back to it. */
+.a0-cost { text-align: center; margin: 22px auto 0; max-width: 400px;
+  font-size: 12px; color: #8a8d94; line-height: 1.6; }
+.a0-spinner {
+  width: 34px; height: 34px; margin: 6px auto 18px; border-radius: 50%;
+  border: 3px solid var(--a0-line); border-top-color: var(--a0-blue);
+  animation: a0spin .8s linear infinite;
+}
+@keyframes a0spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .a0-spinner { animation: none; } }

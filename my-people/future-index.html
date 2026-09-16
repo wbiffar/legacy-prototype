@@ -763,6 +763,7 @@
 <script src="shared/family.js"></script>
 <script src="shared/suggestions.js"></script>
 <script src="shared/records.js"></script>
+<script src="shared/auth-handoff.js"></script>
 <script>
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
@@ -902,17 +903,48 @@
   }
   $('#saved-go').addEventListener('click', () => { window.location.href = 'future-my-people.html'; });
 
-  // ===== Auth modal (My People value-prop save gate) =====
-  function openAuth(){ openOverlay(overlays.auth); }
-  // "Sign In or Create an Account" simulates success: become signed in and save Ralph.
-  function authSuccess(){
-    closeAll();
+  // ===== Auth round trip =====
+  // Both signed-out paths leave the site here. Everything the save needs has to
+  // survive the navigation, which is exactly the requirement DES-2280 flagged
+  // and DES-2268 depends on.
+  const AUTH = window.LEGACY_AUTH;
+  function handoffToAuth(intent, rel){
+    AUTH.start({
+      intent: intent,
+      personId: PID,
+      rel: rel ? { top: rel.top, group: rel.group, specific: rel.specific } : null,
+      returnTo: 'future-index.html?id=' + encodeURIComponent(PID),
+    });
+    location.href = 'auth-login.html';
+  }
+
+  // Coming back. Only the callback sets ?auth=1, so cancelling out of Auth0 or
+  // hitting Back lands here without it and the held answer is dropped.
+  function resumeFromAuth(){
+    const returned = new URLSearchParams(location.search).get('auth') === '1';
+    const h = AUTH.read();
+    AUTH.clear();
+    if (!returned || !h || h.personId !== PID) return;
+
     scenario = 'signed-in';
-    setSaved(PID, true);
     paintScenario();
+
+    if (h.intent === 'relationship' && h.rel && h.rel.top) {
+      sel = { top: h.rel.top, group: h.rel.group, specific: h.rel.specific };
+      finishSave();
+      return;
+    }
+    setSaved(PID, true);
+    paintAdded();
     if (firstSaveDue(true)) { markFirstSave(); openSavedModal(REL.displayLabel(currentRelValue())); return; }
     toast(PERSON.first + ' added to My People', 'future-my-people.html', 'View');
   }
+
+  // ===== Auth modal (My People value-prop save gate) =====
+  function openAuth(){ openOverlay(overlays.auth); }
+  // "Sign In or Create an Account" simulates success: become signed in and save Ralph.
+  // Path B: no relationship to carry, just the person and the intent.
+  function authSuccess(){ handoffToAuth('add', null); }
   $('#auth-continue').addEventListener('click', authSuccess);
   // Header "Sign In" takes the visitor to My People (simulates signing in).
   acctSignin.addEventListener('click', () => { window.location.href = 'future-my-people.html'; });
@@ -958,6 +990,7 @@
   const demoReset = $('[data-demo-reset]');
   if (demoReset) demoReset.addEventListener('click', () => {
     try { localStorage.removeItem('legacyMyPeople.v0'); } catch(_){}
+    AUTH.clear();   // an abandoned round trip must not survive a reset either
     // Reload to a clean URL (drop so=/from= so it returns to the signed-in default).
     location.href = location.pathname + '?id=' + encodeURIComponent(PID);
   });
@@ -1309,13 +1342,10 @@
 
   function gateAuth(how){
     if (!pending) return;
-    // Re-apply the held answer, the way a real build would after the auth
-    // round trip returns.
-    sel = { top: pending.top, group: pending.group, specific: pending.specific };
-    track('gate_auth', { how: how, top: sel.top });
-    scenario = 'signed-in';
-    paintScenario();
-    finishSave();
+    track('gate_auth', { how: how, top: pending.top });
+    // Hand the held answer to sessionStorage and leave. It has to come back
+    // through the callback to be applied; any other way back drops it.
+    handoffToAuth('relationship', pending);
   }
   $('#gate-continue').addEventListener('click', () => gateAuth('continue'));
 
@@ -1434,6 +1464,7 @@
   paintHeroRel();
   renderSuggestions();
   renderRecords();
+  resumeFromAuth();
 
   // ---- Memorial events carousel (mobile) -------------------------------
   (function initEventsCarousel(){
