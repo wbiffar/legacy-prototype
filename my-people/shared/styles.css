@@ -24,7 +24,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 }
 .sheet-overlay.open { display: flex; }
 .sheet-card {
-  background: #fff; width: 100%; max-width: 512px;
+  background: #fff; width: 100%; max-width: 640px;
   border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
   position: relative; animation: pop .18s ease;
   /* A cap, not a height: a short sheet never reaches it and is sized by its
@@ -98,18 +98,6 @@ button.rel-skip:hover { color: #293548; text-decoration: underline; text-underli
 button.rel-pill:focus-visible, button.rel-cta:focus-visible, button.rel-skip:focus-visible {
   outline: 2px solid #42608f; outline-offset: 2px;
 }
-
-/* Placeholder slot for the feature thumbnails in the first-save confirmation
-   (DES-2268). Deliberately obvious — a real asset must not look like this, so
-   nobody can mistake an unfilled slot for a finished screen. */
-.feature-slot {
-  flex: 0 0 auto; width: 72px; height: 56px; border-radius: 8px;
-  border: 1px dashed #b9b7b2; background: #f4f3f1;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
-  color: #807e7a;
-}
-@media (min-width: 640px) { .feature-slot { width: 96px; height: 72px; } }
 
 /* =================== Toast (Figma Toast component) =================== */
 .toast {
