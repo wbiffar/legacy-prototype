@@ -684,56 +684,72 @@
 </div>
 
 <!-- ====================================================================
-     FIRST-SAVE CONFIRMATION (DES-2268)
+     FIRST-SAVE CONFIRMATION (DES-2268) — Figma 6695:24738
      Fires once per account, on whichever save happens to be their first,
-     from all four paths — with or without a relationship. In production two
-     of those paths arrive here after returning from an off-site sign-in;
-     the prototype simulates auth in-page, so it opens immediately instead.
+     from all four paths, with or without a relationship. In production the
+     two signed-out paths reach this on RETURN from the off-site sign-in.
+     Three slides share one frame: only the image and copy move.
      ==================================================================== -->
 <div class="sheet-overlay" id="saved-overlay" role="dialog" aria-modal="true" aria-labelledby="saved-title">
-  <div class="sheet-card border border-wb-300 flex flex-col items-center gap-8 p-8 text-center">
-    <span class="inline-flex items-center gap-1 rounded-md bg-gold-100 px-3 py-0.5 text-sm text-gold-900"><i class="ph ph-user text-sm"></i> My People</span>
+  <div class="sheet-card relative overflow-hidden pt-10 flex flex-col items-center">
+    <button type="button" data-close class="absolute top-2 right-2 z-10 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
 
-    <div class="flex flex-col items-center gap-2 max-w-[480px] w-full">
-      <h2 id="saved-title" class="font-serif-heading text-3xl text-navy-700 leading-tight"><span class="saved-name">Ralph</span> is in My People</h2>
-      <!-- Only the relationship paths show a chip. Everything else about this
-           modal is identical either way. -->
-      <span id="saved-chip" class="inline-flex items-center px-3 py-0.5 rounded-full bg-navy-100 text-navy-800 text-sm hidden">My Father</span>
-      <p id="saved-lede" class="text-sm text-wb-700 leading-relaxed">He&rsquo;s saved to your account. Come back to him any time.</p>
-    </div>
+    <div class="w-full max-w-[480px] px-3 pb-6 flex flex-col items-center gap-4">
 
-    <div class="w-full max-w-[480px] flex flex-col gap-4">
-      <p class="text-xs font-semibold tracking-wider text-wb-600 uppercase text-left">What you can do now</p>
-      <ul class="flex flex-col gap-4 text-left">
-        <li class="flex items-center gap-4">
-          <span class="feature-slot" aria-hidden="true">Image</span>
-          <span class="flex-1">
-            <span class="block text-base font-semibold text-wb-900 leading-snug">Everyone in one place</span>
-            <span class="block text-sm text-wb-700 leading-normal">Your saved people live together in My People, ready whenever you want to come back.</span>
-          </span>
-        </li>
-        <li class="flex items-center gap-4">
-          <span class="feature-slot" aria-hidden="true">Image</span>
-          <span class="flex-1">
-            <span class="block text-base font-semibold text-wb-900 leading-snug">Choose what you hear about</span>
-            <span class="block text-sm text-wb-700 leading-normal">Turn updates on or off for each person, so you only hear what you want to.</span>
-          </span>
-        </li>
-        <!-- Collections is mocks-only (DES-2264). This row is flagged off by
-             default so we never teach a screen the dashboard cannot show yet. -->
-        <li class="flex items-center gap-4" data-feature="collections" hidden>
-          <span class="feature-slot" aria-hidden="true">Image</span>
-          <span class="flex-1">
-            <span class="block text-base font-semibold text-wb-900 leading-snug">Group them into collections</span>
-            <span class="block text-sm text-wb-700 leading-normal">Family, friends, a hometown. However you think of them.</span>
-          </span>
-        </li>
-      </ul>
-    </div>
+      <div class="flex flex-col items-center gap-2 w-full">
+        <h2 id="saved-title" class="font-serif-heading text-3xl text-navy-700 leading-tight text-center w-full"><span class="saved-name">Ralph</span> is now in My People</h2>
+        <p id="saved-lede" class="text-sm text-wb-700 leading-normal text-center w-full">They&rsquo;re saved to your account. You can come back anytime.</p>
+        <!-- No relationship yet? The chip is the invitation to add one. If they
+             already gave one it states that instead. Same slot either way. -->
+        <button type="button" id="saved-rel-add" class="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-navy-700 text-navy-700 text-sm hover:bg-wb-50"><i class="ph ph-plus-circle text-sm" aria-hidden="true"></i> Add your relationship</button>
+        <span id="saved-rel-chip" class="hidden items-center px-3 py-1 rounded-full border border-navy-700 text-navy-700 text-sm">My Father</span>
+      </div>
 
-    <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center sm:justify-end gap-3 sm:gap-4 w-full">
-      <button type="button" data-close class="inline-flex items-center justify-center px-5 py-3 rounded-full border border-navy-700 bg-white text-base font-semibold text-navy-700 hover:bg-wb-50">Done</button>
-      <button type="button" id="saved-go" class="inline-flex items-center justify-center px-5 py-3 rounded-full bg-gold-400 hover:bg-gold-500 text-base font-semibold text-wb-900">Go to My People</button>
+      <div class="flex items-center gap-2 w-full">
+        <span class="flex-1 h-px bg-gold-700"></span>
+        <span class="text-sm font-semibold text-gold-700 uppercase tracking-[0.84px] whitespace-nowrap">Here&rsquo;s what you can do now</span>
+        <span class="flex-1 h-px bg-gold-700"></span>
+      </div>
+
+      <!-- Held at the tallest slide so stepping through never resizes the card
+           under the reader. -->
+      <div id="ob-viewport" class="w-full overflow-hidden">
+        <div id="ob-track" class="flex items-start transition-transform duration-300 ease-out">
+
+          <div class="ob-slide w-full flex-shrink-0 flex flex-col gap-4" data-slide="people">
+            <img src="assets/onboarding-people.png" alt="The My People dashboard, showing saved people as cards." class="w-full aspect-[416/176] object-cover rounded-2xl border border-gold-200 bg-gold-50" />
+            <p class="text-lg text-wb-900 leading-normal"><strong class="font-bold">My People keeps everyone you save, and your connection to them.</strong> Add how you knew someone, and the list grows into a family tree.</p>
+          </div>
+
+          <div class="ob-slide w-full flex-shrink-0 flex flex-col gap-4" data-slide="collections" data-feature="collections">
+            <img src="assets/onboarding-collections.png" alt="Collections in My People, each holding a group of saved people." class="w-full aspect-[416/176] object-cover object-top rounded-2xl border border-gold-200 bg-gold-50" />
+            <p class="text-lg text-wb-900 leading-normal"><strong class="font-bold">Group people into collections.</strong> Dad&rsquo;s side of the family, friends from work, the people from church. However you think of them.</p>
+          </div>
+
+          <div class="ob-slide w-full flex-shrink-0 flex flex-col gap-4" data-slide="updates">
+            <!-- Rebuilt rather than screenshotted: this is the same callout the
+                 person page already renders, so it stays in sync for free. -->
+            <div class="relative w-full aspect-[416/176] overflow-hidden rounded-2xl border border-gold-200 bg-[#fdf6e3] flex flex-col justify-center gap-3 pl-4 pr-8 py-4">
+              <img src="assets/updates-art.jpg" alt="" aria-hidden="true" class="pointer-events-none absolute -bottom-px -right-px w-[245px] h-[232px] object-cover z-0" />
+              <div class="relative z-10 flex flex-col gap-1">
+                <p class="text-lg font-bold text-navy-700 leading-tight">Stay Close to Their Story</p>
+                <p class="text-base text-wb-700 leading-tight">Get an email whenever someone leaves a new memory in the guestbook.</p>
+              </div>
+              <span class="relative z-10 self-start inline-flex items-center gap-2.5 h-8 px-3 rounded-full bg-navy-700 text-white text-xs font-semibold"><i class="ph ph-bell text-base" aria-hidden="true"></i> Get Updates</span>
+            </div>
+            <p class="text-lg text-wb-900 leading-normal"><strong class="font-bold">Choose what you hear about.</strong> Turn updates on for the people you want news of, and off for the ones you&rsquo;d rather visit in your own time.</p>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="ob-dots" class="flex items-center -mt-2" role="tablist" aria-label="Onboarding slides"></div>
+
+      <div class="w-full border-t border-wb-300 pt-4 px-1 flex items-center justify-between">
+        <button type="button" data-close class="text-base font-bold text-navy-500 hover:underline">Dismiss</button>
+        <button type="button" id="saved-go" class="inline-flex items-center gap-2.5 h-10 px-5 rounded-full bg-gold-400 hover:bg-gold-500 text-sm font-semibold text-wb-900">Go to My People <i class="ph ph-arrow-right text-xl" aria-hidden="true"></i></button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -878,29 +894,121 @@
   function markFirstSave(){ const o = readStore(); o.seenFirstSave = true; writeStore(o); }
   function firstSaveDue(added){ return !!added && !hasSeenFirstSave(); }
 
-  // Only teach what a user can actually go and find. Collections is mocks-only
-  // (DES-2264), so its row stays off until it ships.
-  const FEATURES = { collections: false };
-  $$('#saved-overlay [data-feature]').forEach(el => { el.hidden = !FEATURES[el.dataset.feature]; });
+  // Only teach what a user can actually go and find. Collections ships with
+  // this (DES-2264); flip a flag off and the carousel renumbers itself.
+  const FEATURES = { collections: true };
 
   // "My Father" -> "your father", for sentences that address the user.
   function yourLabel(label){ return label ? label.replace(/^My\s+/i, 'your ').toLowerCase() : null; }
 
+  // ----- Onboarding carousel (Figma 6695:24738) -----
+  // Slides sit side by side inside a clipped viewport. The track keeps the
+  // viewport's own width, so a 100% translate per step is exactly one slide.
+  let obSlides = [], obIndex = 0;
+  function obLayout(){
+    // Pin the viewport to the tallest slide. Copy lengths differ, and a card
+    // that resizes as you step through it is worse than a little dead space.
+    let max = 0;
+    obSlides.forEach(el => { max = Math.max(max, el.offsetHeight); });
+    if (max) $('#ob-viewport').style.height = max + 'px';
+  }
+  function obGo(i, auto){
+    if (!obSlides.length) return;
+    obIndex = Math.max(0, Math.min(i, obSlides.length - 1));
+    $('#ob-track').style.transform = 'translateX(-' + (obIndex * 100) + '%)';
+    $$('#ob-dots [data-dot]').forEach((d, n) => {
+      const on = n === obIndex;
+      d.setAttribute('aria-selected', String(on));
+      d.firstElementChild.className = 'block h-3 rounded-full ' + (on ? 'w-8 bg-wb-700' : 'w-3 bg-wb-400');
+    });
+    obSlides.forEach((el, n) => { el.setAttribute('aria-hidden', String(n !== obIndex)); });
+    // A deliberate move hands control over for good; the timer just queues the
+    // next one.
+    if (auto) obSchedule(); else obStop();
+  }
+
+  // Auto-advance is here to show that more slides EXIST, not to pace the
+  // reading. So it runs one pass and stops on the last slide, hover pauses it,
+  // and any deliberate move stops it for good. That is the WCAG 2.2.2 pause
+  // mechanism, and it matters more than usual here: our readers are older and
+  // slower than the average carousel assumes, and being yanked mid-sentence
+  // while reading about someone who died is a bad way to learn about a feature.
+  let obTimer = null, obAuto = true;
+  const OB_INTERVAL = 6000;
+  const obReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function obClear(){ if (obTimer) { clearTimeout(obTimer); obTimer = null; } }
+  function obStop(){ obAuto = false; obClear(); }
+  function obSchedule(){
+    obClear();
+    if (!obAuto || obReduced) return;
+    if (obIndex >= obSlides.length - 1) return;      // one pass, then it rests
+    obTimer = setTimeout(() => {
+      if (!overlays.saved.classList.contains('open')) { obStop(); return; }
+      obGo(obIndex + 1, true);
+    }, OB_INTERVAL);
+  }
+  function obInit(){
+    const all = $$('#ob-track .ob-slide');
+    all.forEach(el => { const f = el.dataset.feature; el.hidden = !!f && !FEATURES[f]; });
+    obSlides = all.filter(el => !el.hidden);
+    $('#ob-dots').innerHTML = obSlides.map((_, n) =>
+      '<button type="button" role="tab" data-dot="' + n + '" class="flex items-center justify-center h-11 px-1" ' +
+      'aria-label="Slide ' + (n + 1) + ' of ' + obSlides.length + '"><span class="block h-3 w-3 rounded-full bg-wb-400"></span></button>'
+    ).join('');
+    obAuto = true;
+    obGo(0, true);
+    obLayout();
+  }
+  $('#ob-dots').addEventListener('click', (e) => {
+    const d = e.target.closest('[data-dot]'); if (d) obGo(+d.dataset.dot);
+  });
+  // The design gives no Next button, so the dots are the only visible way
+  // forward. Arrow keys and swipe are here so the slides are not effectively
+  // unreachable for anyone who does not think to tap a 12px dot.
+  document.addEventListener('keydown', (e) => {
+    if (!overlays.saved.classList.contains('open')) return;
+    if (e.key === 'ArrowRight') obGo(obIndex + 1);
+    if (e.key === 'ArrowLeft')  obGo(obIndex - 1);
+  });
+  (function obSwipe(){
+    const vp = $('#ob-viewport'); let x0 = null;
+    vp.addEventListener('touchstart', e => { x0 = e.changedTouches[0].clientX; }, { passive: true });
+    vp.addEventListener('touchend', e => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0; x0 = null;
+      if (Math.abs(dx) > 40) obGo(obIndex + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+  })();
+  $('#ob-viewport').addEventListener('mouseenter', obClear);
+  $('#ob-viewport').addEventListener('mouseleave', obSchedule);
+  if (window.ResizeObserver) new ResizeObserver(() => obLayout()).observe($('#ob-viewport'));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(obLayout);
+
   function openSavedModal(relLabel){
     $$('.saved-name').forEach(el => { el.textContent = PERSON.first; });
-    const chip = $('#saved-chip');
-    if (relLabel) { chip.textContent = relLabel; chip.classList.remove('hidden'); }
-    else chip.classList.add('hidden');
-    // One heading for both scenarios. The chip carries the only difference,
-    // so there is no second layout to maintain. Copy stays pronoun-free — we
-    // do not know the person's gender and must not guess it.
+    // One heading for both scenarios. The chip slot carries the difference:
+    // a stated relationship, or an invitation to add one.
+    const chip = $('#saved-rel-chip'), add = $('#saved-rel-add');
+    if (relLabel) {
+      chip.textContent = relLabel;
+      chip.classList.remove('hidden'); chip.classList.add('inline-flex');
+      add.classList.add('hidden');
+    } else {
+      chip.classList.add('hidden'); chip.classList.remove('inline-flex');
+      add.classList.remove('hidden');
+    }
+    // "They're" keeps this true whoever the person was — we have the name but
+    // not the gender, and must not guess it.
     $('#saved-lede').textContent = relLabel
-      ? 'Saved to your account, along with your connection.'
-      : 'Saved to your account. You can come back any time.';
+      ? 'They\u2019re saved to your account, along with your connection.'
+      : 'They\u2019re saved to your account. You can come back anytime.';
     track('first_save_confirmation', { withRelationship: !!relLabel });
     closeAll();
     openOverlay(overlays.saved);
+    obInit();
   }
+  // The chip is a real way in: it closes the confirmation and opens the picker.
+  $('#saved-rel-add').addEventListener('click', () => { closeAll(); openRelationshipFlow(); });
   $('#saved-go').addEventListener('click', () => { window.location.href = 'future-my-people.html'; });
 
   // ===== Auth round trip =====
@@ -1168,6 +1276,7 @@
     $('#fam-sub-name').textContent = PERSON.first;
     $('#refine-name').textContent = PERSON.first;
     pending = null;
+    addedThisFlow = false;
     const saved = storedRel();
     sel = (saved && typeof saved === 'object' && saved.top)
       ? { top: saved.top, group: saved.group || null, specific: saved.specific || null }
@@ -1280,11 +1389,16 @@
 
   // Write the answer to the store. Only ever called when there is an account to
   // write it to: already signed in, or just authenticated at the gate.
+  // True once this run of the picker has actually added the person. The
+  // signed-in family path calls writeRelationship twice (the group on the way
+  // to the refinement pane, then the specific role), so the second call sees
+  // `added` false and the first-save check has to remember the first one.
+  let addedThisFlow = false;
   function writeRelationship(){
     const badge = REL.computeBadge(sel.top, sel.group, sel.specific);
     REL.setRelationship(PID, { top: sel.top, group: sel.group, specific: sel.specific, badge: badge });
     const added = !isSaved(PID);
-    if (added) setSaved(PID, true);
+    if (added) { setSaved(PID, true); addedThisFlow = true; }
     pending = null;
     paintHeroRel();
     paintAdded();
@@ -1296,7 +1410,7 @@
     const w = writeRelationship();
     closeAll();
     const label = REL.displayLabel({ top: sel.top, badge: w.badge });
-    if (firstSaveDue(w.added)) { markFirstSave(); openSavedModal(label); return; }
+    if (firstSaveDue(addedThisFlow)) { markFirstSave(); openSavedModal(label); return; }
     if (!label) toast('Thanks \u2014 that helps us understand your connection.', null, null, 'ph ph-check');
     else if (w.added) toast(PERSON.first + ' added to My People as ' + label.toLowerCase(), 'future-my-people.html', 'View', 'ph ph-check');
     else toast('Saved as ' + label.toLowerCase(), null, null, 'ph ph-check');
