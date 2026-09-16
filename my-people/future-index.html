@@ -723,7 +723,7 @@
 
           <div class="ob-slide w-full flex-shrink-0 flex flex-col gap-4" data-slide="collections" data-feature="collections">
             <img src="assets/onboarding-collections.png" alt="Collections in My People, each holding a group of saved people." class="w-full aspect-[416/176] object-cover object-top rounded-2xl border border-gold-200 bg-gold-50" />
-            <p class="text-lg text-wb-900 leading-normal"><strong class="font-bold">Group people into collections.</strong> Dad&rsquo;s side of the family, friends from work, the people from church. However you think of them, and someone can be in more than one.</p>
+            <p class="text-lg text-wb-900 leading-normal"><strong class="font-bold">Group people into collections.</strong> Dad&rsquo;s side of the family, friends from work, the people from church. However you think of them.</p>
           </div>
 
           <div class="ob-slide w-full flex-shrink-0 flex flex-col gap-4" data-slide="updates">
@@ -743,7 +743,7 @@
         </div>
       </div>
 
-      <div id="ob-dots" class="flex items-center gap-2" role="tablist" aria-label="Onboarding slides"></div>
+      <div id="ob-dots" class="flex items-center -mt-2" role="tablist" aria-label="Onboarding slides"></div>
 
       <div class="w-full border-t border-wb-300 pt-4 px-1 flex items-center justify-between">
         <button type="button" data-close class="text-base font-bold text-navy-500 hover:underline">Dismiss</button>
@@ -912,7 +912,7 @@
     obSlides.forEach(el => { max = Math.max(max, el.offsetHeight); });
     if (max) $('#ob-viewport').style.height = max + 'px';
   }
-  function obGo(i){
+  function obGo(i, auto){
     if (!obSlides.length) return;
     obIndex = Math.max(0, Math.min(i, obSlides.length - 1));
     $('#ob-track').style.transform = 'translateX(-' + (obIndex * 100) + '%)';
@@ -922,6 +922,30 @@
       d.firstElementChild.className = 'block h-3 rounded-full ' + (on ? 'w-8 bg-wb-700' : 'w-3 bg-wb-400');
     });
     obSlides.forEach((el, n) => { el.setAttribute('aria-hidden', String(n !== obIndex)); });
+    // A deliberate move hands control over for good; the timer just queues the
+    // next one.
+    if (auto) obSchedule(); else obStop();
+  }
+
+  // Auto-advance is here to show that more slides EXIST, not to pace the
+  // reading. So it runs one pass and stops on the last slide, hover pauses it,
+  // and any deliberate move stops it for good. That is the WCAG 2.2.2 pause
+  // mechanism, and it matters more than usual here: our readers are older and
+  // slower than the average carousel assumes, and being yanked mid-sentence
+  // while reading about someone who died is a bad way to learn about a feature.
+  let obTimer = null, obAuto = true;
+  const OB_INTERVAL = 6000;
+  const obReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function obClear(){ if (obTimer) { clearTimeout(obTimer); obTimer = null; } }
+  function obStop(){ obAuto = false; obClear(); }
+  function obSchedule(){
+    obClear();
+    if (!obAuto || obReduced) return;
+    if (obIndex >= obSlides.length - 1) return;      // one pass, then it rests
+    obTimer = setTimeout(() => {
+      if (!overlays.saved.classList.contains('open')) { obStop(); return; }
+      obGo(obIndex + 1, true);
+    }, OB_INTERVAL);
   }
   function obInit(){
     const all = $$('#ob-track .ob-slide');
@@ -931,7 +955,8 @@
       '<button type="button" role="tab" data-dot="' + n + '" class="flex items-center justify-center h-11 px-1" ' +
       'aria-label="Slide ' + (n + 1) + ' of ' + obSlides.length + '"><span class="block h-3 w-3 rounded-full bg-wb-400"></span></button>'
     ).join('');
-    obGo(0);
+    obAuto = true;
+    obGo(0, true);
     obLayout();
   }
   $('#ob-dots').addEventListener('click', (e) => {
@@ -954,6 +979,8 @@
       if (Math.abs(dx) > 40) obGo(obIndex + (dx < 0 ? 1 : -1));
     }, { passive: true });
   })();
+  $('#ob-viewport').addEventListener('mouseenter', obClear);
+  $('#ob-viewport').addEventListener('mouseleave', obSchedule);
   if (window.ResizeObserver) new ResizeObserver(() => obLayout()).observe($('#ob-viewport'));
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(obLayout);
 
