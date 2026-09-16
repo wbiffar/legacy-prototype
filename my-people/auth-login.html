@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sign in — legacy-com.us.auth0.com (MOCK)</title>
+<link rel="stylesheet" href="shared/auth-mock.css" />
+<script src="shared/auth-handoff.js"></script>
+</head>
+<body class="a0">
+  <div class="a0-urlbar">🔒 <span>legacy-com.us.auth0.com/u/login</span></div>
+  <p class="a0-banner">PROTOTYPE — not a real sign-in. Fields are decoration and accept no input.</p>
+
+  <div class="a0-wrap">
+    <main class="a0-card">
+      <p class="a0-step">Auth0 · Screen 1</p>
+      <p class="a0-logo">Legacy</p>
+      <h1>Welcome</h1>
+      <p class="a0-sub">Log in to Legacy.com to continue.</p>
+
+      <div class="a0-field">Email address</div>
+      <button class="a0-btn" onclick="location.href='auth-password.html'">Continue</button>
+
+      <div class="a0-or">OR</div>
+      <!-- The short path. Worth feeling next to the three-screen one. -->
+      <button class="a0-btn a0-alt" onclick="location.href='auth-callback.html'">Continue with Google</button>
+      <button class="a0-btn a0-alt" onclick="location.href='auth-callback.html'">Continue with Apple</button>
+
+      <p class="a0-foot">Don't have an account? <a href="auth-signup.html">Sign up</a></p>
+      <a class="a0-back" id="a0-cancel" href="#">Cancel and go back</a>
+    </main>
+  </div>
+
+  <p class="a0-cost">You have left the obituary. Two more screens to go by email, or one with Google.</p>
+
+  <script>
+    // Cancelling returns WITHOUT ?auth=1, so the person page treats the answer
+    // as abandoned and drops it — exactly what the gate says happens.
+    document.getElementById('a0-cancel').addEventListener('click', function (e) {
+      e.preventDefault();
+      var h = window.LEGACY_AUTH.read();
+      window.LEGACY_AUTH.clear();
+      location.href = (h && h.returnTo) || 'future-index.html?id=ralph';
+    });
+  </script>
+</body>
+</html>

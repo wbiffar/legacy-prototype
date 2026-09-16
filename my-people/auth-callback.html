@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Signing you in… (MOCK)</title>
+<link rel="stylesheet" href="shared/auth-mock.css" />
+<script src="shared/auth-handoff.js"></script>
+</head>
+<body class="a0">
+  <div class="a0-urlbar">🔒 <span id="a0-url">legacy.com/callback?code=…&amp;state=…</span></div>
+  <p class="a0-banner">PROTOTYPE — the redirect back to the page they started on.</p>
+
+  <div class="a0-wrap">
+    <main class="a0-card">
+      <p class="a0-step">Auth0 · Screen 3 — returning</p>
+      <div class="a0-spinner" role="status" aria-label="Signing you in"></div>
+      <h1>Signing you in…</h1>
+      <p class="a0-sub">Taking you back to where you left off.</p>
+      <button class="a0-btn" id="a0-go">Continue now</button>
+      <p class="a0-foot" id="a0-dest"></p>
+    </main>
+  </div>
+
+  <!-- We control the return, so the visitor lands back on the page they started
+       on. What still has to hold is the handoff: the held answer must survive
+       this hop or there is nothing to save when they arrive. -->
+  <p class="a0-cost">Everything the save needs has to survive this hop. The return goes back to the page they started on, so the held answer has somewhere to land.</p>
+
+  <script>
+    var dest = window.LEGACY_AUTH.returnTo();
+    document.getElementById('a0-dest').textContent = 'Returning to ' + dest;
+    document.getElementById('a0-go').addEventListener('click', function () { location.href = dest; });
+    setTimeout(function () { location.href = dest; }, 1600);
+  </script>
+</body>
+</html>

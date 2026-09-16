@@ -81,6 +81,11 @@ button.rel-cta:disabled { background: #ebe9e9; border-color: #dbdad7; color: #80
   font-size: 14px; font-weight: 400; line-height: 1.25;
 }
 
+/* Same note, but for a signed-out visitor whose answer is NOT yet saved
+   (DES-2280). The seafoam version reads as a confirmation; here there is
+   nothing to confirm, so it drops to a neutral restatement of the choice. */
+.rel-note.rel-note-pending { background: #f4f3f1; color: #4a4742; }
+
 /* "No thanks, Parent is right" — a text link, not a second button, so it
    never competes with the gold CTA above it. */
 button.rel-skip {
@@ -93,6 +98,18 @@ button.rel-skip:hover { color: #293548; text-decoration: underline; text-underli
 button.rel-pill:focus-visible, button.rel-cta:focus-visible, button.rel-skip:focus-visible {
   outline: 2px solid #42608f; outline-offset: 2px;
 }
+
+/* Placeholder slot for the feature thumbnails in the first-save confirmation
+   (DES-2268). Deliberately obvious — a real asset must not look like this, so
+   nobody can mistake an unfilled slot for a finished screen. */
+.feature-slot {
+  flex: 0 0 auto; width: 72px; height: 56px; border-radius: 8px;
+  border: 1px dashed #b9b7b2; background: #f4f3f1;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  color: #807e7a;
+}
+@media (min-width: 640px) { .feature-slot { width: 96px; height: 72px; } }
 
 /* =================== Toast (Figma Toast component) =================== */
 .toast {
