@@ -192,12 +192,6 @@
         <p class="text-base text-wb-800 leading-relaxed">What you share here, together with the people you've saved in <a href="future-my-people.html" class="font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2">My People</a>, is what we use to personalise Legacy.com — the obituaries, memorials and communities we put in front of you.</p>
       </div>
 
-      <!-- ---------- Return-visit summary strip ---------- -->
-      <div id="saved-strip" hidden class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-gold-50 border border-gold-200 px-4 py-3 mb-5 md:mb-6">
-        <span class="text-gold-800 flex-shrink-0" aria-hidden="true"><i class="ph-fill ph-check-circle text-xl"></i></span>
-        <p class="text-[15px] text-wb-800"><span class="font-semibold" id="saved-strip-count">0 of 10 details added</span><span class="text-wb-600" id="saved-strip-when"></span></p>
-      </div>
-
       <!-- ---------- Unsaved-changes banner (DES-2186 pattern) ---------- -->
       <!-- Same gold/100 container, star icon and Reset / Save pairing as the
            Saved Defaults "Changed" banner, so the two pages speak with one
@@ -567,7 +561,6 @@
   const isDirty = () =>
     ALL_KEYS.some(k => (profile[k] || '') !== (saved[k] || '')) ||
     FIELDS.some(f => (wheres[f.key] || '') !== (savedWheres[f.key] || ''));
-  const filledCount = () => ALL_KEYS.filter(k => profile[k]).length;
 
   /* ==================================================================
      TYPEAHEAD
@@ -864,30 +857,19 @@
            d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   }
 
-  function whenLabel(ts) {
-    if (!ts) return '';
-    const d = new Date(ts);
-    return ' · last saved ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  }
-
-  function renderStrip() {
-    const strip = $('#saved-strip');
-    const everSaved = !!lastSaved;
-    strip.hidden = !everSaved;
-    $('#page-subtitle').textContent = everSaved
+  /* First and return visits open differently; the saved state itself is
+     the save row's job, not the subtitle's. */
+  function renderSubtitle() {
+    $('#page-subtitle').textContent = lastSaved
       ? 'Change anything below and save when you\'re done.'
       : 'Tell us about yourself. It takes about a minute, and every field is optional.';
-    if (!everSaved) return;
-    const n = filledCount();
-    $('#saved-strip-count').textContent = n + ' of ' + ALL_KEYS.length + ' details added';
-    $('#saved-strip-when').textContent  = whenLabel(lastSaved);
   }
 
   function render() {
     $('#age-range').value = profile.ageRange || '';
     $('#gender').value    = profile.gender || '';
     painters.forEach(p => p());
-    renderStrip();
+    renderSubtitle();
     onChange();
   }
 
@@ -896,7 +878,7 @@
     savedWheres = { ...wheres };
     lastSaved = Date.now();
     persist();
-    renderStrip();
+    renderSubtitle();
     onChange();
     toast('Your details are saved.');
   }
