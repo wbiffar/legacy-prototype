@@ -54,11 +54,37 @@
       .ta-spin { animation-duration: 2.4s; }
     }
 
+    /* ---- Unsaved-changes banner — the DES-2186 Saved Defaults "Changed"
+           state, reused. In that ticket it sits in normal flow, which on a
+           ten-field form would just move the problem from below the fold to
+           above it, so here it is pinned instead: under the header on
+           desktop, at the bottom on mobile where the thumb already is.
+           Toggled with the `hidden` attribute, so the shared
+           `[hidden] { display: none !important }` rule does the hiding. ---- */
+    .am-dirtybar { position: sticky; top: 0; z-index: 30; animation: am-bar-in .2s ease; }
+    @keyframes am-bar-in { from { opacity: 0; transform: translateY(-6px); } }
+    @media (max-width: 767px) {
+      .am-dirtybar {
+        position: fixed; left: 0; right: 0; z-index: 50;
+        /* `top` has to be unset explicitly — it is still 0 from the sticky
+           rule above, and fixed + top:0 + bottom:0 stretches the bar over
+           the whole viewport instead of sitting at the foot of it. */
+        top: auto; bottom: 0;
+        padding: 0 12px calc(12px + env(safe-area-inset-bottom));
+        animation-name: am-bar-in-up;
+      }
+      @keyframes am-bar-in-up { from { opacity: 0; transform: translateY(8px); } }
+      /* The bar is fixed, so it would otherwise sit on top of the last ~140px
+         of the page — which is exactly where Send feedback lives. Reserve the
+         space only while the bar is actually showing. */
+      body.am-bar-on { padding-bottom: 156px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .am-dirtybar { animation: none; } }
+
     /* ---- Save row sits at the foot of the card, in normal flow. It was
            sticky at first, but floating a white bar over white fields in
-           the same card read as a rendering glitch. The unsaved-changes
-           prompt is carried by the shared .sticky-actions bar on phones
-           and by the inline status text on desktop. ---- */
+           the same card read as a rendering glitch. It's the in-flow end of
+           the form; .am-dirtybar above is what follows the user. ---- */
     .am-saverow { position: static; }
 
     /* Anchor offset so the sticky header never covers a scrolled-to field. */
@@ -172,6 +198,26 @@
         <p class="text-[15px] text-wb-800"><span class="font-semibold" id="saved-strip-count">0 of 10 details added</span><span class="text-wb-600" id="saved-strip-when"></span></p>
       </div>
 
+      <!-- ---------- Unsaved-changes banner (DES-2186 pattern) ---------- -->
+      <!-- Same gold/100 container, star icon and Reset / Save pairing as the
+           Saved Defaults "Changed" banner, so the two pages speak with one
+           voice about unsaved work. -->
+      <div class="am-dirtybar" id="dirty-bar" role="region" aria-label="Unsaved changes" hidden>
+        <div class="bg-gold-50 md:py-3">
+          <div class="w-full bg-gold-100 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3 shadow-md md:shadow-none">
+            <div class="flex items-center gap-2 min-w-0 sm:flex-1">
+              <i class="ph ph-star text-[22px] text-gold-700 flex-shrink-0" aria-hidden="true"></i>
+              <p class="text-base text-wb-700 leading-tight">You've changed your details.</p>
+            </div>
+            <div class="flex items-center gap-3 justify-end sm:ml-auto flex-shrink-0">
+              <!-- 44px on phones for the tap-target minimum; back to the
+                   design system's 40px pill from sm up. -->
+              <button type="button" id="bar-save" class="inline-flex items-center justify-center h-11 sm:h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold transition-colors whitespace-nowrap">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ---------- The form ---------- -->
       <form id="about-form" novalidate>
         <div class="bg-white border border-wb-200 rounded-xl shadow-sm p-5 md:p-8">
@@ -213,7 +259,7 @@
           <section class="am-anchor" aria-labelledby="sec-places">
             <h2 id="sec-places" class="font-serif-heading text-2xl text-wb-900">Places that matter</h2>
             <p class="text-[15px] text-wb-600 mt-1.5">We'll surface obituaries and local communities from these places.</p>
-            <div id="fields-places" class="grid grid-cols-1 gap-5 mt-5"></div>
+            <div id="fields-places" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-5"></div>
           </section>
 
           <div class="border-t border-wb-200 my-7 md:my-8"></div>
@@ -222,7 +268,7 @@
           <section class="am-anchor" aria-labelledby="sec-schools">
             <h2 id="sec-schools" class="font-serif-heading text-2xl text-wb-900">Schools and work</h2>
             <p class="text-[15px] text-wb-600 mt-1.5">Two schools with the same name? Check the town underneath each suggestion.</p>
-            <div id="fields-schools" class="grid grid-cols-1 gap-5 mt-5"></div>
+            <div id="fields-schools" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-5"></div>
           </section>
 
           <div class="border-t border-wb-200 my-7 md:my-8"></div>
@@ -231,13 +277,12 @@
           <section class="am-anchor" aria-labelledby="sec-communities">
             <h2 id="sec-communities" class="font-serif-heading text-2xl text-wb-900">Communities</h2>
             <p class="text-[15px] text-wb-600 mt-1.5">Groups you belong to, or have belonged to.</p>
-            <div id="fields-communities" class="grid grid-cols-1 gap-5 mt-5"></div>
+            <div id="fields-communities" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-5"></div>
           </section>
 
           <!-- ===== Save row ===== -->
           <div class="am-saverow -mx-5 md:-mx-8 -mb-5 md:-mb-8 mt-7 md:mt-8 px-5 md:px-8 py-4 md:py-5 bg-white border-t border-wb-200 rounded-b-xl flex flex-wrap items-center gap-x-4 gap-y-3">
             <button type="submit" id="save-btn" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 focus-visible:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-navy-700">Save my details</button>
-            <button type="button" id="clear-btn" class="inline-flex items-center justify-center h-12 px-3 rounded-full text-base font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-navy-500">Clear all</button>
             <span id="save-status" role="status" aria-live="polite" class="text-[15px] text-wb-600 w-full sm:w-auto sm:ml-auto"></span>
           </div>
         </div>
@@ -342,16 +387,24 @@
   </div>
 </footer>
 
-<!-- Mobile sticky save bar (shared .sticky-actions) -->
-<div class="sticky-actions" id="mobile-save">
-  <span class="text-[15px] font-semibold text-wb-800 flex-1 min-w-0">You have unsaved changes</span>
-  <button type="button" id="mobile-save-btn" class="inline-flex items-center justify-center h-12 px-6 rounded-full bg-navy-700 text-white text-base font-semibold flex-shrink-0">Save</button>
+<!-- Leave-without-saving guard. Mirrors the confirm dialog on the My People
+     dashboard, so the destructive-action pattern stays consistent. -->
+<div class="sheet-overlay" id="leave-overlay" role="alertdialog" aria-modal="true" aria-labelledby="lv-title" aria-describedby="lv-body">
+  <div class="sheet-card p-6 md:p-8">
+    <h2 id="lv-title" class="text-xl font-bold text-navy-700 leading-tight pr-2">You have unsaved changes</h2>
+    <p id="lv-body" class="text-base text-wb-700 mt-3 leading-relaxed">Leave this page and your most recent edits won't be kept.</p>
+    <div class="flex flex-col sm:flex-row gap-3 mt-6">
+      <button type="button" id="lv-save" class="flex-1 h-12 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold">Save and leave</button>
+      <button type="button" id="lv-leave" class="flex-1 h-12 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Leave without saving</button>
+    </div>
+    <button type="button" data-close class="w-full h-12 mt-3 rounded-full text-base font-semibold text-navy-500 hover:text-navy-700">Stay on this page</button>
+  </div>
 </div>
 
 <!-- Toast (shared .toast) -->
 <div class="toast" id="toast">
   <span class="toast-ico"><i class="ph-fill ph-check-circle" id="toast-icon" aria-hidden="true"></i></span>
-  <span class="toast-body"><span id="toast-text" role="status" aria-live="polite"></span><button id="toast-action" type="button" hidden></button></span>
+  <span class="toast-body"><span id="toast-text" role="status" aria-live="polite"></span></span>
 </div>
 
 <!-- Demo switcher -->
@@ -451,14 +504,14 @@
 
   /* Field order and grouping (DES-2296). */
   const FIELDS = [
-    { key:'currentLocation', group:'places',      label:'Current location',   hint:'Where you live now',                   ph:'Start typing a city or town…',  icon:'ph-map-pin',         set:'places' },
-    { key:'hometown',        group:'places',      label:'Hometown',           hint:'Where you grew up',                    ph:'Start typing a city or town…',  icon:'ph-house-line',      set:'places' },
-    { key:'highSchool',      group:'schools',     label:'High school',        hint:'',                                     ph:'Start typing a school name…',   icon:'ph-student',         set:'highSchools' },
-    { key:'college',         group:'schools',     label:'College / university',hint:'',                                    ph:'Start typing a school name…',   icon:'ph-graduation-cap',  set:'colleges' },
-    { key:'occupation',      group:'schools',     label:'Occupation',         hint:'',                                     ph:'Start typing a line of work…',  icon:'ph-briefcase',       set:'occupations' },
-    { key:'greek',           group:'communities', label:'Fraternity / sorority', hint:'',                                  ph:'Start typing a chapter name…',  icon:'ph-users-three',     set:'greek' },
-    { key:'teams',           group:'communities', label:'Sports teams',       hint:'',                                     ph:'Start typing a team name…',     icon:'ph-confetti',        set:'teams' },
-    { key:'military',        group:'communities', label:'Military service',   hint:'Branch you served in',                 ph:'Start typing a branch…',        icon:'ph-medal',           set:'military' },
+    { key:'currentLocation', group:'places',      label:'Current location',   hint:'Where you live now',                   ph:'Search cities and towns…',  icon:'ph-map-pin',         set:'places' },
+    { key:'hometown',        group:'places',      label:'Hometown',           hint:'Where you grew up',                    ph:'Search cities and towns…',  icon:'ph-house-line',      set:'places' },
+    { key:'highSchool',      group:'schools',     label:'High school',        hint:'',                                     ph:'Search high schools…',     icon:'ph-student',         set:'highSchools' },
+    { key:'college',         group:'schools',     label:'College / university',hint:'',                                    ph:'Search colleges…',         icon:'ph-graduation-cap',  set:'colleges' },
+    { key:'occupation',      group:'schools',     label:'Occupation',         hint:'',                                     ph:'Search occupations…',  icon:'ph-briefcase',       set:'occupations' },
+    { key:'greek',           group:'communities', label:'Fraternity / sorority', hint:'',                                  ph:'Search chapters…',  icon:'ph-users-three',     set:'greek' },
+    { key:'teams',           group:'communities', label:'Sports teams',       hint:'',                                     ph:'Search teams…',     icon:'ph-confetti',        set:'teams' },
+    { key:'military',        group:'communities', label:'Military service',   hint:'Branch you served in',                 ph:'Search branches…',        icon:'ph-medal',           set:'military' },
   ];
   const ALL_KEYS = ['ageRange','gender', ...FIELDS.map(f => f.key)];
 
@@ -516,9 +569,7 @@
              selected · cleared. Driven off data-state on .ta-field so
              every state is inspectable in the DOM.
      ================================================================== */
-  const INPUT_BASE = 'w-full h-12 pl-11 pr-12 rounded-lg bg-white text-base text-wb-900 leading-normal placeholder:text-wb-500 focus:outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-500/25';
-  const BORDER_REST = ['border', 'border-wb-300'];
-  const BORDER_SEL  = ['border', 'border-seafoam-600', 'bg-seafoam-50', 'font-semibold'];
+  const INPUT_BASE = 'w-full h-12 pl-11 pr-12 rounded-lg bg-white border border-wb-300 text-base text-wb-900 leading-normal text-ellipsis placeholder:text-wb-500 focus:outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-500/25';
 
   function fieldMarkup(f) {
     const id = 'ta-' + f.key;
@@ -531,7 +582,7 @@
           '<input id="' + id + '" type="text" role="combobox" autocomplete="off" ' +
                  'aria-expanded="false" aria-autocomplete="list" aria-controls="' + id + '-list" ' +
                  (f.hint ? 'aria-describedby="' + id + '-hint" ' : '') +
-                 'placeholder="' + esc(f.ph) + '" class="ta-input ' + INPUT_BASE + ' ' + BORDER_REST.join(' ') + '" />' +
+                 'placeholder="' + esc(f.ph) + '" class="ta-input ' + INPUT_BASE + '" />' +
           '<button type="button" class="ta-clear absolute right-1.5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full text-wb-700 hover:bg-wb-100 flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500" aria-label="Clear ' + esc(f.label) + '" hidden><i class="ph ph-x text-lg" aria-hidden="true"></i></button>' +
           /* The popover lives inside .ta-control so it anchors to the input
              itself — .ta-control is the only positioned ancestor. */
@@ -563,7 +614,6 @@
     const list  = $('.ta-list', root);
     const aux   = $('.ta-aux', root);
     const clear = $('.ta-clear', root);
-    const lead  = $('.ta-lead', root);
     const live  = $('.ta-live', root);
     const sel   = $('.ta-sel', root);
     const id    = 'ta-' + f.key;
@@ -572,16 +622,18 @@
 
     const setState = (s) => { root.dataset.state = s; };
 
+    /* A chosen record gets no colour treatment of its own. The value sitting
+       in the field, the clear button and the location line below it are
+       signal enough, and the leading icon stays the category's throughout —
+       it says more about the field than a tick does. */
     function paintSelected(on) {
-      input.classList.remove(...BORDER_REST, ...BORDER_SEL);
-      input.classList.add(...(on ? BORDER_SEL : BORDER_REST));
-      lead.innerHTML = on
-        ? '<i class="ph-fill ph-check-circle text-xl text-seafoam-600"></i>'
-        : '<i class="ph ' + f.icon + ' text-xl"></i>';
-      lead.classList.toggle('text-wb-600', !on);
       clear.hidden = !on;
       sel.textContent = on ? (wheres[f.key] || '') : '';
       sel.hidden = !on || !wheres[f.key];
+      /* In two columns a long school name ellipsizes, so the full value has
+         to stay reachable on hover and to assistive tech. */
+      if (on) input.title = profile[f.key] + (wheres[f.key] ? ' — ' + wheres[f.key] : '');
+      else input.removeAttribute('title');
     }
 
     function close() {
@@ -773,16 +825,12 @@
      TOAST
      ================================================================== */
   let toastTimer = null;
-  function toast(text, { icon = 'ph-check-circle', action = null, onAction = null } = {}) {
-    const el = $('#toast');
+  function toast(text, { icon = 'ph-check-circle' } = {}) {
     $('#toast-text').textContent = text;
     $('#toast-icon').className = 'ph-fill ' + icon;
-    const btn = $('#toast-action');
-    btn.hidden = !action;
-    if (action) { btn.textContent = action; btn.onclick = () => { hideToast(); onAction && onAction(); }; }
-    el.classList.add('show');
+    $('#toast').classList.add('show');
     if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(hideToast, action ? 7000 : 4000);
+    toastTimer = setTimeout(hideToast, 4000);
   }
   function hideToast() { $('#toast').classList.remove('show'); }
 
@@ -794,8 +842,8 @@
   function onChange() {
     const dirty = isDirty();
     $('#save-btn').disabled = !dirty;
-    $('#clear-btn').disabled = filledCount() === 0;
-    $('#mobile-save').classList.toggle('show', dirty);
+    $('#dirty-bar').hidden = !dirty;
+    document.body.classList.toggle('am-bar-on', dirty);
     $('#save-status').textContent = dirty ? 'Unsaved changes' : '';
   }
 
@@ -850,16 +898,7 @@
   });
 
   $('#about-form').addEventListener('submit', (e) => { e.preventDefault(); save(); });
-  $('#mobile-save-btn').addEventListener('click', () => save());
-
-  $('#clear-btn').addEventListener('click', () => {
-    const before = { ...profile }, beforeW = { ...wheres };
-    profile = blank();
-    wheres  = blankW();
-    render();
-    toast('All details cleared.', { icon: 'ph-eraser', action: 'Undo',
-      onAction: () => { profile = before; wheres = beforeW; render(); } });
-  });
+  $('#bar-save').addEventListener('click', () => save());
 
   $('#feedback-send').addEventListener('click', () => {
     const box = $('#feedback-text');
@@ -876,6 +915,55 @@
     const open = box.dataset.acctOpen === 'true';
     box.dataset.acctOpen = String(!open);
     acctToggle.setAttribute('aria-expanded', String(!open));
+  });
+
+  /* ==================================================================
+     LEAVE-WITHOUT-SAVING GUARD
+     The banner says changes are pending; this catches the case where the
+     user misses it and navigates anyway. Two layers: a styled dialog for
+     links we control, and the browser's own prompt for everything else
+     (tab close, back button, typed URL), which can't be styled.
+     ================================================================== */
+  const leaveOverlay = $('#leave-overlay');
+  let pendingHref = null;
+
+  function openLeave(href) {
+    pendingHref = href;
+    leaveOverlay.classList.add('open');
+    $('#lv-save').focus();
+  }
+  function closeLeave() {
+    leaveOverlay.classList.remove('open');
+    pendingHref = null;
+  }
+  function go() { const h = pendingHref; closeLeave(); if (h) window.location.href = h; }
+
+  $('#lv-save').addEventListener('click', () => { save(); go(); });
+  $('#lv-leave').addEventListener('click', () => { saved = { ...profile }; savedWheres = { ...wheres }; go(); });
+  $('[data-close]', leaveOverlay).addEventListener('click', closeLeave);
+  leaveOverlay.addEventListener('mousedown', (e) => { if (e.target === leaveOverlay) closeLeave(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && leaveOverlay.classList.contains('open')) closeLeave();
+  });
+
+  /* Intercept in-page navigation while there are unsaved changes. Runs in
+     the capture phase so it beats any other click handler on the link. */
+  document.addEventListener('click', (e) => {
+    if (!isDirty()) return;
+    const a = e.target.closest('a[href]');
+    if (!a || a.target === '_blank') return;
+    const href = a.getAttribute('href');
+    /* In-page anchors and non-navigating hrefs stay put. */
+    if (!href || href === '#' || href.startsWith('#') ||
+        href.startsWith('mailto:') || href.startsWith('tel:')) return;
+    e.preventDefault();
+    openLeave(a.href);
+  }, true);
+
+  window.addEventListener('beforeunload', (e) => {
+    if (!isDirty()) return;
+    e.preventDefault();
+    e.returnValue = '';
   });
 
   /* Demo switcher */
