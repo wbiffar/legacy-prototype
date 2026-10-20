@@ -190,14 +190,16 @@
       </header>
 
       <!-- ---------- Unsaved-changes banner (DES-2186 pattern) ---------- -->
-      <!-- Same gold/100 container, star icon and Reset / Save pairing as the
-           Saved Defaults "Changed" banner, so the two pages speak with one
-           voice about unsaved work. -->
+      <!-- Same gold/100 container and navy save pill as the Saved Defaults
+           "Changed" banner, so the two pages speak with one voice about
+           unsaved work. The icon differs on purpose: there a star means
+           "this is your saved default", here nothing is starred — a pencil
+           says what actually happened, which is that you edited something. -->
       <div class="am-dirtybar" id="dirty-bar" role="region" aria-label="Unsaved changes" hidden>
         <div class="bg-gold-50 md:py-3">
           <div class="w-full bg-gold-100 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3 shadow-md md:shadow-none">
             <div class="flex items-center gap-2 min-w-0 sm:flex-1">
-              <i class="ph ph-star text-[22px] text-gold-700 flex-shrink-0" aria-hidden="true"></i>
+              <i class="ph ph-pencil-simple text-[22px] text-gold-700 flex-shrink-0" aria-hidden="true"></i>
               <p class="text-base text-wb-700 leading-tight">You've changed your details.</p>
             </div>
             <div class="flex items-center gap-3 justify-end sm:ml-auto flex-shrink-0">
