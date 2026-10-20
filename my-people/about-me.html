@@ -499,16 +499,18 @@
     ],
   };
 
-  /* Field order and grouping (DES-2296). */
+  /* Field order and grouping (DES-2296). Each field's guidance lives in its
+     placeholder; `hint` still renders a line under the label if one is ever
+     wanted back, but nothing uses it now. */
   const FIELDS = [
-    { key:'currentLocation', group:'places',      label:'Current location',   hint:'Where you live now',                   ph:'Search cities and towns…',  icon:'ph-map-pin',         set:'places' },
-    { key:'hometown',        group:'places',      label:'Hometown',           hint:'Where you grew up',                    ph:'Search cities and towns…',  icon:'ph-house-line',      set:'places' },
-    { key:'highSchool',      group:'schools',     label:'High school',        hint:'',                                     ph:'Search high schools…',     icon:'ph-student',         set:'highSchools' },
-    { key:'college',         group:'schools',     label:'College / university',hint:'',                                    ph:'Search colleges…',         icon:'ph-graduation-cap',  set:'colleges' },
-    { key:'occupation',      group:'schools',     label:'Occupation',         hint:'',                                     ph:'Search occupations…',  icon:'ph-briefcase',       set:'occupations' },
-    { key:'greek',           group:'communities', label:'Fraternity / sorority', hint:'',                                  ph:'Search chapters…',  icon:'ph-users-three',     set:'greek' },
-    { key:'teams',           group:'communities', label:'Sports teams',       hint:'',                                     ph:'Search teams…',     icon:'ph-confetti',        set:'teams' },
-    { key:'military',        group:'communities', label:'Military service',   hint:'Branch you served in',                 ph:'Search branches…',        icon:'ph-medal',           set:'military' },
+    { key:'currentLocation', group:'places',      label:'Current location',      ph:'Where you live now',    icon:'ph-map-pin',        set:'places'      },
+    { key:'hometown',        group:'places',      label:'Hometown',              ph:'Where you grew up',     icon:'ph-house-line',     set:'places'      },
+    { key:'highSchool',      group:'schools',     label:'High school',           ph:'Search high schools…',  icon:'ph-student',        set:'highSchools' },
+    { key:'college',         group:'schools',     label:'College / university',  ph:'Search colleges…',      icon:'ph-graduation-cap', set:'colleges'    },
+    { key:'occupation',      group:'schools',     label:'Occupation',            ph:'Search occupations…',   icon:'ph-briefcase',      set:'occupations' },
+    { key:'greek',           group:'communities', label:'Fraternity / sorority', ph:'Search chapters…',      icon:'ph-users-three',    set:'greek'       },
+    { key:'teams',           group:'communities', label:'Sports teams',          ph:'Search teams…',         icon:'ph-confetti',       set:'teams'       },
+    { key:'military',        group:'communities', label:'Military service',      ph:'Branch you served in',  icon:'ph-medal',          set:'military'    },
   ];
   const ALL_KEYS = ['ageRange','gender', ...FIELDS.map(f => f.key)];
 
@@ -571,8 +573,10 @@
     const id = 'ta-' + f.key;
     return (
       '<div class="ta-field am-anchor" data-ta="' + f.key + '" data-state="empty">' +
-        '<label for="' + id + '" class="block text-[15px] font-semibold text-wb-900 mb-1">' + esc(f.label) + '</label>' +
-        (f.hint ? '<p id="' + id + '-hint" class="text-sm text-wb-600 mb-2">' + esc(f.hint) + '</p>' : '<div class="mb-2"></div>') +
+        /* Two fields sharing a grid row need the same label block height or
+           their inputs won't line up — so give both a hint, or neither. */
+        '<label for="' + id + '" class="block text-[15px] font-semibold text-wb-900 ' + (f.hint ? 'mb-1' : 'mb-2') + '">' + esc(f.label) + '</label>' +
+        (f.hint ? '<p id="' + id + '-hint" class="text-sm text-wb-600 mb-2">' + esc(f.hint) + '</p>' : '') +
         '<div class="ta-control">' +
           '<span class="ta-lead absolute left-3.5 top-1/2 -translate-y-1/2 text-wb-600 pointer-events-none" aria-hidden="true"><i class="ph ' + f.icon + ' text-xl"></i></span>' +
           '<input id="' + id + '" type="text" role="combobox" autocomplete="off" ' +
