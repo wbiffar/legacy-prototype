@@ -283,7 +283,13 @@
           <!-- ===== Save row ===== -->
           <div class="am-saverow -mx-5 md:-mx-8 -mb-5 md:-mb-8 mt-7 md:mt-8 px-5 md:px-8 py-4 md:py-5 bg-white border-t border-wb-200 rounded-b-xl flex flex-wrap items-center gap-x-4 gap-y-3">
             <button type="submit" id="save-btn" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 focus-visible:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-navy-700">Save my details</button>
-            <span id="save-status" role="status" aria-live="polite" class="text-[15px] text-wb-600 w-full sm:w-auto sm:ml-auto"></span>
+            <!-- Always present, so the page can always answer "is my work
+                 safe?" without the user having to change something to find
+                 out. The unsaved line appears above it when there is one. -->
+            <span id="save-status" role="status" aria-live="polite" class="text-[15px] leading-snug w-full sm:w-auto sm:ml-auto sm:text-right">
+              <span id="save-status-dirty" class="block font-semibold text-wb-800" hidden>Unsaved changes</span>
+              <span id="save-status-when" class="block text-wb-600"></span>
+            </span>
           </div>
         </div>
       </form>
@@ -844,7 +850,18 @@
     $('#save-btn').disabled = !dirty;
     $('#dirty-bar').hidden = !dirty;
     document.body.classList.toggle('am-bar-on', dirty);
-    $('#save-status').textContent = dirty ? 'Unsaved changes' : '';
+    $('#save-status-dirty').hidden = !dirty;
+    $('#save-status-when').textContent =
+      lastSaved ? 'Last saved ' + stamp(lastSaved) : 'Not saved yet';
+  }
+
+  /* "Oct 14, 10:32 AM" — the save row is the transactional status, so it
+     carries the time as well as the date. The summary strip at the top of
+     the page stays date-only; it's an at-a-glance line, not a receipt. */
+  function stamp(ts) {
+    const d = new Date(ts);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' +
+           d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   }
 
   function whenLabel(ts) {
