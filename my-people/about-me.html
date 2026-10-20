@@ -181,16 +181,13 @@
            user's own. The name is deliberately NOT repeated here — the header
            and the My Account card already greet them, and a third greeting
            was one too many. -->
+      <!-- The explainer is the description, not a callout beside it: it's
+           the answer to "why are you asking?", which is the first thing a
+           reader wants, so it belongs directly under the title. -->
       <header class="mb-5 md:mb-6 mt-3 lg:mt-0">
         <h1 class="font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight">About Me</h1>
-        <p id="page-subtitle" class="text-base md:text-lg text-wb-700 mt-3 leading-relaxed"></p>
+        <p class="text-base md:text-lg text-wb-700 mt-3 leading-relaxed">What you share here, along with the people you've saved in <a href="future-my-people.html" class="font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2">My People</a>, shapes what we show you on Legacy.com.</p>
       </header>
-
-      <!-- ---------- Explainer callout ---------- -->
-      <div class="flex items-start gap-3 rounded-xl bg-seafoam-100 border border-seafoam-200 p-4 md:p-5 mb-5 md:mb-6">
-        <span class="w-10 h-10 rounded-full bg-seafoam-200 text-seafoam-800 flex items-center justify-center flex-shrink-0" aria-hidden="true"><i class="ph ph-sparkle text-xl"></i></span>
-        <p class="text-base text-wb-800 leading-relaxed">What you share here, together with the people you've saved in <a href="future-my-people.html" class="font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2">My People</a>, is what we use to personalise Legacy.com — the obituaries, memorials and communities we put in front of you.</p>
-      </div>
 
       <!-- ---------- Unsaved-changes banner (DES-2186 pattern) ---------- -->
       <!-- Same gold/100 container, star icon and Reset / Save pairing as the
@@ -857,19 +854,10 @@
            d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   }
 
-  /* First and return visits open differently; the saved state itself is
-     the save row's job, not the subtitle's. */
-  function renderSubtitle() {
-    $('#page-subtitle').textContent = lastSaved
-      ? 'Change anything below and save when you\'re done.'
-      : 'Tell us about yourself. It takes about a minute, and every field is optional.';
-  }
-
   function render() {
     $('#age-range').value = profile.ageRange || '';
     $('#gender').value    = profile.gender || '';
     painters.forEach(p => p());
-    renderSubtitle();
     onChange();
   }
 
@@ -878,7 +866,6 @@
     savedWheres = { ...wheres };
     lastSaved = Date.now();
     persist();
-    renderSubtitle();
     onChange();
     toast('Your details are saved.');
   }
