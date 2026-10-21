@@ -81,10 +81,12 @@
     }
     @media (prefers-reduced-motion: reduce) { .am-dirtybar { animation: none; } }
 
-    /* ---- Save row sits at the foot of the card, in normal flow. It was
-           sticky at first, but floating a white bar over white fields in
-           the same card read as a rendering glitch. It's the in-flow end of
-           the form; .am-dirtybar above is what follows the user. ---- */
+    /* ---- Save row sits at the foot of the card, in normal flow. Pinning it
+           to the viewport was prototyped and set aside: it keeps the button
+           and the last-saved line permanently in reach, but costs ~89px of
+           desktop and ~130px of phone screen to a bar that's idle most of
+           the time. The .am-dirtybar above is what follows the user, and
+           only once there's something to say. ---- */
     .am-saverow { position: static; }
 
     /* Anchor offset so the sticky header never covers a scrolled-to field. */
@@ -275,11 +277,20 @@
 
           <!-- ===== Save row ===== -->
           <div class="am-saverow -mx-5 md:-mx-8 -mb-5 md:-mb-8 mt-7 md:mt-8 px-5 md:px-8 py-4 md:py-5 bg-white border-t border-wb-200 rounded-b-xl flex flex-wrap items-center gap-x-4 gap-y-3">
-            <button type="submit" id="save-btn" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 focus-visible:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-navy-700">Save my details</button>
+            <button type="submit" id="save-btn" class="flex-shrink-0 inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 focus-visible:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-navy-700"><span class="sm:hidden">Save</span><span class="hidden sm:inline">Save my details</span></button>
             <!-- Always present, so the page can always answer "is my work
                  safe?" without the user having to change something to find
                  out. The unsaved line appears above it when there is one. -->
-            <span id="save-status" role="status" aria-live="polite" class="text-[15px] leading-snug w-full sm:w-auto sm:ml-auto sm:text-right">
+            <!-- "Save my details" is shortened to "Save" below sm. At 375px the
+                 full label leaves the status ~125px, which wraps it to four
+                 lines — worse than the stacking this was meant to avoid. -->
+            <!-- flex-1 gives this a zero flex-basis, so it never measures
+                 wide enough to push itself onto a line of its own — it takes
+                 whatever the button leaves and wraps its own text instead.
+                 With ml-auto it would stack as soon as the timestamp didn't
+                 fit, which at 375px is most of the time. The button is
+                 flex-shrink-0, so the status is what gives way. -->
+            <span id="save-status" role="status" aria-live="polite" class="text-[15px] leading-snug min-w-0 flex-1 text-right">
               <span id="save-status-dirty" class="block font-semibold text-wb-800" hidden>Unsaved changes</span>
               <span id="save-status-when" class="block text-wb-600"></span>
             </span>
