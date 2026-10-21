@@ -74,10 +74,11 @@
         animation-name: am-bar-in-up;
       }
       @keyframes am-bar-in-up { from { opacity: 0; transform: translateY(8px); } }
-      /* The bar is fixed, so it would otherwise sit on top of the last ~140px
+      /* The bar is fixed, so it would otherwise sit on top of the last ~80px
          of the page — which is exactly where Send feedback lives. Reserve the
-         space only while the bar is actually showing. */
-      body.am-bar-on { padding-bottom: 156px; }
+         space only while the bar is actually showing. Keep this in step with
+         the bar's height if its copy or control ever changes. */
+      body.am-bar-on { padding-bottom: 96px; }
     }
     @media (prefers-reduced-motion: reduce) { .am-dirtybar { animation: none; } }
 
@@ -196,20 +197,28 @@
            "Changed" banner, so the two pages speak with one voice about
            unsaved work. The icon differs on purpose: there a star means
            "this is your saved default", here nothing is starred — a pencil
-           says what actually happened, which is that you edited something. -->
-      <div class="am-dirtybar" id="dirty-bar" role="region" aria-label="Unsaved changes" hidden>
-        <div class="bg-gold-50 md:py-3">
-          <div class="w-full bg-gold-100 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3 shadow-md md:shadow-none">
-            <div class="flex items-center gap-2 min-w-0 sm:flex-1">
-              <i class="ph ph-pencil-simple text-[22px] text-gold-700 flex-shrink-0" aria-hidden="true"></i>
-              <p class="text-base text-wb-700 leading-tight">You've changed your details.</p>
-            </div>
-            <div class="flex items-center gap-3 justify-end sm:ml-auto flex-shrink-0">
-              <!-- 44px on phones for the tap-target minimum; back to the
-                   design system's 40px pill from sm up. -->
-              <button type="button" id="bar-save" class="inline-flex items-center justify-center h-11 sm:h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold transition-colors whitespace-nowrap">Save Changes</button>
-            </div>
+           says what actually happened, which is that you edited something.
+
+           Nothing sits behind it: no band, no page-coloured backdrop. It's
+           a card that floats over the form, so the fill has to be its own
+           and the shadow does the separating. Mobile throws the shadow
+           upward, since a downward one on a bottom-anchored bar falls off
+           the screen and leaves its top edge flat against the content. -->
+      <div class="am-dirtybar md:py-3" id="dirty-bar" role="region" aria-label="Unsaved changes" hidden>
+        <div class="w-full bg-gold-100 rounded-lg px-4 py-3 sm:p-4 flex items-center gap-3 shadow-[0_-6px_16px_-4px_rgba(0,0,0,0.12)] md:shadow-md">
+          <div class="flex items-center gap-2 min-w-0 flex-1">
+            <i class="ph ph-pencil-simple text-xl sm:text-[22px] text-gold-700 flex-shrink-0" aria-hidden="true"></i>
+            <!-- One message at every width. "You've changed your details."
+                 needed ~230px and a phone leaves ~207px beside the button,
+                 so it had to swap to a short form below sm; this is inside
+                 the budget everywhere and reads the same on any screen.
+                 `truncate` keeps the bar to one row below 375px rather
+                 than letting it wrap. -->
+            <p class="text-base text-wb-700 leading-tight truncate">You've made changes.</p>
           </div>
+          <!-- 44px on phones for the tap-target minimum; back to the
+               design system's 40px pill from sm up. -->
+          <button type="button" id="bar-save" class="flex-shrink-0 inline-flex items-center justify-center h-11 sm:h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold transition-colors whitespace-nowrap">Save</button>
         </div>
       </div>
 
