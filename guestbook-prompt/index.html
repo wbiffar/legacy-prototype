@@ -92,14 +92,44 @@
   </div>
 </nav>
 
-<!-- ==================== Hero band ==================== -->
-<div class="h-[215px] bg-navy-700" role="presentation"></div>
+<!-- ==================== Hero band ====================
+     QA page: <div class="h-[215px] relative"> wrapping a full-width
+     bg-[#3d4d69] fill — navy/600, not the navy/700 this used to be. -->
+<div class="h-[215px] bg-navy-600" role="presentation"></div>
 
 <main class="bg-gold-50">
-  <!-- ==================== Name ==================== -->
-  <header class="text-center pt-8 px-4">
-    <h1 class="font-serif text-[40px] md:text-[60px] leading-tight text-navy-700">John Doe</h1>
-    <p class="mt-1 text-wb-600 text-[15px]">1960 &ndash; 2026</p>
+  <!-- ==================== Portrait + name ====================
+       The QA page carries the portrait slot as
+         absolute -bottom-24 sm:-bottom-20 left-1/2 -translate-x-1/2 z-20 rounded-2xl
+       centred on the band and hanging 96px (mobile) / 80px (sm+) below it.
+       Every obit in that QA org has the slot EMPTY — no photo uploaded
+       anywhere — so two things could not be read off the live page: the
+       portrait's own dimensions, and how the name clears it. The real
+       template must add that clearance when a photo exists, because at
+       `mt-8` the name would land on top of the picture.
+
+       So: position and radius from QA, dimensions from our own
+       obituary-template (202x280, 160x222 on phones), and the portrait put
+       in normal flow with a negative margin instead of absolute. Same
+       result, and the name is pushed clear automatically rather than by a
+       magic number the QA page cannot supply. The offsets are chosen to
+       land the portrait exactly where QA's would: bottom 80px below the
+       band at sm+ (215 + 80 − 280 = 15px from the band top, so −200px),
+       and 96px below on phones (215 + 96 − 222 = 89px, so −126px).
+
+       flex on the header matters — flex items do not margin-collapse, so
+       the negative margin moves the portrait without dragging the header
+       up with it. -->
+  <header class="text-center px-4 flex flex-col items-center">
+    <div class="w-[160px] h-[222px] sm:w-[202px] sm:h-[280px] -mt-[126px] sm:-mt-[200px]
+                rounded-2xl overflow-hidden bg-gold-100 shadow-xl
+                flex flex-col items-center justify-center gap-2 text-gold-700"
+         role="img" aria-label="Portrait of John Doe — placeholder">
+      <i class="ph ph-user text-5xl" aria-hidden="true"></i>
+      <span class="text-[11px] font-semibold uppercase tracking-wider">Portrait</span>
+    </div>
+    <h1 class="mt-6 font-serif text-[36px] md:text-[48px] lg:text-[60px] leading-tight text-navy-700">John Doe</h1>
+    <p class="mt-1 text-gold-700 text-[20px] font-light tracking-wider">1960 &ndash; 2026</p>
     <div class="mt-5 flex flex-wrap items-center justify-center gap-2.5">
       <button class="inline-flex items-center gap-2 min-h-[44px] px-5 rounded-full bg-gold-400 text-wb-900 font-semibold text-sm hover:bg-gold-500">
         <i class="ph ph-flower-tulip text-lg" aria-hidden="true"></i> Send Flowers
