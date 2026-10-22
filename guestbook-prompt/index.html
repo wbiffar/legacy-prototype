@@ -518,6 +518,9 @@
   /* ==================================================================
      Modal orchestration.
 
+     Written up in full, with the reasoning and the open questions, in
+     TRIGGER-LOGIC.md next to this file. Keep the two in step.
+
      DES-2305: the obit page already carries an exit-intent modal, a
      scroll-threshold modal and interstitial ads.
 
@@ -621,9 +624,10 @@
       slot: null,          // id of the trigger holding the one allowance
       reservedFor: null,   // posting reserves the slot before the prompt fires
       posted: false,
-      // Set when the exit-intent modal reaches "You're all set!". That state
-      // makes the account offer itself, so it is the thing that suppresses
-      // the guestbook prompt — not the exit modal merely having appeared.
+      // Set when the follow modal reaches "You're all set!", from either
+      // trigger. That state makes the account offer itself, so it is the
+      // thing that suppresses the guestbook prompt — not the modal merely
+      // having appeared.
       seenAccountOffer: false,
       postScrollY: 0,
       rateLimit: document.getElementById('rateLimitToggle').checked,
