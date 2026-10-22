@@ -589,7 +589,7 @@
     exit: {
       label: 'Exit-intent modal',
       scrim: 'followScrim',
-      waitingWhy: 'Waiting — pointer leaves the top of the window.'
+      waitingWhy: 'Waiting — pointer leaves the top of the window. Desktop only; on touch the 60% threshold covers it.'
     },
     guestbook: {
       label: 'Guestbook account prompt',
@@ -811,23 +811,27 @@
     });
   }, { passive: true });
 
-  // Exit intent, desktop: pointer leaves through the top of the window.
-  document.addEventListener('mouseout', function (e) {
-    if (e.relatedTarget || e.clientY > 8) return;
+  /* Exit intent: the pointer leaves through the top of the window.
+
+     `mouseleave` on the document element, not `mouseout` on the document.
+     mouseout fires every time the pointer crosses between two elements, and
+     scrolling moves elements under a stationary cursor — so a cursor parked
+     in the top few pixels generated a stream of mouseout events with a null
+     relatedTarget, and the old `clientY > 8` guard let them through. The
+     clientY <= 0 check keeps it to leaving upward: out of the bottom or the
+     sides is not someone reaching for the tab bar.
+
+     There is no touch equivalent here, deliberately. This used to also fire
+     on a fast upward flick, on the theory that phones have no pointer to
+     lose — but 1.6px/ms is an ordinary wheel scroll, so it went off whenever
+     anyone scrolled back up on a laptop, and it collided with the guestbook
+     prompt, which now claims the up-scroll gesture for itself. One gesture
+     cannot mean both "I am leaving" and "show me the account offer". Touch
+     visitors reach the same card through the 60% scroll threshold instead. */
+  document.documentElement.addEventListener('mouseleave', function (e) {
+    if (e.clientY > 0) return;
     fire('exit');
   });
-
-  // Exit intent, touch: a fast flick back toward the top reads as leaving.
-  // Phones have no pointer to lose, and 70%+ of this traffic is mobile.
-  var lastY = window.scrollY, lastT = Date.now();
-  window.addEventListener('scroll', function () {
-    var now = Date.now(), y = window.scrollY, dt = now - lastT;
-    if (dt > 60) {
-      var v = (lastY - y) / dt;              // px per ms, upward is positive
-      if (v > 1.6 && y > 400) fire('exit');
-      lastY = y; lastT = now;
-    }
-  }, { passive: true });
 
   // Dismissals and account actions.
   document.addEventListener('click', function (e) {
