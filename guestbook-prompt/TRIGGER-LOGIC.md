@@ -16,11 +16,17 @@ implements exactly this.
 | Guestbook prompt | A post, then 80px scroll either direction | Account prompt |
 | ~~Sign-in pop~~ | — | Removed — wrong page type for it |
 
-**Follow modal** (`3626:41748` → `3626:41688`): email capture, then "You're all
-set!". Both generic triggers show this same card. Its success state repeats the
-full account offer — same benefits, same buttons — which drives rule 2.
+**Follow modal** — Figma:
+[capture](https://www.figma.com/design/djnZb62qRq3Y4W5HvQcGG1/des-2289-tukios-consumer-obit-adjustments?node-id=3626-41748)
+→ [success](https://www.figma.com/design/djnZb62qRq3Y4W5HvQcGG1/des-2289-tukios-consumer-obit-adjustments?node-id=3626-41688).
+"Never miss an update" takes an email, then "You're all set!" confirms it. Both
+generic triggers show this same card. The success state repeats the full
+account offer — same benefits, same buttons — which is what drives rule 1.
 
-**Account prompt** (`3653:59029` / `3657:64954`): the "Stay connected" card.
+**Account prompt** — Figma:
+[mobile](https://www.figma.com/design/djnZb62qRq3Y4W5HvQcGG1/des-2289-tukios-consumer-obit-adjustments?node-id=3653-59029)
+/ [desktop](https://www.figma.com/design/djnZb62qRq3Y4W5HvQcGG1/des-2289-tukios-consumer-obit-adjustments?node-id=3657-64954).
+The "Stay connected" card.
 
 ## Rules
 
