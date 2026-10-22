@@ -391,7 +391,7 @@
 
      Two states. The success state is the important one: it carries the SAME
      account offer as the guestbook prompt — same benefits, same buttons —
-     which is why reaching it suppresses that prompt later (rule 2).
+     which is why reaching it suppresses that prompt later (rule 1).
 
      Icons are Phosphor classes rather than exported SVGs: the comp's own
      icons are Phosphor Bell and X, and Phosphor is already loaded here and
@@ -532,24 +532,24 @@
      outright on 22 Oct — an obituary is not the page type for it. It is not
      a trigger here any more, so it takes no part in what follows.
 
-     The rules:
+     The rules, in the order canFire() applies them:
 
-       1. A post earns the guestbook account prompt. It does not compete for
-          the slot, and a generic prompt the visitor DISMISSED does not
-          block it — writing a tribute is the moment the account offer
-          actually makes sense, and it is too valuable to lose to a modal
-          they waved away on their way in. Rule 2 is the one thing that
-          overrides this, so "earns" rather than "always".
+       1. A completed follow ends all of it. A visitor who gave their email
+          and reached "You're all set!" is already getting the updates, and
+          that state carries the account offer itself — same benefits list,
+          same two buttons. So nothing fires afterwards, the guestbook
+          prompt included: asking again would be asking twice. Dismissing
+          the modal WITHOUT submitting does not count; the trigger is the
+          success, not the appearance.
 
-       2. Completing the follow ends all of it. A visitor who gave their
-          email and reached "You're all set!" is already getting the
-          updates, and that state carries the account offer itself — same
-          benefits list, same two buttons. So nothing fires afterwards, the
-          guestbook prompt included: asking again would be asking twice.
-          Dismissing the modal WITHOUT submitting does not count; the
-          trigger is the success, not the appearance.
+       2. Otherwise a post earns the guestbook account prompt. It does not
+          compete for the slot, and a generic prompt the visitor DISMISSED
+          does not block it — writing a tribute is the moment the account
+          offer actually makes sense, and it is too valuable to lose to a
+          modal they waved away on their way in. "Earns", never "always":
+          rule 1 still outranks it.
 
-       3. Posting makes the generic prompts stand down for the rest of the
+       3. A post also stands the generic prompts down for the rest of the
           session, so they never pile on after the contextual one.
 
        4. Among the generic prompts, the first eligible trigger takes the
@@ -652,7 +652,7 @@
     guestbook: {
       label: 'Guestbook account prompt',
       scrim: 'accountScrim',
-      // Rule 1 — exempt from the slot. Not exempt from rule 2.
+      // Rule 2 — exempt from the slot. Rule 1 still outranks it.
       alwaysFires: true,
       waitingWhy: 'Waiting — needs a post, then a scroll either way.'
     }
@@ -663,14 +663,14 @@
   function canFire(id) {
     var t = TRIGGERS[id];
     if (state.fired[id]) return false;
-    // Rule 2 — once the follow is completed nothing else needs to ask. The
+    // Rule 1 — once the follow is completed nothing else needs to ask. The
     // visitor is already getting the emails and has already been shown the
     // account offer, so this holds even with rate limiting off: that toggle
     // is there to show prompts stacking up, not to re-ask someone who has
     // already said yes.
     if (state.seenAccountOffer) return false;
     if (!state.rateLimit) return true;              // contrast mode: no limit
-    if (t.alwaysFires) return true;                 // rule 1 — exempt from the slot
+    if (t.alwaysFires) return true;                 // rule 2 — exempt from the slot
     if (state.slot) return false;                   // already spent
     if (state.reservedFor && state.reservedFor !== id) return false;  // rule 3
     return true;
@@ -767,7 +767,7 @@
       if (state.fired[id]) {
         s = 'spent'; text = 'Shown.';
       } else if (state.seenAccountOffer) {
-        // Rule 2 outranks everything below, including the slot exemption.
+        // Rule 1 outranks everything below, including the slot exemption.
         s = 'blocked'; text = 'Suppressed — the follow is done and the account offer was made with it.';
       } else if (state.rateLimit && t.alwaysFires) {
         // An exempt prompt is never suppressed by the slot or the stand-down.
@@ -827,7 +827,7 @@
       FULL_NAME + ' at ' + email + '.';
     document.getElementById('followCapture').hidden = true;
     document.getElementById('followSuccess').hidden = false;
-    // Rule 2 — this state carries the account offer, so the guestbook prompt
+    // Rule 1 — this state carries the account offer, so the guestbook prompt
     // stands down for the rest of the session.
     state.seenAccountOffer = true;
     render();
