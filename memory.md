@@ -142,3 +142,18 @@ Each entry should include:
 - **What to do instead:** Any control that *appears* inside a capped, scrollable sheet has to be scrolled into view as it appears. Pin the card to its own bottom (`scrollTop = scrollHeight`) so the content above shifts up. **Snap the pane's height first, then pin in the same frame — never animate the pin.** Also reset the scroll on pane change: the *card* is the scroller, so `viewport.scrollTop = 0` resets the wrong element.
 - **Don't chase an animation with a timer.** I built the pin twice against a moving target — first an rAF loop ended by a `transitionend` on `height`, then `scrollTo({behavior:'smooth'})` — and both stranded the button off-screen whenever the animation clock and the wall clock disagreed (a backgrounded or throttled tab pauses one and not the other). Both *looked* correct in a settled tab, which is why they survived a first round of testing. The fix was to remove the moving target: apply the final height with the transition suppressed, so `scrollHeight` is already final and one synchronous assignment lands exactly. When correctness depends on where an animation ended up, prefer making it not animate over adding another mechanism to track it.
 - **Verify at 375×667, not just 375×812.** The shorter phone is where a capped sheet actually overflows.
+
+---
+
+## 2026-10-22 — Guestbook account prompt (DES-2305)
+
+### A scroll-triggered reveal needs the page to have scroll left
+- **What went wrong:** The account prompt arms on a guestbook post and fires after 180px of further scrolling. Built against a stub page with four guestbook posts, the confirmation landed at the very bottom — max scroll was reached before the 180px was up, so the trigger armed and then silently never fired. It looked like a logic bug and wasn't.
+- **What to do instead:** When a trigger depends on scrolling *past* something, check there is runway below it. Give the prototype a realistic amount of content (the live obit has 1,834 entries, so twelve posts, not four), and make the trigger accept "reached the end of the page" as equivalent to the delta. Symptom to recognise: the panel/state says "armed" and never advances while scrollY sits at `scrollHeight - innerHeight`.
+
+### `scroll-behavior: smooth` makes programmatic scrolls no-op in the automated browser
+- **What went wrong:** Spent several cycles chasing a trigger that "didn't fire" under test. The page logic was correct the whole time. With `html { scroll-behavior: smooth }`, `window.scrollTo` / `scrollBy` / `el.scrollTop =` from the Browser tools' `javascript_tool` leave `scrollY` at 0, and even once the scroll lands (with smooth forced off) the harness dispatches **no scroll events** — a probe listener counted 0 hits across a 300px programmatic jump.
+- **What to do instead:** Verify scroll-triggered behaviour with real input — `computer{action:"scroll"}` — not `window.scrollTo` from `javascript_tool`. Those wheel events do fire listeners. Before concluding a scroll handler is broken, attach a throwaway `scroll` listener and count hits; zero hits means the harness, not the page. Related to the DES-2265 entry on not chasing an animation with a timer: the same fix applied here, `scrollIntoView({behavior:'instant'})` instead of smooth + a timer to re-read the position.
+
+### Expose prototype state on `window` for review and debugging
+- **Preference learned:** The orchestration state lived in an IIFE closure and could not be inspected, which is what made the two bugs above slow to pin down. A `window.__gp = { get state(){...}, fire, triggers }` handle costs three lines, makes the flow drivable from the console during a stakeholder review, and is prototype-only code anyway. Worth adding to any prototype with non-trivial state.

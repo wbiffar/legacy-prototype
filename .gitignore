@@ -26,6 +26,8 @@
 !obituary-template/**
 !my-people/
 !my-people/**
+!guestbook-prompt/
+!guestbook-prompt/**
 
 # Sign-up follow prototype
 !signup-follow-prototype.html

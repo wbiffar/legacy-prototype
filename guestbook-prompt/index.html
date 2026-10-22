@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tukios Consumer Obit — Guestbook account prompt (DES-2305)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0;1&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <script src="tokens.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ====================================================================
+     SCENARIO PANEL — prototype scaffolding, not product UI.
+     DES-2305 asks the prototype to *show* the rate-limiting logic, so the
+     modal slot and each trigger's state are on screen and resettable.
+     ==================================================================== -->
+<aside id="panel" class="gp-panel bg-navy-900 text-white rounded-xl overflow-hidden" data-collapsed="false" aria-label="Prototype scenario controls">
+  <button id="panelToggle" class="w-full flex items-center gap-2 px-3 py-2.5 text-left bg-navy-800 hover:bg-navy-700 min-h-[44px]" aria-expanded="true" aria-controls="panelBody">
+    <i class="ph ph-sliders-horizontal text-base" aria-hidden="true"></i>
+    <span class="font-semibold tracking-wide uppercase text-[11px]">DES-2305 scenario</span>
+    <i id="panelChevron" class="ph ph-caret-up ml-auto text-base" aria-hidden="true"></i>
+  </button>
+
+  <div id="panelBody" class="gp-panel-body px-3 py-3">
+    <!-- The one allowance every account prompt competes for -->
+    <div class="rounded-lg bg-navy-800 px-3 py-2.5 mb-3">
+      <p class="uppercase tracking-wide text-[10px] font-semibold text-navy-300">Generic-prompt slot</p>
+      <p class="mt-0.5 font-semibold text-sm" id="slotState">Unspent</p>
+      <p class="mt-1 text-navy-200 leading-snug" id="slotNote">One generic prompt per session — first eligible trigger takes it. The guestbook prompt is exempt.</p>
+    </div>
+
+    <p class="uppercase tracking-wide text-[10px] font-semibold text-navy-300 mb-1.5">Triggers</p>
+    <ul class="flex flex-col gap-1.5 mb-3">
+      <li class="gp-trig flex items-start gap-2" data-trig="scroll" data-state="waiting">
+        <i class="ph ph-circle mt-0.5 shrink-0" data-dot aria-hidden="true"></i>
+        <span class="flex-1 min-w-0">
+          <span class="font-semibold block">Scroll-threshold modal</span>
+          <span class="text-navy-200 block leading-snug" data-why>Waiting — fires at 60% depth.</span>
+        </span>
+      </li>
+      <li class="gp-trig flex items-start gap-2" data-trig="exit" data-state="waiting">
+        <i class="ph ph-circle mt-0.5 shrink-0" data-dot aria-hidden="true"></i>
+        <span class="flex-1 min-w-0">
+          <span class="font-semibold block">Exit-intent modal</span>
+          <span class="text-navy-200 block leading-snug" data-why>Waiting — pointer leaves the top of the window.</span>
+        </span>
+      </li>
+      <li class="gp-trig flex items-start gap-2" data-trig="guestbook" data-state="waiting">
+        <i class="ph ph-circle mt-0.5 shrink-0" data-dot aria-hidden="true"></i>
+        <span class="flex-1 min-w-0">
+          <span class="font-semibold block">Guestbook account prompt <span class="font-normal text-gold-300">· always</span></span>
+          <span class="text-navy-200 block leading-snug" data-why>Waiting — needs a post, then a scroll either way.</span>
+        </span>
+      </li>
+    </ul>
+
+    <label class="flex items-start gap-2 mb-3 cursor-pointer">
+      <input id="rateLimitToggle" type="checkbox" checked class="mt-0.5 w-4 h-4 shrink-0 accent-gold-400" />
+      <span class="flex-1">
+        <span class="font-semibold block">Rate limiting on</span>
+        <span class="text-navy-200 block leading-snug">Uncheck to see today's behaviour — every trigger fires independently, stacking prompts in one session.</span>
+      </span>
+    </label>
+
+    <div class="flex gap-2">
+      <button id="resetBtn" class="flex-1 min-h-[44px] rounded-full bg-gold-400 text-wb-900 font-semibold px-3 hover:bg-gold-500">Reset session</button>
+      <button id="postedBtn" class="flex-1 min-h-[44px] rounded-full border border-navy-300 text-white font-semibold px-3 hover:bg-navy-800">Skip to posted</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ==================== Nav ==================== -->
+<nav class="bg-white border-b border-wb-200">
+  <div class="max-w-screen-xl mx-auto px-4 h-[68px] flex items-center gap-4">
+    <a href="#" class="shrink-0" aria-label="Legacy.com home">
+      <img src="assets/logo-horizontal.svg" alt="Legacy.com" class="h-7 w-auto" />
+    </a>
+    <div class="ml-auto flex items-center gap-2">
+      <button class="hidden md:inline-flex items-center gap-1.5 min-h-[44px] px-3 font-semibold text-[15px] text-navy-600 hover:text-navy-700">
+        <i class="ph ph-user-circle text-xl" aria-hidden="true"></i> Sign In
+      </button>
+      <button class="inline-flex items-center justify-center w-11 h-11 text-wb-900" aria-label="Open menu">
+        <i class="ph ph-list text-2xl" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ==================== Hero band ==================== -->
+<div class="h-[215px] bg-navy-700" role="presentation"></div>
+
+<main class="bg-gold-50">
+  <!-- ==================== Name ==================== -->
+  <header class="text-center pt-8 px-4">
+    <h1 class="font-serif text-[40px] md:text-[60px] leading-tight text-navy-700">John Doe</h1>
+    <p class="mt-1 text-wb-600 text-[15px]">1960 &ndash; 2026</p>
+    <div class="mt-5 flex flex-wrap items-center justify-center gap-2.5">
+      <button class="inline-flex items-center gap-2 min-h-[44px] px-5 rounded-full bg-gold-400 text-wb-900 font-semibold text-sm hover:bg-gold-500">
+        <i class="ph ph-flower-tulip text-lg" aria-hidden="true"></i> Send Flowers
+      </button>
+      <button class="inline-flex items-center gap-2 min-h-[44px] px-5 rounded-full bg-seafoam-700 text-white font-semibold text-sm hover:bg-seafoam-800">
+        <i class="ph ph-tree text-lg" aria-hidden="true"></i> Plant Trees
+      </button>
+      <button class="inline-flex items-center gap-2 min-h-[44px] px-5 rounded-full border border-wb-300 bg-white text-wb-700 font-semibold text-sm hover:bg-wb-50">
+        <i class="ph ph-share-network text-lg" aria-hidden="true"></i> Share
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== Obituary ==================== -->
+  <section class="bg-white mx-4 my-8 p-5 sm:p-8 shadow-lg max-w-screen-lg min-[832px]:mx-auto rounded-sm">
+    <h2 class="font-serif text-2xl text-wb-900">John Doe's Obituary</h2>
+    <div class="mt-4 flex flex-col gap-4 font-body text-lg leading-relaxed text-wb-800">
+      <p>John Doe of Dixon, Illinois, died peacefully at home on October 6, 2026, at the age of 66, with his family beside him.</p>
+      <p>Born in 1960, John spent thirty-one years as a machinist at the Rock River works, where he was known for arriving an hour early and for a tool chest nobody else was allowed to touch. He married Elaine in 1984. They raised three children, kept an unreasonable number of tomato plants, and spent most Augusts on the water at Lake Carroll.</p>
+      <p>He is survived by his wife Elaine; his children Marcus, Dana, and Ruth; and six grandchildren who knew him as the only adult who would take them fishing before sunrise.</p>
+      <p class="text-sm text-wb-600">Published on Legacy.com on October 8, 2026.</p>
+    </div>
+  </section>
+
+  <!-- ==================== Keepsake book ==================== -->
+  <section class="mx-4 mb-8 max-w-screen-lg min-[832px]:mx-auto rounded-xl overflow-hidden bg-navy-700 text-white">
+    <div class="p-6 sm:p-8 flex flex-col sm:flex-row gap-6">
+      <div class="shrink-0 w-[108px] h-[150px] rounded bg-navy-600 border border-navy-500" role="presentation"></div>
+      <div class="flex-1">
+        <p class="uppercase tracking-widest text-[11px] font-semibold text-gold-300">Celebrating the life of</p>
+        <h2 class="font-serif text-2xl mt-1">John Doe</h2>
+        <div class="mt-3 flex flex-wrap gap-2.5">
+          <button class="inline-flex items-center min-h-[44px] px-5 rounded-full border border-white/60 text-white font-semibold text-sm hover:bg-white/10">View Book</button>
+          <button class="inline-flex items-center min-h-[44px] px-5 rounded-full bg-gold-400 text-wb-900 font-semibold text-sm hover:bg-gold-500">Buy Book</button>
+        </div>
+        <p class="mt-4 text-navy-100 text-[15px] leading-snug">A beautifully bound keepsake book filled with memories and condolences from family and friends.</p>
+      </div>
+    </div>
+    <div class="bg-navy-800 px-6 sm:px-8 py-4 flex flex-col sm:flex-row sm:items-center gap-3">
+      <div class="flex-1">
+        <p class="font-semibold text-[15px]">Share Your Memories</p>
+        <p class="text-navy-200 text-sm leading-snug">Contribute your memory to the online guestbook to be featured in this unique keepsake book.</p>
+      </div>
+      <a href="#guestbook" class="shrink-0 inline-flex items-center justify-center min-h-[44px] px-5 rounded-full border border-white/60 text-white font-semibold text-sm hover:bg-white/10">Share Your Memory</a>
+    </div>
+  </section>
+
+  <!-- ==================== Guestbook ==================== -->
+  <section id="guestbook" class="gp-guestbook-glow px-4 pb-10">
+    <div class="max-w-screen-lg mx-auto">
+      <div class="text-center pt-6">
+        <h2 class="font-serif text-[30px] text-wb-700">John's Guestbook</h2>
+        <p class="mt-2 text-wb-600 text-[15px]">Sign the Guest Book, share photos and add memories that will last forever.</p>
+        <p class="mt-2 text-wb-600 text-[15px]"><span id="entryCount">1,834</span> Entries</p>
+      </div>
+
+      <!-- Form and confirmation occupy the same slot; the form is replaced in
+           place so the page does not jump under the user's thumb. -->
+      <div id="composerSlot" class="mt-6">
+
+        <!-- ---------- Composer ---------- -->
+        <form id="composer" class="bg-white border border-wb-300 rounded-2xl p-5 sm:p-8">
+          <h3 class="font-serif text-xl text-wb-900">Add a post in memory of John</h3>
+
+          <label for="gbName" class="sr-only">Your first and last name</label>
+          <div class="mt-4 flex items-center gap-2 border-b border-wb-300 focus-within:border-navy-500 pb-2">
+            <i class="ph ph-user text-xl text-wb-500" aria-hidden="true"></i>
+            <input id="gbName" name="name" type="text" required placeholder="Your First &amp; Last Name"
+                   class="flex-1 min-w-0 min-h-[44px] bg-transparent outline-none text-base text-wb-900 placeholder:text-wb-500" />
+          </div>
+
+          <label for="gbMessage" class="sr-only">Your message</label>
+          <textarea id="gbMessage" name="message" required rows="4" placeholder="Share a memory of John&hellip;"
+                    class="mt-4 w-full rounded-lg border border-wb-400 bg-wb-50 px-4 py-3.5 text-base text-wb-900 placeholder:text-wb-500 outline-none focus:border-navy-500"></textarea>
+
+          <div class="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
+            <!-- Same squeeze as the sheet's button pair: at 375 these two sit
+                 in ~303px of card, and px-5 pushed both labels onto a second
+                 line. px-4 + nowrap keeps them one line and side by side, as
+                 in the comp. -->
+            <div class="flex gap-2">
+              <button type="button" class="inline-flex items-center gap-1.5 min-h-[44px] px-4 rounded-full border border-wb-300 text-wb-700 font-medium text-sm whitespace-nowrap hover:bg-wb-50">
+                <i class="ph ph-images text-lg" aria-hidden="true"></i> Add Photos
+              </button>
+              <button type="button" class="inline-flex items-center gap-1.5 min-h-[44px] px-4 rounded-full border border-wb-300 text-wb-700 font-medium text-sm whitespace-nowrap hover:bg-wb-50">
+                <i class="ph ph-flame text-lg" aria-hidden="true"></i> Light a Candle
+              </button>
+            </div>
+            <button type="submit" class="sm:ml-auto inline-flex items-center justify-center min-h-[44px] px-5 rounded-full bg-gold-400 text-wb-900 font-semibold text-sm hover:bg-gold-500">
+              Add to the Guestbook
+            </button>
+          </div>
+
+          <!-- Jamie's approved rewrite (DES-2295, 19 Oct): names the updates
+               and drops "daily" and the web-speak. -->
+          <label class="mt-4 flex items-start gap-2.5 cursor-pointer">
+            <input type="checkbox" class="mt-1 w-4 h-4 shrink-0 accent-navy-700" />
+            <span class="text-sm text-wb-700 leading-snug">Email me updates when new memories of John are shared.</span>
+          </label>
+        </form>
+
+        <!-- ---------- Confirmation (Figma 3653:58031) ---------- -->
+        <div id="confirmation" hidden class="gp-fade-in bg-white border border-wb-300 rounded-2xl px-4 py-6 flex flex-col items-center gap-4" role="status" aria-live="polite">
+          <h3 class="font-serif text-2xl leading-tight text-navy-700 text-center max-w-[640px] w-full">Thank you for honoring John.</h3>
+          <p class="text-lg leading-tight text-wb-700 text-center max-w-[640px] w-full">Your entry is being reviewed by a moderator before it's added to the guestbook.</p>
+          <div class="w-full flex flex-col gap-1">
+            <p class="uppercase tracking-wider text-xs font-semibold text-wb-700 text-center">Preview</p>
+            <article class="bg-white border border-wb-300 rounded-2xl pt-6 pb-2 max-w-[640px] w-full mx-auto">
+              <div class="px-6 flex flex-col gap-6">
+                <div class="flex flex-wrap items-center gap-3">
+                  <div class="flex-1 min-w-0 flex flex-wrap items-center gap-4">
+                    <p class="font-bold text-base leading-tight text-wb-900" id="previewName">Your name</p>
+                    <p class="text-base leading-tight text-wb-700">Just now</p>
+                    <span class="inline-flex items-center gap-1 text-base leading-tight text-wb-900">
+                      Pending Review <i class="ph ph-info text-base" aria-hidden="true"></i>
+                    </span>
+                  </div>
+                  <i class="ph ph-dots-three text-[32px] text-wb-700" aria-hidden="true"></i>
+                </div>
+                <p class="font-body text-lg leading-normal text-wb-900" id="previewMessage"></p>
+              </div>
+              <div class="px-6 mt-2 flex items-center justify-between min-h-[40px]">
+                <span class="inline-flex items-center gap-1 text-wb-900">
+                  <i class="ph ph-heart text-2xl" aria-hidden="true"></i><span class="text-base">0</span>
+                </span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- Existing posts ----------
+           Rendered from data rather than hand-written. The count matters for
+           realism — the real obit carries 1,834 entries, and a composer with
+           four posts under it sits at the foot of the page, which is nowhere
+           near where a visitor actually posts from. -->
+      <div class="mt-8 grid gap-4 md:grid-cols-2 items-start" id="postList"></div>
+    </div>
+  </section>
+
+  <!-- ==================== Ad slot ==================== -->
+  <div class="px-4 pb-10">
+    <div class="max-w-[300px] h-[250px] mx-auto bg-wb-200 flex items-center justify-center text-wb-500 text-sm">AD&mdash;300x250</div>
+  </div>
+</main>
+
+<footer class="bg-navy-700 text-white">
+  <div class="max-w-screen-xl mx-auto px-4 py-10">
+    <img src="assets/logo-horizontal-white.svg" alt="Legacy.com" class="h-7 w-auto" onerror="this.remove()" />
+    <p class="mt-4 text-navy-200 text-sm">&copy; 2026 Legacy.com, Inc. Prototype for DES-2305.</p>
+  </div>
+</footer>
+
+<!-- Tukios pins this to the phone viewport. The account sheet covers it while
+     open, which is why the sheet is bottom-anchored rather than floating. -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-wb-200 p-4">
+  <div class="flex gap-3 max-w-sm mx-auto">
+    <button class="flex-1 inline-flex items-center justify-center gap-2 min-h-[44px] rounded-full bg-gold-400 text-wb-900 font-semibold text-sm">
+      <i class="ph ph-flower-tulip text-xl" aria-hidden="true"></i> Send Flowers
+    </button>
+    <button class="flex-1 inline-flex items-center justify-center gap-2 min-h-[44px] rounded-full border border-wb-300 text-wb-700 font-semibold text-sm">
+      <i class="ph ph-envelope-simple text-xl" aria-hidden="true"></i> Send a Card
+    </button>
+  </div>
+</div>
+
+<!-- ====================================================================
+     ACCOUNT PROMPT — Figma Follow/Modal/Soft Follow
+     3653:59029 (mobile, 375x384) / 3657:64954 (desktop, 640x352).
+     Card contents are the comp verbatim. Placement is not: it slides up from
+     the bottom on phones and sits centred on desktop, per Wes on 22 Oct —
+     see the note in styles.css.
+     ==================================================================== -->
+<div id="accountScrim" class="gp-sheet-scrim" hidden data-open="false">
+  <div class="gp-sheet bg-white" role="dialog" aria-modal="true" aria-labelledby="acctEyebrow" id="accountSheet">
+    <div class="flex flex-col items-center px-4 py-8">
+      <div class="flex flex-col gap-4 w-full max-w-[480px]">
+
+        <!-- Eyebrow rule. "Stay connected" is Jamie's replacement for
+             "Want more" (DES-2295, 19 Oct). -->
+        <div class="flex items-center gap-2 w-full">
+          <span class="flex-1 h-px bg-wb-300"></span>
+          <p id="acctEyebrow" class="font-semibold text-base leading-normal text-wb-600 text-center uppercase tracking-[1.12px] whitespace-nowrap">Stay connected</p>
+          <span class="flex-1 h-px bg-wb-300"></span>
+        </div>
+
+        <div class="flex flex-col gap-6 items-center w-full max-w-[420px] mx-auto">
+          <div class="flex flex-col gap-4 items-start w-full">
+            <p class="font-semibold text-base leading-normal text-wb-900 tracking-[-0.32px]">Your own space on Legacy.</p>
+            <ul class="flex flex-col gap-3 w-full max-w-[480px]">
+              <li class="flex gap-2 items-start">
+                <img src="assets/check.svg" alt="" width="24" height="24" class="shrink-0" />
+                <span class="flex-1 min-w-0 text-base leading-tight text-wb-700">Keep the people you care about in one place</span>
+              </li>
+              <li class="flex gap-2 items-start">
+                <img src="assets/check.svg" alt="" width="24" height="24" class="shrink-0" />
+                <span class="flex-1 min-w-0 text-base leading-tight text-wb-700">Get updates when new memories are shared</span>
+              </li>
+              <li class="flex gap-2 items-start">
+                <img src="assets/check.svg" alt="" width="24" height="24" class="shrink-0" />
+                <span class="flex-1 min-w-0 text-base leading-tight text-wb-700">Save your searches and filters</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="flex flex-col gap-6 items-center w-full">
+            <div class="flex gap-2 items-start w-full">
+              <!-- px-4 and nowrap, not the Figma's px-5: at 375 the two
+                   buttons split 343px of row, and 20px of side padding left
+                   "Create an Account" ~2px short of fitting, so it wrapped to
+                   two lines. The comp's own button is 166.5px wide with the
+                   label on one line, so nowrap is the intent and the padding
+                   is what gives. -->
+              <button data-acct="create" class="flex-1 min-w-0 min-h-[44px] rounded-full bg-navy-700 text-white font-semibold text-sm px-4 whitespace-nowrap hover:bg-navy-800">Create an Account</button>
+              <button data-acct="signin" class="flex-1 min-w-0 min-h-[44px] rounded-full bg-white border border-navy-700 text-navy-700 font-semibold text-sm px-4 whitespace-nowrap hover:bg-navy-50">Sign In</button>
+            </div>
+          </div>
+
+          <button data-acct="later" class="font-semibold text-base leading-normal text-navy-500 underline tracking-[-0.32px] min-h-[44px]">Maybe later</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Exit-intent modal ==================== -->
+<div id="exitScrim" class="gp-dialog-scrim" hidden data-open="false">
+  <div class="gp-dialog bg-white" role="dialog" aria-modal="true" aria-labelledby="exitTitle">
+    <div class="p-6 sm:p-8">
+      <div class="flex items-start gap-3">
+        <h2 id="exitTitle" class="flex-1 font-serif text-2xl leading-tight text-navy-700">Before you go &mdash; follow John's page?</h2>
+        <button data-dismiss="exit" class="shrink-0 w-11 h-11 -mt-2 -mr-2 inline-flex items-center justify-center text-wb-600 hover:text-wb-900" aria-label="Close">
+          <i class="ph ph-x text-xl" aria-hidden="true"></i>
+        </button>
+      </div>
+      <p class="mt-3 text-wb-700 text-base leading-snug">We'll email you when new memories are shared. Creating an account keeps every page you follow in one place.</p>
+      <div class="mt-5 flex flex-col sm:flex-row gap-2">
+        <button data-acct="create" class="flex-1 min-h-[44px] rounded-full bg-navy-700 text-white font-semibold text-sm px-5 hover:bg-navy-800">Follow &amp; create account</button>
+        <button data-dismiss="exit" class="flex-1 min-h-[44px] rounded-full bg-white border border-navy-700 text-navy-700 font-semibold text-sm px-5 hover:bg-navy-50">No thanks</button>
+      </div>
+      <p class="mt-4 text-xs text-wb-500 text-center">Exit-intent modal &mdash; the page's existing interrupt, shown here so the prompt can be seen competing with it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Scroll-threshold modal ==================== -->
+<div id="scrollScrim" class="gp-dialog-scrim" hidden data-open="false">
+  <div class="gp-dialog bg-white" role="dialog" aria-modal="true" aria-labelledby="scrollTitle">
+    <div class="p-6 sm:p-8">
+      <div class="flex items-start gap-3">
+        <h2 id="scrollTitle" class="flex-1 font-serif text-2xl leading-tight text-navy-700">Keep John's memory close</h2>
+        <button data-dismiss="scroll" class="shrink-0 w-11 h-11 -mt-2 -mr-2 inline-flex items-center justify-center text-wb-600 hover:text-wb-900" aria-label="Close">
+          <i class="ph ph-x text-xl" aria-hidden="true"></i>
+        </button>
+      </div>
+      <p class="mt-3 text-wb-700 text-base leading-snug">Create a free account to follow this page and get updates when new memories are shared.</p>
+      <div class="mt-5 flex flex-col sm:flex-row gap-2">
+        <button data-acct="create" class="flex-1 min-h-[44px] rounded-full bg-navy-700 text-white font-semibold text-sm px-5 hover:bg-navy-800">Create an Account</button>
+        <button data-dismiss="scroll" class="flex-1 min-h-[44px] rounded-full bg-white border border-navy-700 text-navy-700 font-semibold text-sm px-5 hover:bg-navy-50">Maybe later</button>
+      </div>
+      <p class="mt-4 text-xs text-wb-500 text-center">Scroll-threshold modal &mdash; fires at 60% depth.</p>
+    </div>
+  </div>
+</div>
+
+<!-- The standalone sign-in pop used to live here. Removed 22 Oct: an obituary
+     is not the page type for it. Not disabled behind a flag — gone, so it
+     cannot come back by someone flipping a toggle. -->
+
+<!-- ==================== Signed-in confirmation toast ==================== -->
+<div id="toast" hidden class="fixed left-1/2 -translate-x-1/2 bottom-[104px] md:bottom-8 z-[85] max-w-[92vw] bg-navy-700 text-white rounded-full pl-4 pr-5 py-3 shadow-lg flex items-center gap-2" role="status" aria-live="polite">
+  <i class="ph-fill ph-check-circle text-xl text-seafoam-300" aria-hidden="true"></i>
+  <span class="text-sm font-medium" id="toastText"></span>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ==================================================================
+     Modal orchestration.
+
+     DES-2305: the obit page already carries an exit-intent modal, a
+     scroll-threshold modal and interstitial ads. The GENERIC prompts compete
+     for ONE allowance so they cannot stack up.
+
+     The standalone sign-in pop that used to sit alongside them was removed
+     outright on 22 Oct — an obituary is not the page type for it. It is not
+     a trigger here any more, so it takes no part in what follows.
+
+     The rules:
+
+       1. The guestbook account prompt ALWAYS shows to someone who has
+          posted. It does not compete for the slot and is not blocked by a
+          generic prompt that fired earlier in the session — writing a
+          tribute is the moment the account offer actually makes sense, and
+          it is too valuable to lose to an exit-intent modal the visitor
+          dismissed on their way in.
+       2. Posting also makes the generic prompts stand down for the rest of
+          the session, so they never pile on after the contextual one.
+       3. Among the generic prompts, the first eligible trigger takes the
+          slot and the other is suppressed. Exit intent therefore leads for
+          a visitor who reads and leaves without posting.
+       4. The account prompt is armed by the post but fired by SCROLLING —
+          user interaction, never a timer (review 2, 20 Oct).
+
+     The ceiling is therefore two account prompts in a session, and only for
+     a visitor who saw a generic one and then went on to post. Never three,
+     and never two for the same intent.
+     ================================================================== */
+
+  var SCROLL_DEPTH_TRIGGER = 0.60;   // scroll-threshold modal
+
+  // How far the visitor has to move after posting before the prompt appears,
+  // in either direction. 80px is about one wheel notch on a laptop and the
+  // start of a thumb swipe on a phone — enough that it reads as a deliberate
+  // move away from the confirmation rather than a stray pixel, and not so far
+  // that someone who posts and pauses never sees the offer. It was 180px,
+  // which on a 812px phone is nearly a quarter of the screen and felt like a
+  // hike.
+  var SCROLL_AFTER_POST    = 80;
+  var FIRST_NAME           = 'John';
+
+  /* ---------------- Guestbook entries ---------------- */
+
+  var POSTS = [
+    ['Eliana Salvucci', '2 hours ago', 'John was a bright light in this world. I will always remember his infectious laugh and kind heart. He will be missed dearly.', 3],
+    ['Deven Quinton', '3 hours ago', 'John was a beacon of light, his laughter echoing in our hearts. A devoted father and cherished friend, he embraced life with open arms.', 2],
+    ['Johnathan Doebenheimer', '1 day ago', 'Thirty-one years on the floor together and he never once let me carry a load on my own. I keep expecting to see him at the gate at six in the morning. Rest easy, old friend.', 8],
+    ['Ruth Doe-Halvorsen', '1 day ago', 'Dad, thank you for every early morning on the water and for teaching all six grandkids to bait their own hooks. We will keep the tomatoes going.', 14],
+    ['Pastor Len Whitaker', '1 day ago', 'John quietly fixed the church boiler every winter for twenty years and never once let us put his name in the bulletin. The congregation is holding Elaine and the family in prayer.', 11],
+    ['Carole Mendenhall', '2 days ago', 'Our families camped together at Lake Carroll every August. John could start a fire in the rain and never made anyone feel foolish for not knowing how.', 5],
+    ['Terrence Boyd', '2 days ago', 'He trained me on the lathe when I was nineteen and convinced I knew everything. Patient man. I have taught it the same way to four apprentices since.', 7],
+    ['Marguerite Oyelaran', '3 days ago', 'Elaine and John were the first neighbours to knock on our door when we moved to Dixon in 1998. He had a tomato plant under his arm. We still grow its grandchildren.', 9],
+    ['Danny Pruitt', '3 days ago', 'Rest easy, big John.', 4],
+    ['The Halvorsen family', '4 days ago', 'Grandpa, thank you for the boat, the bad jokes, and for never telling Mom about the window. We love you.', 22],
+    ['Sylvia Ruiz-Cortez', '4 days ago', 'I worked second shift across from John for eleven years. He brought in coffee every Friday for the whole floor and never let anybody pay him back.', 6],
+    ['Walt Ingersoll', '5 days ago', 'A good man and a better friend. Sixty years since we met in Mr. Dunphy’s shop class. I will miss our Tuesday calls more than I can say.', 13]
+  ];
+
+  function renderPosts() {
+    document.getElementById('postList').innerHTML = POSTS.map(function (p) {
+      return '' +
+        '<article class="bg-white border border-wb-300 rounded-2xl pt-6 pb-2">' +
+          '<div class="px-6 flex flex-col gap-6">' +
+            '<div class="flex flex-wrap items-center gap-3">' +
+              '<div class="flex-1 min-w-0 flex flex-wrap items-center gap-4">' +
+                '<p class="font-bold text-base leading-tight text-wb-900">' + p[0] + '</p>' +
+                '<p class="text-base leading-tight text-wb-700">' + p[1] + '</p>' +
+              '</div>' +
+              '<i class="ph ph-dots-three text-[32px] text-wb-700" aria-hidden="true"></i>' +
+            '</div>' +
+            '<p class="font-body text-lg leading-normal text-wb-900">' + p[2] + '</p>' +
+          '</div>' +
+          '<div class="px-6 mt-2 flex items-center justify-between min-h-[40px]">' +
+            '<span class="inline-flex items-center gap-1 text-wb-900">' +
+              '<i class="ph ph-heart text-2xl" aria-hidden="true"></i><span class="text-base">' + p[3] + '</span>' +
+            '</span>' +
+          '</div>' +
+        '</article>';
+    }).join('');
+  }
+
+  var state;
+
+  function freshState() {
+    return {
+      slot: null,          // id of the trigger holding the one allowance
+      reservedFor: null,   // posting reserves the slot before the prompt fires
+      posted: false,
+      postScrollY: 0,
+      rateLimit: document.getElementById('rateLimitToggle').checked,
+      fired: {},
+      openCount: 0
+    };
+  }
+
+  /* ---------------- Trigger registry ---------------- */
+
+  var TRIGGERS = {
+    scroll: {
+      label: 'Scroll-threshold modal',
+      scrim: 'scrollScrim',
+      waitingWhy: 'Waiting — fires at 60% depth.'
+    },
+    exit: {
+      label: 'Exit-intent modal',
+      scrim: 'exitScrim',
+      waitingWhy: 'Waiting — pointer leaves the top of the window.'
+    },
+    guestbook: {
+      label: 'Guestbook account prompt',
+      scrim: 'accountScrim',
+      // Rule 2 — exempt from the slot. Posting always earns the prompt.
+      alwaysFires: true,
+      waitingWhy: 'Waiting — needs a post, then a scroll either way.'
+    }
+  };
+
+  /* ---------------- Slot arbitration ---------------- */
+
+  function canFire(id) {
+    var t = TRIGGERS[id];
+    if (state.fired[id]) return false;
+    if (!state.rateLimit) return true;              // contrast mode: no limit
+    if (t.alwaysFires) return true;                 // rule 2 — exempt
+    if (state.slot) return false;                   // already spent
+    if (state.reservedFor && state.reservedFor !== id) return false;  // rule 3
+    return true;
+  }
+
+  function fire(id) {
+    if (!canFire(id)) return false;
+    if (state.rateLimit) {
+      // An exempt prompt never spends the slot — it was never competing for
+      // it. It does stop anything generic following it (rule 3), which is
+      // what reservedFor already means.
+      if (TRIGGERS[id].alwaysFires) state.reservedFor = id;
+      else state.slot = id;
+    }
+    state.fired[id] = true;
+    state.openCount++;
+    openScrim(TRIGGERS[id].scrim);
+    render();
+    return true;
+  }
+
+  /* ---------------- Scrim plumbing ---------------- */
+
+  function openScrim(elId) {
+    var el = document.getElementById(elId);
+    el.hidden = false;
+    // Two frames: one for `hidden` to clear, one for the transition to have a
+    // starting value to animate from. A single rAF lands before layout and
+    // the sheet appears already open.
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { el.setAttribute('data-open', 'true'); });
+    });
+    var focusable = el.querySelector('button');
+    if (focusable) setTimeout(function () { focusable.focus(); }, 60);
+  }
+
+  function closeScrim(elId) {
+    var el = document.getElementById(elId);
+    el.setAttribute('data-open', 'false');
+    var done = function () { el.hidden = true; el.removeEventListener('transitionend', done); };
+    el.addEventListener('transitionend', done);
+    // transitionend never arrives on a hidden tab, so guarantee the cleanup.
+    setTimeout(function () { if (el.getAttribute('data-open') === 'false') el.hidden = true; }, 420);
+  }
+
+  function closeAll() {
+    ['accountScrim', 'exitScrim', 'scrollScrim'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el.hidden) closeScrim(id);
+    });
+  }
+
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    document.getElementById('toastText').textContent = msg;
+    t.hidden = false;
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { t.hidden = true; }, 3200);
+  }
+
+  /* ---------------- Panel ---------------- */
+
+  function render() {
+    var slotState = document.getElementById('slotState');
+    var slotNote  = document.getElementById('slotNote');
+
+    if (!state.rateLimit) {
+      slotState.textContent = 'Rate limiting off';
+      slotNote.textContent = 'Today’s behaviour: every trigger fires independently. ' +
+        state.openCount + ' prompt' + (state.openCount === 1 ? '' : 's') + ' shown so far.';
+    } else if (state.slot) {
+      slotState.textContent = 'Spent — ' + TRIGGERS[state.slot].label;
+      slotNote.textContent = state.posted
+        ? 'Spent for this session. The guestbook prompt is exempt and still shows — a post always earns it.'
+        : 'Spent for this session. No other generic prompt can fire.';
+    } else if (state.posted) {
+      slotState.textContent = 'Stood down — posted';
+      slotNote.textContent = 'The post takes over: the guestbook prompt shows on the next scroll and the generic prompts hold off.';
+    } else {
+      slotState.textContent = 'Unspent';
+      slotNote.textContent = 'One generic prompt per session — first eligible trigger takes it. The guestbook prompt is exempt.';
+    }
+
+    Object.keys(TRIGGERS).forEach(function (id) {
+      var row = document.querySelector('.gp-trig[data-trig="' + id + '"]');
+      var dot = row.querySelector('[data-dot]');
+      var why = row.querySelector('[data-why]');
+      var t = TRIGGERS[id];
+      var s, text;
+
+      if (state.fired[id]) {
+        s = 'spent'; text = 'Shown.';
+      } else if (state.rateLimit && t.alwaysFires) {
+        // Checked before the slot and stand-down branches: an exempt prompt
+        // is never suppressed by either of them.
+        if (state.posted) { s = 'armed'; text = 'Armed — scroll ' + SCROLL_AFTER_POST + 'px either way to fire it. Always shows after a post.'; }
+        else { s = 'waiting'; text = t.waitingWhy; }
+      } else if (state.rateLimit && state.slot) {
+        s = 'blocked'; text = 'Suppressed — ' + TRIGGERS[state.slot].label + ' already fired.';
+      } else if (state.rateLimit && state.reservedFor && state.reservedFor !== id) {
+        s = 'blocked'; text = 'Stood down — the visitor posted.';
+      } else {
+        s = 'waiting'; text = t.waitingWhy;
+      }
+
+      row.setAttribute('data-state', s);
+      why.textContent = text;
+      dot.className = 'ph mt-0.5 shrink-0 ' + ({
+        spent:   'ph-check-circle text-seafoam-300',
+        blocked: 'ph-prohibit text-navy-300',
+        armed:   'ph-target text-gold-300',
+        waiting: 'ph-circle text-navy-300'
+      })[s];
+    });
+  }
+
+  /* ---------------- Guestbook flow ---------------- */
+
+  function submitPost(name, message) {
+    document.getElementById('previewName').textContent = name;
+    document.getElementById('previewMessage').textContent = message;
+    document.getElementById('composer').hidden = true;
+
+    var conf = document.getElementById('confirmation');
+    conf.hidden = false;
+    // Restart the entrance animation if this is a replay after a reset.
+    conf.classList.remove('gp-fade-in');
+    void conf.offsetWidth;
+    conf.classList.add('gp-fade-in');
+
+    state.posted = true;
+    state.postScrollY = window.scrollY;
+    // Rule 3 — the post makes the generic prompts stand down. Set whether or
+    // not the slot is already spent: if a generic one fired earlier the slot
+    // is blocking them anyway, and if it hasn't, this is what stops one
+    // landing on top of the contextual prompt.
+    if (state.rateLimit) state.reservedFor = 'guestbook';
+    render();
+  }
+
+  /* ---------------- Wiring ---------------- */
+
+  document.getElementById('composer').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = document.getElementById('gbName').value.trim() || 'Your name';
+    var msg  = document.getElementById('gbMessage').value.trim() ||
+               'Thinking of the whole family today.';
+    submitPost(name, msg);
+  });
+
+  // Scroll: both the depth trigger and the post-then-scroll trigger.
+  var ticking = false;
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      ticking = false;
+      var y = window.scrollY;
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+
+      // Rule 5 — armed by the post, fired by the scroll.
+      // Absolute distance, so scrolling back UP counts the same as going
+      // down. Reading on from the confirmation and going back over the other
+      // tributes are both the visitor moving on from their own post, and
+      // up is the likelier one on a phone, where the composer sits below the
+      // entries they were already reading. Taking either direction also
+      // removes the short-page problem the old downward-only test had: at the
+      // foot of the obit there may be nothing left to scroll down into, but
+      // there is always something to scroll back up to.
+      if (state.posted && !state.fired.guestbook &&
+          Math.abs(y - state.postScrollY) >= SCROLL_AFTER_POST) {
+        fire('guestbook');
+      }
+
+      if (max > 0 && y / max >= SCROLL_DEPTH_TRIGGER) fire('scroll');
+    });
+  }, { passive: true });
+
+  // Exit intent, desktop: pointer leaves through the top of the window.
+  document.addEventListener('mouseout', function (e) {
+    if (e.relatedTarget || e.clientY > 8) return;
+    fire('exit');
+  });
+
+  // Exit intent, touch: a fast flick back toward the top reads as leaving.
+  // Phones have no pointer to lose, and 70%+ of this traffic is mobile.
+  var lastY = window.scrollY, lastT = Date.now();
+  window.addEventListener('scroll', function () {
+    var now = Date.now(), y = window.scrollY, dt = now - lastT;
+    if (dt > 60) {
+      var v = (lastY - y) / dt;              // px per ms, upward is positive
+      if (v > 1.6 && y > 400) fire('exit');
+      lastY = y; lastT = now;
+    }
+  }, { passive: true });
+
+  // Dismissals and account actions.
+  document.addEventListener('click', function (e) {
+    var dismiss = e.target.closest('[data-dismiss]');
+    if (dismiss) { closeScrim(dismiss.getAttribute('data-dismiss') + 'Scrim'); return; }
+
+    var acct = e.target.closest('[data-acct]');
+    if (!acct) return;
+    var action = acct.getAttribute('data-acct');
+    closeAll();
+    if (action === 'create')      toast('Account created — you’ll hear when new memories of ' + FIRST_NAME + ' are shared.');
+    else if (action === 'signin') toast('Signed in — following ' + FIRST_NAME + '’s page.');
+  });
+
+  // Click the scrim itself (not the card) to dismiss.
+  ['accountScrim', 'exitScrim', 'scrollScrim'].forEach(function (id) {
+    document.getElementById(id).addEventListener('click', function (e) {
+      if (e.target === this) closeScrim(id);
+    });
+  });
+
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
+
+  /* ---------------- Panel controls ---------------- */
+
+  document.getElementById('panelToggle').addEventListener('click', function () {
+    var p = document.getElementById('panel');
+    var collapsed = p.getAttribute('data-collapsed') === 'true';
+    p.setAttribute('data-collapsed', String(!collapsed));
+    this.setAttribute('aria-expanded', String(collapsed));
+    document.getElementById('panelChevron').className =
+      'ph ml-auto text-base ' + (collapsed ? 'ph-caret-up' : 'ph-caret-down');
+  });
+
+  document.getElementById('rateLimitToggle').addEventListener('change', function () {
+    state.rateLimit = this.checked;
+    state.slot = null;
+    state.reservedFor = this.checked && state.posted ? 'guestbook' : null;
+    render();
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    closeAll();
+    document.getElementById('composer').hidden = false;
+    document.getElementById('confirmation').hidden = true;
+    document.getElementById('composer').reset();
+    state = freshState();
+    render();
+    // `instant`, not `auto` — html sets scroll-behavior:smooth, which `auto`
+    // inherits, and a smooth trip back to the top keeps firing the scroll
+    // handler on the way up against the state we just reset.
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  });
+
+  // Jump straight to the posted state, so a reviewer can reach the prompt
+  // without typing a memory out first.
+  document.getElementById('postedBtn').addEventListener('click', function () {
+    if (!state.posted) {
+      submitPost('Marcus Doe', 'Dad taught me to bait a hook before I could tie my shoes. Forty years of early mornings on the water and I would take every one of them again.');
+    }
+    // `instant`, not the page's default smooth scroll. Smooth travel runs
+    // through the scroll handler, and the trip down to the guestbook is far
+    // longer than the threshold the prompt is armed at — so the prompt fired
+    // mid-flight, before the reviewer had seen the confirmation.
+    // Taking the anchor on a timer afterwards only races the animation
+    // (memory.md: don't chase an animation with a timer). Jumping instead
+    // means scrollY is already final on the next line and there is nothing
+    // to race.
+    document.getElementById('guestbook').scrollIntoView({ block: 'start', behavior: 'instant' });
+    state.postScrollY = window.scrollY;
+  });
+
+  // The panel is scaffolding, so it must not be the first thing a reviewer
+  // sees on a phone — expanded it covers most of a 375x812 screen. Start it
+  // collapsed there and leave it open on desktop, where it costs nothing.
+  if (window.innerWidth < 768) {
+    document.getElementById('panel').setAttribute('data-collapsed', 'true');
+    document.getElementById('panelToggle').setAttribute('aria-expanded', 'false');
+    document.getElementById('panelChevron').className = 'ph ml-auto text-base ph-caret-down';
+  }
+
+  renderPosts();
+  state = freshState();
+  render();
+
+  // Debug handle for the scenario panel and for driving the flow from the
+  // console during a review ("why didn't it fire?"). Prototype-only.
+  window.__gp = {
+    get state() { return state; },
+    fire: fire,
+    triggers: TRIGGERS
+  };
+})();
+</script>
+</body>
+</html>
