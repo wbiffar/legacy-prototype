@@ -30,20 +30,13 @@ The "Stay connected" card.
 
 ## Rules
 
-In the order `canFire()` applies them.
+Applied in this order.
 
-1. **A completed follow ends all prompting**, the guestbook prompt included.
-   That success state already made the account offer; asking again is asking
-   twice. *Submitting* suppresses — dismissing with the X does not.
-2. **Otherwise a post earns the prompt** — exempt from the allowance, and from
-   any generic prompt the visitor dismissed. A tribute is when the offer makes
-   sense.
-3. **A post also stands the generic prompts down** for the session.
-4. **Generic prompts share one allowance.** First eligible wins, so exit intent
-   leads for someone who reads and leaves.
-5. **Interaction fires the prompt, never a timer**: the post arms, a scroll
-   fires. Accepted 20 Oct — misses anyone who posts and leaves without
-   scrolling.
+1. **A completed follow ends all prompting** — it already made the account offer.
+2. **Otherwise a post earns the prompt**, even after a dismissed modal.
+3. **A post also stops the generic prompts** for that session.
+4. **One generic prompt per session** — exit intent usually takes it.
+5. **A scroll fires the prompt**, never a timer.
 
 **Ceiling: two prompts per session**, and only for someone who dismissed a
 generic one and then posted. Complete the follow and it is one. Never three.
