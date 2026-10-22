@@ -42,10 +42,19 @@ textarea:focus-visible, [tabindex]:focus-visible {
 
 /* The gold wash behind the guestbook, lifted off the live Tukios page:
    radial-gradient(ellipse 100% 100% at 50% 0%, rgba(226,186,96,0.25), transparent).
-   226,186,96 is gold/400 — an alpha wash of the token, not a new colour. */
+   226,186,96 is gold/400 — an alpha wash of the token, not a new colour.
+
+   `top` is measured from this element's own top edge, and this element starts
+   at the post UI, so 80px puts the gradient 80px below the top of the
+   composer. It is a flat offset rather than a share of the height on purpose:
+   the wash should sit the same distance under the card's top lip at every
+   width. The live page uses 6rem here; 80px is Wes's call, 22 Oct.
+
+   The element is full width while its content is capped and centred inside,
+   so the ellipse spans the page rather than the 1024px column. */
 .gp-guestbook-glow { position: relative; }
 .gp-guestbook-glow::before {
-  content: ''; position: absolute; inset-inline: 0; top: 6rem;
+  content: ''; position: absolute; inset-inline: 0; top: 80px;
   height: 100%; max-height: 500px; pointer-events: none;
   background: radial-gradient(ellipse 100% 100% at 50% 0%, rgba(226,186,96,0.25) 0%, transparent 100%);
 }

@@ -187,17 +187,26 @@
   </section>
 
   <!-- ==================== Guestbook ==================== -->
-  <section id="guestbook" class="gp-guestbook-glow px-4 pb-10">
-    <div class="max-w-screen-lg mx-auto">
-      <div class="text-center pt-6">
+  <section id="guestbook" class="pb-10">
+    <div class="px-4">
+      <div class="max-w-screen-lg mx-auto text-center pt-6">
         <h2 class="font-serif text-[30px] text-wb-700">John's Guestbook</h2>
         <p class="mt-2 text-wb-600 text-[15px]">Sign the Guest Book, share photos and add memories that will last forever.</p>
         <p class="mt-2 text-wb-600 text-[15px]"><span id="entryCount">1,834</span> Entries</p>
       </div>
+    </div>
+
+    <!-- The gold wash is anchored here, not on the whole section: this
+         wrapper's top edge IS the top of the post UI, so the glow's 80px
+         offset is measured from the composer rather than from the heading
+         above it. Matches the live page, where the h2 and the subtitle are
+         siblings OUTSIDE the element carrying the gradient. -->
+    <div class="gp-guestbook-glow px-4 mt-6">
+      <div class="max-w-screen-lg mx-auto">
 
       <!-- Form and confirmation occupy the same slot; the form is replaced in
            place so the page does not jump under the user's thumb. -->
-      <div id="composerSlot" class="mt-6">
+      <div id="composerSlot">
 
         <!-- ---------- Composer ---------- -->
         <form id="composer" class="bg-white border border-wb-300 rounded-2xl p-5 sm:p-8">
@@ -276,6 +285,7 @@
            four posts under it sits at the foot of the page, which is nowhere
            near where a visitor actually posts from. -->
       <div class="mt-8 grid gap-4 md:grid-cols-2 items-start" id="postList"></div>
+      </div>
     </div>
   </section>
 
