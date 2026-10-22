@@ -16,17 +16,15 @@ implements exactly this.
 | Guestbook prompt | A post, then 80px scroll either direction | Account prompt |
 | ~~Sign-in pop~~ | — | Removed — wrong page type for it |
 
-**Follow modal** — Figma:
-[capture](https://www.figma.com/design/djnZb62qRq3Y4W5HvQcGG1/des-2289-tukios-consumer-obit-adjustments?node-id=3626-41748)
-→ [success](https://www.figma.com/design/djnZb62qRq3Y4W5HvQcGG1/des-2289-tukios-consumer-obit-adjustments?node-id=3626-41688).
-"Never miss an update" takes an email, then "You're all set!" confirms it. Both
-generic triggers show this same card. The success state repeats the full
-account offer — same benefits, same buttons — which is what drives rule 1.
+**Follow modal** — one card, two states:
+["Never miss an update"](https://www.figma.com/design/djnZb62qRq3Y4W5HvQcGG1/des-2289-tukios-consumer-obit-adjustments?node-id=3626-41748)
+→ ["You're all set!"](https://www.figma.com/design/djnZb62qRq3Y4W5HvQcGG1/des-2289-tukios-consumer-obit-adjustments?node-id=3626-41688).
+Both generic triggers show it. The success state repeats the account offer,
+which is why rule 1 exists.
 
-**Account prompt** — Figma:
+**Account prompt** — the "Stay connected" card:
 [mobile](https://www.figma.com/design/djnZb62qRq3Y4W5HvQcGG1/des-2289-tukios-consumer-obit-adjustments?node-id=3653-59029)
 / [desktop](https://www.figma.com/design/djnZb62qRq3Y4W5HvQcGG1/des-2289-tukios-consumer-obit-adjustments?node-id=3657-64954).
-The "Stay connected" card.
 
 ## Rules
 
