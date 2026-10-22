@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy — About Me (DES-2296)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0;1&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <script src="shared/tokens.js"></script>
+  <link rel="stylesheet" href="shared/styles.css" />
+  <style>
+    /* ==================================================================
+       About Me — structural CSS only.
+       Every colour comes from a Tailwind token class in the markup or in
+       the JS that renders the suggestion rows. Nothing here sets a colour,
+       so there are no raw hex values to drift from the design system.
+       Custom classes are `ta-` / `am-` prefixed so none of them can
+       collide with a Tailwind CDN utility (see memory.md: `.collapse`).
+       ================================================================== */
+
+    /* ---- Typeahead popover ---- */
+    .ta-control { position: relative; }
+    /* The control is the popover's anchor, so it has to be exactly as tall
+       as the input — otherwise `top: 100%` lands in dead space. */
+    .ta-control > .ta-input { display: block; }
+    .ta-pop {
+      position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 40;
+      max-height: 320px; overflow-y: auto; overscroll-behavior: contain;
+    }
+    /* Last field in a group would clip inside the card; flip it upward. */
+    .ta-field[data-drop="up"] .ta-pop { top: auto; bottom: calc(100% + 6px); }
+
+    /* Suggestion row — 56px keeps it clear of the 44px minimum tap target. */
+    .ta-opt {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%; min-height: 56px; padding: 10px 14px; text-align: left;
+      cursor: pointer;
+    }
+    .ta-opt:last-child { border-bottom: 0; }
+
+    /* ---- Spinner (loading state) ---- */
+    .ta-spin {
+      width: 18px; height: 18px; border-radius: 9999px;
+      border: 2px solid currentColor; border-top-color: transparent;
+      animation: ta-spin 0.7s linear infinite;
+    }
+    @keyframes ta-spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .ta-spin { animation-duration: 2.4s; }
+    }
+
+    /* ---- Unsaved-changes banner — the DES-2186 Saved Defaults "Changed"
+           state, reused. In that ticket it sits in normal flow, which on a
+           ten-field form would just move the problem from below the fold to
+           above it, so here it is pinned instead: under the header on
+           desktop, at the bottom on mobile where the thumb already is.
+           Toggled with the `hidden` attribute, so the shared
+           `[hidden] { display: none !important }` rule does the hiding. ---- */
+    .am-dirtybar { position: sticky; top: 0; z-index: 30; animation: am-bar-in .2s ease; }
+    @keyframes am-bar-in { from { opacity: 0; transform: translateY(-6px); } }
+    @media (max-width: 767px) {
+      .am-dirtybar {
+        position: fixed; left: 0; right: 0; z-index: 50;
+        /* `top` has to be unset explicitly — it is still 0 from the sticky
+           rule above, and fixed + top:0 + bottom:0 stretches the bar over
+           the whole viewport instead of sitting at the foot of it. */
+        top: auto; bottom: 0;
+        padding: 0 12px calc(12px + env(safe-area-inset-bottom));
+        animation-name: am-bar-in-up;
+      }
+      @keyframes am-bar-in-up { from { opacity: 0; transform: translateY(8px); } }
+      /* The bar is fixed, so it would otherwise sit on top of the last ~80px
+         of the page — which is exactly where Send feedback lives. Reserve the
+         space only while the bar is actually showing. Keep this in step with
+         the bar's height if its copy or control ever changes. */
+      body.am-bar-on { padding-bottom: 96px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .am-dirtybar { animation: none; } }
+
+    /* ---- Save row sits at the foot of the card, in normal flow. Pinning it
+           to the viewport was prototyped and set aside: it keeps the button
+           and the last-saved line permanently in reach, but costs ~89px of
+           desktop and ~130px of phone screen to a bar that's idle most of
+           the time. The .am-dirtybar above is what follows the user, and
+           only once there's something to say. ---- */
+    .am-saverow { position: static; }
+
+    /* Anchor offset so the sticky header never covers a scrolled-to field. */
+    .am-anchor { scroll-margin-top: 120px; }
+  </style>
+</head>
+<body>
+
+<!-- ====================================================================
+     HEADER — NavigationCustom 2.0 (signed in)
+     Mirrors future-my-people.html exactly so the two pages share chrome.
+     ==================================================================== -->
+<header class="bg-white border-b border-wb-300">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-3 md:py-4 flex items-center gap-3 md:gap-6">
+    <a href="../" aria-label="Legacy.com home" class="flex-shrink-0 flex items-center">
+      <img src="assets/logo-horizontal.svg" alt="Legacy" class="h-8 md:h-9 w-auto" />
+    </a>
+    <div class="flex-1 max-w-[480px] mx-auto hidden lg:block">
+      <div class="relative">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-wb-500 pointer-events-none"><i class="ph ph-magnifying-glass text-lg"></i></span>
+        <input type="search" placeholder="Find a loved one…" aria-label="Find a loved one" class="w-full h-11 pl-11 pr-4 rounded-full bg-white border border-wb-300 text-[15px] text-wb-900 placeholder:text-wb-400 focus:outline-none focus:border-navy-500" />
+      </div>
+    </div>
+    <div class="flex items-center gap-2 md:gap-3 ml-auto">
+      <div class="hidden lg:inline-flex items-center gap-2 px-2 py-1">
+        <span class="w-9 h-9 rounded-full bg-gold-100 text-gold-900 flex items-center justify-center text-sm font-semibold border border-gold-300" aria-hidden="true">J</span>
+        <span class="text-[15px] font-semibold text-wb-900">Hi, John</span>
+      </div>
+      <button aria-label="Your account" class="lg:hidden w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900"><i class="ph ph-user-circle text-xl"></i></button>
+      <button aria-label="Open menu" class="lg:hidden w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900"><i class="ph ph-list text-xl"></i></button>
+    </div>
+  </div>
+  <nav class="hidden lg:block border-t border-wb-200">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-center gap-8 text-[15px] font-semibold text-wb-900 h-12">
+      <a href="#" class="hover:text-navy-700">Create &amp; Publish</a>
+      <a href="#" class="hover:text-navy-700">Browse Obituaries</a>
+      <a href="#" class="hover:text-navy-700">Plan Ahead</a>
+      <a href="#" class="hover:text-navy-700">Get Support</a>
+      <a href="#" class="hover:text-navy-700">Send a Gift</a>
+    </div>
+  </nav>
+</header>
+
+<!-- ====================================================================
+     MAIN
+     ==================================================================== -->
+<main class="max-w-[1440px] mx-auto px-3 md:px-8 lg:px-12 pt-6 md:pt-10 pb-16">
+  <div class="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-4 lg:gap-12 lg:max-w-[1108px] lg:mx-auto">
+
+    <!-- =================== LEFT: My Account =================== -->
+    <aside class="hidden lg:block">
+      <nav class="sticky top-[140px] bg-white border border-wb-200 rounded-xl p-6 shadow-sm" aria-label="My Account">
+        <h2 class="font-serif-heading text-2xl text-wb-900 leading-none">My Account</h2>
+        <p class="text-sm text-gold-800 mt-2">Welcome back, John</p>
+        <div class="border-t border-wb-200 my-5"></div>
+        <ul class="space-y-3 text-[15px]">
+          <li><a href="about-me.html" aria-current="page" class="font-bold text-wb-900">About Me</a></li>
+          <li><a href="future-my-people.html" class="text-wb-700 hover:text-navy-700">My People</a></li>
+          <li><a href="#" class="text-wb-700 hover:text-navy-700">Following</a></li>
+          <li><a href="#" class="text-wb-700 hover:text-navy-700">Account Settings</a></li>
+        </ul>
+        <div class="border-t border-wb-200 my-5"></div>
+        <a href="future-index.html?id=ralph&so=1" class="inline-block text-sm font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2">Sign out</a>
+      </nav>
+    </aside>
+
+    <!-- Mobile accordion -->
+    <div class="lg:hidden bg-white border border-wb-200 rounded-xl shadow-sm overflow-hidden" data-acct-open="false" id="acct-accordion">
+      <button class="w-full p-5 flex items-start justify-between gap-3 text-left" aria-expanded="false" aria-controls="acct-links" id="acct-toggle">
+        <span class="min-w-0">
+          <span class="block font-serif-heading text-2xl text-wb-900 leading-none">My Account</span>
+          <span class="block text-sm text-gold-800 mt-2 break-words">Welcome back, John</span>
+        </span>
+        <i class="ph ph-caret-down text-xl text-wb-700 acct-chevron flex-shrink-0 mt-1" aria-hidden="true"></i>
+      </button>
+      <div class="acct-panel" id="acct-links">
+        <div>
+          <ul class="px-5 pt-1 pb-5 space-y-3 text-[15px]">
+            <li><a href="about-me.html" aria-current="page" class="font-bold text-wb-900">About Me</a></li>
+            <li><a href="future-my-people.html" class="text-wb-700">My People</a></li>
+            <li><a href="#" class="text-wb-700">Following</a></li>
+            <li><a href="#" class="text-wb-700">Account Settings</a></li>
+            <li><a href="future-index.html?id=ralph&so=1" class="text-navy-500 font-semibold underline underline-offset-2">Sign out</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== RIGHT: About Me =================== -->
+    <div class="max-w-[800px]">
+
+      <!-- ---------- Personalised header ---------- -->
+      <!-- Plain noun title, matching "My People", so the page reads as the
+           user's own. The name is deliberately NOT repeated here — the header
+           and the My Account card already greet them, and a third greeting
+           was one too many. -->
+      <!-- The explainer is the description, not a callout beside it: it's
+           the answer to "why are you asking?", which is the first thing a
+           reader wants, so it belongs directly under the title. -->
+      <header class="mb-5 md:mb-6 mt-3 lg:mt-0">
+        <h1 class="font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight">About Me</h1>
+        <p class="text-base md:text-lg text-wb-700 mt-3 leading-relaxed">What you share here, along with the people you've saved in <a href="future-my-people.html" class="font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2">My People</a>, shapes what we show you on Legacy.com.</p>
+      </header>
+
+      <!-- ---------- Unsaved-changes banner (DES-2186 pattern) ---------- -->
+      <!-- Same gold/100 container and navy save pill as the Saved Defaults
+           "Changed" banner, so the two pages speak with one voice about
+           unsaved work. The icon differs on purpose: there a star means
+           "this is your saved default", here nothing is starred — a pencil
+           says what actually happened, which is that you edited something.
+
+           Nothing sits behind it: no band, no page-coloured backdrop. It's
+           a card that floats over the form, so the fill has to be its own
+           and the shadow does the separating. Mobile throws the shadow
+           upward, since a downward one on a bottom-anchored bar falls off
+           the screen and leaves its top edge flat against the content. -->
+      <div class="am-dirtybar md:py-3" id="dirty-bar" role="region" aria-label="Unsaved changes" hidden>
+        <div class="w-full bg-gold-100 rounded-lg px-4 py-3 sm:p-4 flex items-center gap-3 shadow-[0_-6px_16px_-4px_rgba(0,0,0,0.12)] md:shadow-md">
+          <div class="flex items-center gap-2 min-w-0 flex-1">
+            <i class="ph ph-pencil-simple text-xl sm:text-[22px] text-gold-700 flex-shrink-0" aria-hidden="true"></i>
+            <!-- One message at every width. "You've changed your details."
+                 needed ~230px and a phone leaves ~207px beside the button,
+                 so it had to swap to a short form below sm; this is inside
+                 the budget everywhere and reads the same on any screen.
+                 `truncate` keeps the bar to one row below 375px rather
+                 than letting it wrap. -->
+            <p class="text-base text-wb-700 leading-tight truncate">You've made changes.</p>
+          </div>
+          <!-- 44px on phones for the tap-target minimum; back to the
+               design system's 40px pill from sm up. -->
+          <button type="button" id="bar-save" class="flex-shrink-0 inline-flex items-center justify-center h-11 sm:h-10 px-5 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-sm font-semibold transition-colors whitespace-nowrap">Save</button>
+        </div>
+      </div>
+
+      <!-- ---------- The form ---------- -->
+      <form id="about-form" novalidate>
+        <div class="bg-white border border-wb-200 rounded-xl shadow-sm p-5 md:p-8">
+
+          <!-- ===== About you ===== -->
+          <!-- Age band + gender are both pending legal review (DES-2296).
+               Designed here so the page reads complete; easy to drop. -->
+          <section class="am-anchor" aria-labelledby="sec-about">
+            <h2 id="sec-about" class="font-serif-heading text-2xl text-wb-900">About you</h2>
+            <p class="text-[15px] text-wb-600 mt-1.5">Broad strokes only. None of this appears on a public page.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5">
+              <div>
+                <label for="age-range" class="block text-[15px] font-semibold text-wb-900 mb-2">Age range</label>
+                <div class="relative">
+                  <select id="age-range" data-simple-field="ageRange" class="w-full h-12 pl-4 pr-11 rounded-lg border border-wb-300 bg-white text-base text-wb-900 appearance-none focus:outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-500/25">
+                    <option value="">Select an age range</option>
+                    <option>18–24</option><option>25–34</option><option>35–44</option>
+                    <option>45–54</option><option>55–64</option><option>65–74</option><option>75+</option>
+                  </select>
+                  <span class="absolute right-4 top-1/2 -translate-y-1/2 text-wb-600 pointer-events-none" aria-hidden="true"><i class="ph ph-caret-down"></i></span>
+                </div>
+              </div>
+              <div>
+                <label for="gender" class="block text-[15px] font-semibold text-wb-900 mb-2">Gender</label>
+                <div class="relative">
+                  <select id="gender" data-simple-field="gender" class="w-full h-12 pl-4 pr-11 rounded-lg border border-wb-300 bg-white text-base text-wb-900 appearance-none focus:outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-500/25">
+                    <option value="">Prefer not to say</option>
+                    <option>Woman</option><option>Man</option><option>Non-binary</option><option>Another identity</option>
+                  </select>
+                  <span class="absolute right-4 top-1/2 -translate-y-1/2 text-wb-600 pointer-events-none" aria-hidden="true"><i class="ph ph-caret-down"></i></span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="border-t border-wb-200 my-7 md:my-8"></div>
+
+          <!-- ===== Places that matter ===== -->
+          <section class="am-anchor" aria-labelledby="sec-places">
+            <h2 id="sec-places" class="font-serif-heading text-2xl text-wb-900">Places that matter</h2>
+            <p class="text-[15px] text-wb-600 mt-1.5">We'll surface obituaries and local communities from these places.</p>
+            <div id="fields-places" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-5"></div>
+          </section>
+
+          <div class="border-t border-wb-200 my-7 md:my-8"></div>
+
+          <!-- ===== Schools and work ===== -->
+          <section class="am-anchor" aria-labelledby="sec-schools">
+            <h2 id="sec-schools" class="font-serif-heading text-2xl text-wb-900">Schools and work</h2>
+            <p class="text-[15px] text-wb-600 mt-1.5">Two schools with the same name? Check the town underneath each suggestion.</p>
+            <div id="fields-schools" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-5"></div>
+          </section>
+
+          <div class="border-t border-wb-200 my-7 md:my-8"></div>
+
+          <!-- ===== Communities ===== -->
+          <section class="am-anchor" aria-labelledby="sec-communities">
+            <h2 id="sec-communities" class="font-serif-heading text-2xl text-wb-900">Communities</h2>
+            <p class="text-[15px] text-wb-600 mt-1.5">Groups you belong to, or have belonged to.</p>
+            <div id="fields-communities" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-5"></div>
+          </section>
+
+          <!-- ===== Save row ===== -->
+          <div class="am-saverow -mx-5 md:-mx-8 -mb-5 md:-mb-8 mt-7 md:mt-8 px-5 md:px-8 py-4 md:py-5 bg-white border-t border-wb-200 rounded-b-xl flex flex-wrap items-center gap-x-4 gap-y-3">
+            <button type="submit" id="save-btn" class="flex-shrink-0 inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 focus-visible:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-navy-700"><span class="sm:hidden">Save</span><span class="hidden sm:inline">Save my details</span></button>
+            <!-- Always present, so the page can always answer "is my work
+                 safe?" without the user having to change something to find
+                 out. The unsaved line appears above it when there is one. -->
+            <!-- "Save my details" is shortened to "Save" below sm. At 375px the
+                 full label leaves the status ~125px, which wraps it to four
+                 lines — worse than the stacking this was meant to avoid. -->
+            <!-- flex-1 gives this a zero flex-basis, so it never measures
+                 wide enough to push itself onto a line of its own — it takes
+                 whatever the button leaves and wraps its own text instead.
+                 With ml-auto it would stack as soon as the timestamp didn't
+                 fit, which at 375px is most of the time. The button is
+                 flex-shrink-0, so the status is what gives way. -->
+            <span id="save-status" role="status" aria-live="polite" class="text-[15px] leading-snug min-w-0 flex-1 text-right">
+              <span id="save-status-dirty" class="block font-semibold text-wb-800" hidden>Unsaved changes</span>
+              <span id="save-status-when" class="block text-wb-600"></span>
+            </span>
+          </div>
+        </div>
+      </form>
+
+      <!-- ---------- Share Feedback ---------- -->
+      <!-- Storage is still open (SurveyMonkey vs our own DB, pending Akash).
+           Designed as an in-page field either way; the submit handler is the
+           single place that would swap to a survey hand-off. -->
+      <section id="feedback-card" class="am-anchor bg-white border border-wb-200 rounded-xl shadow-sm p-5 md:p-8 mt-5 md:mt-6" aria-labelledby="fb-title">
+        <h2 id="fb-title" class="font-serif-heading text-2xl text-wb-900">Something missing?</h2>
+        <p class="text-base text-wb-700 mt-2 leading-relaxed">If you couldn't find your school, your town or a group you belong to — or you'd like to add more than one — tell us here. We'll take your feedback and use it in future releases.</p>
+        <label for="feedback-text" class="block text-[15px] font-semibold text-wb-900 mt-5 mb-2">Your feedback</label>
+        <textarea id="feedback-text" rows="4" class="w-full rounded-lg border border-wb-300 bg-white p-4 text-base text-wb-900 leading-relaxed placeholder:text-wb-500 focus:outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-500/25" placeholder="For example: my high school isn't listed — Carl Sandburg High School in Orland Park, Illinois."></textarea>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-3 mt-4">
+          <button type="button" id="feedback-send" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-navy-50 text-base font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 focus-visible:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed">Send feedback</button>
+          <span id="feedback-status" role="status" aria-live="polite" class="text-[15px] text-wb-600"></span>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<!-- ====================================================================
+     HELP CENTER BAND
+     ==================================================================== -->
+<section class="bg-seafoam-100 border-t border-seafoam-200">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-10">
+    <h2 class="font-serif-heading text-2xl text-wb-900">Legacy Help Center</h2>
+    <p class="text-base text-wb-700 mt-1">Need additional help? The Legacy Support Team is available Monday through Friday, 7am–7pm CT.</p>
+    <div class="flex flex-col sm:flex-row gap-6 sm:gap-12 mt-5">
+      <div class="flex items-center gap-3">
+        <span class="w-11 h-11 rounded-full bg-seafoam-200 text-seafoam-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-phone text-xl"></i></span>
+        <span><span class="block text-xs uppercase tracking-wider text-wb-500 font-semibold">Call us</span><a href="tel:8883979494" class="text-base font-semibold text-navy-700">888-397-9494</a></span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="w-11 h-11 rounded-full bg-seafoam-200 text-seafoam-700 flex items-center justify-center flex-shrink-0"><i class="ph ph-envelope-simple text-xl"></i></span>
+        <span><span class="block text-xs uppercase tracking-wider text-wb-500 font-semibold">Email us</span><a href="mailto:info@legacy.com" class="text-base font-semibold text-navy-700">info@legacy.com</a></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     FOOTER
+     ==================================================================== -->
+<footer class="bg-navy-900 text-white">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8">
+      <div class="col-span-2 md:col-span-1">
+        <img src="assets/logo-horizontal-white.svg" alt="Legacy" class="h-9 w-auto" />
+        <div class="flex gap-3 mt-4 text-wb-300">
+          <a href="#" aria-label="Facebook" class="hover:text-gold-500"><i class="ph-fill ph-facebook-logo text-xl"></i></a>
+          <a href="#" aria-label="YouTube" class="hover:text-gold-500"><i class="ph-fill ph-youtube-logo text-xl"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Services</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Create &amp; Publish an obituary</a></li>
+          <li><a href="#" class="hover:text-gold-500">Plan a funeral or estate</a></li>
+          <li><a href="#" class="hover:text-gold-500">Send a Sympathy Gift</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Find obituaries</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Browse by Lastname</a></li>
+          <li><a href="#" class="hover:text-gold-500">Browse by Newspaper</a></li>
+          <li><a href="#" class="hover:text-gold-500">Browse by Location</a></li>
+          <li><a href="#" class="hover:text-gold-500">Celebrity Obituaries</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Legacy for Business</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">Funeral Homes</a></li>
+          <li><a href="#" class="hover:text-gold-500">Newspapers &amp; Media Outlets</a></li>
+          <li><a href="#" class="hover:text-gold-500">Advertise with us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold mb-3 text-gold-500">Help &amp; Support</h4>
+        <ul class="space-y-2 text-sm text-wb-300">
+          <li><a href="#" class="hover:text-gold-500">24/7 Publishing Support</a></li>
+          <li><a href="#" class="hover:text-gold-500">How to write an obituary</a></li>
+          <li><a href="#" class="hover:text-gold-500">FAQs</a></li>
+        </ul>
+        <div class="mt-4 rounded-xl border border-gold-700/60 p-4">
+          <p class="text-sm font-semibold text-gold-500 mb-2">Customer Support</p>
+          <a href="#" class="flex items-center gap-2 text-sm text-wb-300 hover:text-gold-500 mb-1.5"><i class="ph ph-chat-circle-dots"></i> Chat with us</a>
+          <a href="tel:8185555555" class="flex items-center gap-2 text-sm text-wb-300 hover:text-gold-500 mb-1.5"><i class="ph ph-phone"></i> (818) 555-5555</a>
+          <p class="text-xs text-wb-400 mt-2">Available Monday–Friday<br>7:00 am – 7:00 pm CST</p>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-navy-700 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-wb-400">
+      <p>©2026 Legacy.com All rights reserved.</p>
+      <div class="flex gap-5"><a href="#" class="hover:text-gold-500">Do Not Sell My Information</a><a href="#" class="hover:text-gold-500">Privacy policy</a><a href="#" class="hover:text-gold-500">Terms of use</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- Leave-without-saving guard. Mirrors the confirm dialog on the My People
+     dashboard, so the destructive-action pattern stays consistent. -->
+<div class="sheet-overlay" id="leave-overlay" role="alertdialog" aria-modal="true" aria-labelledby="lv-title" aria-describedby="lv-body">
+  <div class="sheet-card p-6 md:p-8">
+    <h2 id="lv-title" class="text-xl font-bold text-navy-700 leading-tight pr-2">You have unsaved changes</h2>
+    <p id="lv-body" class="text-base text-wb-700 mt-3 leading-relaxed">Leave this page and your most recent edits won't be kept.</p>
+    <div class="flex flex-col sm:flex-row gap-3 mt-6">
+      <button type="button" id="lv-save" class="flex-1 h-12 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold">Save and leave</button>
+      <button type="button" id="lv-leave" class="flex-1 h-12 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Leave without saving</button>
+    </div>
+    <button type="button" data-close class="w-full h-12 mt-3 rounded-full text-base font-semibold text-navy-500 hover:text-navy-700">Stay on this page</button>
+  </div>
+</div>
+
+<!-- Toast (shared .toast) -->
+<div class="toast" id="toast">
+  <span class="toast-ico"><i class="ph-fill ph-check-circle" id="toast-icon" aria-hidden="true"></i></span>
+  <span class="toast-body"><span id="toast-text" role="status" aria-live="polite"></span></span>
+</div>
+
+<!-- Demo switcher -->
+<div class="demo-switcher" role="group" aria-label="Demo scenarios">
+  <span class="demo-switcher-label">Demo scenario</span>
+  <button data-scenario="first" class="active"><i class="ph ph-sparkle"></i> First visit · nothing saved</button>
+  <button data-scenario="return"><i class="ph ph-clock-counter-clockwise"></i> Return visit · saved values</button>
+  <span class="demo-switcher-divider" aria-hidden="true"></span>
+  <button data-demo-slow><i class="ph ph-wifi-medium"></i> Slow network</button>
+  <button data-demo-reset title="Clear saved About Me details"><i class="ph ph-arrow-clockwise"></i> Reset demo</button>
+</div>
+
+<script>
+(() => {
+  const $  = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const esc = (v) => String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+  const STORE_KEY = 'legacyAboutMe.v1';
+
+  /* ==================================================================
+     CLOSED-LIST DATA
+     Every typeahead resolves against records we already hold. Free text
+     is never saved — gaps go to Share Feedback instead (DES-2296).
+     Each record carries a `where` so two groups with the same name stay
+     tellable apart in the suggestion row.
+     ================================================================== */
+  const DATA = {
+    places: [
+      { name: 'Chicago, Illinois',      where: 'Cook County'      },
+      { name: 'Evanston, Illinois',     where: 'Cook County'      },
+      { name: 'Naperville, Illinois',   where: 'DuPage County'    },
+      { name: 'Springfield, Illinois',  where: 'Sangamon County'  },
+      { name: 'Springfield, Missouri',  where: 'Greene County'    },
+      { name: 'Springfield, Massachusetts', where: 'Hampden County' },
+      { name: 'Milwaukee, Wisconsin',   where: 'Milwaukee County' },
+      { name: 'Madison, Wisconsin',     where: 'Dane County'      },
+      { name: 'Portland, Oregon',       where: 'Multnomah County' },
+      { name: 'Portland, Maine',        where: 'Cumberland County'},
+    ],
+    highSchools: [
+      { name: 'Evanston Township High School', where: 'Evanston, Illinois' },
+      { name: 'New Trier High School',         where: 'Winnetka, Illinois' },
+      { name: 'Central High School',           where: 'Springfield, Illinois' },
+      { name: 'Central High School',           where: 'Omaha, Nebraska' },
+      { name: 'Central High School',           where: 'Philadelphia, Pennsylvania' },
+      { name: 'Lincoln Park High School',      where: 'Chicago, Illinois' },
+      { name: 'Dwight D. Eisenhower High School', where: 'Blue Island, Illinois' },
+    ],
+    colleges: [
+      { name: 'Northwestern University',             where: 'Evanston, Illinois' },
+      { name: 'University of Illinois Chicago',      where: 'Chicago, Illinois' },
+      { name: 'University of Illinois Urbana-Champaign', where: 'Champaign, Illinois' },
+      { name: 'Loyola University Chicago',           where: 'Chicago, Illinois' },
+      { name: 'DePaul University',                   where: 'Chicago, Illinois' },
+      { name: 'University of Wisconsin–Madison',     where: 'Madison, Wisconsin' },
+      { name: 'Miami University',                    where: 'Oxford, Ohio' },
+      { name: 'University of Miami',                 where: 'Coral Gables, Florida' },
+    ],
+    occupations: [
+      { name: 'Teacher / Educator',      where: 'Education'     },
+      { name: 'Nurse',                   where: 'Healthcare'    },
+      { name: 'Physician',               where: 'Healthcare'    },
+      { name: 'Firefighter',             where: 'Public service'},
+      { name: 'Police Officer',          where: 'Public service'},
+      { name: 'Engineer',                where: 'Technology'    },
+      { name: 'Small Business Owner',    where: 'Business'      },
+      { name: 'Farmer',                  where: 'Agriculture'   },
+    ],
+    greek: [
+      { name: 'Alpha Kappa Alpha',  where: 'Sorority · founded 1908' },
+      { name: 'Alpha Phi Alpha',    where: 'Fraternity · founded 1906' },
+      { name: 'Chi Omega',          where: 'Sorority · founded 1895' },
+      { name: 'Delta Sigma Theta',  where: 'Sorority · founded 1913' },
+      { name: 'Kappa Alpha Psi',    where: 'Fraternity · founded 1911' },
+      { name: 'Sigma Chi',          where: 'Fraternity · founded 1855' },
+    ],
+    teams: [
+      { name: 'Chicago Bears',        where: 'NFL · Chicago, Illinois' },
+      { name: 'Chicago Bulls',        where: 'NBA · Chicago, Illinois' },
+      { name: 'Chicago Cubs',         where: 'MLB · Chicago, Illinois' },
+      { name: 'Chicago White Sox',    where: 'MLB · Chicago, Illinois' },
+      { name: 'Green Bay Packers',    where: 'NFL · Green Bay, Wisconsin' },
+      { name: 'Milwaukee Brewers',    where: 'MLB · Milwaukee, Wisconsin' },
+      { name: 'Northwestern Wildcats',where: 'NCAA · Evanston, Illinois' },
+    ],
+    military: [
+      { name: 'U.S. Army',         where: 'Armed Forces' },
+      { name: 'U.S. Navy',         where: 'Armed Forces' },
+      { name: 'U.S. Air Force',    where: 'Armed Forces' },
+      { name: 'U.S. Marine Corps', where: 'Armed Forces' },
+      { name: 'U.S. Coast Guard',  where: 'Armed Forces' },
+      { name: 'U.S. Space Force',  where: 'Armed Forces' },
+      { name: 'National Guard',    where: 'Reserve component' },
+    ],
+  };
+
+  /* Field order and grouping (DES-2296). Each field's guidance lives in its
+     placeholder; `hint` still renders a line under the label if one is ever
+     wanted back, but nothing uses it now. */
+  const FIELDS = [
+    { key:'currentLocation', group:'places',      label:'Current location',      ph:'Where you live now',    icon:'ph-map-pin',        set:'places'      },
+    { key:'hometown',        group:'places',      label:'Hometown',              ph:'Where you grew up',     icon:'ph-house-line',     set:'places'      },
+    { key:'highSchool',      group:'schools',     label:'High school',           ph:'Search high schools…',  icon:'ph-student',        set:'highSchools' },
+    { key:'college',         group:'schools',     label:'College / university',  ph:'Search colleges…',      icon:'ph-graduation-cap', set:'colleges'    },
+    { key:'occupation',      group:'schools',     label:'Occupation',            ph:'Search occupations…',   icon:'ph-briefcase',      set:'occupations' },
+    { key:'greek',           group:'communities', label:'Fraternity / sorority', ph:'Search chapters…',      icon:'ph-users-three',    set:'greek'       },
+    { key:'teams',           group:'communities', label:'Sports teams',          ph:'Search teams…',         icon:'ph-confetti',       set:'teams'       },
+    { key:'military',        group:'communities', label:'Military service',      ph:'Branch you served in',  icon:'ph-medal',          set:'military'    },
+  ];
+  const ALL_KEYS = ['ageRange','gender', ...FIELDS.map(f => f.key)];
+
+  /* A filled-in profile for the "return visit" scenario. */
+  const DEMO_PROFILE = {
+    ageRange:'45–54', gender:'', currentLocation:'Chicago, Illinois', hometown:'Evanston, Illinois',
+    highSchool:'Evanston Township High School', college:'Northwestern University',
+    occupation:'Teacher / Educator', greek:'', teams:'Chicago Cubs', military:'',
+  };
+  const DEMO_WHERES = {
+    currentLocation:'Cook County', hometown:'Cook County',
+    highSchool:'Evanston, Illinois', college:'Evanston, Illinois',
+    occupation:'Education', greek:'', teams:'MLB · Chicago, Illinois', military:'',
+  };
+
+  /* ==================================================================
+     STATE
+     ================================================================== */
+  const blank  = () => Object.fromEntries(ALL_KEYS.map(k => [k, '']));
+  /* `wheres` carries each chosen record's location alongside its name. Two
+     schools can share a name, so the name alone doesn't identify a record —
+     it has to travel with its location, for display and for change
+     detection. */
+  const blankW = () => Object.fromEntries(FIELDS.map(f => [f.key, '']));
+  let profile     = blank();
+  let saved       = blank();   // last persisted copy, for dirty-checking
+  let wheres      = blankW();
+  let savedWheres = blankW();
+  let lastSaved   = null;
+  let slowNet     = false;
+
+  function load() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+      if (!raw) return false;
+      profile = { ...blank(), ...(raw.profile || {}) };
+      wheres  = { ...blankW(), ...(raw.wheres || {}) };
+      lastSaved = raw.lastSaved || null;
+      saved = { ...profile };
+      savedWheres = { ...wheres };
+      return true;
+    } catch (_) { return false; }
+  }
+  function persist() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify({ profile, wheres, lastSaved })); } catch (_) {}
+  }
+  const isDirty = () =>
+    ALL_KEYS.some(k => (profile[k] || '') !== (saved[k] || '')) ||
+    FIELDS.some(f => (wheres[f.key] || '') !== (savedWheres[f.key] || ''));
+
+  /* ==================================================================
+     TYPEAHEAD
+     States: empty · focused · typing · loading · open · no-match ·
+             selected · cleared. Driven off data-state on .ta-field so
+             every state is inspectable in the DOM.
+     ================================================================== */
+  const INPUT_BASE = 'w-full h-12 pl-11 pr-12 rounded-lg bg-white border border-wb-300 text-base text-wb-900 leading-normal text-ellipsis placeholder:text-wb-500 focus:outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-500/25';
+
+  function fieldMarkup(f) {
+    const id = 'ta-' + f.key;
+    return (
+      '<div class="ta-field am-anchor" data-ta="' + f.key + '" data-state="empty">' +
+        /* Two fields sharing a grid row need the same label block height or
+           their inputs won't line up — so give both a hint, or neither. */
+        '<label for="' + id + '" class="block text-[15px] font-semibold text-wb-900 ' + (f.hint ? 'mb-1' : 'mb-2') + '">' + esc(f.label) + '</label>' +
+        (f.hint ? '<p id="' + id + '-hint" class="text-sm text-wb-600 mb-2">' + esc(f.hint) + '</p>' : '') +
+        '<div class="ta-control">' +
+          '<span class="ta-lead absolute left-3.5 top-1/2 -translate-y-1/2 text-wb-600 pointer-events-none" aria-hidden="true"><i class="ph ' + f.icon + ' text-xl"></i></span>' +
+          '<input id="' + id + '" type="text" role="combobox" autocomplete="off" ' +
+                 'aria-expanded="false" aria-autocomplete="list" aria-controls="' + id + '-list" ' +
+                 (f.hint ? 'aria-describedby="' + id + '-hint" ' : '') +
+                 'placeholder="' + esc(f.ph) + '" class="ta-input ' + INPUT_BASE + '" />' +
+          '<button type="button" class="ta-clear absolute right-1.5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full text-wb-700 hover:bg-wb-100 flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500" aria-label="Clear ' + esc(f.label) + '" hidden><i class="ph ph-x text-lg" aria-hidden="true"></i></button>' +
+          /* The popover lives inside .ta-control so it anchors to the input
+             itself — .ta-control is the only positioned ancestor. */
+          '<div class="ta-pop bg-white border border-wb-300 rounded-lg shadow-lg" hidden>' +
+            '<ul id="' + id + '-list" role="listbox" aria-label="' + esc(f.label) + ' suggestions" class="ta-list"></ul>' +
+            '<div class="ta-aux"></div>' +
+          '</div>' +
+        '</div>' +
+        /* Which record was chosen — matters when several share a name. */
+        '<p class="ta-sel text-sm text-wb-600 mt-1.5" hidden></p>' +
+        '<p class="ta-live sr-only" role="status" aria-live="polite"></p>' +
+      '</div>'
+    );
+  }
+
+  function mark(text, q) {
+    if (!q) return esc(text);
+    const i = text.toLowerCase().indexOf(q.toLowerCase());
+    if (i < 0) return esc(text);
+    return esc(text.slice(0, i)) +
+           '<mark class="bg-gold-100 text-wb-900 rounded-sm px-0.5">' + esc(text.slice(i, i + q.length)) + '</mark>' +
+           esc(text.slice(i + q.length));
+  }
+
+  function setupField(f) {
+    const root  = $('[data-ta="' + f.key + '"]');
+    const input = $('.ta-input', root);
+    const pop   = $('.ta-pop', root);
+    const list  = $('.ta-list', root);
+    const aux   = $('.ta-aux', root);
+    const clear = $('.ta-clear', root);
+    const live  = $('.ta-live', root);
+    const sel   = $('.ta-sel', root);
+    const id    = 'ta-' + f.key;
+
+    let timer = null, reqId = 0, results = [], active = -1;
+
+    const setState = (s) => { root.dataset.state = s; };
+
+    /* A chosen record gets no colour treatment of its own. The value sitting
+       in the field, the clear button and the location line below it are
+       signal enough, and the leading icon stays the category's throughout —
+       it says more about the field than a tick does. */
+    function paintSelected(on) {
+      clear.hidden = !on;
+      sel.textContent = on ? (wheres[f.key] || '') : '';
+      sel.hidden = !on || !wheres[f.key];
+      /* In two columns a long school name ellipsizes, so the full value has
+         to stay reachable on hover and to assistive tech. */
+      if (on) input.title = profile[f.key] + (wheres[f.key] ? ' — ' + wheres[f.key] : '');
+      else input.removeAttribute('title');
+    }
+
+    function close() {
+      pop.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+      input.removeAttribute('aria-activedescendant');
+      active = -1;
+      if (timer) { clearTimeout(timer); timer = null; }
+      setState(profile[f.key] ? 'selected' : 'empty');
+    }
+
+    /* Flip the popover upward when there isn't room beneath the field. */
+    function placePop() {
+      const r = input.getBoundingClientRect();
+      root.dataset.drop = (window.innerHeight - r.bottom < 300 && r.top > 320) ? 'up' : 'down';
+    }
+
+    function showLoading() {
+      setState('loading');
+      list.innerHTML = '';
+      aux.innerHTML =
+        '<div class="flex items-center gap-3 px-4 py-5 text-wb-600">' +
+          '<span class="ta-spin text-navy-500 flex-shrink-0" aria-hidden="true"></span>' +
+          '<span class="text-[15px]">Searching our records…</span>' +
+        '</div>';
+      placePop();
+      pop.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    }
+
+    function showResults(rows, q) {
+      results = rows; active = -1;
+      aux.innerHTML = '';
+      list.innerHTML = rows.map((r, i) =>
+        '<li role="option" id="' + id + '-opt-' + i + '" aria-selected="false" data-idx="' + i + '" ' +
+            'class="ta-opt border-b border-wb-200 hover:bg-wb-100">' +
+          '<span class="w-9 h-9 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center flex-shrink-0" aria-hidden="true"><i class="ph ' + f.icon + '"></i></span>' +
+          '<span class="min-w-0 flex-1">' +
+            '<span class="block text-base text-wb-900 leading-snug">' + mark(r.name, q) + '</span>' +
+            '<span class="block text-sm text-wb-600 leading-snug mt-0.5">' + esc(r.where) + '</span>' +
+          '</span>' +
+        '</li>'
+      ).join('');
+      setState('open');
+      placePop();
+      pop.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+      live.textContent = rows.length + (rows.length === 1 ? ' suggestion' : ' suggestions') + ' available.';
+    }
+
+    function showNoMatch(q) {
+      results = []; active = -1;
+      list.innerHTML = '';
+      /* Gold, not red: a gap in our records isn't the user's mistake. */
+      aux.innerHTML =
+        '<div class="p-4">' +
+          '<p class="text-base font-semibold text-wb-900">No match for “' + esc(q) + '”</p>' +
+          '<p class="text-[15px] text-wb-600 leading-relaxed mt-1">We only list ' + esc(f.label.toLowerCase()) + ' records we already hold, so this one just isn\'t in there yet.</p>' +
+          '<button type="button" data-ta-feedback class="mt-3 inline-flex items-center gap-2 h-11 px-4 rounded-full bg-gold-100 hover:bg-gold-200 text-gold-900 text-[15px] font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500">Tell us what\'s missing <i class="ph ph-arrow-right" aria-hidden="true"></i></button>' +
+        '</div>';
+      setState('no-match');
+      placePop();
+      pop.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+      live.textContent = 'No suggestions. Share feedback to tell us what is missing.';
+    }
+
+    function query(q) {
+      const mine = ++reqId;
+      showLoading();
+      setTimeout(() => {
+        if (mine !== reqId) return;             // a newer keystroke won
+        const needle = q.trim().toLowerCase();
+        const rows = DATA[f.set].filter(r => !needle || r.name.toLowerCase().includes(needle));
+        if (!rows.length) showNoMatch(q.trim()); else showResults(rows.slice(0, 8), q.trim());
+      }, slowNet ? 1400 : 320);
+    }
+
+    function schedule(q) {
+      if (timer) clearTimeout(timer);
+      setState('typing');
+      timer = setTimeout(() => query(q), 180);
+    }
+
+    function select(i) {
+      const r = results[i];
+      if (!r) return;
+      profile[f.key] = r.name;
+      wheres[f.key]  = r.where;
+      input.value = r.name;
+      paintSelected(true);
+      close();
+      live.textContent = r.name + ', ' + r.where + ' selected.';
+      onChange();
+    }
+
+    function setActive(i) {
+      const opts = $$('[role="option"]', list);
+      if (!opts.length) return;
+      active = (i + opts.length) % opts.length;
+      opts.forEach((o, n) => {
+        const on = n === active;
+        o.setAttribute('aria-selected', String(on));
+        o.classList.toggle('bg-wb-100', on);
+      });
+      input.setAttribute('aria-activedescendant', opts[active].id);
+      opts[active].scrollIntoView({ block: 'nearest' });
+    }
+
+    /* ---- events ---- */
+    input.addEventListener('focus', () => {
+      if (pop.hidden) { setState('focused'); query(input.value); }
+    });
+    input.addEventListener('input', () => {
+      /* Typing away from a chosen record clears it — the field only ever
+         holds a real record, never the half-typed string. */
+      if (profile[f.key] && input.value !== profile[f.key]) {
+        profile[f.key] = '';
+        wheres[f.key]  = '';
+        paintSelected(false);
+        onChange();
+      }
+      schedule(input.value);
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown')      { e.preventDefault(); pop.hidden ? query(input.value) : setActive(active + 1); }
+      else if (e.key === 'ArrowUp')   { e.preventDefault(); if (!pop.hidden) setActive(active - 1); }
+      else if (e.key === 'Enter') {
+        /* While the listbox is open, Enter belongs to the combobox and never
+           to the form — otherwise an Enter with nothing highlighted falls
+           through to implicit submission and silently saves the page. */
+        if (!pop.hidden) { e.preventDefault(); if (active >= 0) select(active); }
+      }
+      else if (e.key === 'Escape')    { if (!pop.hidden) { e.stopPropagation(); revert(); close(); } }
+      else if (e.key === 'Tab')       { revert(); close(); }
+    });
+    /* Leaving a field mid-type snaps back to the saved record (or empty). */
+    function revert() { input.value = profile[f.key] || ''; paintSelected(!!profile[f.key]); }
+
+    list.addEventListener('mousedown', (e) => {
+      const li = e.target.closest('[data-idx]');
+      if (li) { e.preventDefault(); select(Number(li.dataset.idx)); }
+    });
+    aux.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-ta-feedback]')) return;
+      const typed = input.value.trim();
+      close();
+      jumpToFeedback(f.label, typed);
+    });
+    clear.addEventListener('click', () => {
+      profile[f.key] = '';
+      wheres[f.key]  = '';
+      input.value = '';
+      paintSelected(false);
+      setState('empty');
+      live.textContent = f.label + ' cleared.';
+      onChange();
+      input.focus();
+    });
+    document.addEventListener('mousedown', (e) => {
+      if (!pop.hidden && !root.contains(e.target)) { revert(); close(); }
+    });
+
+    /* Called by render() to push state in. */
+    return function paint() {
+      input.value = profile[f.key] || '';
+      paintSelected(!!profile[f.key]);
+      root.dataset.state = profile[f.key] ? 'selected' : 'empty';
+      pop.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+    };
+  }
+
+  /* ==================================================================
+     SHARE FEEDBACK
+     ================================================================== */
+  function jumpToFeedback(label, typed) {
+    const box = $('#feedback-text');
+    const seed = typed ? label + ': “' + typed + '” isn\'t listed.' : label + ' isn\'t listed.';
+    box.value = box.value.trim() ? box.value.replace(/\s*$/, '\n') + seed : seed + ' ';
+    $('#feedback-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => {
+      box.focus();
+      box.setSelectionRange(box.value.length, box.value.length);
+    }, 320);
+  }
+
+  /* ==================================================================
+     TOAST
+     ================================================================== */
+  let toastTimer = null;
+  function toast(text, { icon = 'ph-check-circle' } = {}) {
+    $('#toast-text').textContent = text;
+    $('#toast-icon').className = 'ph-fill ' + icon;
+    $('#toast').classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(hideToast, 4000);
+  }
+  function hideToast() { $('#toast').classList.remove('show'); }
+
+  /* ==================================================================
+     RENDER / SAVE
+     ================================================================== */
+  const painters = [];
+
+  function onChange() {
+    const dirty = isDirty();
+    $('#save-btn').disabled = !dirty;
+    $('#dirty-bar').hidden = !dirty;
+    document.body.classList.toggle('am-bar-on', dirty);
+    $('#save-status-dirty').hidden = !dirty;
+    $('#save-status-when').textContent =
+      lastSaved ? 'Last saved ' + stamp(lastSaved) : 'Not saved yet';
+  }
+
+  /* "Oct 14, 10:32 AM" — the save row is the transactional status, so it
+     carries the time as well as the date. The summary strip at the top of
+     the page stays date-only; it's an at-a-glance line, not a receipt. */
+  function stamp(ts) {
+    const d = new Date(ts);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' +
+           d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  }
+
+  function render() {
+    $('#age-range').value = profile.ageRange || '';
+    $('#gender').value    = profile.gender || '';
+    painters.forEach(p => p());
+    onChange();
+  }
+
+  function save() {
+    saved = { ...profile };
+    savedWheres = { ...wheres };
+    lastSaved = Date.now();
+    persist();
+    onChange();
+    toast('Your details are saved.');
+  }
+
+  /* ==================================================================
+     BOOT
+     ================================================================== */
+  FIELDS.forEach(f => {
+    const host = $('#fields-' + f.group);
+    host.insertAdjacentHTML('beforeend', fieldMarkup(f));
+  });
+  FIELDS.forEach(f => painters.push(setupField(f)));
+
+  $$('[data-simple-field]').forEach(el => {
+    el.addEventListener('change', () => { profile[el.dataset.simpleField] = el.value; onChange(); });
+  });
+
+  $('#about-form').addEventListener('submit', (e) => { e.preventDefault(); save(); });
+  $('#bar-save').addEventListener('click', () => save());
+
+  $('#feedback-send').addEventListener('click', () => {
+    const box = $('#feedback-text');
+    if (!box.value.trim()) { box.focus(); $('#feedback-status').textContent = 'Add a note first.'; return; }
+    box.value = '';
+    $('#feedback-status').textContent = '';
+    toast('Thanks — your feedback is on its way.', { icon: 'ph-paper-plane-tilt' });
+  });
+
+  /* Mobile My Account accordion (same behaviour as the dashboard). */
+  const acctToggle = $('#acct-toggle');
+  acctToggle.addEventListener('click', () => {
+    const box = $('#acct-accordion');
+    const open = box.dataset.acctOpen === 'true';
+    box.dataset.acctOpen = String(!open);
+    acctToggle.setAttribute('aria-expanded', String(!open));
+  });
+
+  /* ==================================================================
+     LEAVE-WITHOUT-SAVING GUARD
+     The banner says changes are pending; this catches the case where the
+     user misses it and navigates anyway. Two layers: a styled dialog for
+     links we control, and the browser's own prompt for everything else
+     (tab close, back button, typed URL), which can't be styled.
+     ================================================================== */
+  const leaveOverlay = $('#leave-overlay');
+  let pendingHref = null;
+
+  function openLeave(href) {
+    pendingHref = href;
+    leaveOverlay.classList.add('open');
+    $('#lv-save').focus();
+  }
+  function closeLeave() {
+    leaveOverlay.classList.remove('open');
+    pendingHref = null;
+  }
+  function go() { const h = pendingHref; closeLeave(); if (h) window.location.href = h; }
+
+  $('#lv-save').addEventListener('click', () => { save(); go(); });
+  $('#lv-leave').addEventListener('click', () => { saved = { ...profile }; savedWheres = { ...wheres }; go(); });
+  $('[data-close]', leaveOverlay).addEventListener('click', closeLeave);
+  leaveOverlay.addEventListener('mousedown', (e) => { if (e.target === leaveOverlay) closeLeave(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && leaveOverlay.classList.contains('open')) closeLeave();
+  });
+
+  /* Intercept in-page navigation while there are unsaved changes. Runs in
+     the capture phase so it beats any other click handler on the link. */
+  document.addEventListener('click', (e) => {
+    if (!isDirty()) return;
+    const a = e.target.closest('a[href]');
+    if (!a || a.target === '_blank') return;
+    const href = a.getAttribute('href');
+    /* In-page anchors and non-navigating hrefs stay put. */
+    if (!href || href === '#' || href.startsWith('#') ||
+        href.startsWith('mailto:') || href.startsWith('tel:')) return;
+    e.preventDefault();
+    openLeave(a.href);
+  }, true);
+
+  window.addEventListener('beforeunload', (e) => {
+    if (!isDirty()) return;
+    e.preventDefault();
+    e.returnValue = '';
+  });
+
+  /* Demo switcher */
+  function setScenario(key) {
+    $$('.demo-switcher [data-scenario]').forEach(b => b.classList.toggle('active', b.dataset.scenario === key));
+    if (key === 'return') {
+      profile = { ...blank(), ...DEMO_PROFILE };
+      wheres  = { ...blankW(), ...DEMO_WHERES };
+      lastSaved = Date.now() - 6 * 864e5;
+    } else {
+      profile = blank();
+      wheres  = blankW();
+      lastSaved = null;
+    }
+    saved = { ...profile };
+    savedWheres = { ...wheres };
+    persist();
+    render();
+  }
+  $$('.demo-switcher [data-scenario]').forEach(b => b.addEventListener('click', () => setScenario(b.dataset.scenario)));
+  $('[data-demo-slow]').addEventListener('click', (e) => {
+    slowNet = !slowNet;
+    e.currentTarget.classList.toggle('active', slowNet);
+    toast(slowNet ? 'Slow network on — watch the loading state.' : 'Slow network off.', { icon: 'ph-wifi-medium' });
+  });
+  $('[data-demo-reset]').addEventListener('click', () => {
+    try { localStorage.removeItem(STORE_KEY); } catch (_) {}
+    setScenario('first');
+    toast('Demo reset.', { icon: 'ph-arrow-clockwise' });
+  });
+
+  const had = load();
+  $$('.demo-switcher [data-scenario]').forEach(b => b.classList.toggle('active', b.dataset.scenario === (lastSaved ? 'return' : 'first')));
+  render();
+})();
+</script>
+</body>
+</html>
