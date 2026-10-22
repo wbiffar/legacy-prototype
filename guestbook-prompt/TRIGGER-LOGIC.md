@@ -38,9 +38,6 @@ Applied in this order.
 4. **One generic prompt per session** — exit intent usually takes it.
 5. **A scroll fires the prompt**, never a timer.
 
-**Ceiling: two prompts per session**, and only for someone who dismissed a
-generic one and then posted. Complete the follow and it is one. Never three.
-
 ## What a visitor sees
 
 | Path | Sees |
