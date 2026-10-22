@@ -1,0 +1,201 @@
+/* DES-2305 — Guestbook account prompt, structural CSS.
+
+   Colour lives in Tailwind token classes in the markup, not here, so there is
+   nothing in this file that can drift from the design system. The exceptions
+   are the two scrims and the guestbook radial glow, which are alpha washes
+   over whatever is behind them rather than surfaces in their own right — they
+   are written as rgba() of a token colour and noted at each site.
+
+   Every custom class is `gp-` prefixed. The Tailwind CDN ships utilities
+   called .collapse, .container, .grid and friends, and an unprefixed custom
+   class of the same name loses the cascade to them (see memory.md). */
+
+/* ============================== Base ============================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Tailwind's display utilities are the same specificity as [hidden] and load
+   after it, so a .flex element toggled with el.hidden stays visible. Every
+   modal here is toggled that way, so this rule is load-bearing. */
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', system-ui, sans-serif; color: #262116; background: #fff; }
+img { display: block; max-width: 100%; }
+
+/* Our users skew older (CLAUDE.md), so the focus ring is a real one: 2px of
+   gold at a 2px offset, on everything focusable, never removed. */
+button:focus-visible, a:focus-visible, input:focus-visible,
+textarea:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid #dcb05e; outline-offset: 2px;
+}
+
+/* Tap targets. 44x44 is the CLAUDE.md minimum; the Figma buttons are 40px
+   tall, so the shortfall is made up with padding rather than by growing the
+   button and breaking the comp. */
+.gp-tap { position: relative; }
+.gp-tap::after {
+  content: ''; position: absolute; left: 0; right: 0;
+  top: 50%; transform: translateY(-50%); height: 44px;
+}
+
+/* ======================== Page furniture ======================== */
+
+/* The gold wash behind the guestbook, lifted off the live Tukios page:
+   radial-gradient(ellipse 100% 100% at 50% 0%, rgba(226,186,96,0.25), transparent).
+   226,186,96 is gold/400 — an alpha wash of the token, not a new colour.
+
+   `top` is measured from this element's own top edge, and this element starts
+   at the post UI, so 80px puts the gradient 80px below the top of the
+   composer. It is a flat offset rather than a share of the height on purpose:
+   the wash should sit the same distance under the card's top lip at every
+   width. The live page uses 6rem here; 80px is Wes's call, 22 Oct.
+
+   The element is full width while its content is capped and centred inside,
+   so the ellipse spans the page rather than the 1024px column. */
+.gp-guestbook-glow { position: relative; }
+.gp-guestbook-glow::before {
+  content: ''; position: absolute; inset-inline: 0; top: 80px;
+  height: 100%; max-height: 500px; pointer-events: none;
+  background: radial-gradient(ellipse 100% 100% at 50% 0%, rgba(226,186,96,0.25) 0%, transparent 100%);
+}
+.gp-guestbook-glow > * { position: relative; }
+
+/* Tukios pins a Send Flowers / Send a Card bar to the foot of the phone
+   viewport. It matters here because it is the thing the account sheet has to
+   share the bottom of the screen with — the sheet covers it while open, and
+   the page reserves room for it so the last post is not trapped underneath. */
+@media (max-width: 767px) { body { padding-bottom: 84px; } }
+
+/* ===================== Account prompt =====================
+   Figma: Follow/Modal/Soft Follow (3653:59029 mobile, 3657:64954 desktop).
+
+   The comps place it bottom-anchored at both sizes — 375x384 at y=431 of an
+   815-tall phone frame, and 640x352 at y=785 of a 1280x1024 desktop frame —
+   and DES-2305 describes desktop as "same pattern as mobile, scaled up".
+   Wes directed otherwise on 22 Oct: centred in the viewport on desktop, the
+   bottom sheet on mobile only. A bottom-anchored card on a wide screen reads
+   as a cookie bar or a chat widget, which is the wrong register for an offer
+   we want taken seriously; centred, it reads as a dialog. On a phone the
+   bottom edge is where the thumb is, so the sheet stays there.
+
+   Deliberate divergence from the comp, not drift — if the Figma is updated
+   to match, this comment is the thing to delete. */
+.gp-sheet-scrim {
+  position: fixed; inset: 0; z-index: 70;
+  display: flex; align-items: flex-end; justify-content: center;
+  /* navy/900 at 60% — dim enough to read as a layer, light enough that the
+     guestbook confirmation stays legible behind it. The prompt is an offer,
+     not an interruption, so the page it interrupts should still be visible. */
+  background: rgba(21, 27, 36, 0.60);
+  opacity: 0; transition: opacity .28s ease;
+}
+.gp-sheet-scrim[data-open="true"] { opacity: 1; }
+
+.gp-sheet {
+  width: 100%; max-width: 640px;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Figma shadow, verbatim */
+  /* Slides up from under its own edge. transform (not height or bottom) so
+     the animation runs on the compositor and nothing reflows behind it. */
+  transform: translateY(100%); transition: transform .34s cubic-bezier(.22,.61,.36,1);
+  max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain;
+}
+.gp-sheet-scrim[data-open="true"] .gp-sheet { transform: none; }
+
+@media (min-width: 768px) {
+  /* Centred from here up. The entrance changes with the position: a card in
+     the middle of the screen has no edge to slide from, so it settles into
+     place instead — the same rise-and-fade as .gp-dialog below, so the three
+     modals read as one system rather than three different arrivals. */
+  .gp-sheet-scrim { align-items: center; padding: 24px; }
+  .gp-sheet {
+    border-radius: 20px;
+    max-height: calc(100dvh - 48px);
+    opacity: 0; transform: translateY(8px) scale(.98);
+    transition: opacity .2s ease, transform .2s ease;
+  }
+  .gp-sheet-scrim[data-open="true"] .gp-sheet { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gp-sheet-scrim, .gp-sheet { transition-duration: .01ms; }
+}
+
+/* ===================== Centred dialogs =====================
+   Exit-intent and scroll-threshold. These are the page's existing interrupts,
+   included so the prompt can be seen competing with them; they are built to
+   the same modal shell as the account sheet but centred, so that the account
+   sheet's bottom-anchored entrance stays visually distinct from them. */
+.gp-dialog-scrim {
+  position: fixed; inset: 0; z-index: 80;
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+  background: rgba(21, 27, 36, 0.70);
+  opacity: 0; transition: opacity .2s ease;
+}
+.gp-dialog-scrim[data-open="true"] { opacity: 1; }
+.gp-dialog {
+  /* 640 to match the account sheet — the exit-intent modal is the same
+     Follow/Modal/Soft Follow component in Figma, so they share a width. Its
+     content is capped at 544 inside, which is where the padding comes from. */
+  width: 100%; max-width: 640px; border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  opacity: 0; transform: translateY(8px) scale(.98);
+  transition: opacity .2s ease, transform .2s ease;
+  max-height: calc(100dvh - 48px); overflow-y: auto; overscroll-behavior: contain;
+}
+.gp-dialog-scrim[data-open="true"] .gp-dialog { opacity: 1; transform: none; }
+@media (max-width: 639px) {
+  .gp-dialog-scrim { align-items: flex-end; padding: 0; }
+  /* Same 32px cap as .gp-sheet. At 48px the follow-success card — the
+     tallest thing here, with a title bar, three benefits and two stacked
+     buttons — came out 10px over on a 375x667 phone and scrolled to hide
+     its own bottom padding. 32px clears it, and matching the sheet means
+     both kinds of modal leave the same strip of backdrop above them. */
+  .gp-dialog { max-width: 100%; border-radius: 20px 20px 0 0; max-height: calc(100dvh - 32px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gp-dialog-scrim, .gp-dialog { transition-duration: .01ms; }
+}
+
+/* ===================== Confirmation swap =====================
+   The form is replaced in place by the confirmation card. Fading the new card
+   in over a settled layout, rather than animating a height, keeps the scroll
+   position under the user's thumb where they left it — the account prompt is
+   triggered by scrolling, so a jump here would read as a scroll and fire it. */
+.gp-fade-in { animation: gp-fade-in .32s ease both; }
+@keyframes gp-fade-in { from { opacity: 0; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { .gp-fade-in { animation: none; } }
+
+/* ===================== Scenario panel =====================
+   Prototype scaffolding, not product UI. It is how the rate-limiting
+   acceptance criterion gets demonstrated in a review: the modal slot and
+   every trigger's state are visible and resettable while you click around. */
+.gp-panel {
+  position: fixed; z-index: 90; right: 12px; top: 12px; width: 288px;
+  font-size: 12px; line-height: 1.45;
+  box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.35);
+  max-height: calc(100dvh - 24px); display: flex; flex-direction: column;
+}
+.gp-panel[data-collapsed="true"] .gp-panel-body { display: none; }
+.gp-panel-body { overflow-y: auto; }
+@media (max-width: 767px) {
+  /* Bottom-left on phones: the top-right corner is where the page's own
+     hamburger lives, and the bottom-right is the sticky Send Flowers bar. */
+  .gp-panel { right: 8px; left: 8px; top: auto; bottom: 92px; width: auto; }
+  .gp-panel[data-collapsed="true"] { left: auto; width: auto; }
+}
+
+/* The panel yields to any open modal until the viewport is wide enough that
+   the two cannot touch. The 640px card is centred, so it reaches to
+   (vw + 640) / 2; the panel starts at vw - 300. Those cross below 1240px —
+   on a phone the panel sat on the sheet's Sign In button, and at tablet
+   widths it clips the card's top-right corner. Below that width the panel
+   drops under the scrim: still legible through the dim, just not clickable
+   until the modal is dismissed. Above it the panel stays on top, which is
+   where watching the slot change while a prompt is open actually works. */
+@media (max-width: 1239px) {
+  .gp-panel { z-index: 60; }
+}
+
+/* A trigger row dims once it can no longer fire this session. */
+.gp-trig[data-state="spent"], .gp-trig[data-state="blocked"] { opacity: .55; }
