@@ -51,35 +51,3 @@ generic one and then posted. Complete the follow and it is one. Never three.
 | Generic → dismissed → posts | Both (2) |
 | Generic → email submitted → posts | Follow modal only (1) |
 | Posts, then a generic would fire | Account prompt only |
-
-## Settled details
-
-- **80px, either direction.** Was 180px down-only — too far on a phone, and up
-  is the likelier gesture there. Either direction also removes the dead end at
-  the foot of a long obit, where there is nothing left to scroll down into.
-- **Exit intent is desktop only** — `mouseleave` on the document element,
-  `clientY <= 0`. A fast-upward-flick fallback for touch was removed: its
-  threshold matched an ordinary wheel scroll, and it collided with rule 5. One
-  gesture cannot mean both "leaving" and "show me the offer". Touch gets the
-  same card at 60%.
-- **The sign-in pop is deleted, not disabled**, so it cannot return via a flag.
-
-## Still open
-
-- "Your own space on Legacy." — Jamie asked whether Obituary.com visitors know
-  what Legacy is. Unanswered; prototype ships the Figma wording.
-- Figma's success frame still says "Want more?"; the prototype uses the
-  approved "Stay connected" in both places. Fix in Figma.
-- A Send Card offer is planned (Antonio) and will want a place in this
-  sequence. Not on the page today.
-- Nothing today edits or saves a guestbook post — no copy may suggest it does.
-
-## In the code
-
-`index.html`: `TRIGGERS` registry (`alwaysFires` = rule 1), `canFire()` holds
-the arbitration in rule order, state flags `slot` / `reservedFor` / `posted` /
-`seenAccountOffer`, constants `SCROLL_DEPTH_TRIGGER` and `SCROLL_AFTER_POST`.
-
-The scenario panel shows every trigger's state live, with a rate-limiting
-toggle for contrast, a reset, and Skip to posted. `window.__gp` exposes
-`state`, `fire()` and `triggers` for the console.
