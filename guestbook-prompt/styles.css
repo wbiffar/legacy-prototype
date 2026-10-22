@@ -125,7 +125,10 @@ textarea:focus-visible, [tabindex]:focus-visible {
 }
 .gp-dialog-scrim[data-open="true"] { opacity: 1; }
 .gp-dialog {
-  width: 100%; max-width: 520px; border-radius: 20px;
+  /* 640 to match the account sheet — the exit-intent modal is the same
+     Follow/Modal/Soft Follow component in Figma, so they share a width. Its
+     content is capped at 544 inside, which is where the padding comes from. */
+  width: 100%; max-width: 640px; border-radius: 20px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   opacity: 0; transform: translateY(8px) scale(.98);
   transition: opacity .2s ease, transform .2s ease;
@@ -134,7 +137,12 @@ textarea:focus-visible, [tabindex]:focus-visible {
 .gp-dialog-scrim[data-open="true"] .gp-dialog { opacity: 1; transform: none; }
 @media (max-width: 639px) {
   .gp-dialog-scrim { align-items: flex-end; padding: 0; }
-  .gp-dialog { max-width: 100%; border-radius: 20px 20px 0 0; }
+  /* Same 32px cap as .gp-sheet. At 48px the follow-success card — the
+     tallest thing here, with a title bar, three benefits and two stacked
+     buttons — came out 10px over on a 375x667 phone and scrolled to hide
+     its own bottom padding. 32px clears it, and matching the sheet means
+     both kinds of modal leave the same strip of backdrop above them. */
+  .gp-dialog { max-width: 100%; border-radius: 20px 20px 0 0; max-height: calc(100dvh - 32px); }
 }
 @media (prefers-reduced-motion: reduce) {
   .gp-dialog-scrim, .gp-dialog { transition-duration: .01ms; }
