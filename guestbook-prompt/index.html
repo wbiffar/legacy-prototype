@@ -121,14 +121,23 @@
        the negative margin moves the portrait without dragging the header
        up with it. -->
   <header class="text-center px-4 flex flex-col items-center">
-    <div class="w-[160px] h-[222px] sm:w-[202px] sm:h-[280px] -mt-[126px] sm:-mt-[200px]
+    <!-- Hidden. This is also the QA page's real state: John Doe has no photo
+         uploaded, nor does any other obit in that org, so the slot renders
+         empty there too. Drop the `hidden` attribute to bring it back —
+         nothing else needs touching. The name's mt-8 serves both states: a
+         flex item that is display:none leaves the layout entirely, so with
+         the portrait hidden that 32px is the gap from the band (QA puts the
+         same mt-8 on its name block), and with it shown the same 32px is the
+         gap below the portrait. -->
+    <div hidden
+         class="w-[160px] h-[222px] sm:w-[202px] sm:h-[280px] -mt-[126px] sm:-mt-[200px]
                 rounded-2xl overflow-hidden bg-gold-100 shadow-xl
                 flex flex-col items-center justify-center gap-2 text-gold-700"
          role="img" aria-label="Portrait of John Doe — placeholder">
       <i class="ph ph-user text-5xl" aria-hidden="true"></i>
       <span class="text-[11px] font-semibold uppercase tracking-wider">Portrait</span>
     </div>
-    <h1 class="mt-6 font-serif text-[36px] md:text-[48px] lg:text-[60px] leading-tight text-navy-700">John Doe</h1>
+    <h1 class="mt-8 font-serif text-[36px] md:text-[48px] lg:text-[60px] leading-tight text-navy-700">John Doe</h1>
     <p class="mt-1 text-gold-700 text-[20px] font-light tracking-wider">1960 &ndash; 2026</p>
     <div class="mt-5 flex flex-wrap items-center justify-center gap-2.5">
       <button class="inline-flex items-center gap-2 min-h-[44px] px-5 rounded-full bg-gold-400 text-wb-900 font-semibold text-sm hover:bg-gold-500">
