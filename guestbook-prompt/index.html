@@ -54,7 +54,7 @@
       <li class="gp-trig flex items-start gap-2" data-trig="guestbook" data-state="waiting">
         <i class="ph ph-circle mt-0.5 shrink-0" data-dot aria-hidden="true"></i>
         <span class="flex-1 min-w-0">
-          <span class="font-semibold block">Guestbook account prompt <span class="font-normal text-gold-300">· always</span></span>
+          <span class="font-semibold block">Guestbook account prompt <span class="font-normal text-gold-300">· exempt</span></span>
           <span class="text-navy-200 block leading-snug" data-why>Waiting — needs a post, then a scroll either way.</span>
         </span>
       </li>
@@ -534,12 +534,12 @@
 
      The rules:
 
-       1. The guestbook account prompt ALWAYS shows to someone who has
-          posted. It does not compete for the slot and is not blocked by a
-          generic prompt that fired earlier in the session — writing a
-          tribute is the moment the account offer actually makes sense, and
-          it is too valuable to lose to a modal the visitor dismissed on
-          their way in.
+       1. A post earns the guestbook account prompt. It does not compete for
+          the slot, and a generic prompt the visitor DISMISSED does not
+          block it — writing a tribute is the moment the account offer
+          actually makes sense, and it is too valuable to lose to a modal
+          they waved away on their way in. Rule 2 is the one thing that
+          overrides this, so "earns" rather than "always".
 
        2. Completing the follow ends all of it. A visitor who gave their
           email and reached "You're all set!" is already getting the
@@ -652,7 +652,7 @@
     guestbook: {
       label: 'Guestbook account prompt',
       scrim: 'accountScrim',
-      // Rule 1 — exempt from the slot. Posting always earns the prompt.
+      // Rule 1 — exempt from the slot. Not exempt from rule 2.
       alwaysFires: true,
       waitingWhy: 'Waiting — needs a post, then a scroll either way.'
     }
@@ -747,7 +747,7 @@
     } else if (state.slot) {
       slotState.textContent = 'Spent — ' + TRIGGERS[state.slot].label;
       slotNote.textContent = state.posted
-        ? 'Spent for this session. The guestbook prompt is exempt and still shows — a post always earns it.'
+        ? 'Spent for this session. The guestbook prompt is exempt and still shows — the post earned it.'
         : 'Spent for this session. No other generic prompt can fire.';
     } else if (state.posted) {
       slotState.textContent = 'Stood down — posted';
@@ -771,7 +771,7 @@
         s = 'blocked'; text = 'Suppressed — the follow is done and the account offer was made with it.';
       } else if (state.rateLimit && t.alwaysFires) {
         // An exempt prompt is never suppressed by the slot or the stand-down.
-        if (state.posted) { s = 'armed'; text = 'Armed — scroll ' + SCROLL_AFTER_POST + 'px either way to fire it. Always shows after a post.'; }
+        if (state.posted) { s = 'armed'; text = 'Armed — scroll ' + SCROLL_AFTER_POST + 'px either way to fire it. The slot cannot block it.'; }
         else { s = 'waiting'; text = t.waitingWhy; }
       } else if (state.rateLimit && state.slot) {
         s = 'blocked'; text = 'Suppressed — ' + TRIGGERS[state.slot].label + ' already fired.';

@@ -24,14 +24,15 @@ full account offer — same benefits, same buttons — which drives rule 2.
 
 ## Rules
 
-1. **The guestbook prompt always shows to someone who posted.** Exempt from the
-   allowance; not blocked by a generic prompt that already fired. Writing a
-   tribute is when the offer makes sense — too valuable to lose to a modal they
-   waved away on the way in.
-2. **Completing the follow ends all prompting**, the guestbook prompt included.
-   They are already getting updates and the success state made the offer;
-   asking again is asking twice. *Submitting* suppresses — dismissing with the
-   X does not.
+1. **A post earns the prompt.** It is exempt from the allowance, and a generic
+   prompt the visitor *dismissed* does not block it. Writing a tribute is when
+   the offer makes sense — too valuable to lose to a modal they waved away on
+   the way in. Rule 2 is the one thing that overrides this.
+2. **Completing the follow ends all prompting**, the guestbook prompt included
+   — so someone who followed the page before posting does **not** get the
+   prompt afterwards. They are already getting updates and the success state
+   made the offer; asking again is asking twice. *Submitting* suppresses —
+   dismissing with the X does not.
 3. **Posting makes the generic prompts stand down** for the session.
 4. **The generic prompts share one allowance.** First eligible wins, so exit
    intent leads for someone who reads and leaves.
