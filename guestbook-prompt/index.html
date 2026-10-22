@@ -326,29 +326,36 @@
 </div>
 
 <!-- ====================================================================
-     EXIT-INTENT MODAL — Figma Follow/Modal/Soft Follow
+     FOLLOW MODAL — Figma Follow/Modal/Soft Follow
      3626:41748 (capture) → 3626:41688 (success).
 
-     Two states in one card. The success state is the important one: it
-     carries the SAME account offer as the guestbook prompt, which is why
-     reaching it suppresses that prompt later (see rule 2 in the script).
-     Icons are Phosphor classes rather than exported SVGs — the comp's own
+     ONE card, shared by both generic triggers. Exit intent and the scroll
+     threshold differ only in when they fire; the thing they show is the
+     same, so duplicating ~90 lines of markup to say so would only create
+     two copies to keep in step. Which trigger opened it is tracked in
+     state, and the scenario panel reports it.
+
+     Two states. The success state is the important one: it carries the SAME
+     account offer as the guestbook prompt — same benefits, same buttons —
+     which is why reaching it suppresses that prompt later (rule 2).
+
+     Icons are Phosphor classes rather than exported SVGs: the comp's own
      icons are Phosphor Bell and X, and Phosphor is already loaded here and
      used by every other icon on the page.
      ==================================================================== -->
-<div id="exitScrim" class="gp-dialog-scrim" hidden data-open="false">
-  <div class="gp-dialog bg-white" role="dialog" aria-modal="true" aria-labelledby="exitTitle">
+<div id="followScrim" class="gp-dialog-scrim" hidden data-open="false">
+  <div class="gp-dialog bg-white" role="dialog" aria-modal="true" aria-labelledby="followTitle">
 
     <!-- ---------- Capture ---------- -->
-    <div id="exitCapture">
+    <div id="followCapture">
       <div class="sticky top-0 bg-white flex items-center gap-3 px-4 py-4">
         <div class="flex-1 min-w-0 flex items-center gap-2">
           <span class="shrink-0 w-12 h-12 rounded-full bg-navy-100 inline-flex items-center justify-center">
             <i class="ph ph-bell text-[28px] text-navy-700" aria-hidden="true"></i>
           </span>
-          <h2 id="exitTitle" class="flex-1 min-w-0 font-serif text-2xl leading-tight text-navy-700">Never miss an update</h2>
+          <h2 id="followTitle" class="flex-1 min-w-0 font-serif text-2xl leading-tight text-navy-700">Never miss an update</h2>
         </div>
-        <button data-dismiss="exit" class="shrink-0 w-10 h-10 rounded-full border border-wb-300 bg-white inline-flex items-center justify-center text-wb-700 hover:bg-wb-50" aria-label="Close">
+        <button data-dismiss="follow" class="shrink-0 w-10 h-10 rounded-full border border-wb-300 bg-white inline-flex items-center justify-center text-wb-700 hover:bg-wb-50" aria-label="Close">
           <i class="ph ph-x text-sm" aria-hidden="true"></i>
         </button>
       </div>
@@ -373,7 +380,7 @@
     </div>
 
     <!-- ---------- Success ---------- -->
-    <div id="exitSuccess" hidden class="gp-fade-in" role="status" aria-live="polite">
+    <div id="followSuccess" hidden class="gp-fade-in" role="status" aria-live="polite">
       <div class="sticky top-0 bg-white flex items-center gap-3 px-4 py-4">
         <div class="flex-1 min-w-0 flex items-center gap-2">
           <span class="shrink-0 w-12 h-12 rounded-full bg-navy-100 inline-flex items-center justify-center">
@@ -381,7 +388,7 @@
           </span>
           <h2 class="flex-1 min-w-0 font-serif text-2xl leading-tight text-navy-700">You're all set!</h2>
         </div>
-        <button data-dismiss="exit" class="shrink-0 w-10 h-10 rounded-full border border-wb-300 bg-white inline-flex items-center justify-center text-wb-700 hover:bg-wb-50" aria-label="Close">
+        <button data-dismiss="follow" class="shrink-0 w-10 h-10 rounded-full border border-wb-300 bg-white inline-flex items-center justify-center text-wb-700 hover:bg-wb-50" aria-label="Close">
           <i class="ph ph-x text-sm" aria-hidden="true"></i>
         </button>
       </div>
@@ -436,25 +443,9 @@
   </div>
 </div>
 
-<!-- ==================== Scroll-threshold modal ==================== -->
-<div id="scrollScrim" class="gp-dialog-scrim" hidden data-open="false">
-  <div class="gp-dialog bg-white" role="dialog" aria-modal="true" aria-labelledby="scrollTitle">
-    <div class="p-6 sm:p-8">
-      <div class="flex items-start gap-3">
-        <h2 id="scrollTitle" class="flex-1 font-serif text-2xl leading-tight text-navy-700">Keep John's memory close</h2>
-        <button data-dismiss="scroll" class="shrink-0 w-11 h-11 -mt-2 -mr-2 inline-flex items-center justify-center text-wb-600 hover:text-wb-900" aria-label="Close">
-          <i class="ph ph-x text-xl" aria-hidden="true"></i>
-        </button>
-      </div>
-      <p class="mt-3 text-wb-700 text-base leading-snug">Create a free account to follow this page and get updates when new memories are shared.</p>
-      <div class="mt-5 flex flex-col sm:flex-row gap-2">
-        <button data-acct="create" class="flex-1 min-h-[44px] rounded-full bg-navy-700 text-white font-semibold text-sm px-5 hover:bg-navy-800">Create an Account</button>
-        <button data-dismiss="scroll" class="flex-1 min-h-[44px] rounded-full bg-white border border-navy-700 text-navy-700 font-semibold text-sm px-5 hover:bg-navy-50">Maybe later</button>
-      </div>
-      <p class="mt-4 text-xs text-wb-500 text-center">Scroll-threshold modal &mdash; fires at 60% depth.</p>
-    </div>
-  </div>
-</div>
+<!-- The scroll-threshold modal had its own card here. It is the same card as
+     the exit-intent one now, so both triggers open the shared #followScrim
+     above and this markup is gone rather than duplicated. -->
 
 <!-- The standalone sign-in pop used to live here. Removed 22 Oct: an obituary
      is not the page type for it. Not disabled behind a flag — gone, so it
@@ -474,8 +465,11 @@
      Modal orchestration.
 
      DES-2305: the obit page already carries an exit-intent modal, a
-     scroll-threshold modal and interstitial ads. The GENERIC prompts compete
-     for ONE allowance so they cannot stack up.
+     scroll-threshold modal and interstitial ads.
+
+     The two GENERIC prompts now show the same card — the follow modal,
+     email capture then "You're all set!" — and differ only in when they
+     fire. They compete for ONE allowance so they cannot stack up.
 
      The standalone sign-in pop that used to sit alongside them was removed
      outright on 22 Oct — an obituary is not the page type for it. It is not
@@ -487,27 +481,30 @@
           posted. It does not compete for the slot and is not blocked by a
           generic prompt that fired earlier in the session — writing a
           tribute is the moment the account offer actually makes sense, and
-          it is too valuable to lose to an exit-intent modal the visitor
-          dismissed on their way in.
+          it is too valuable to lose to a modal the visitor dismissed on
+          their way in.
 
-       2. The one exception: a visitor who gave their email to the
-          exit-intent modal and reached its "You're all set!" state has
-          already been shown the account offer, because that success state
-          carries the same benefits list and the same two buttons. Showing
-          it again after their guestbook post would be asking twice. So the
-          success state suppresses the prompt; dismissing the exit modal
-          without completing it does not.
-       3. Posting also makes the generic prompts stand down for the rest of
-          the session, so they never pile on after the contextual one.
+       2. Completing the follow ends all of it. A visitor who gave their
+          email and reached "You're all set!" is already getting the
+          updates, and that state carries the account offer itself — same
+          benefits list, same two buttons. So nothing fires afterwards, the
+          guestbook prompt included: asking again would be asking twice.
+          Dismissing the modal WITHOUT submitting does not count; the
+          trigger is the success, not the appearance.
+
+       3. Posting makes the generic prompts stand down for the rest of the
+          session, so they never pile on after the contextual one.
+
        4. Among the generic prompts, the first eligible trigger takes the
           slot and the other is suppressed. Exit intent therefore leads for
           a visitor who reads and leaves without posting.
+
        5. The account prompt is armed by the post but fired by SCROLLING —
           user interaction, never a timer (review 2, 20 Oct).
 
-     The ceiling is therefore two account prompts in a session, and only for
-     a visitor who saw a generic one and then went on to post. Never three,
-     and never two for the same intent.
+     The ceiling is two prompts in a session, and only for a visitor who
+     dismissed a generic one and then went on to post. Complete the follow
+     and it is one. Never three, and never two for the same intent.
      ================================================================== */
 
   var SCROLL_DEPTH_TRIGGER = 0.60;   // scroll-threshold modal
@@ -586,18 +583,18 @@
   var TRIGGERS = {
     scroll: {
       label: 'Scroll-threshold modal',
-      scrim: 'scrollScrim',
+      scrim: 'followScrim',
       waitingWhy: 'Waiting — fires at 60% depth.'
     },
     exit: {
       label: 'Exit-intent modal',
-      scrim: 'exitScrim',
+      scrim: 'followScrim',
       waitingWhy: 'Waiting — pointer leaves the top of the window.'
     },
     guestbook: {
       label: 'Guestbook account prompt',
       scrim: 'accountScrim',
-      // Rule 2 — exempt from the slot. Posting always earns the prompt.
+      // Rule 1 — exempt from the slot. Posting always earns the prompt.
       alwaysFires: true,
       waitingWhy: 'Waiting — needs a post, then a scroll either way.'
     }
@@ -608,10 +605,14 @@
   function canFire(id) {
     var t = TRIGGERS[id];
     if (state.fired[id]) return false;
+    // Rule 2 — once the follow is completed nothing else needs to ask. The
+    // visitor is already getting the emails and has already been shown the
+    // account offer, so this holds even with rate limiting off: that toggle
+    // is there to show prompts stacking up, not to re-ask someone who has
+    // already said yes.
+    if (state.seenAccountOffer) return false;
     if (!state.rateLimit) return true;              // contrast mode: no limit
-    // Rule 1 — exempt from the slot, except for rule 2: the follow success
-    // has already made this exact offer.
-    if (t.alwaysFires) return !state.seenAccountOffer;
+    if (t.alwaysFires) return true;                 // rule 1 — exempt from the slot
     if (state.slot) return false;                   // already spent
     if (state.reservedFor && state.reservedFor !== id) return false;  // rule 3
     return true;
@@ -658,7 +659,7 @@
   }
 
   function closeAll() {
-    ['accountScrim', 'exitScrim', 'scrollScrim'].forEach(function (id) {
+    ['accountScrim', 'followScrim'].forEach(function (id) {
       var el = document.getElementById(id);
       if (!el.hidden) closeScrim(id);
     });
@@ -683,8 +684,8 @@
       slotNote.textContent = 'Today’s behaviour: every trigger fires independently. ' +
         state.openCount + ' prompt' + (state.openCount === 1 ? '' : 's') + ' shown so far.';
     } else if (state.seenAccountOffer) {
-      slotState.textContent = 'Account offer already made';
-      slotNote.textContent = 'The follow success showed the benefits and the buttons, so the guestbook prompt stands down too. Nothing else can fire.';
+      slotState.textContent = 'Following — nothing left to ask';
+      slotNote.textContent = 'The follow succeeded and carried the account offer with it, so every prompt stands down, the guestbook one included.';
     } else if (state.slot) {
       slotState.textContent = 'Spent — ' + TRIGGERS[state.slot].label;
       slotNote.textContent = state.posted
@@ -707,11 +708,12 @@
 
       if (state.fired[id]) {
         s = 'spent'; text = 'Shown.';
+      } else if (state.seenAccountOffer) {
+        // Rule 2 outranks everything below, including the slot exemption.
+        s = 'blocked'; text = 'Suppressed — the follow is done and the account offer was made with it.';
       } else if (state.rateLimit && t.alwaysFires) {
-        // Checked before the slot and stand-down branches: an exempt prompt
-        // is never suppressed by either of them — only by rule 2.
-        if (state.seenAccountOffer) { s = 'blocked'; text = 'Suppressed — the follow success already made this offer.'; }
-        else if (state.posted) { s = 'armed'; text = 'Armed — scroll ' + SCROLL_AFTER_POST + 'px either way to fire it. Always shows after a post.'; }
+        // An exempt prompt is never suppressed by the slot or the stand-down.
+        if (state.posted) { s = 'armed'; text = 'Armed — scroll ' + SCROLL_AFTER_POST + 'px either way to fire it. Always shows after a post.'; }
         else { s = 'waiting'; text = t.waitingWhy; }
       } else if (state.rateLimit && state.slot) {
         s = 'blocked'; text = 'Suppressed — ' + TRIGGERS[state.slot].label + ' already fired.';
@@ -765,8 +767,8 @@
     document.getElementById('followSuccessCopy').textContent =
       'You’ll get email alerts when new notices and tributes are published for ' +
       FULL_NAME + ' at ' + email + '.';
-    document.getElementById('exitCapture').hidden = true;
-    document.getElementById('exitSuccess').hidden = false;
+    document.getElementById('followCapture').hidden = true;
+    document.getElementById('followSuccess').hidden = false;
     // Rule 2 — this state carries the account offer, so the guestbook prompt
     // stands down for the rest of the session.
     state.seenAccountOffer = true;
@@ -841,7 +843,7 @@
   });
 
   // Click the scrim itself (not the card) to dismiss.
-  ['accountScrim', 'exitScrim', 'scrollScrim'].forEach(function (id) {
+  ['accountScrim', 'followScrim'].forEach(function (id) {
     document.getElementById(id).addEventListener('click', function (e) {
       if (e.target === this) closeScrim(id);
     });
@@ -873,8 +875,8 @@
     document.getElementById('confirmation').hidden = true;
     document.getElementById('composer').reset();
     // The exit modal is a two-state card, so put it back on its first state.
-    document.getElementById('exitCapture').hidden = false;
-    document.getElementById('exitSuccess').hidden = true;
+    document.getElementById('followCapture').hidden = false;
+    document.getElementById('followSuccess').hidden = true;
     document.getElementById('followForm').reset();
     state = freshState();
     render();
