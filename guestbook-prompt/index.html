@@ -802,11 +802,6 @@
     btn.setAttribute('aria-expanded', String(open));
     if (open) {
       pop.hidden = false;
-      // Both live in the top-right corner, so they overlap at most widths.
-      // The popover wins on z-index and stays clickable, but a dark debug
-      // panel behind the thing being demoed looks like a bug. Scaffolding
-      // yields to product; one click on the header reopens it.
-      collapsePanel(true);
       // Flush layout so the closed state is committed, then flip — see the
       // note in openScrim. rAF does not fire in a backgrounded tab, which
       // left this stuck at opacity 0.
