@@ -60,14 +60,6 @@
       </li>
     </ul>
 
-    <label class="flex items-start gap-2 mb-3 cursor-pointer">
-      <input id="rateLimitToggle" type="checkbox" checked class="mt-0.5 w-4 h-4 shrink-0 accent-gold-400" />
-      <span class="flex-1">
-        <span class="font-semibold block">Rate limiting on</span>
-        <span class="text-navy-200 block leading-snug">Uncheck to see today's behaviour — every trigger fires independently, stacking prompts in one session.</span>
-      </span>
-    </label>
-
     <div class="flex gap-2">
       <button id="resetBtn" class="flex-1 min-h-[44px] rounded-full bg-gold-400 text-wb-900 font-semibold px-3 hover:bg-gold-500">Reset session</button>
       <button id="postedBtn" class="flex-1 min-h-[44px] rounded-full border border-navy-300 text-white font-semibold px-3 hover:bg-navy-800">Skip to posted</button>
@@ -81,10 +73,68 @@
     <a href="#" class="shrink-0" aria-label="Legacy.com home">
       <img src="assets/logo-horizontal.svg" alt="Legacy.com" class="h-7 w-auto" />
     </a>
-    <div class="ml-auto flex items-center gap-2">
-      <button class="hidden md:inline-flex items-center gap-1.5 min-h-[44px] px-3 font-semibold text-[15px] text-navy-600 hover:text-navy-700">
-        <i class="ph ph-user-circle text-xl" aria-hidden="true"></i> Sign In
+    <!-- The popover anchors to this whole button group, not to the Sign In
+         button itself. Anchored to the button, its right edge sits ~68px in
+         from the screen edge (the hamburger is to its right), so a 320px card
+         started at left:-7 on a 375 phone and clipped. Against the group, the
+         right edge is the nav's own padding edge and it fits at every width —
+         no media query needed. The max-width is the backstop for very narrow
+         phones, where even that would overflow.
+
+         Sign In is visible at every width now; it used to be
+         `hidden md:inline-flex`, which left phones no way to reach the
+         popover at all. The label collapses under sm so the header still
+         fits a 375 screen. -->
+    <div class="ml-auto relative flex items-center gap-2">
+      <button id="signInBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="signInPop"
+              class="inline-flex items-center gap-1.5 min-h-[44px] px-3 font-semibold text-[15px] text-navy-600 hover:text-navy-700">
+        <i class="ph ph-user-circle text-xl" aria-hidden="true"></i>
+        <span class="hidden sm:inline">Sign In</span>
       </button>
+
+        <!-- ============================================================
+             SIGN-IN POPOVER — Figma Engagement Patterns 301:85244.
+
+             User-initiated, so it takes no part in the trigger arbitration:
+             it never spends the allowance and is never suppressed. Someone
+             who taps Sign In is asking for this, which is the opposite of
+             an interrupt. Not to be confused with the automatic sign-in pop
+             that was removed on 22 Oct.
+             ============================================================ -->
+        <div id="signInPop" hidden data-open="false" role="dialog" aria-label="Create an account or sign in"
+             class="gp-popover absolute right-0 top-full mt-2 w-[320px] max-w-[calc(100vw-32px)] bg-white border border-wb-300 rounded-2xl p-6 flex flex-col gap-4 items-start text-left">
+
+          <div class="flex flex-col gap-4 items-start w-full">
+            <p class="font-semibold text-base leading-tight text-wb-900 w-full">Your own space on Legacy.</p>
+            <ul class="flex flex-col gap-3 items-start w-full">
+              <li class="flex gap-2 items-start w-full">
+                <img src="assets/check-16.svg" alt="" width="16" height="16" class="shrink-0 mt-0.5" />
+                <span class="flex-1 min-w-0 text-sm leading-tight text-wb-700">Keep the people you care about in one place</span>
+              </li>
+              <li class="flex gap-2 items-start w-full">
+                <img src="assets/check-16.svg" alt="" width="16" height="16" class="shrink-0 mt-0.5" />
+                <span class="flex-1 min-w-0 text-sm leading-tight text-wb-700">Get updates when new memories are shared</span>
+              </li>
+              <li class="flex gap-2 items-start w-full">
+                <img src="assets/check-16.svg" alt="" width="16" height="16" class="shrink-0 mt-0.5" />
+                <span class="flex-1 min-w-0 text-sm leading-tight text-wb-700">Save your searches and filters</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Gold primary here, not the navy the account prompt uses. That
+               is the comp: this popover sits on white nav chrome rather than
+               over a dimmed page, so it needs its own emphasis. -->
+          <div class="flex flex-col gap-3 items-start w-full">
+            <button data-acct="create" class="w-full min-h-[44px] px-5 rounded-full bg-gold-400 text-wb-900 font-semibold text-sm hover:bg-gold-500">Create an Account</button>
+            <button data-acct="signin" class="w-full min-h-[44px] px-5 rounded-full bg-white border border-navy-700 text-navy-700 font-semibold text-sm hover:bg-navy-50">Sign In</button>
+          </div>
+
+          <button data-pop-close class="absolute top-1 right-1 w-7 h-7 rounded-full bg-wb-200 inline-flex items-center justify-center text-wb-900 hover:bg-wb-300" aria-label="Close">
+            <i class="ph ph-x text-xs" aria-hidden="true"></i>
+        </button>
+      </div>
+
       <button class="inline-flex items-center justify-center w-11 h-11 text-wb-900" aria-label="Open menu">
         <i class="ph ph-list text-2xl" aria-hidden="true"></i>
       </button>
@@ -630,8 +680,16 @@
       // thing that suppresses the guestbook prompt — not the modal merely
       // having appeared.
       seenAccountOffer: false,
+      // Clicked Create an Account or Sign In anywhere, the header popover
+      // included. They have an account; there is nothing left to prompt for.
+      signedIn: false,
       postScrollY: 0,
-      rateLimit: document.getElementById('rateLimitToggle').checked,
+      // Always on. The toggle that exposed the unlimited contrast mode was
+      // removed on 23 Oct — rate limiting is the behaviour, not an option.
+      // The !rateLimit branches below are left in place so the contrast can
+      // still be produced from the console (__gp.state.rateLimit = false)
+      // without rebuilding them.
+      rateLimit: true,
       fired: {},
       openCount: 0
     };
@@ -670,6 +728,7 @@
     // is there to show prompts stacking up, not to re-ask someone who has
     // already said yes.
     if (state.seenAccountOffer) return false;
+    if (state.signedIn) return false;
     if (!state.rateLimit) return true;              // contrast mode: no limit
     if (t.alwaysFires) return true;                 // rule 2 — exempt from the slot
     if (state.slot) return false;                   // already spent
@@ -698,12 +757,16 @@
   function openScrim(elId) {
     var el = document.getElementById(elId);
     el.hidden = false;
-    // Two frames: one for `hidden` to clear, one for the transition to have a
-    // starting value to animate from. A single rAF lands before layout and
-    // the sheet appears already open.
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () { el.setAttribute('data-open', 'true'); });
-    });
+    /* The transition needs the closed state committed before the open one is
+       set, or the card appears already open with no animation. This used to
+       be two nested rAFs, which is the usual trick and is wrong here:
+       requestAnimationFrame does not fire while the tab is backgrounded, so
+       the attribute was never set and the modal sat at opacity 0 — visible to
+       hit-testing, invisible to the user. Reading offsetWidth forces the
+       style flush synchronously, so it holds whether or not the tab is
+       being painted. */
+    void el.offsetWidth;
+    el.setAttribute('data-open', 'true');
     var focusable = el.querySelector('button');
     if (focusable) setTimeout(function () { focusable.focus(); }, 60);
   }
@@ -722,6 +785,32 @@
       var el = document.getElementById(id);
       if (!el.hidden) closeScrim(id);
     });
+    setSignInPop(false);
+  }
+
+  /* ---------------- Sign-in popover ----------------
+     Deliberately outside the trigger machinery above: it is opened by the
+     visitor, so it has no trigger, never spends the allowance and is never
+     suppressed. */
+
+  function setSignInPop(open) {
+    var pop = document.getElementById('signInPop');
+    var btn = document.getElementById('signInBtn');
+    btn.setAttribute('aria-expanded', String(open));
+    if (open) {
+      pop.hidden = false;
+      // Flush layout so the closed state is committed, then flip — see the
+      // note in openScrim. rAF does not fire in a backgrounded tab, which
+      // left this stuck at opacity 0.
+      void pop.offsetWidth;
+      pop.setAttribute('data-open', 'true');
+    } else {
+      if (pop.hidden) return;
+      pop.setAttribute('data-open', 'false');
+      setTimeout(function () {
+        if (pop.getAttribute('data-open') === 'false') pop.hidden = true;
+      }, 180);
+    }
   }
 
   function toast(msg) {
@@ -742,6 +831,9 @@
       slotState.textContent = 'Rate limiting off';
       slotNote.textContent = 'Today’s behaviour: every trigger fires independently. ' +
         state.openCount + ' prompt' + (state.openCount === 1 ? '' : 's') + ' shown so far.';
+    } else if (state.signedIn) {
+      slotState.textContent = 'Signed in — nothing left to ask';
+      slotNote.textContent = 'The visitor has an account, so every prompt stands down. The header popover can still be reopened by tapping Sign In.';
     } else if (state.seenAccountOffer) {
       slotState.textContent = 'Following — nothing left to ask';
       slotNote.textContent = 'The follow succeeded and carried the account offer with it, so every prompt stands down, the guestbook one included.';
@@ -767,6 +859,8 @@
 
       if (state.fired[id]) {
         s = 'spent'; text = 'Shown.';
+      } else if (state.signedIn) {
+        s = 'blocked'; text = 'Suppressed — the visitor has an account.';
       } else if (state.seenAccountOffer) {
         // Rule 1 outranks everything below, including the slot exemption.
         s = 'blocked'; text = 'Suppressed — the follow is done and the account offer was made with it.';
@@ -892,15 +986,33 @@
     fire('exit');
   });
 
+  document.getElementById('signInBtn').addEventListener('click', function (e) {
+    e.stopPropagation();   // don't let the outside-click handler below reopen/close it
+    setSignInPop(document.getElementById('signInPop').hidden);
+  });
+
   // Dismissals and account actions.
   document.addEventListener('click', function (e) {
+    if (e.target.closest('[data-pop-close]')) { setSignInPop(false); return; }
+
     var dismiss = e.target.closest('[data-dismiss]');
     if (dismiss) { closeScrim(dismiss.getAttribute('data-dismiss') + 'Scrim'); return; }
 
     var acct = e.target.closest('[data-acct]');
-    if (!acct) return;
+    if (!acct) {
+      // Click anywhere outside the popover closes it. The scrims handle their
+      // own outside-clicks; the popover has no scrim to catch them.
+      if (!e.target.closest('#signInPop')) setSignInPop(false);
+      return;
+    }
     var action = acct.getAttribute('data-acct');
     closeAll();
+    if (action === 'create' || action === 'signin') {
+      // They have an account now, so nothing left to prompt for. Applies
+      // wherever the buttons were clicked, popover included.
+      state.signedIn = true;
+      render();
+    }
     if (action === 'create')      toast('Account created — you’ll hear when new memories of ' + FIRST_NAME + ' are shared.');
     else if (action === 'signin') toast('Signed in — following ' + FIRST_NAME + '’s page.');
   });
@@ -916,20 +1028,16 @@
 
   /* ---------------- Panel controls ---------------- */
 
-  document.getElementById('panelToggle').addEventListener('click', function () {
-    var p = document.getElementById('panel');
-    var collapsed = p.getAttribute('data-collapsed') === 'true';
-    p.setAttribute('data-collapsed', String(!collapsed));
-    this.setAttribute('aria-expanded', String(collapsed));
+  function collapsePanel(collapsed) {
+    document.getElementById('panel').setAttribute('data-collapsed', String(collapsed));
+    document.getElementById('panelToggle').setAttribute('aria-expanded', String(!collapsed));
     document.getElementById('panelChevron').className =
-      'ph ml-auto text-base ' + (collapsed ? 'ph-caret-up' : 'ph-caret-down');
-  });
+      'ph ml-auto text-base ' + (collapsed ? 'ph-caret-down' : 'ph-caret-up');
+  }
 
-  document.getElementById('rateLimitToggle').addEventListener('change', function () {
-    state.rateLimit = this.checked;
-    state.slot = null;
-    state.reservedFor = this.checked && state.posted ? 'guestbook' : null;
-    render();
+  document.getElementById('panelToggle').addEventListener('click', function () {
+    var collapsed = document.getElementById('panel').getAttribute('data-collapsed') === 'true';
+    collapsePanel(!collapsed);
   });
 
   document.getElementById('resetBtn').addEventListener('click', function () {
@@ -941,6 +1049,7 @@
     document.getElementById('followCapture').hidden = false;
     document.getElementById('followSuccess').hidden = true;
     document.getElementById('followForm').reset();
+    setSignInPop(false);
     state = freshState();
     render();
     // `instant`, not `auto` — html sets scroll-behavior:smooth, which `auto`
@@ -970,11 +1079,7 @@
   // The panel is scaffolding, so it must not be the first thing a reviewer
   // sees on a phone — expanded it covers most of a 375x812 screen. Start it
   // collapsed there and leave it open on desktop, where it costs nothing.
-  if (window.innerWidth < 768) {
-    document.getElementById('panel').setAttribute('data-collapsed', 'true');
-    document.getElementById('panelToggle').setAttribute('aria-expanded', 'false');
-    document.getElementById('panelChevron').className = 'ph ml-auto text-base ph-caret-down';
-  }
+  if (window.innerWidth < 768) collapsePanel(true);
 
   renderPosts();
   state = freshState();

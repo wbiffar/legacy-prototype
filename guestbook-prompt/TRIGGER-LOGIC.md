@@ -16,6 +16,11 @@ implements exactly this.
 | Guestbook prompt | A post, then 80px scroll either direction | Account prompt |
 | ~~Sign-in pop~~ | — | Removed — wrong page type for it |
 
+Tapping **Sign In** in the header opens a
+[sign-in popover](https://www.figma.com/design/OfNpb0009ADQSTcOXMsFgn/Engagement-Patterns?node-id=301-85244).
+It is user-initiated, so it sits outside all of this: it never spends the
+allowance and is never suppressed.
+
 **Follow modal** — one card, two states:
 ["Never miss an update"](https://www.figma.com/design/djnZb62qRq3Y4W5HvQcGG1/des-2289-tukios-consumer-obit-adjustments?node-id=3626-41748)
 → ["You're all set!"](https://www.figma.com/design/djnZb62qRq3Y4W5HvQcGG1/des-2289-tukios-consumer-obit-adjustments?node-id=3626-41688).
@@ -30,7 +35,7 @@ which is why rule 1 exists.
 
 Applied in this order.
 
-1. **A completed follow ends all prompting** — it already made the account offer.
+1. **A completed follow, or signing in, ends all prompting** — the account offer is already made or taken.
 2. **Otherwise a post earns the prompt**, even after a dismissed modal.
 3. **A post also stops the generic prompts** for that session.
 4. **One generic prompt per session** — exit intent usually takes it.

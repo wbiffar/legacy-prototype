@@ -157,6 +157,25 @@ textarea:focus-visible, [tabindex]:focus-visible {
   .gp-dialog-scrim, .gp-dialog { transition-duration: .01ms; }
 }
 
+/* ===================== Sign-in popover =====================
+   Figma Engagement Patterns 301:85244. Anchored under the header's Sign In
+   button rather than centred, because it answers a tap on that button — it
+   should feel attached to the control the visitor just used, not like the
+   page interrupting them.
+
+   Above the scenario panel (z-90) so it stays clickable: at desktop widths
+   both sit in the top-right corner and the panel would otherwise cover the
+   buttons — the same collision the account sheet hit on phones. */
+.gp-popover {
+  z-index: 95;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Figma shadow, verbatim */
+  opacity: 0; transform: translateY(-4px) scale(.98);
+  transform-origin: top right;
+  transition: opacity .14s ease, transform .14s ease;
+}
+.gp-popover[data-open="true"] { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .gp-popover { transition-duration: .01ms; } }
+
 /* ===================== Confirmation swap =====================
    The form is replaced in place by the confirmation card. Fading the new card
    in over a settled layout, rather than animating a height, keeps the scroll
@@ -169,9 +188,15 @@ textarea:focus-visible, [tabindex]:focus-visible {
 /* ===================== Scenario panel =====================
    Prototype scaffolding, not product UI. It is how the rate-limiting
    acceptance criterion gets demonstrated in a review: the modal slot and
-   every trigger's state are visible and resettable while you click around. */
+   every trigger's state are visible and resettable while you click around.
+
+   Pinned bottom-right on desktop. It was top-right, which put it in the
+   same corner as the header's Sign In button and its popover; down here the
+   two cannot meet, and the corner is otherwise empty on a wide screen.
+   Bottom-anchored means it grows upward as rows are added, so the slot
+   summary at its top moves rather than the controls at its foot. */
 .gp-panel {
-  position: fixed; z-index: 90; right: 12px; top: 12px; width: 288px;
+  position: fixed; z-index: 90; right: 12px; bottom: 12px; width: 288px;
   font-size: 12px; line-height: 1.45;
   box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.35);
   max-height: calc(100dvh - 24px); display: flex; flex-direction: column;
@@ -179,20 +204,20 @@ textarea:focus-visible, [tabindex]:focus-visible {
 .gp-panel[data-collapsed="true"] .gp-panel-body { display: none; }
 .gp-panel-body { overflow-y: auto; }
 @media (max-width: 767px) {
-  /* Bottom-left on phones: the top-right corner is where the page's own
-     hamburger lives, and the bottom-right is the sticky Send Flowers bar. */
-  .gp-panel { right: 8px; left: 8px; top: auto; bottom: 92px; width: auto; }
+  /* Full width on phones, lifted clear of the page's own sticky Send
+     Flowers bar. */
+  .gp-panel { right: 8px; left: 8px; bottom: 92px; width: auto; }
   .gp-panel[data-collapsed="true"] { left: auto; width: auto; }
 }
 
 /* The panel yields to any open modal until the viewport is wide enough that
    the two cannot touch. The 640px card is centred, so it reaches to
    (vw + 640) / 2; the panel starts at vw - 300. Those cross below 1240px —
-   on a phone the panel sat on the sheet's Sign In button, and at tablet
-   widths it clips the card's top-right corner. Below that width the panel
-   drops under the scrim: still legible through the dim, just not clickable
-   until the modal is dismissed. Above it the panel stays on top, which is
-   where watching the slot change while a prompt is open actually works. */
+   on a phone the panel sat on the sheet's buttons, and at tablet widths it
+   clips the card. Below that width the panel drops under the scrim: still
+   legible through the dim, just not clickable until the modal is dismissed.
+   Above it the panel stays on top, which is where watching the slot change
+   while a prompt is open actually works. */
 @media (max-width: 1239px) {
   .gp-panel { z-index: 60; }
 }
