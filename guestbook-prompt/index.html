@@ -60,14 +60,6 @@
       </li>
     </ul>
 
-    <label class="flex items-start gap-2 mb-3 cursor-pointer">
-      <input id="rateLimitToggle" type="checkbox" checked class="mt-0.5 w-4 h-4 shrink-0 accent-gold-400" />
-      <span class="flex-1">
-        <span class="font-semibold block">Rate limiting on</span>
-        <span class="text-navy-200 block leading-snug">Uncheck to see today's behaviour — every trigger fires independently, stacking prompts in one session.</span>
-      </span>
-    </label>
-
     <div class="flex gap-2">
       <button id="resetBtn" class="flex-1 min-h-[44px] rounded-full bg-gold-400 text-wb-900 font-semibold px-3 hover:bg-gold-500">Reset session</button>
       <button id="postedBtn" class="flex-1 min-h-[44px] rounded-full border border-navy-300 text-white font-semibold px-3 hover:bg-navy-800">Skip to posted</button>
@@ -692,7 +684,12 @@
       // included. They have an account; there is nothing left to prompt for.
       signedIn: false,
       postScrollY: 0,
-      rateLimit: document.getElementById('rateLimitToggle').checked,
+      // Always on. The toggle that exposed the unlimited contrast mode was
+      // removed on 23 Oct — rate limiting is the behaviour, not an option.
+      // The !rateLimit branches below are left in place so the contrast can
+      // still be produced from the console (__gp.state.rateLimit = false)
+      // without rebuilding them.
+      rateLimit: true,
       fired: {},
       openCount: 0
     };
@@ -1041,13 +1038,6 @@
   document.getElementById('panelToggle').addEventListener('click', function () {
     var collapsed = document.getElementById('panel').getAttribute('data-collapsed') === 'true';
     collapsePanel(!collapsed);
-  });
-
-  document.getElementById('rateLimitToggle').addEventListener('change', function () {
-    state.rateLimit = this.checked;
-    state.slot = null;
-    state.reservedFor = this.checked && state.posted ? 'guestbook' : null;
-    render();
   });
 
   document.getElementById('resetBtn').addEventListener('click', function () {
