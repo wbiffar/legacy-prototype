@@ -157,6 +157,25 @@ textarea:focus-visible, [tabindex]:focus-visible {
   .gp-dialog-scrim, .gp-dialog { transition-duration: .01ms; }
 }
 
+/* ===================== Sign-in popover =====================
+   Figma Engagement Patterns 301:85244. Anchored under the header's Sign In
+   button rather than centred, because it answers a tap on that button — it
+   should feel attached to the control the visitor just used, not like the
+   page interrupting them.
+
+   Above the scenario panel (z-90) so it stays clickable: at desktop widths
+   both sit in the top-right corner and the panel would otherwise cover the
+   buttons — the same collision the account sheet hit on phones. */
+.gp-popover {
+  z-index: 95;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Figma shadow, verbatim */
+  opacity: 0; transform: translateY(-4px) scale(.98);
+  transform-origin: top right;
+  transition: opacity .14s ease, transform .14s ease;
+}
+.gp-popover[data-open="true"] { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .gp-popover { transition-duration: .01ms; } }
+
 /* ===================== Confirmation swap =====================
    The form is replaced in place by the confirmation card. Fading the new card
    in over a settled layout, rather than animating a height, keeps the scroll
