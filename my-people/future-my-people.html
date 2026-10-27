@@ -180,8 +180,8 @@
         <h2 id="detail-people-heading" class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700 mb-4"><i class="ph ph-users-three text-2xl" aria-hidden="true"></i><span>People</span><span id="detail-people-count" class="contents"></span></h2>
         <div id="detail-people"></div>
 
-        <!-- Possible matches for this collection — the same carousel as the
-             dashboard, with the copy and the add action scoped to this group. -->
+        <!-- The same carousel, pool and copy as the dashboard — only the add
+             action differs, putting the person in this collection. -->
         <section id="detail-suggest-section" class="mt-10 md:mt-12 flex flex-col gap-4">
           <div class="flex flex-col gap-1">
             <div class="flex items-center gap-2">
@@ -191,7 +191,7 @@
               <button type="button" data-car="suggest" data-dir="next" class="w-10 h-10 rounded-full bg-wb-200 hover:bg-wb-300 text-wb-900 flex items-center justify-center flex-shrink-0 transition-opacity disabled:opacity-50 disabled:hover:bg-wb-200" aria-label="More suggestions"><i class="ph-bold ph-caret-right text-sm"></i></button>
             </div>
             </div>
-            <p class="text-base text-wb-700 leading-relaxed">Suggestions based on family names, the people in this collection, and places you follow.</p>
+            <p class="text-base text-wb-700 leading-relaxed">Suggestions based on family names, your people, and places you follow.</p>
           </div>
           <div id="detail-suggest-row" class="flex gap-2 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 -my-3 px-1 py-3"></div>
         </section>
@@ -852,9 +852,7 @@
   // Empty state (Figma 7441:38495): the row becomes one card the height of a
   // suggestion card, explaining why it's empty and pointing at search.
   function suggestEmptyHTML(kind){
-    const sub = kind === 'match'
-      ? 'Add someone to My People, and we’ll suggest others connected to them.'
-      : 'Add someone to this collection, and we’ll suggest others connected to them.';
+    const sub = 'Add someone to My People, and we’ll suggest others connected to them.';
     return '<div class="w-full flex-shrink-0 min-h-[234px] bg-white border border-wb-300 rounded-2xl p-6 flex flex-col items-center justify-center gap-6">' +
       '<div class="w-full max-w-[420px] flex flex-col gap-1 text-center">' +
         '<p class="text-lg font-bold text-navy-700 leading-normal">No matches.</p>' +
@@ -865,11 +863,11 @@
   }
 
   // ----- carousel plumbing -----
-  function suggestPoolFor(kind){
-    if (kind === 'match') return window.LEGACY_SUGGEST.list(savedIds);
-    const c = currentColl();
-    return c ? window.LEGACY_SUGGEST.forCollection(c) : [];
-  }
+  // Both rows draw the same candidates: the collection page recommends from My
+  // People rather than from the collection's own members, so a person sees one
+  // consistent set of matches wherever they are. (LEGACY_SUGGEST.forCollection
+  // still builds the collection-scoped set; it is simply not wired up here.)
+  function suggestPoolFor(){ return window.LEGACY_SUGGEST.list(savedIds); }
   function updateSuggestControls(kind){
     const st = suggestState[kind], row = $(st.row), box = $(st.controls);
     if (!row || !box) return;
@@ -902,7 +900,7 @@
     const i = st.shown.findIndex(s => s.id === id);
     if (i < 0) { paintSuggestRow(kind); return; }
     st.shown.splice(i, 1);
-    st.pool = suggestPoolFor(kind);
+    st.pool = suggestPoolFor();
     const shownIds = st.shown.map(x => x.id);
     const next = st.pool.find(x => shownIds.indexOf(x.id) < 0);
     if (next) st.shown.push(next);
@@ -1034,19 +1032,19 @@
       paginationHTML(detailPage, ppl.length, 'detail', 'people');
     applyPhotoColors();
   }
-  function renderDetailSuggestions(c){
-    setSuggestPool('suggest', window.LEGACY_SUGGEST.forCollection(c));
+  function renderDetailSuggestions(){
+    setSuggestPool('suggest', suggestPoolFor());
   }
   function refreshDetail(){
     const c = readCollections().find(x => x.id === currentCollId);
     if (!c) { hideCollection(); return; }
-    updateDetailHeader(c); renderDetailPeople(c); renderDetailSuggestions(c);
+    updateDetailHeader(c); renderDetailPeople(c); renderDetailSuggestions();
   }
   function showCollection(id){
     const c = readCollections().find(x => x.id === id); if (!c) return;
     currentCollId = id;
     detailPage = 1;
-    updateDetailHeader(c); renderDetailPeople(c); renderDetailSuggestions(c);
+    updateDetailHeader(c); renderDetailPeople(c); renderDetailSuggestions();
     $('#list-view').style.display = 'none';
     $('#detail-view').style.display = '';
     window.scrollTo(0, 0);
@@ -1056,6 +1054,7 @@
     $('#detail-view').style.display = 'none';
     $('#list-view').style.display = '';
     renderCollections();
+    renderMatches();   // the two rows share a pool, so refresh what the collection page just consumed
   }
   $('#detail-back').addEventListener('click', hideCollection);
   // Create a Collection now lives beneath the grid, so listen on the wrapper.
@@ -1065,9 +1064,7 @@
     showCollection(card.dataset.collId);
   });
   $('#detail-suggest-row').addEventListener('click', (e) => {
-    // The empty state points at the collection's own "add people" picker
-    // rather than site search — a collection is filled from My People.
-    if (e.target.closest('.suggest-find')) { openAddPeople(); return; }
+    if (e.target.closest('.suggest-find')) { goAddMore(); return; }
     const card = e.target.closest('.suggest-card'); if (!card) return;
     const id = card.dataset.id;
     if (e.target.closest('.suggest-dismiss')) { window.LEGACY_SUGGEST.dismiss(id); consumeSuggestion('suggest', id); return; }
