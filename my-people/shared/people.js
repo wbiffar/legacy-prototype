@@ -91,6 +91,215 @@
       photo: null, relation: null,
       source: 'Los Angeles Sentinel', home: 'Angelus Funeral Home', location: 'Los Angeles, CA',
       obit: 'Dorothy Reed passed away on October 18, 2009, at the age of 78. The heart of a large Los Angeles family, she led her church choir for decades and never met a neighbor she didn’t feed.'
+    },
+
+    // ---- Recommendation pool (DES-2304) ----
+    // Possible-match candidates beyond the family graph, so the carousel always
+    // has 30 suggestions to draw on once anyone is saved. They are real pages
+    // in the demo — a card opens them like any other person.
+    recJanice: {
+      first: 'Janice', last: 'Whitfield', full: 'Janice Lynn Whitfield', dates: '1968 – 2021',
+      photo: null, relation: null,
+      source: 'The Denver Post', home: 'Whitfield Chapel', location: 'Denver, CO',
+      obit: 'Janice Lynn Whitfield passed away on May 4, 2021, at the age of 53. A school nurse for twenty-five years, she looked after half of Denver\'s children and remembered every one of their names.'
+    },
+    recTimothy: {
+      first: 'Timothy', last: 'Alan', full: 'Timothy Marc Alan', dates: '1955 – 2024',
+      photo: null, relation: null,
+      source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
+      obit: 'Timothy Marc Alan passed away on January 19, 2024, at the age of 68. A lifelong Chicagoan and union carpenter, he built half the back porches on his block and refused payment for most of them.'
+    },
+    recMargaretA: {
+      first: 'Margaret', last: 'Thomas', full: 'Margaret Alice Thomas', dates: '1944 – 2026',
+      photo: null, relation: null,
+      source: 'Chicago Sun-Times', home: 'Eternal Springs Funeral Home', location: 'Dixon, IL',
+      obit: 'Margaret Alice Thomas passed away on February 2, 2026, at the age of 81. She taught piano in Dixon for four decades and kept a jar of butterscotch candy on the bench for every student.'
+    },
+    recJaniceA: {
+      first: 'Janice', last: 'Whitfield', full: 'Janice Amanda Whitfield', dates: '1973 – 2026',
+      photo: null, relation: null,
+      source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
+      obit: 'Janice Amanda Whitfield passed away on June 11, 2026, at the age of 52. A librarian and fierce defender of the quiet corner, she matched readers to books with uncanny accuracy.'
+    },
+    recMichael: {
+      first: 'Michael', last: 'Adams', full: 'Michael Brian Adams', dates: '1985 – 2023',
+      photo: null, relation: null,
+      source: 'The Boston Globe', home: 'Fairview Memorial Chapel', location: 'Boston, MA',
+      obit: 'Michael Brian Adams passed away on September 30, 2023, at the age of 38. A high-school baseball coach, he is remembered for the dugout speeches his players still quote to each other.'
+    },
+    recSophia: {
+      first: 'Sophia', last: 'Harper', full: 'Sophia Harper', dates: '1952 – 2025',
+      photo: null, relation: null,
+      source: 'The Sacramento Bee', home: 'Green Valley Funeral Home', location: 'Sacramento, CA',
+      obit: 'Sophia Harper passed away on March 17, 2025, at the age of 72. A nurse, a quilter, and the first to arrive whenever a neighbor needed anything at all.'
+    },
+    recRobertD: {
+      first: 'Robert', last: 'Thomas', full: 'Robert Dale Thomas', dates: '1950 – 2024',
+      photo: null, relation: null,
+      source: 'The Fresno Bee', home: 'Fresno Memorial Gardens', location: 'Fresno, CA',
+      obit: 'Robert Dale Thomas passed away on August 8, 2024, at the age of 74. He farmed the same stretch of land his grandfather did and could read the weather better than any forecast.'
+    },
+    recLiam: {
+      first: 'Liam', last: 'Victor', full: 'Liam Victor', dates: '1965 – 2024',
+      photo: null, relation: null,
+      source: 'The Denver Post', home: 'Mountain View Chapel', location: 'Denver, CO',
+      obit: 'Liam Victor passed away on November 2, 2024, at the age of 59. A trail guide and mapmaker, he knew every switchback in the front range by heart.'
+    },
+    recClara: {
+      first: 'Clara', last: 'Timmons', full: 'Clara Timmons', dates: '1938 – 2025',
+      photo: null, relation: null,
+      source: 'The Boston Globe', home: 'Fairview Memorial Chapel', location: 'Boston, MA',
+      obit: 'Clara Timmons passed away on April 22, 2025, at the age of 86. She ran the corner bakery for fifty years and never once wrote down a recipe.'
+    },
+    recDavid: {
+      first: 'David', last: 'Allen', full: 'David Allen', dates: '1947 – 2023',
+      photo: null, relation: null,
+      source: 'Los Angeles Times', home: 'Crenshaw Memorial', location: 'Los Angeles, CA',
+      obit: 'David Allen passed away on July 5, 2023, at the age of 76. A studio engineer, he spent his life making other people sound their best and never asked for the credit.'
+    },
+    recEmma: {
+      first: 'Emma', last: 'Miller', full: 'Emma Miller', dates: '1940 – 2026',
+      photo: null, relation: null,
+      source: 'The Sacramento Bee', home: 'Green Valley Funeral Home', location: 'Sacramento, CA',
+      obit: 'Emma Miller passed away on January 30, 2026, at the age of 85. A county clerk for thirty years, she knew everyone\'s business and told no one\'s.'
+    },
+    recJamesN: {
+      first: 'James', last: 'Norton', full: 'James Norton', dates: '1953 – 2025',
+      photo: null, relation: null,
+      source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
+      obit: 'James Norton passed away on October 14, 2025, at the age of 72. A fire captain for the city, he retired to a quiet street and kept the hydrant on his corner clear all winter.'
+    },
+    recPatriciaK: {
+      first: 'Patricia', last: 'Kelly', full: 'Patricia Kelly', dates: '1945 – 2022',
+      photo: null, relation: null,
+      source: 'Chicago Sun-Times', home: 'Eternal Springs Funeral Home', location: 'Dixon, IL',
+      obit: 'Patricia Kelly passed away on December 3, 2022, at the age of 77. She kept the books for three generations of Dixon family businesses and remembered all of their stories.'
+    },
+    recQuinn: {
+      first: 'Quinn', last: 'Robinson', full: 'Quinn Robinson', dates: '1961 – 2024',
+      photo: null, relation: null,
+      source: 'Los Angeles Times', home: 'Angelus Funeral Home', location: 'Los Angeles, CA',
+      obit: 'Quinn Robinson passed away on May 28, 2024, at the age of 63. A bus driver on the same route for twenty-two years, he greeted every rider by name.'
+    },
+    recTyler: {
+      first: 'Tyler', last: 'Smith', full: 'Tyler Smith', dates: '1972 – 2025',
+      photo: null, relation: null,
+      source: 'The Fresno Bee', home: 'Fresno Memorial Gardens', location: 'Fresno, CA',
+      obit: 'Tyler Smith passed away on February 9, 2025, at the age of 52. A high-school art teacher whose murals still cover three walls of the gymnasium.'
+    },
+    recHelen: {
+      first: 'Helen', last: 'Thomas', full: 'Helen Marie Thomas', dates: '1929 – 2015',
+      photo: null, relation: null,
+      source: 'The Fresno Bee', home: 'Fresno Memorial Gardens', location: 'Fresno, CA',
+      obit: 'Helen Marie Thomas passed away in 2015 at the age of 86. She raised four children in Fresno and kept a garden that fed most of the street each summer.'
+    },
+    recArthur: {
+      first: 'Arthur', last: 'Whitfield', full: 'Arthur Whitfield', dates: '1920 – 1998',
+      photo: null, relation: null,
+      source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
+      obit: 'Arthur Whitfield passed away in 1998 at the age of 78. A veteran and a steelworker, he was known on his block for a workshop that was open to any kid with a broken bicycle.'
+    },
+    recRose: {
+      first: 'Rose', last: 'Delgado', full: 'Rose Delgado', dates: '1933 – 2011',
+      photo: null, relation: null,
+      source: 'The Fresno Bee', home: 'Fresno Memorial Gardens', location: 'Fresno, CA',
+      obit: 'Rose Delgado passed away in 2011 at the age of 78. She sewed wedding dresses for half of Fresno and signed each one inside the hem.'
+    },
+    recCarlos: {
+      first: 'Carlos', last: 'Ramirez', full: 'Carlos Ramirez', dates: '1941 – 2019',
+      photo: null, relation: null,
+      source: 'Chicago Sun-Times', home: 'Eternal Springs Funeral Home', location: 'Dixon, IL',
+      obit: 'Carlos Ramirez passed away in 2019 at the age of 78. A machinist and a devoted grandfather, he spent every Saturday morning at the hardware store whether he needed anything or not.'
+    },
+    recBeatrice: {
+      first: 'Beatrice', last: 'Sanderson', full: 'Beatrice Sanderson', dates: '1926 – 2004',
+      photo: null, relation: null,
+      source: 'The Boston Globe', home: 'Fairview Memorial Chapel', location: 'Boston, MA',
+      obit: 'Beatrice Sanderson passed away in 2004 at the age of 78. A Boston school teacher for thirty-five years, she kept in touch with students long after they had children of their own.'
+    },
+    recWalter: {
+      first: 'Walter', last: 'Reed', full: 'Walter Reed', dates: '1918 – 1992',
+      photo: null, relation: null,
+      source: 'Los Angeles Sentinel', home: 'Angelus Funeral Home', location: 'Los Angeles, CA',
+      obit: 'Walter Reed passed away in 1992 at the age of 74. A Pullman porter turned small-business owner, he opened the first record shop on his stretch of Central Avenue.'
+    },
+    recNora: {
+      first: 'Nora', last: 'Pike', full: 'Nora Pike', dates: '1958 – 2023',
+      photo: null, relation: null,
+      source: 'The Denver Post', home: 'Mountain View Chapel', location: 'Denver, CO',
+      obit: 'Nora Pike passed away on June 19, 2023, at the age of 65. A veterinarian who made house calls for anything too large to fit in a car.'
+    },
+    recSamuel: {
+      first: 'Samuel', last: 'Thomas', full: 'Samuel Thomas', dates: '1962 – 2020',
+      photo: null, relation: null,
+      source: 'The Sacramento Bee', home: 'Green Valley Funeral Home', location: 'Sacramento, CA',
+      obit: 'Samuel Thomas passed away on April 3, 2020, at the age of 58. A letter carrier for most of his life, he walked the same twelve miles a day and liked every one of them.'
+    },
+    recGrace: {
+      first: 'Grace', last: 'Whitfield', full: 'Grace Ellen Whitfield', dates: '1936 – 2016',
+      photo: null, relation: null,
+      source: 'The Denver Post', home: 'Whitfield Chapel', location: 'Denver, CO',
+      obit: 'Grace Ellen Whitfield passed away in 2016 at the age of 80. She organized the church rummage sale for forty years and could price anything at a glance.'
+    },
+    recVincent: {
+      first: 'Vincent', last: 'Delgado', full: 'Vincent Delgado', dates: '1949 – 2021',
+      photo: null, relation: null,
+      source: 'The Fresno Bee', home: 'Fresno Memorial Gardens', location: 'Fresno, CA',
+      obit: 'Vincent Delgado passed away on September 12, 2021, at the age of 72. An irrigation engineer, he spent his career getting water where it needed to go.'
+    },
+    recOlivia: {
+      first: 'Olivia', last: 'Sanderson', full: 'Olivia Sanderson', dates: '1954 – 2022',
+      photo: null, relation: null,
+      source: 'The Boston Globe', home: 'Fairview Memorial Chapel', location: 'Boston, MA',
+      obit: 'Olivia Sanderson passed away on November 25, 2022, at the age of 68. A harbor pilot and one of the first women licensed on the bay.'
+    },
+    recFrances: {
+      first: 'Frances', last: 'Thomas', full: 'Frances Thomas', dates: '1955 – 2023',
+      photo: null, relation: null,
+      source: 'Chicago Sun-Times', home: 'Eternal Springs Funeral Home', location: 'Dixon, IL',
+      obit: 'Frances Thomas passed away on July 21, 2023, at the age of 68. She ran the town newspaper\'s front desk and knew every birth, wedding, and loss before it went to print.'
+    },
+    recEdward: {
+      first: 'Edward', last: 'Whitfield', full: 'Edward Whitfield', dates: '1931 – 2009',
+      photo: null, relation: null,
+      source: 'The Denver Post', home: 'Whitfield Chapel', location: 'Denver, CO',
+      obit: 'Edward Whitfield passed away in 2009 at the age of 78. A rail engineer for thirty-one years, he could tell you the grade of every mile between Denver and Cheyenne.'
+    },
+    recMarian: {
+      first: 'Marian', last: 'Reed', full: 'Marian Reed', dates: '1944 – 2018',
+      photo: null, relation: null,
+      source: 'Los Angeles Sentinel', home: 'Angelus Funeral Home', location: 'Los Angeles, CA',
+      obit: 'Marian Reed passed away in 2018 at the age of 74. A civil rights organizer and a formidable cook, she fed every meeting she ever hosted.'
+    },
+    recGlenn: {
+      first: 'Glenn', last: 'Sanderson', full: 'Glenn Sanderson', dates: '1949 – 2021',
+      photo: null, relation: null,
+      source: 'The Boston Globe', home: 'Fairview Memorial Chapel', location: 'Boston, MA',
+      obit: 'Glenn Sanderson passed away on August 30, 2021, at the age of 72. A lobsterman out of Gloucester who was on the water by four every morning of his working life.'
+    },
+    recAnita: {
+      first: 'Anita', last: 'Delgado', full: 'Anita Delgado', dates: '1937 – 2014',
+      photo: null, relation: null,
+      source: 'The Fresno Bee', home: 'Fresno Memorial Gardens', location: 'Fresno, CA',
+      obit: 'Anita Delgado passed away in 2014 at the age of 77. She kept the family bakery open through two recessions and never raised the price of a dozen.'
+    },
+    recHoward: {
+      first: 'Howard', last: 'Ramirez', full: 'Howard Ramirez', dates: '1958 – 2022',
+      photo: null, relation: null,
+      source: 'Chicago Sun-Times', home: 'Restwood Funeral Home', location: 'Chicago, IL',
+      obit: 'Howard Ramirez passed away on March 6, 2022, at the age of 64. A city planner who spent his career arguing, successfully, for more trees.'
+    },
+    recLouise: {
+      first: 'Louise', last: 'Harper', full: 'Louise Harper', dates: '1942 – 2020',
+      photo: null, relation: null,
+      source: 'The Sacramento Bee', home: 'Green Valley Funeral Home', location: 'Sacramento, CA',
+      obit: 'Louise Harper passed away on October 9, 2020, at the age of 78. A court reporter for four decades, she heard the whole county\'s business and repeated none of it.'
+    },
+    recPhilip: {
+      first: 'Philip', last: 'Alan', full: 'Philip Alan', dates: '1966 – 2024',
+      photo: null, relation: null,
+      source: 'The Denver Post', home: 'Mountain View Chapel', location: 'Denver, CO',
+      obit: 'Philip Alan passed away on December 15, 2024, at the age of 58. A ski patroller turned paramedic, he spent his life getting to people fast.'
     }
   };
 
