@@ -2,7 +2,12 @@
    A connection is only strong enough to suggest when people share a LAST NAME
    or a FAMILY RELATIONSHIP (from the LEGACY_FAMILY graph). Weaker coincidences
    — same hometown/state or same newspaper — are intentionally NOT used.
-   Dismissed candidates drop out. Used by the dashboard and the person page. */
+   Dismissed candidates drop out. Used by the dashboard and the person page.
+
+   The "Possible Matches" carousels (DES-2304) always have POOL_SIZE candidates
+   to draw on: the graph matches above come first, then the recommendation pool
+   from people.js tops the list up. The carousel shows the first PAGE_SIZE and
+   backfills from the rest as cards are added or dismissed. */
 (function () {
   var STORE_KEY = 'legacyMyPeople.v0';
   function readStore(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (_) { return {}; } }
@@ -13,6 +18,34 @@
 
   function cap(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 
+  // The carousel keeps POOL_SIZE suggestions available and shows PAGE_SIZE of
+  // them at a time; the rest are held back to fill the gaps left by cards the
+  // user adds or dismisses.
+  var POOL_SIZE = 30;
+  var PAGE_SIZE = 15;
+
+  // Recommendation-pool ids, in the order people.js declares them. They pad the
+  // graph matches out to POOL_SIZE, and are kept out of the organic last-name /
+  // relationship matching so the person and collection pages keep suggesting
+  // only people with a real tie.
+  function isPoolId(id){ return id.indexOf('rec') === 0; }
+  function poolIds(){
+    return Object.keys(window.LEGACY_PEOPLE || {}).filter(isPoolId);
+  }
+  // Top `out` up to POOL_SIZE with pool people, skipping anyone excluded,
+  // already suggested, saved or dismissed.
+  function topUp(out, skip){
+    var dis = readDismissed();
+    var have = {};
+    out.forEach(function (s) { have[s.id] = true; });
+    poolIds().forEach(function (id) {
+      if (out.length >= POOL_SIZE) return;
+      if (have[id] || dis.indexOf(id) >= 0 || skip.indexOf(id) >= 0) return;
+      out.push({ id: id, reasonType: 'pool', icon: 'ph ph-user-circle-plus', reason: '' });
+    });
+    return out.slice(0, POOL_SIZE);
+  }
+
   // User-level suggestions (dashboard "Possible matches"): every family-graph
   // person marked "possible" who has a page and a relationship to you — minus
   // anyone already saved/dismissed/current. Reason comes straight from the graph
@@ -20,15 +53,18 @@
   // relationship tie (e.g. a same-city coincidence) are excluded by design.
   function list(savedIds, excludeId){
     var saved = savedIds || [];
+    // Suggestions are built off the people you've saved, so with an empty My
+    // People there is nothing to suggest — the carousel shows its empty state.
+    if (!saved.length) return [];
     var dis = readDismissed();
     var fam = window.LEGACY_FAMILY;
     var people = window.LEGACY_PEOPLE || {};
-    if (!fam) return [];
-    return fam.byState('possible').filter(function (id) {
+    var out = !fam ? [] : fam.byState('possible').filter(function (id) {
       return people[id] && fam.reason(id) && id !== excludeId && saved.indexOf(id) < 0 && dis.indexOf(id) < 0;
     }).map(function (id) {
       return { id: id, reasonType: 'relationship', icon: 'ph ph-tree-structure', reason: fam.reason(id) };
     });
+    return topUp(out, saved.concat(excludeId ? [excludeId] : []));
   }
 
   // Person-specific suggestions: other people connected to `pid` by a family
@@ -43,7 +79,7 @@
     var dis = readDismissed();
     var out = [];
     Object.keys(P).forEach(function (id) {
-      if (id === pid || dis.indexOf(id) >= 0) return;
+      if (id === pid || dis.indexOf(id) >= 0 || isPoolId(id)) return;
       var c = P[id];
       var rel = fam ? fam.relationBetween(pid, id) : null;
       var s = null;
@@ -68,7 +104,7 @@
     var dis = readDismissed();
     var out = [];
     Object.keys(P).forEach(function (id) {
-      if (members.indexOf(id) >= 0 || dis.indexOf(id) >= 0) return;
+      if (members.indexOf(id) >= 0 || dis.indexOf(id) >= 0 || isPoolId(id)) return;
       var c = P[id];
       var best = null;
       members.forEach(function (mid) {
@@ -81,8 +117,12 @@
       });
       if (best) { best.id = id; out.push(best); }
     });
-    return out;
+    return topUp(out, members);
   }
 
-  window.LEGACY_SUGGEST = { readDismissed: readDismissed, dismiss: dismiss, list: list, forPerson: forPerson, forCollection: forCollection };
+  window.LEGACY_SUGGEST = {
+    POOL_SIZE: POOL_SIZE, PAGE_SIZE: PAGE_SIZE,
+    readDismissed: readDismissed, dismiss: dismiss,
+    list: list, forPerson: forPerson, forCollection: forCollection
+  };
 })();

@@ -130,10 +130,21 @@
         </section>
 
         <!-- =================== Possible matches =================== -->
-        <section id="matches-section" class="mt-10 md:mt-12 flex-col gap-5" style="display:none">
-          <div class="flex flex-col gap-2">
-            <h2 class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700"><i class="ph ph-user-plus text-2xl" aria-hidden="true"></i><span>Possible matches</span></h2>
-            <p class="text-base text-wb-700 leading-relaxed">People you may want to save — based on family names, the people you’ve saved, and groups you follow.</p>
+        <!-- Carousel (Figma 7351:26129): a serif section title with prev/next
+             controls over a scrolling row of suggestions. 15 cards show at a
+             time, backfilled from a pool of 30 as they’re added or dismissed.
+             With nothing to suggest the row becomes the empty-state card
+             (Figma 7441:38495) and the controls hide. -->
+        <section id="matches-section" class="mt-10 md:mt-12 flex flex-col gap-4">
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-2">
+              <h2 class="flex-1 min-w-0 font-serif-heading text-3xl text-navy-700 leading-tight">Possible Matches</h2>
+              <div id="matches-controls" class="flex items-center gap-4 flex-shrink-0">
+              <button type="button" data-car="match" data-dir="prev" class="w-10 h-10 rounded-full bg-wb-200 hover:bg-wb-300 text-wb-900 flex items-center justify-center flex-shrink-0 transition-opacity disabled:opacity-50 disabled:hover:bg-wb-200" aria-label="Previous suggestions"><i class="ph-bold ph-caret-left text-sm"></i></button>
+              <button type="button" data-car="match" data-dir="next" class="w-10 h-10 rounded-full bg-wb-200 hover:bg-wb-300 text-wb-900 flex items-center justify-center flex-shrink-0 transition-opacity disabled:opacity-50 disabled:hover:bg-wb-200" aria-label="More suggestions"><i class="ph-bold ph-caret-right text-sm"></i></button>
+            </div>
+            </div>
+            <p class="text-base text-wb-700 leading-relaxed">Suggestions based on family names, your people, and places you follow.</p>
           </div>
           <div id="matches-grid" class="flex gap-2 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 -my-3 px-1 py-3"></div>
         </section>
@@ -169,11 +180,18 @@
         <h2 id="detail-people-heading" class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700 mb-4"><i class="ph ph-users-three text-2xl" aria-hidden="true"></i><span>People</span><span id="detail-people-count" class="contents"></span></h2>
         <div id="detail-people"></div>
 
-        <!-- Tailored suggestions for this collection (moved here from the root) -->
-        <section id="detail-suggest-section" class="mt-10 md:mt-12 flex-col gap-5" style="display:none">
+        <!-- Possible matches for this collection — the same carousel as the
+             dashboard, with the copy and the add action scoped to this group. -->
+        <section id="detail-suggest-section" class="mt-10 md:mt-12 flex flex-col gap-4">
           <div class="flex flex-col gap-1">
-            <h2 class="flex items-center gap-1 text-base font-semibold uppercase tracking-[0.07em] text-gold-700"><i class="ph ph-user-plus text-2xl" aria-hidden="true"></i><span>Suggested for this collection</span></h2>
-            <p class="text-base text-wb-700 leading-relaxed">People who may belong here — based on family names, hometowns, and where they’re remembered.</p>
+            <div class="flex items-center gap-2">
+              <h2 class="flex-1 min-w-0 font-serif-heading text-3xl text-navy-700 leading-tight">Possible Matches</h2>
+              <div id="detail-suggest-controls" class="flex items-center gap-4 flex-shrink-0">
+              <button type="button" data-car="suggest" data-dir="prev" class="w-10 h-10 rounded-full bg-wb-200 hover:bg-wb-300 text-wb-900 flex items-center justify-center flex-shrink-0 transition-opacity disabled:opacity-50 disabled:hover:bg-wb-200" aria-label="Previous suggestions"><i class="ph-bold ph-caret-left text-sm"></i></button>
+              <button type="button" data-car="suggest" data-dir="next" class="w-10 h-10 rounded-full bg-wb-200 hover:bg-wb-300 text-wb-900 flex items-center justify-center flex-shrink-0 transition-opacity disabled:opacity-50 disabled:hover:bg-wb-200" aria-label="More suggestions"><i class="ph-bold ph-caret-right text-sm"></i></button>
+            </div>
+            </div>
+            <p class="text-base text-wb-700 leading-relaxed">Suggestions based on family names, the people in this collection, and places you follow.</p>
           </div>
           <div id="detail-suggest-row" class="flex gap-2 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 -my-3 px-1 py-3"></div>
         </section>
@@ -793,42 +811,132 @@
     applyPhotoColors();
   }
 
-  // ===== Possible matches (user-level suggestions) =====
-  // A clickable card that opens the person's page; the button saves them to
-  // My People (and drops them from this list). Shared with the collection-detail
-  // "Suggested" surface via suggestPersonCardHTML — a carousel card whose name
-  // wraps (never truncates, since it's the key recognition cue) with a centered
-  // avatar-over-name layout. `kind` swaps the add label + the class prefix its
-  // surface's click handler listens on ('match' | 'suggest').
+  // ===== Possible Matches carousels =====
+  // One implementation behind both surfaces: the dashboard (kind 'match',
+  // suggestions for My People) and the collection detail page (kind 'suggest',
+  // suggestions for that collection). `kind` picks the add label, the class
+  // prefix each surface's click handler listens on, and the empty-state copy.
+  // LEGACY_SUGGEST keeps POOL_SIZE (30) candidates available; the row shows the
+  // first PAGE_SIZE (15) and pulls the next one in at the end whenever a card
+  // is added or dismissed, so the carousel never thins out mid-session.
+  const SUGGEST_PAGE = window.LEGACY_SUGGEST.PAGE_SIZE;
+  const SUGGEST_STEP = 221;                         // 213px card + 8px gap
+  const suggestState = {
+    match:   { pool: [], shown: [], row: '#matches-grid',       controls: '#matches-controls' },
+    suggest: { pool: [], shown: [], row: '#detail-suggest-row', controls: '#detail-suggest-controls' }
+  };
+
+  // Suggestion card (Figma 7337:24580): 213px wide, 80px avatar over a
+  // fixed-height name/date block so every Add button lines up, with the dismiss
+  // control pinned to the top-right corner. The whole card opens the person.
   function suggestPersonCardHTML(s, kind){
     const p = personData(s.id);
     const d = P[s.id];
     const label = kind === 'match' ? 'Add to My People' : 'Add to collection';
     const av = p.photo
-      ? '<span class="inline-block w-12 h-12 rounded-full bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
-      : '<span class="w-12 h-12 rounded-full flex items-center justify-center font-serif-heading text-white text-lg flex-shrink-0" style="background:' + colorFor(s.id) + '">' + esc(initials(p.name)) + '</span>';
-    return '<article class="' + kind + '-card relative shrink-0 basis-[78%] sm:basis-[240px] snap-start transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg bg-white border border-wb-300 rounded-lg p-4 flex flex-col items-center text-center gap-2 cursor-pointer" data-id="' + esc(s.id) + '">' +
-      '<button class="' + kind + '-dismiss absolute top-2 right-2 w-7 h-7 rounded-full text-wb-400 hover:text-wb-700 hover:bg-wb-100 flex items-center justify-center flex-shrink-0" aria-label="Dismiss suggestion"><i class="ph ph-x"></i></button>' +
-      '<div class="mt-1">' + av + '</div>' +
-      '<div><p class="text-base font-semibold text-wb-900 leading-tight break-words">' + esc(p.name) + '</p><p class="text-sm text-wb-600 mt-0.5">' + esc(d ? d.dates : '') + '</p></div>' +
-      '<p class="flex items-start justify-center gap-1.5 text-sm text-wb-700 leading-snug"><i class="' + s.icon + ' text-base text-gold-700 flex-shrink-0 mt-0.5"></i> <span class="min-w-0">' + esc(s.reason) + '</span></p>' +
-      '<button class="' + kind + '-add mt-auto w-full min-h-10 py-1.5 rounded-full border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors inline-flex items-center justify-center gap-1.5"><i class="ph ph-plus-circle text-lg flex-shrink-0"></i> <span>' + label + '</span></button>' +
+      ? '<span class="block w-20 h-20 rounded-full border border-white bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
+      : '<span class="w-20 h-20 rounded-full border border-white flex items-center justify-center font-serif-heading text-white text-2xl flex-shrink-0" style="background:' + colorFor(s.id) + '">' + esc(initials(p.name)) + '</span>';
+    return '<article class="' + kind + '-card relative w-[213px] flex-shrink-0 snap-start transition-all duration-150 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lg bg-wb-50 border border-wb-300 rounded-lg p-3 flex flex-col items-center gap-3 cursor-pointer" data-id="' + esc(s.id) + '">' +
+      '<div class="w-full flex flex-col items-center gap-3">' +
+        av +
+        '<div class="w-full h-16 overflow-hidden flex flex-col gap-1 text-center">' +
+          '<p class="text-base font-semibold text-wb-900 leading-tight break-words">' + esc(p.name) + '</p>' +
+          '<p class="text-base text-wb-700 leading-tight">' + esc(d ? d.dates : '') + '</p>' +
+        '</div>' +
+      '</div>' +
+      '<button class="' + kind + '-add mt-auto h-10 max-w-full px-4 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap"><i class="ph ph-plus-circle text-xl flex-shrink-0"></i> <span>' + label + '</span></button>' +
+      '<button class="' + kind + '-dismiss absolute top-[7px] right-[7px] w-7 h-7 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-navy-700 hover:text-white transition-colors flex items-center justify-center flex-shrink-0" aria-label="Dismiss ' + esc(p.name) + '"><i class="ph-bold ph-x text-xs"></i></button>' +
     '</article>';
   }
-  function renderMatches(){
-    const sec = $('#matches-section'), grid = $('#matches-grid');
-    if (!sec || !grid) return;
-    const items = window.LEGACY_SUGGEST.list(savedIds);
-    sec.style.display = items.length ? 'flex' : 'none';
-    grid.innerHTML = items.map(s => suggestPersonCardHTML(s, 'match')).join('');
+
+  // Empty state (Figma 7441:38495): the row becomes one card the height of a
+  // suggestion card, explaining why it's empty and pointing at search.
+  function suggestEmptyHTML(kind){
+    const sub = kind === 'match'
+      ? 'Add someone to My People, and we’ll suggest others connected to them.'
+      : 'Add someone to this collection, and we’ll suggest others connected to them.';
+    return '<div class="w-full flex-shrink-0 min-h-[234px] bg-white border border-wb-300 rounded-2xl p-6 flex flex-col items-center justify-center gap-6">' +
+      '<div class="w-full max-w-[420px] flex flex-col gap-1 text-center">' +
+        '<p class="text-lg font-bold text-navy-700 leading-normal">No matches.</p>' +
+        '<p class="text-lg text-wb-700 leading-normal">' + sub + '</p>' +
+      '</div>' +
+      '<button type="button" class="' + kind + '-find w-full max-w-[420px] px-5 py-3 rounded-full bg-gold-400 hover:bg-gold-300 text-wb-900 text-base font-semibold inline-flex items-center justify-center gap-2.5 transition-colors"><i class="ph ph-magnifying-glass text-2xl flex-shrink-0"></i> <span>Find Someone</span></button>' +
+    '</div>';
   }
+
+  // ----- carousel plumbing -----
+  function suggestPoolFor(kind){
+    if (kind === 'match') return window.LEGACY_SUGGEST.list(savedIds);
+    const c = currentColl();
+    return c ? window.LEGACY_SUGGEST.forCollection(c) : [];
+  }
+  function updateSuggestControls(kind){
+    const st = suggestState[kind], row = $(st.row), box = $(st.controls);
+    if (!row || !box) return;
+    const max = row.scrollWidth - row.clientWidth - 1;
+    box.querySelector('[data-dir="prev"]').disabled = row.scrollLeft <= 0;
+    box.querySelector('[data-dir="next"]').disabled = row.scrollLeft >= max;
+  }
+  function paintSuggestRow(kind){
+    const st = suggestState[kind], row = $(st.row), box = $(st.controls);
+    if (!row) return;
+    row.innerHTML = st.shown.length
+      ? st.shown.map(s => suggestPersonCardHTML(s, kind)).join('')
+      : suggestEmptyHTML(kind);
+    if (box) box.style.display = st.shown.length ? '' : 'none';
+    row.scrollLeft = 0;
+    updateSuggestControls(kind);
+  }
+  // Full reset: take a fresh pool and show the first PAGE_SIZE of it.
+  function setSuggestPool(kind, pool){
+    const st = suggestState[kind];
+    st.pool = pool;
+    st.shown = pool.slice(0, SUGGEST_PAGE);
+    paintSuggestRow(kind);
+  }
+  // A card has been added or dismissed: drop it from the row and slide the next
+  // unused candidate in at the END of the result set, so the visible count
+  // holds at PAGE_SIZE and the carousel keeps its scroll position.
+  function consumeSuggestion(kind, id){
+    const st = suggestState[kind];
+    const i = st.shown.findIndex(s => s.id === id);
+    if (i < 0) { paintSuggestRow(kind); return; }
+    st.shown.splice(i, 1);
+    st.pool = suggestPoolFor(kind);
+    const shownIds = st.shown.map(x => x.id);
+    const next = st.pool.find(x => shownIds.indexOf(x.id) < 0);
+    if (next) st.shown.push(next);
+    const row = $(st.row);
+    const card = row.querySelector('.' + kind + '-card[data-id="' + id + '"]');
+    if (card) card.remove();
+    if (next) row.insertAdjacentHTML('beforeend', suggestPersonCardHTML(next, kind));
+    if (!st.shown.length) paintSuggestRow(kind);
+    else updateSuggestControls(kind);
+  }
+  // Prev/next step by whole cards — a screenful on wide viewports, one card on
+  // a phone, where the row is also a plain swipe.
+  ['match', 'suggest'].forEach(kind => {
+    const st = suggestState[kind], row = $(st.row), box = $(st.controls);
+    if (!row || !box) return;
+    box.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-dir]'); if (!btn) return;
+      const step = Math.max(1, Math.floor(row.clientWidth / SUGGEST_STEP)) * SUGGEST_STEP;
+      row.scrollBy({ left: btn.dataset.dir === 'prev' ? -step : step, behavior: 'smooth' });
+    });
+    row.addEventListener('scroll', () => updateSuggestControls(kind));
+  });
+  window.addEventListener('resize', () => { updateSuggestControls('match'); updateSuggestControls('suggest'); });
+
+  function renderMatches(){ setSuggestPool('match', window.LEGACY_SUGGEST.list(savedIds)); }
+
   $('#matches-grid').addEventListener('click', (e) => {
+    if (e.target.closest('.match-find')) { goAddMore(); return; }
     const card = e.target.closest('.match-card'); if (!card) return;
     const id = card.dataset.id;
-    if (e.target.closest('.match-dismiss')) { window.LEGACY_SUGGEST.dismiss(id); renderMatches(); return; }
+    if (e.target.closest('.match-dismiss')) { window.LEGACY_SUGGEST.dismiss(id); consumeSuggestion('match', id); return; }
     if (e.target.closest('.match-add')) {
       if (savedIds.indexOf(id) < 0) { savedIds.push(id); writeSaved(savedIds); buildPeople(); render(); }
-      renderMatches();
+      consumeSuggestion('match', id);
       toast(personData(id).name + ' added to My People');
       return;
     }
@@ -895,10 +1003,6 @@
   // ===== Collection detail view =====
   let currentCollId = null;
 
-  // Collection-detail "Suggested" carousel card — shares the wrapping,
-  // non-truncating layout of the dashboard match card (kind 'suggest').
-  function suggestCardHTML(s){ return suggestPersonCardHTML(s, 'suggest'); }
-
   function updateDetailHeader(c){
     $('#detail-title').textContent = c.name;
     $('#detail-desc').textContent = c.description || '';   // no description simply renders nothing
@@ -931,10 +1035,7 @@
     applyPhotoColors();
   }
   function renderDetailSuggestions(c){
-    const sec = $('#detail-suggest-section'), row = $('#detail-suggest-row');
-    const items = window.LEGACY_SUGGEST.forCollection(c);
-    sec.style.display = items.length ? 'flex' : 'none';
-    row.innerHTML = items.map(suggestCardHTML).join('');
+    setSuggestPool('suggest', window.LEGACY_SUGGEST.forCollection(c));
   }
   function refreshDetail(){
     const c = readCollections().find(x => x.id === currentCollId);
@@ -964,9 +1065,12 @@
     showCollection(card.dataset.collId);
   });
   $('#detail-suggest-row').addEventListener('click', (e) => {
+    // The empty state points at the collection's own "add people" picker
+    // rather than site search — a collection is filled from My People.
+    if (e.target.closest('.suggest-find')) { openAddPeople(); return; }
     const card = e.target.closest('.suggest-card'); if (!card) return;
     const id = card.dataset.id;
-    if (e.target.closest('.suggest-dismiss')) { window.LEGACY_SUGGEST.dismiss(id); refreshDetail(); return; }
+    if (e.target.closest('.suggest-dismiss')) { window.LEGACY_SUGGEST.dismiss(id); consumeSuggestion('suggest', id); return; }
     if (e.target.closest('.suggest-add')) { addToCurrentCollection(id); return; }
     window.location.href = 'future-index.html?id=' + id;
   });
@@ -978,7 +1082,9 @@
     if (c.people.indexOf(id) < 0) c.people.push(id);
     if (savedIds.indexOf(id) < 0) { savedIds.push(id); writeSaved(savedIds); buildPeople(); render(); }  // adding to a collection also saves them
     writeCollections(colls);
-    refreshDetail();
+    // Header and people grid move; the suggestion row loses just this card and
+    // backfills, so the carousel keeps its place.
+    updateDetailHeader(c); renderDetailPeople(c); consumeSuggestion('suggest', id);
     toast(personData(id).name + ' added to “' + c.name + '”');
   }
 
