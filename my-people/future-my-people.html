@@ -547,14 +547,14 @@
 <div class="sheet-overlay" id="coll-addpeople-overlay" role="dialog" aria-modal="true" aria-labelledby="coll-addpeople-title">
   <div class="sheet-card p-6 md:p-8 !pb-[72px] md:!pb-8">
     <button data-close class="absolute top-2 right-2 w-10 h-10 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-wb-100 flex items-center justify-center" aria-label="Close"><i class="ph-bold ph-x text-sm"></i></button>
-    <h2 id="coll-addpeople-title" class="text-xl font-bold text-navy-700 leading-tight pr-10">Add people to this collection</h2>
-    <p class="text-sm text-wb-700 mt-1 leading-relaxed">Tap to add or remove people you’ve saved.</p>
+    <h2 id="coll-addpeople-title" class="text-xl font-bold text-navy-700 leading-tight pr-10">Add to a collection</h2>
+    <p class="text-sm mt-1 leading-relaxed"><span class="font-semibold text-wb-900">My People</span> <span id="coll-addpeople-count" class="text-wb-700"></span></p>
     <div id="coll-addpeople-list" class="mt-4 flex flex-col gap-1 max-h-[300px] overflow-y-auto -mx-1 px-1"></div>
     <!-- Sticky submit/cancel lockup: edits stage in a draft and only persist on
          Save; Cancel (or dismissing) discards them. -->
-    <div class="flex items-center gap-4 pt-4 mt-4 border-t border-wb-300">
+    <div class="flex items-center justify-between gap-4 pt-4 mt-4 border-t border-wb-300">
       <button id="coll-addpeople-cancel" type="button" class="inline-flex items-center justify-center h-10 px-5 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-wb-50 shrink-0">Cancel</button>
-      <button id="coll-addpeople-save" type="button" disabled class="flex-1 min-w-0 inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-semibold">Save changes</button>
+      <button id="coll-addpeople-save" type="button" disabled class="inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-semibold shrink-0">Add to Collection</button>
     </div>
   </div>
 </div>
@@ -832,7 +832,6 @@
   function suggestPersonCardHTML(s, kind){
     const p = personData(s.id);
     const d = P[s.id];
-    const label = kind === 'match' ? 'Add to My People' : 'Add to collection';
     const av = p.photo
       ? '<span class="block w-20 h-20 rounded-full border border-white bg-center bg-cover flex-shrink-0" style="background-image:url(' + esc(p.photo) + ')"></span>'
       : '<span class="w-20 h-20 rounded-full border border-white flex items-center justify-center font-serif-heading text-white text-2xl flex-shrink-0" style="background:' + colorFor(s.id) + '">' + esc(initials(p.name)) + '</span>';
@@ -844,7 +843,7 @@
           '<p class="text-base text-wb-700 leading-tight">' + esc(d ? d.dates : '') + '</p>' +
         '</div>' +
       '</div>' +
-      '<button class="' + kind + '-add mt-auto h-10 max-w-full px-4 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap"><i class="ph ph-plus-circle text-xl flex-shrink-0"></i> <span>' + label + '</span></button>' +
+      '<button class="' + kind + '-add mt-auto h-10 max-w-full px-4 rounded-full bg-white border border-navy-700 text-navy-700 text-sm font-semibold hover:bg-navy-700 hover:text-white transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap"><i class="ph ph-plus-circle text-xl flex-shrink-0"></i> <span>Add to My People</span></button>' +
       '<button class="' + kind + '-dismiss absolute top-[7px] right-[7px] w-7 h-7 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-navy-700 hover:text-white transition-colors flex items-center justify-center flex-shrink-0" aria-label="Dismiss ' + esc(p.name) + '"><i class="ph-bold ph-x text-xs"></i></button>' +
     '</article>';
   }
@@ -1068,21 +1067,21 @@
     const card = e.target.closest('.suggest-card'); if (!card) return;
     const id = card.dataset.id;
     if (e.target.closest('.suggest-dismiss')) { window.LEGACY_SUGGEST.dismiss(id); consumeSuggestion('suggest', id); return; }
-    if (e.target.closest('.suggest-add')) { addToCurrentCollection(id); return; }
+    if (e.target.closest('.suggest-add')) { addFromCollectionPage(id); return; }
     window.location.href = 'future-index.html?id=' + id;
   });
   function currentColl(){ return readCollections().find(x => x.id === currentCollId); }
-  function addToCurrentCollection(id){
-    const colls = readCollections();
-    const c = colls.find(x => x.id === currentCollId); if (!c) return;
-    c.people = c.people || [];
-    if (c.people.indexOf(id) < 0) c.people.push(id);
-    if (savedIds.indexOf(id) < 0) { savedIds.push(id); writeSaved(savedIds); buildPeople(); render(); }  // adding to a collection also saves them
-    writeCollections(colls);
-    // Header and people grid move; the suggestion row loses just this card and
-    // backfills, so the carousel keeps its place.
-    updateDetailHeader(c); renderDetailPeople(c); consumeSuggestion('suggest', id);
-    toast(personData(id).name + ' added to “' + c.name + '”');
+  // A suggestion on a collection page adds to My People like anywhere else
+  // (DES-2304). We say so, then offer the collection as a separate, optional
+  // step: the picker opens with this person already ticked, so confirming is
+  // one tap and Cancel still leaves them saved.
+  function addFromCollectionPage(id){
+    if (savedIds.indexOf(id) < 0) { savedIds.push(id); writeSaved(savedIds); buildPeople(); render(); }
+    consumeSuggestion('suggest', id);
+    toast(personData(id).name + ' added to My People');
+    // A beat so the two steps read in order; the toast outlives the delay and
+    // sits above the sheet, so it's still there to explain what just happened.
+    setTimeout(() => openAddPeople([id]), 450);
   }
 
   // ----- Share -----
@@ -1130,6 +1129,10 @@
     b.style.color = on ? '#262116' : '#807e7a';             // wb-900 / wb-500
     b.style.border = on ? '1px solid #e2ba60' : '1px solid #dbdad7'; // gold-400 / wb-300
   }
+  function paintAddPeopleCount(){
+    const n = (addPeopleDraft || []).length;
+    const el = $('#coll-addpeople-count'); if (el) el.textContent = '(' + n + ' selected)';
+  }
   function renderAddPeopleList(){
     const inColl = addPeopleDraft || [];
     $('#coll-addpeople-list').innerHTML = savedIds.map(id => {
@@ -1144,13 +1147,24 @@
       '</button>';
     }).join('') || '<p class="text-sm text-wb-600 py-2">You haven’t saved anyone yet.</p>';
   }
-  function openAddPeople(){
+  // `preselect` ticks people who aren't in the collection yet — used by the
+  // suggestion flow, which has just saved someone and wants them ready to add.
+  function openAddPeople(preselect){
     const c = currentColl(); if (!c) return;
     addPeopleOrig = (c.people || []).slice();
     addPeopleDraft = addPeopleOrig.slice();
+    (preselect || []).forEach(id => { if (addPeopleDraft.indexOf(id) < 0) addPeopleDraft.push(id); });
     renderAddPeopleList();
+    paintAddPeopleCount();
     paintAddPeopleSave();
     openOverlay(overlays.collAddPeople);
+    // Someone just saved sits at the end of My People, which can be below the
+    // fold of the list — bring them into view so the tick is visible.
+    const first = (preselect || [])[0];
+    if (first) {
+      const row = $('#coll-addpeople-list').querySelector('.addperson-row[data-id="' + first + '"]');
+      if (row) row.scrollIntoView({ block: 'nearest' });
+    }
   }
   $('#coll-addpeople-list').addEventListener('click', (e) => {
     const row = e.target.closest('.addperson-row'); if (!row || !addPeopleDraft) return;
@@ -1158,6 +1172,7 @@
     const i = addPeopleDraft.indexOf(id);
     if (i < 0) addPeopleDraft.push(id); else addPeopleDraft.splice(i, 1);
     renderAddPeopleList();
+    paintAddPeopleCount();
     paintAddPeopleSave();
   });
   // Save persists the whole draft; Cancel (and any other dismissal) discards it.
