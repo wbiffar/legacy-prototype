@@ -157,3 +157,11 @@ Each entry should include:
 
 ### Expose prototype state on `window` for review and debugging
 - **Preference learned:** The orchestration state lived in an IIFE closure and could not be inspected, which is what made the two bugs above slow to pin down. A `window.__gp = { get state(){...}, fire, triggers }` handle costs three lines, makes the flow drivable from the console during a stakeholder review, and is prototype-only code anyway. Worth adding to any prototype with non-trivial state.
+
+## 2026-10-27 — About Me (DES-2296) finalizations
+
+### "Update the prototype" means diff it, not rebuild it
+- **What went wrong:** Asked to reflect approved copy changes on an existing page, I started a broad Figma crawl that read like the opening of a from-scratch build. Wes stopped me: "the prototype already exists you don't need to create it."
+- **What to do instead:** When a prototype already exists, pull only what's needed to spot the deltas — the final frames plus the element sheets for anything that changed — then edit the file in place. Say up front that the existing file is the target.
+
+---
