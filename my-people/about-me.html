@@ -35,6 +35,28 @@
     /* Last field in a group would clip inside the card; flip it upward. */
     .ta-field[data-drop="up"] .ta-pop { top: auto; bottom: calc(100% + 6px); }
 
+    /* ---- Selected value, drawn inside the input ----
+       The record's location can't live in a real <input>, which is one line
+       by definition, so a chosen value is painted over the input instead:
+       name on top, location underneath, both inside the same 64px box the
+       design specifies. The overlay is click-through, so the input beneath
+       it still takes focus; once it has focus the overlay steps aside and
+       the input shows its own text for editing. */
+    .ta-value {
+      position: absolute; inset: 1px; border-radius: 7px;
+      display: none; flex-direction: column; justify-content: center;
+      padding-left: 44px; padding-right: 47px;
+      pointer-events: none;
+    }
+    .ta-field[data-state="selected"] .ta-value { display: flex; }
+    /* Hide the input's own single line while the overlay stands in for it. */
+    .ta-field[data-state="selected"] .ta-input { color: transparent; }
+    /* `data-focus` rather than `:focus`: the field can sit focused and still
+       be in the selected state (dismiss the suggestions with Escape, say),
+       and the caret has to be visible in its own text when it does. */
+    .ta-field[data-focus] .ta-value { display: none; }
+    .ta-field[data-focus] .ta-input { color: inherit; }
+
     /* Suggestion row — 56px keeps it clear of the 44px minimum tap target. */
     .ta-opt {
       display: flex; align-items: center; gap: 12px;
@@ -164,7 +186,7 @@
         <ul class="space-y-3 text-[15px]">
           <li><a href="about-me.html" aria-current="page" class="font-bold text-wb-900">About Me</a></li>
           <li><a href="future-my-people.html" class="text-wb-700 hover:text-navy-700">My People</a></li>
-          <li><a href="#" class="text-wb-700 hover:text-navy-700">Following</a></li>
+          <li><a href="#" class="text-wb-700 hover:text-navy-700">Notifications</a></li>
           <li><a href="#" class="text-wb-700 hover:text-navy-700">Account Settings</a></li>
         </ul>
         <div class="border-t border-wb-200 my-5"></div>
@@ -186,7 +208,7 @@
           <ul class="px-5 pt-1 pb-5 space-y-3 text-[15px]">
             <li><a href="about-me.html" aria-current="page" class="font-bold text-wb-900">About Me</a></li>
             <li><a href="future-my-people.html" class="text-wb-700">My People</a></li>
-            <li><a href="#" class="text-wb-700">Following</a></li>
+            <li><a href="#" class="text-wb-700">Notifications</a></li>
             <li><a href="#" class="text-wb-700">Account Settings</a></li>
             <li><a href="future-index.html?id=ralph&so=1" class="text-navy-500 font-semibold underline underline-offset-2">Sign out</a></li>
           </ul>
@@ -204,10 +226,12 @@
            was one too many. -->
       <!-- The explainer is the description, not a callout beside it: it's
            the answer to "why are you asking?", which is the first thing a
-           reader wants, so it belongs directly under the title. -->
+           reader wants, so it belongs directly under the title. The approved
+           copy carries its own reassurance — optional, changeable — so it no
+           longer links out to My People mid-sentence. -->
       <header class="mb-5 md:mb-6 mt-3 lg:mt-0">
         <h1 class="font-serif-heading text-4xl md:text-5xl text-navy-700 leading-tight">About Me</h1>
-        <p class="text-base md:text-lg text-wb-700 mt-3 leading-relaxed">What you share here, along with the people you've saved in <a href="future-my-people.html" class="font-semibold text-navy-500 hover:text-navy-700 underline underline-offset-2">My People</a>, shapes what we show you on Legacy.com.</p>
+        <p class="text-base md:text-lg text-wb-700 mt-3 leading-relaxed">Tell us a little about yourself. We'll use it to make browsing on this site more personal as new features roll out. It's all optional, and you can change it anytime.</p>
       </header>
 
       <!-- ---------- Unsaved-changes banner (DES-2186 pattern) ---------- -->
@@ -244,30 +268,35 @@
       <form id="about-form" novalidate>
         <div class="bg-white border border-wb-200 rounded-xl shadow-sm p-5 md:p-8">
 
-          <!-- ===== About you ===== -->
-          <!-- Age band + gender are both pending legal review (DES-2296).
-               Designed here so the page reads complete; easy to drop. -->
+          <!-- ===== Your Details ===== -->
+          <!-- Birth year replaced the age band: a year is stable and lets the
+               recommender infer a graduating class, which an age range can't.
+               Both it and gender are pending legal re-check (DES-2296), so
+               they stay easy to drop. -->
           <section class="am-anchor" aria-labelledby="sec-about">
-            <h2 id="sec-about" class="font-serif-heading text-2xl text-wb-900">About you</h2>
-            <p class="text-[15px] text-wb-600 mt-1.5">Broad strokes only. None of this appears on a public page.</p>
+            <h2 id="sec-about" class="font-serif-heading text-2xl text-wb-900">Your Details</h2>
+            <p class="text-[15px] text-wb-600 mt-1.5">Your information is private by default. We won't share it or sell it to third parties.</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5">
               <div>
-                <label for="age-range" class="block text-[15px] font-semibold text-wb-900 mb-2">Age range</label>
+                <label for="birth-year" class="block text-[15px] font-semibold text-wb-900 mb-2">Year you were born</label>
                 <div class="relative">
-                  <select id="age-range" data-simple-field="ageRange" class="w-full h-12 pl-4 pr-11 rounded-lg border border-wb-300 bg-white text-base text-wb-900 appearance-none focus:outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-500/25">
-                    <option value="">Select an age range</option>
-                    <option>18–24</option><option>25–34</option><option>35–44</option>
-                    <option>45–54</option><option>55–64</option><option>65–74</option><option>75+</option>
+                  <!-- Options are filled in by the script so the markup
+                       doesn't carry a hundred <option> lines. -->
+                  <select id="birth-year" data-simple-field="birthYear" aria-describedby="birth-year-hint" class="w-full h-12 pl-4 pr-11 rounded-lg border border-wb-300 bg-white text-base text-wb-900 appearance-none focus:outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-500/25">
+                    <option value="">Select year</option>
                   </select>
                   <span class="absolute right-4 top-1/2 -translate-y-1/2 text-wb-600 pointer-events-none" aria-hidden="true"><i class="ph ph-caret-down"></i></span>
                 </div>
+                <!-- Says what the year buys the reader, which is the whole
+                     case for asking a sharper question than an age band. -->
+                <p id="birth-year-hint" class="text-sm text-wb-600 mt-1.5">We use this to help determine your High school class</p>
               </div>
               <div>
                 <label for="gender" class="block text-[15px] font-semibold text-wb-900 mb-2">Gender</label>
                 <div class="relative">
                   <select id="gender" data-simple-field="gender" class="w-full h-12 pl-4 pr-11 rounded-lg border border-wb-300 bg-white text-base text-wb-900 appearance-none focus:outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-500/25">
-                    <option value="">Prefer not to say</option>
-                    <option>Woman</option><option>Man</option><option>Non-binary</option><option>Another identity</option>
+                    <option value="">Select one…</option>
+                    <option>Woman</option><option>Man</option><option>Non-binary</option><option>Another identity</option><option>Prefer not to say</option>
                   </select>
                   <span class="absolute right-4 top-1/2 -translate-y-1/2 text-wb-600 pointer-events-none" aria-hidden="true"><i class="ph ph-caret-down"></i></span>
                 </div>
@@ -279,27 +308,24 @@
 
           <!-- ===== Places that matter ===== -->
           <section class="am-anchor" aria-labelledby="sec-places">
-            <h2 id="sec-places" class="font-serif-heading text-2xl text-wb-900">Places that matter</h2>
-            <p class="text-[15px] text-wb-600 mt-1.5">We'll surface obituaries and local communities from these places.</p>
-            <div id="fields-places" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-5"></div>
+            <h2 id="sec-places" class="font-serif-heading text-2xl text-wb-900">Places That Matter</h2>
+            <div id="fields-places" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-4"></div>
           </section>
 
           <div class="border-t border-wb-200 my-7 md:my-8"></div>
 
           <!-- ===== Schools and work ===== -->
           <section class="am-anchor" aria-labelledby="sec-schools">
-            <h2 id="sec-schools" class="font-serif-heading text-2xl text-wb-900">Schools and work</h2>
-            <p class="text-[15px] text-wb-600 mt-1.5">Two schools with the same name? Check the town underneath each suggestion.</p>
-            <div id="fields-schools" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-5"></div>
+            <h2 id="sec-schools" class="font-serif-heading text-2xl text-wb-900">School &amp; Work</h2>
+            <div id="fields-schools" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-4"></div>
           </section>
 
           <div class="border-t border-wb-200 my-7 md:my-8"></div>
 
           <!-- ===== Communities ===== -->
           <section class="am-anchor" aria-labelledby="sec-communities">
-            <h2 id="sec-communities" class="font-serif-heading text-2xl text-wb-900">Communities</h2>
-            <p class="text-[15px] text-wb-600 mt-1.5">Groups you belong to, or have belonged to.</p>
-            <div id="fields-communities" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-5"></div>
+            <h2 id="sec-communities" class="font-serif-heading text-2xl text-wb-900">Communities &amp; Interests</h2>
+            <div id="fields-communities" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-4"></div>
           </section>
 
           <!-- ===== Suggestions callout (Figma 7184:20774) =====
@@ -311,13 +337,13 @@
                taken from the Phosphor font this page already loads rather
                than downloaded as an SVG. -->
           <div id="suggest-callout" data-feedback-open="false" class="am-anchor mt-7 md:mt-8 flex flex-col items-center gap-2 rounded-2xl border border-dashed border-gold-400 bg-gold-50 p-3 text-center">
-            <p class="font-serif-heading text-2xl text-navy-700 leading-[1.2]">Want to add something else?</p>
-            <p class="text-sm text-wb-700 leading-normal">Tell us what would make your Legacy experience feel more personal.</p>
+            <p class="font-serif-heading text-2xl text-navy-700 leading-[1.2]">Did we miss something?</p>
+            <p class="text-sm text-wb-700 leading-normal">If your city, school, job, or group isn't listed, let us know.</p>
             <!-- Figma's ghost button is ~32px tall; 44px here for the tap
                  target, which only adds height around the same label. It's a
                  disclosure rather than a link, so it carries aria-expanded
                  and stays put when open instead of being swapped out. -->
-            <button type="button" id="suggest-link" aria-expanded="false" aria-controls="feedback-reveal" class="inline-flex items-center justify-center gap-1 min-h-[44px] px-2 py-1 rounded-full text-base font-semibold text-navy-500 tracking-[-0.32px] hover:text-navy-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500">Share feedback <i class="ph ph-arrow-right text-2xl" aria-hidden="true"></i></button>
+            <button type="button" id="suggest-link" aria-expanded="false" aria-controls="feedback-reveal" class="inline-flex items-center justify-center gap-1 min-h-[44px] px-2 py-1 rounded-full text-base font-semibold text-navy-500 tracking-[-0.32px] hover:text-navy-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500">Share Feedback <i class="ph ph-arrow-right text-2xl" aria-hidden="true"></i></button>
 
             <!-- The field lives inside the callout and opens on demand, so
                  the page says this once rather than twice. Storage is still
@@ -329,9 +355,9 @@
                   <!-- The callout's own copy is the label; this is for
                        screen readers, which don't get that from proximity. -->
                   <label for="feedback-text" class="sr-only">Your feedback</label>
-                  <textarea id="feedback-text" rows="4" class="w-full rounded-lg border border-wb-300 bg-white p-4 text-base text-wb-900 leading-relaxed placeholder:text-wb-500 focus:outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-500/25" placeholder="For example: my high school isn't listed — Carl Sandburg High School in Orland Park, Illinois."></textarea>
+                  <textarea id="feedback-text" rows="4" class="w-full rounded-lg border border-wb-300 bg-white p-4 text-base text-wb-900 leading-relaxed placeholder:text-wb-500 focus:outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-500/25" placeholder="For example: my high school isn't listed — Carl Sandburg High school in Chicago, Illinois."></textarea>
                   <div class="flex flex-wrap items-center gap-x-4 gap-y-3 mt-3">
-                    <button type="button" id="feedback-send" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-white border border-navy-700 text-navy-700 hover:bg-navy-50 text-base font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 focus-visible:ring-offset-2">Send feedback</button>
+                    <button type="button" id="feedback-send" disabled class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 focus-visible:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-navy-700">Send Feedback</button>
                     <span id="feedback-status" role="status" aria-live="polite" class="text-[15px] text-wb-600"></span>
                   </div>
                 </div>
@@ -341,11 +367,11 @@
 
           <!-- ===== Save row ===== -->
           <div class="am-saverow -mx-5 md:-mx-8 -mb-5 md:-mb-8 mt-7 md:mt-8 px-5 md:px-8 py-4 md:py-5 bg-white border-t border-wb-200 rounded-b-xl flex flex-wrap items-center gap-x-4 gap-y-3">
-            <button type="submit" id="save-btn" class="flex-shrink-0 inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 focus-visible:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-navy-700"><span class="sm:hidden">Save</span><span class="hidden sm:inline">Save my details</span></button>
+            <button type="submit" id="save-btn" class="flex-shrink-0 inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 focus-visible:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-navy-700"><span class="sm:hidden">Save</span><span class="hidden sm:inline">Save Changes</span></button>
             <!-- Always present, so the page can always answer "is my work
                  safe?" without the user having to change something to find
                  out. The unsaved line appears above it when there is one. -->
-            <!-- "Save my details" is shortened to "Save" below sm. At 375px the
+            <!-- "Save Changes" is shortened to "Save" below sm. At 375px the
                  full label leaves the status ~125px, which wraps it to four
                  lines — worse than the stacking this was meant to avoid. -->
             <!-- flex-1 gives this a zero flex-basis, so it never measures
@@ -355,7 +381,7 @@
                  fit, which at 375px is most of the time. The button is
                  flex-shrink-0, so the status is what gives way. -->
             <span id="save-status" role="status" aria-live="polite" class="text-[15px] leading-snug min-w-0 flex-1 text-right">
-              <span id="save-status-dirty" class="block font-semibold text-wb-800" hidden>Unsaved changes</span>
+              <span id="save-status-dirty" class="block font-semibold text-wb-800" hidden>Unsaved Changes</span>
               <span id="save-status-when" class="block text-wb-600"></span>
             </span>
           </div>
@@ -450,13 +476,15 @@
      dashboard, so the destructive-action pattern stays consistent. -->
 <div class="sheet-overlay" id="leave-overlay" role="alertdialog" aria-modal="true" aria-labelledby="lv-title" aria-describedby="lv-body">
   <div class="sheet-card p-6 md:p-8">
-    <h2 id="lv-title" class="text-xl font-bold text-navy-700 leading-tight pr-2">You have unsaved changes</h2>
-    <p id="lv-body" class="text-base text-wb-700 mt-3 leading-relaxed">Leave this page and your most recent edits won't be kept.</p>
+    <h2 id="lv-title" class="text-xl font-bold text-navy-700 leading-tight pr-2">Leave without saving?</h2>
+    <p id="lv-body" class="text-base text-wb-700 mt-3 leading-relaxed">If you leave now, your latest changes won't be saved.</p>
+    <!-- Leaving sits on the left, saving on the right: the approved order,
+         and the one that puts the recommended action under the thumb. -->
     <div class="flex flex-col sm:flex-row gap-3 mt-6">
-      <button type="button" id="lv-save" class="flex-1 h-12 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold">Save and leave</button>
       <button type="button" id="lv-leave" class="flex-1 h-12 rounded-full bg-white border border-navy-700 text-navy-700 text-base font-semibold hover:bg-wb-50">Leave without saving</button>
+      <button type="button" id="lv-save" class="flex-1 h-12 rounded-full bg-navy-700 hover:bg-navy-800 text-white text-base font-semibold">Save and leave</button>
     </div>
-    <button type="button" data-close class="w-full h-12 mt-3 rounded-full text-base font-semibold text-navy-500 hover:text-navy-700">Stay on this page</button>
+    <button type="button" data-close class="w-full h-12 mt-3 rounded-full text-base font-semibold text-navy-500 hover:text-navy-700">Keep Editing</button>
   </div>
 </div>
 
@@ -482,7 +510,8 @@
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const esc = (v) => String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-  const STORE_KEY = 'legacyAboutMe.v1';
+  /* v2: age band gave way to birth year, so a v1 payload no longer fits. */
+  const STORE_KEY = 'legacyAboutMe.v2';
 
   /* ==================================================================
      CLOSED-LIST DATA
@@ -563,22 +592,29 @@
 
   /* Field order and grouping (DES-2296). Each field's guidance lives in its
      placeholder; `hint` still renders a line under the label if one is ever
-     wanted back, but nothing uses it now. */
+     wanted back, but nothing uses it now. `showWhere` is the second line
+     inside the input once a record is chosen — city/state for the two
+     schools, league for teams. The other fields identify themselves by
+     name alone, so they stay one line. */
   const FIELDS = [
-    { key:'currentLocation', group:'places',      label:'Current location',      ph:'Where you live now',    icon:'ph-map-pin',        set:'places'      },
-    { key:'hometown',        group:'places',      label:'Hometown',              ph:'Where you grew up',     icon:'ph-house-line',     set:'places'      },
-    { key:'highSchool',      group:'schools',     label:'High school',           ph:'Search high schools…',  icon:'ph-student',        set:'highSchools' },
-    { key:'college',         group:'schools',     label:'College / university',  ph:'Search colleges…',      icon:'ph-graduation-cap', set:'colleges'    },
+    { key:'currentLocation', group:'places',      label:'Current city',          ph:'Search cities',         icon:'ph-map-pin',        set:'places'      },
+    { key:'hometown',        group:'places',      label:'Hometown',              ph:'Search cities',         icon:'ph-house-line',     set:'places'      },
+    { key:'highSchool',      group:'schools',     label:'High school',           ph:'Search high schools…',  icon:'ph-student',        set:'highSchools', showWhere:true },
+    { key:'college',         group:'schools',     label:'College / University',  ph:'Search colleges…',      icon:'ph-graduation-cap', set:'colleges',    showWhere:true },
     { key:'occupation',      group:'schools',     label:'Occupation',            ph:'Search occupations…',   icon:'ph-briefcase',      set:'occupations' },
-    { key:'greek',           group:'communities', label:'Fraternity / sorority', ph:'Search chapters…',      icon:'ph-users-three',    set:'greek'       },
-    { key:'teams',           group:'communities', label:'Sports teams',          ph:'Search teams…',         icon:'ph-confetti',       set:'teams'       },
-    { key:'military',        group:'communities', label:'Military service',      ph:'Branch you served in',  icon:'ph-medal',          set:'military'    },
+    { key:'greek',           group:'communities', label:'Fraternity or Sorority',ph:'Search chapters',       icon:'ph-users-three',    set:'greek'       },
+    { key:'teams',           group:'communities', label:'Sports teams',          ph:'Search teams…',         icon:'ph-confetti',       set:'teams',       showWhere:true },
+    { key:'military',        group:'communities', label:'Military Service',      ph:'Branch you served in…', icon:'ph-medal',          set:'military'    },
   ];
-  const ALL_KEYS = ['ageRange','gender', ...FIELDS.map(f => f.key)];
+  const ALL_KEYS = ['birthYear','gender', ...FIELDS.map(f => f.key)];
+
+  /* Birth years run back far enough to cover anyone using the site, newest
+     first so the common picks are the short scroll. */
+  const YEAR_MAX = 2008, YEAR_MIN = 1920;
 
   /* A filled-in profile for the "return visit" scenario. */
   const DEMO_PROFILE = {
-    ageRange:'45–54', gender:'', currentLocation:'Chicago, Illinois', hometown:'Evanston, Illinois',
+    birthYear:'1976', gender:'Woman', currentLocation:'Chicago, Illinois', hometown:'Evanston, Illinois',
     highSchool:'Evanston Township High School', college:'Northwestern University',
     occupation:'Teacher / Educator', greek:'', teams:'Chicago Cubs', military:'',
   };
@@ -629,15 +665,18 @@
              selected · cleared. Driven off data-state on .ta-field so
              every state is inspectable in the DOM.
      ================================================================== */
-  const INPUT_BASE = 'w-full h-12 pl-11 pr-12 rounded-lg bg-white border border-wb-300 text-base text-wb-900 leading-normal text-ellipsis placeholder:text-wb-500 focus:outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-500/25';
+  /* 64px on every typeahead, whether or not it carries a location line, so
+     a row of fields keeps one height (My Account Figma, node 7290:24129). */
+  const INPUT_BASE = 'w-full h-16 pl-11 pr-12 rounded-lg bg-white border border-wb-300 text-base text-wb-900 leading-normal text-ellipsis placeholder:text-wb-500 focus:outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-500/25';
 
   function fieldMarkup(f) {
     const id = 'ta-' + f.key;
     return (
       '<div class="ta-field am-anchor" data-ta="' + f.key + '" data-state="empty">' +
         /* Two fields sharing a grid row need the same label block height or
-           their inputs won't line up — so give both a hint, or neither. */
-        '<label for="' + id + '" class="block text-[15px] font-semibold text-wb-900 ' + (f.hint ? 'mb-1' : 'mb-2') + '">' + esc(f.label) + '</label>' +
+           their inputs won't line up — so give both a hint, or neither.
+           4px under the label is the design's gap for a typeahead field. */
+        '<label for="' + id + '" class="block text-[15px] font-semibold text-wb-900 mb-1">' + esc(f.label) + '</label>' +
         (f.hint ? '<p id="' + id + '-hint" class="text-sm text-wb-600 mb-2">' + esc(f.hint) + '</p>' : '') +
         '<div class="ta-control">' +
           '<span class="ta-lead absolute left-3.5 top-1/2 -translate-y-1/2 text-wb-600 pointer-events-none" aria-hidden="true"><i class="ph ' + f.icon + ' text-xl"></i></span>' +
@@ -645,6 +684,11 @@
                  'aria-expanded="false" aria-autocomplete="list" aria-controls="' + id + '-list" ' +
                  (f.hint ? 'aria-describedby="' + id + '-hint" ' : '') +
                  'placeholder="' + esc(f.ph) + '" class="ta-input ' + INPUT_BASE + '" />' +
+          /* Sits after the input so `:focus ~` can stand it down. */
+          '<div class="ta-value" aria-hidden="true">' +
+            '<span class="ta-value-name text-base text-wb-900 leading-tight truncate"></span>' +
+            (f.showWhere ? '<span class="ta-value-where text-sm text-wb-600 leading-tight truncate mt-0.5"></span>' : '') +
+          '</div>' +
           '<button type="button" class="ta-clear absolute right-1.5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full text-wb-700 hover:bg-wb-100 flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500" aria-label="Clear ' + esc(f.label) + '" hidden><i class="ph ph-x text-lg" aria-hidden="true"></i></button>' +
           /* The popover lives inside .ta-control so it anchors to the input
              itself — .ta-control is the only positioned ancestor. */
@@ -653,8 +697,6 @@
             '<div class="ta-aux"></div>' +
           '</div>' +
         '</div>' +
-        /* Which record was chosen — matters when several share a name. */
-        '<p class="ta-sel text-sm text-wb-600 mt-1.5" hidden></p>' +
         '<p class="ta-live sr-only" role="status" aria-live="polite"></p>' +
       '</div>'
     );
@@ -677,7 +719,9 @@
     const aux   = $('.ta-aux', root);
     const clear = $('.ta-clear', root);
     const live  = $('.ta-live', root);
-    const sel   = $('.ta-sel', root);
+    const val   = $('.ta-value', root);
+    const valName  = $('.ta-value-name', root);
+    const valWhere = $('.ta-value-where', root);
     const id    = 'ta-' + f.key;
 
     let timer = null, reqId = 0, results = [], active = -1;
@@ -690,8 +734,8 @@
        it says more about the field than a tick does. */
     function paintSelected(on) {
       clear.hidden = !on;
-      sel.textContent = on ? (wheres[f.key] || '') : '';
-      sel.hidden = !on || !wheres[f.key];
+      valName.textContent = on ? (profile[f.key] || '') : '';
+      if (valWhere) valWhere.textContent = on ? (wheres[f.key] || '') : '';
       /* In two columns a long school name ellipsizes, so the full value has
          to stay reachable on hover and to assistive tech. */
       if (on) input.title = profile[f.key] + (wheres[f.key] ? ' — ' + wheres[f.key] : '');
@@ -753,8 +797,10 @@
       aux.innerHTML =
         '<div class="p-4">' +
           '<p class="text-base font-semibold text-wb-900">No match for “' + esc(q) + '”</p>' +
-          '<p class="text-[15px] text-wb-600 leading-relaxed mt-1">We only list ' + esc(f.label.toLowerCase()) + ' records we already hold, so this one just isn\'t in there yet.</p>' +
-          '<button type="button" data-ta-feedback class="mt-3 inline-flex items-center gap-2 h-11 px-4 rounded-full bg-gold-100 hover:bg-gold-200 text-gold-900 text-[15px] font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500">Tell us what\'s missing <i class="ph ph-arrow-right" aria-hidden="true"></i></button>' +
+          '<p class="text-[15px] text-wb-600 leading-relaxed mt-1">Check the spelling, or let us know and we\'ll look into adding it.</p>' +
+          /* A plain navy link in the approved design, not a filled pill —
+             padded out to the 44px tap target all the same. */
+          '<button type="button" data-ta-feedback class="mt-1 inline-flex items-center gap-2 min-h-[44px] text-[15px] font-semibold text-navy-500 hover:text-navy-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 rounded-full">Tell us what\'s missing <i class="ph ph-arrow-right" aria-hidden="true"></i></button>' +
         '</div>';
       setState('no-match');
       placePop();
@@ -807,8 +853,10 @@
 
     /* ---- events ---- */
     input.addEventListener('focus', () => {
+      root.dataset.focus = 'true';
       if (pop.hidden) { setState('focused'); query(input.value); }
     });
+    input.addEventListener('blur', () => { delete root.dataset.focus; });
     input.addEventListener('input', () => {
       /* Typing away from a chosen record clears it — the field only ever
          holds a real record, never the half-typed string. */
@@ -899,6 +947,7 @@
     const box = $('#feedback-text');
     const seed = typed ? label + ': “' + typed + '” isn\'t listed.' : label + ' isn\'t listed.';
     box.value = box.value.trim() ? box.value.replace(/\s*$/, '\n') + seed : seed + ' ';
+    $('#feedback-send').disabled = false;
     setFeedbackOpen(true);
     callout.scrollIntoView({ behavior: 'smooth', block: 'center' });
     setTimeout(() => {
@@ -945,8 +994,8 @@
   }
 
   function render() {
-    $('#age-range').value = profile.ageRange || '';
-    $('#gender').value    = profile.gender || '';
+    $('#birth-year').value = profile.birthYear || '';
+    $('#gender').value     = profile.gender || '';
     painters.forEach(p => p());
     onChange();
   }
@@ -969,6 +1018,18 @@
   });
   FIELDS.forEach(f => painters.push(setupField(f)));
 
+  /* Years are generated rather than written out in the markup. */
+  {
+    const sel = $('#birth-year');
+    const frag = document.createDocumentFragment();
+    for (let y = YEAR_MAX; y >= YEAR_MIN; y--) {
+      const o = document.createElement('option');
+      o.value = o.textContent = String(y);
+      frag.appendChild(o);
+    }
+    sel.appendChild(frag);
+  }
+
   $$('[data-simple-field]').forEach(el => {
     el.addEventListener('change', () => { profile[el.dataset.simpleField] = el.value; onChange(); });
   });
@@ -982,10 +1043,16 @@
     if (open) setTimeout(() => $('#feedback-text').focus(), 280);
   });
 
+  /* Nothing to send, nothing to press. */
+  $('#feedback-text').addEventListener('input', (e) => {
+    $('#feedback-send').disabled = !e.target.value.trim();
+  });
+
   $('#feedback-send').addEventListener('click', () => {
     const box = $('#feedback-text');
     if (!box.value.trim()) { box.focus(); $('#feedback-status').textContent = 'Add a note first.'; return; }
     box.value = '';
+    $('#feedback-send').disabled = true;
     $('#feedback-status').textContent = '';
     /* Back to the resting callout — the toast carries the confirmation, so
        leaving an empty field open would just look unfinished. */
