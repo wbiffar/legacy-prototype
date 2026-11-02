@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy — Thousand Oaks Obituaries (Today for you)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0;1&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <script src="tokens.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<a href="#lp-main" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:m-3 focus:rounded-full focus:bg-navy-700 focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-white">Skip to the obituary list</a>
+
+<!-- ====================================================================
+     HEADER — NavigationCustom 2.0
+     ==================================================================== -->
+<header class="bg-white border-b border-wb-300">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-16 py-3 md:py-4 flex items-center gap-3 md:gap-6">
+    <a href="../" aria-label="Legacy.com home" class="shrink-0 flex items-center">
+      <img src="assets/logo-horizontal.svg" alt="Legacy" class="h-8 md:h-9 w-auto" />
+    </a>
+
+    <div class="flex-1 max-w-[480px] mx-auto hidden lg:block">
+      <div class="relative">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-wb-500 pointer-events-none"><i class="ph ph-magnifying-glass text-lg" aria-hidden="true"></i></span>
+        <input type="search" placeholder="Find a loved one…" aria-label="Find a loved one" class="w-full h-11 pl-11 pr-4 rounded-full bg-white border border-wb-300 text-[15px] text-wb-900 placeholder:text-wb-600 focus:outline-none focus:border-navy-500" />
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2 md:gap-3 ml-auto">
+      <!-- Signed out -->
+      <button type="button" data-auth="out" class="lp-tap inline-flex items-center gap-2 px-2 py-2 text-[15px] font-semibold text-wb-900">
+        <i class="ph ph-user-circle text-2xl" aria-hidden="true"></i>
+        <span class="hidden sm:inline">Sign In</span>
+      </button>
+      <!-- Signed in -->
+      <span data-auth="in" class="flex items-center gap-2 px-2 py-1" hidden>
+        <i class="ph ph-user-circle text-2xl text-wb-900" aria-hidden="true"></i>
+        <span class="text-[15px] font-semibold text-wb-900">Wesley</span>
+      </span>
+      <button type="button" aria-label="Open menu" class="lp-tap lg:hidden w-10 h-10 flex items-center justify-center text-wb-900"><i class="ph ph-list text-2xl" aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <nav aria-label="Main" class="hidden lg:block border-t border-wb-200">
+    <div class="max-w-[1440px] mx-auto px-16 flex items-center justify-center gap-10 text-[15px] font-semibold text-wb-900 h-[43px]">
+      <a href="#" class="hover:text-navy-700">Create &amp; Publish</a>
+      <a href="#" class="hover:text-navy-700">Browse Obituaries</a>
+      <a href="#" class="hover:text-navy-700">Plan Ahead</a>
+      <a href="#" class="hover:text-navy-700">Get Support</a>
+      <a href="#" class="hover:text-navy-700">Send a Gift</a>
+    </div>
+  </nav>
+
+  <!-- Mobile search sits under the bar, as in the mobile comps -->
+  <div class="lg:hidden border-t border-wb-200 px-4 py-3">
+    <div class="relative">
+      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-wb-500 pointer-events-none"><i class="ph ph-magnifying-glass text-lg" aria-hidden="true"></i></span>
+      <input type="search" placeholder="Find a loved one…" aria-label="Find a loved one" class="w-full h-11 pl-11 pr-4 rounded-full bg-white border border-wb-300 text-[15px] text-wb-900 placeholder:text-wb-600 focus:outline-none focus:border-navy-500" />
+    </div>
+  </div>
+</header>
+
+<!-- ====================================================================
+     LIST HEADER — breadcrumb, title, page actions
+     ==================================================================== -->
+<div class="bg-gold-50">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-16 pt-4 md:pt-6 pb-5 md:pb-8">
+
+    <div class="flex items-center justify-between gap-4 mb-5 md:mb-[42px]">
+      <nav aria-label="Breadcrumb" class="min-w-0">
+        <ol class="flex items-center gap-2 text-sm text-wb-700">
+          <li class="lg:hidden"><a href="#" class="inline-flex items-center gap-2 font-semibold text-navy-500 underline"><i class="ph ph-arrow-left" aria-hidden="true"></i>California</a></li>
+          <li class="hidden lg:block"><a href="#" class="text-navy-500 underline">Obituaries</a></li>
+          <li class="hidden lg:block text-wb-400" aria-hidden="true">/</li>
+          <li class="hidden lg:block"><a href="#" class="text-navy-500 underline">California</a></li>
+          <li class="hidden lg:block text-wb-400" aria-hidden="true">/</li>
+          <li class="hidden lg:block"><a href="#" aria-current="page" class="text-navy-500 underline">Thousand Oaks</a></li>
+        </ol>
+      </nav>
+
+      <div class="hidden md:flex items-center gap-3 shrink-0">
+        <button type="button" class="inline-flex items-center gap-2 h-[39px] px-4 rounded-full bg-gold-500 text-wb-900 text-sm font-semibold">
+          <i class="ph ph-bell" aria-hidden="true"></i>Get Updates
+        </button>
+        <button type="button" aria-label="Share this page" class="w-[39px] h-[39px] rounded-full border border-wb-300 bg-white flex items-center justify-center text-wb-900">
+          <i class="ph ph-share-network" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="text-center md:text-left">
+      <h1 class="font-serif text-[32px] leading-[40px] md:text-[36px] md:leading-[43px] text-navy-700">Thousand Oaks Obituaries</h1>
+      <p class="mt-2 md:mt-[8px] text-base md:text-[18px] md:leading-[27px] text-wb-700">
+        <span data-auth="out">Local obituaries from Thousand Oaks, CA and nearby communities</span>
+        <span data-auth="in" hidden>Local obituaries from Thousand Oaks, CA and nearby — personalized for Wesley</span>
+      </p>
+    </div>
+
+    <div class="md:hidden mt-5 flex items-center justify-center gap-3">
+      <button type="button" class="inline-flex items-center gap-2 h-11 px-5 rounded-full border border-wb-900 bg-white text-wb-900 text-[15px] font-semibold">
+        <i class="ph ph-bell" aria-hidden="true"></i>Get Updates
+      </button>
+      <button type="button" aria-label="Share this page" class="w-11 h-11 rounded-full border border-wb-900 bg-white flex items-center justify-center text-wb-900">
+        <i class="ph ph-share-network text-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     BODY
+     ==================================================================== -->
+<main id="lp-main" class="bg-gold-50 pb-16">
+  <div class="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-0 pt-4 md:pt-8 grid grid-cols-1 lg:grid-cols-[1fr_352px] gap-6 lg:gap-8 items-start">
+
+    <!-- ============================================================
+         MAIN COLUMN
+         ============================================================ -->
+    <div class="min-w-0">
+
+      <!-- ========== PERSONALIZATION SLOT ========== -->
+
+      <!-- ---------- A. Quick setup (signed out, before setup) ----------
+           Figma: Feed/Quick setup — Collapsed / 1 of 2 / 2 of 2 (18:3022). -->
+      <section id="lp-quicksetup" aria-labelledby="lp-qs-title"
+               class="bg-white border border-wb-300 rounded-xl px-4 md:px-5 py-4 mb-6 md:mb-[30px]">
+
+        <!-- Collapsed -->
+        <div data-qs-step="collapsed" class="lp-step flex flex-wrap items-center gap-x-4 gap-y-3">
+          <span class="w-10 h-10 rounded-full bg-gold-100 flex items-center justify-center shrink-0" aria-hidden="true">
+            <i class="ph ph-graduation-cap text-xl text-navy-700"></i>
+          </span>
+          <div class="flex-1 min-w-[220px] flex flex-col gap-0.5">
+            <h2 id="lp-qs-title" class="font-serif text-[19px] leading-6 text-navy-700">See familiar names first</h2>
+            <p class="text-sm leading-5 text-wb-700">Add your hometown or school. No account needed.</p>
+          </div>
+          <button type="button" data-qs-start
+                  class="lp-tap shrink-0 h-8 px-3 rounded-full bg-navy-700 text-white text-xs font-semibold leading-normal">
+            Get started
+          </button>
+        </div>
+
+        <!-- Step 1 of 2 -->
+        <div data-qs-step="1" class="lp-step flex flex-col gap-3" hidden>
+          <div class="flex items-center gap-3">
+            <p class="text-xs font-semibold text-navy-700">Step 1 of 2</p>
+            <span class="flex gap-1" role="presentation">
+              <span class="w-7 h-1 rounded-sm bg-navy-700"></span>
+              <span class="w-7 h-1 rounded-sm bg-wb-300"></span>
+            </span>
+            <span class="flex-1"></span>
+            <button type="button" data-qs-close aria-label="Close quick setup" class="lp-tap text-wb-700 hover:text-wb-900"><i class="ph ph-x text-base" aria-hidden="true"></i></button>
+          </div>
+
+          <h2 class="font-serif text-xl leading-[26px] text-navy-700">
+            <label for="lp-qs-place">Where did you grow up?</label>
+          </h2>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="relative flex-1 min-w-[200px]">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-wb-500 pointer-events-none"><i class="ph ph-map-pin text-base" aria-hidden="true"></i></span>
+              <input id="lp-qs-place" type="text" autocomplete="off" placeholder="City or town" list="lp-places"
+                     class="w-full h-[46px] pl-10 pr-4 rounded-lg bg-wb-50 border border-wb-400 text-sm text-wb-900 placeholder:text-wb-600 focus:outline-none focus:border-navy-500" />
+              <datalist id="lp-places">
+                <option value="Fresno, CA"></option>
+                <option value="Thousand Oaks, CA"></option>
+                <option value="Newbury Park, CA"></option>
+                <option value="Bakersfield, CA"></option>
+                <option value="Visalia, CA"></option>
+              </datalist>
+            </div>
+            <button type="button" data-qs-next="1" class="shrink-0 h-10 px-5 rounded-full bg-navy-700 text-white text-sm font-semibold">Next</button>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <button type="button" data-qs-skip="1" class="lp-tap text-[13px] font-semibold text-navy-500 underline">Skip this step</button>
+            <span class="flex-1"></span>
+            <p class="text-xs text-wb-700">Saved on this device only</p>
+          </div>
+        </div>
+
+        <!-- Step 2 of 2 -->
+        <div data-qs-step="2" class="lp-step flex flex-col gap-3" hidden>
+          <div class="flex items-center gap-3">
+            <p class="text-xs font-semibold text-navy-700">Step 2 of 2</p>
+            <span class="flex gap-1" role="presentation">
+              <span class="w-7 h-1 rounded-sm bg-navy-700"></span>
+              <span class="w-7 h-1 rounded-sm bg-navy-700"></span>
+            </span>
+            <span class="flex-1"></span>
+            <button type="button" data-qs-close aria-label="Close quick setup" class="lp-tap text-wb-700 hover:text-wb-900"><i class="ph ph-x text-base" aria-hidden="true"></i></button>
+          </div>
+
+          <!-- The step-1 answer collapses to an editable line -->
+          <div data-qs-answered class="flex items-center gap-1.5" hidden>
+            <i class="ph ph-map-pin text-[14px] text-wb-700" aria-hidden="true"></i>
+            <p class="text-[13px] text-wb-700">Grew up in <span data-qs-answer-place>Fresno, CA</span></p>
+            <button type="button" data-qs-back class="lp-tap text-[13px] font-semibold text-navy-500 underline">Edit</button>
+          </div>
+
+          <h2 class="font-serif text-xl leading-[26px] text-navy-700">
+            <label for="lp-qs-school">Where did you go to high school?</label>
+          </h2>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="relative flex-1 min-w-[200px]">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-wb-500 pointer-events-none"><i class="ph ph-graduation-cap text-base" aria-hidden="true"></i></span>
+              <input id="lp-qs-school" type="text" autocomplete="off" placeholder="School name" list="lp-schools"
+                     class="w-full h-[46px] pl-10 pr-4 rounded-lg bg-wb-50 border border-wb-400 text-sm text-wb-900 placeholder:text-wb-600 focus:outline-none focus:border-navy-500" />
+              <datalist id="lp-schools">
+                <option value="Thousand Oaks High"></option>
+                <option value="Newbury Park High"></option>
+                <option value="Westlake High"></option>
+                <option value="Fresno High"></option>
+              </datalist>
+            </div>
+            <select id="lp-qs-year" aria-label="Class year"
+                    class="shrink-0 w-[128px] h-[46px] px-3 rounded-lg bg-wb-50 border border-wb-300 text-sm text-wb-600 focus:outline-none focus:border-navy-500">
+              <option value="">Class year</option>
+            </select>
+            <button type="button" data-qs-next="2" class="shrink-0 h-10 px-5 rounded-full bg-navy-700 text-white text-sm font-semibold">Show my matches</button>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <button type="button" data-qs-back class="lp-tap inline-flex items-center gap-1 text-[13px] font-semibold text-navy-500 underline">
+              <i class="ph ph-arrow-left text-[14px]" aria-hidden="true"></i>Back
+            </button>
+            <button type="button" data-qs-skip="2" class="lp-tap text-[13px] font-semibold text-navy-500 underline">Skip this step</button>
+            <span class="flex-1"></span>
+            <p class="text-xs text-wb-700">Saved on this device only</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- B. Today for you ----------
+           Figma: "Today for you (compact)" — 18:2718 (signed in),
+           18:2918 (signed out, after quick setup). One block, two tails:
+           signed out ends in the soft gate, signed in in "Also today". -->
+      <section id="lp-today" aria-labelledby="lp-today-title"
+               class="bg-white border border-wb-300 rounded-xl p-4 mb-6 md:mb-[40px]" hidden>
+
+        <div class="flex flex-wrap items-center gap-x-2.5 gap-y-2 mb-3">
+          <h2 id="lp-today-title" class="font-serif text-[22px] leading-7 text-navy-700">Today for you</h2>
+          <p class="hidden sm:block text-[13px] text-wb-700" data-today-signals>Fri, Oct 30</p>
+          <span class="inline-flex px-2 py-0.5 rounded-full bg-navy-700 text-xs font-semibold text-white" data-today-count>3 new</span>
+          <span class="flex-1"></span>
+          <button type="button" data-tune-open
+                  class="lp-tap shrink-0 inline-flex items-center gap-2 h-8 px-3 rounded-full bg-white border border-navy-700 text-xs font-semibold text-navy-700">
+            <i class="ph ph-sliders-horizontal text-base" aria-hidden="true"></i>
+            <span class="hidden sm:inline">Tune your feed</span><span class="sm:hidden">Tune</span>
+          </button>
+        </div>
+
+        <!-- On mobile the signals line sits under the header, as in 19:3088 -->
+        <p class="sm:hidden text-[13px] text-wb-700 mb-3" data-today-signals-mobile>Fri, Oct 30</p>
+
+        <ul class="lp-matches list-none p-0 m-0" data-matches aria-label="People you may know who died recently"></ul>
+
+        <p data-today-empty class="px-3 py-3 rounded-lg bg-wb-100 text-sm leading-5 text-wb-700" hidden>
+          No new matches today. We'll keep looking — the full local list is below.
+        </p>
+
+        <!-- Signed-out tail: the soft gate -->
+        <div data-today-tail="out" class="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-2 px-3 py-2 rounded-lg bg-wb-100" hidden>
+          <i class="ph ph-bookmark-simple text-lg text-navy-700 shrink-0" aria-hidden="true"></i>
+          <p class="flex-1 min-w-[180px] text-sm font-medium leading-5 text-navy-700">Get an email when there's a new match</p>
+          <button type="button" data-account-open class="lp-tap shrink-0 h-8 px-3 rounded-full bg-navy-700 text-white text-xs font-semibold">Create free account</button>
+          <button type="button" data-softgate-dismiss class="lp-tap shrink-0 text-[13px] font-semibold text-navy-500 underline">Not now</button>
+        </div>
+
+        <!-- Signed-in tail: Feed/More today -->
+        <div data-today-tail="in" class="mt-3" hidden>
+          <button type="button" data-moretoday
+                  class="w-full flex flex-wrap items-center gap-x-2.5 gap-y-1 px-3 py-2.5 rounded-lg bg-wb-100 text-left"
+                  aria-expanded="false" aria-controls="lp-moretoday-panel">
+            <span class="text-[13px] font-semibold text-navy-700 shrink-0">Also today</span>
+            <span class="flex-1 min-w-0 truncate text-[13px] text-wb-700">Dorothy Hale's 90th birthday · 2 updates from people you follow</span>
+            <span class="shrink-0 inline-flex items-center gap-1 text-[13px] font-semibold text-navy-500">
+              <span data-moretoday-label>Show</span><i class="ph ph-caret-down" aria-hidden="true"></i>
+            </span>
+          </button>
+          <div id="lp-moretoday-panel" class="lp-reveal" data-open="false">
+            <div>
+              <ul class="list-none p-0 m-0 mt-2 flex flex-col gap-2" data-moretoday-list></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== LOCAL FEED ========== -->
+      <section aria-labelledby="lp-feed-title">
+        <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 mb-3 md:mb-5">
+          <h2 id="lp-feed-title" class="font-serif text-2xl md:text-[28px] md:leading-[34px] text-navy-700">All local obituaries</h2>
+
+          <div class="flex items-center gap-2">
+            <span class="hidden md:inline text-sm text-wb-700" data-sort-label>Order:</span>
+            <div class="flex items-center gap-2" role="group" aria-label="Order the list">
+              <button type="button" data-sort="newest" aria-pressed="true"
+                      class="lp-tap h-8 px-3 rounded-full text-[13px] font-semibold border border-navy-700 bg-navy-700 text-white">Newest first</button>
+              <button type="button" data-sort="foryou" aria-pressed="false"
+                      class="lp-tap h-8 px-3 rounded-full text-[13px] font-semibold border border-wb-300 bg-white text-wb-900" hidden>For you</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desktop: the place chips. Mobile: one Filter results button
+             (Figma ListHeaderCTA, 34:3305 / 32:3191). -->
+        <div class="hidden md:flex lp-chiprow mb-5" data-places aria-label="Places in this feed"></div>
+
+        <button type="button" data-tune-open
+                class="md:hidden w-full h-14 mb-4 rounded-full border border-wb-900 bg-white flex items-center justify-center gap-2 text-base font-semibold text-wb-900">
+          <i class="ph ph-sliders-horizontal text-xl" aria-hidden="true"></i>Filter results
+        </button>
+
+        <p class="mb-4 text-sm text-wb-700" data-feed-count aria-live="polite"></p>
+
+        <ul class="list-none p-0 m-0 flex flex-col gap-4 md:gap-5" data-feed></ul>
+
+        <div class="mt-6 flex flex-col items-center gap-3">
+          <button type="button" data-feed-more class="h-11 px-6 rounded-full border border-wb-900 bg-white text-[15px] font-semibold text-wb-900">
+            Show more obituaries
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================================================
+         RIGHT RAIL — stacks under the feed on mobile
+         ============================================================ -->
+    <aside class="flex flex-col gap-6 lg:gap-[24px] lg:sticky lg:top-6" aria-label="About this feed">
+
+      <!-- Signed out: the account value prop (Figma 11:2407) -->
+      <section data-auth="out" class="rounded-xl bg-navy-700 p-5 text-white">
+        <h2 class="font-serif text-xl leading-7">Never miss a familiar name</h2>
+        <ul class="list-none p-0 mt-4 flex flex-col gap-3.5">
+          <li class="flex gap-2 text-sm leading-5"><span class="text-gold-400" aria-hidden="true">✓</span><span>An email when someone from your hometown or school passes</span></li>
+          <li class="flex gap-2 text-sm leading-5"><span class="text-gold-400" aria-hidden="true">✓</span><span>Follow a memorial for service updates and new guest book entries</span></li>
+          <li class="flex gap-2 text-sm leading-5"><span class="text-gold-400" aria-hidden="true">✓</span><span>Your daily view on every device. Always free.</span></li>
+        </ul>
+        <button type="button" data-account-open class="mt-5 w-full h-11 rounded-full bg-gold-500 text-wb-900 text-sm font-semibold">Create free account</button>
+        <p class="mt-3.5 text-center text-[13px] text-navy-200">Already have an account?
+          <button type="button" data-signin class="font-semibold text-white underline">Sign in</button>
+        </p>
+      </section>
+
+      <!-- Signed in: the daily digest control (Figma 5:6288) -->
+      <section data-auth="in" class="rounded-xl bg-white border border-wb-300 p-5" hidden>
+        <h2 class="text-base font-semibold text-navy-700">Get today's matches by email</h2>
+        <label class="mt-4 flex items-start gap-2">
+          <span class="lp-toggle">
+            <input type="checkbox" checked data-digest />
+            <span class="lp-toggle-track" aria-hidden="true"></span>
+          </span>
+          <span class="flex flex-col gap-0.5">
+            <span class="text-base leading-tight text-wb-900">Daily digest, 7 a.m.</span>
+            <span class="text-sm text-wb-600">Only sent on days with a match</span>
+          </span>
+        </label>
+      </section>
+
+      <!-- Both states (Figma 11:1976 / 5:6297) -->
+      <section class="rounded-xl bg-white border border-wb-300 p-5">
+        <h2 class="text-base font-semibold text-navy-700">Why you're seeing these</h2>
+        <p class="mt-4 text-sm leading-5 text-wb-700">Matches use only the details you add in Tune your feed. We never match on obituaries you've read, and you can mute anyone, anytime.</p>
+      </section>
+    </aside>
+  </div>
+</main>
+
+<!-- ====================================================================
+     FOOTER
+     ==================================================================== -->
+<footer class="bg-navy-900 text-white py-10">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-16 flex flex-col md:flex-row items-center justify-between gap-6">
+    <img src="assets/logo-horizontal-white.svg" alt="Legacy" class="h-9 w-auto" />
+    <p class="text-sm text-navy-200">Prototype — Listing Page Personalization</p>
+  </div>
+</footer>
+
+<!-- ====================================================================
+     OVERLAY — Tune your feed
+     Figma: Feed/Tune panel (6:853). Right drawer at md+, bottom sheet below.
+     ==================================================================== -->
+<div class="lp-scrim" data-scrim="tune" data-open="false" hidden></div>
+
+<section class="lp-panel" id="lp-tune" data-open="false" role="dialog" aria-modal="true" aria-labelledby="lp-tune-title" hidden>
+  <div class="hidden max-md:flex justify-center pt-3 pb-1" aria-hidden="true"><span class="w-10 h-1 rounded-full bg-wb-300"></span></div>
+
+  <header class="border-b border-wb-300 px-6 pt-5 md:pt-6 pb-4 flex flex-col gap-1.5">
+    <div class="flex items-center justify-between gap-4">
+      <h2 id="lp-tune-title" class="font-serif text-[28px] leading-9 text-navy-700">Tune your feed</h2>
+      <button type="button" data-tune-close aria-label="Close" class="lp-tap text-wb-900"><i class="ph ph-x text-2xl" aria-hidden="true"></i></button>
+    </div>
+    <p class="text-sm leading-5 text-wb-700">Tell us where you've lived and who you've known. We only use what you add here.</p>
+  </header>
+
+  <div class="lp-panel-body p-6 flex flex-col gap-7">
+
+    <div class="flex flex-col gap-2.5">
+      <h3 class="text-base font-semibold text-navy-700">Places</h3>
+      <p class="text-[13px] leading-[18px] text-wb-700">Where you live now, and places you've lived.</p>
+      <div class="flex flex-wrap gap-2" data-tune-group="places"></div>
+    </div>
+
+    <div class="flex flex-col gap-2.5">
+      <h3 class="text-base font-semibold text-navy-700">Schools &amp; class years</h3>
+      <p class="text-[13px] leading-[18px] text-wb-700">We'll look for classmates within 2 years of your class.</p>
+      <div class="flex flex-wrap gap-2" data-tune-group="schools"></div>
+    </div>
+
+    <div class="flex flex-col gap-2.5">
+      <h3 class="text-base font-semibold text-navy-700">Work, service &amp; community</h3>
+      <div class="flex flex-wrap gap-2" data-tune-group="work"></div>
+    </div>
+
+    <div class="flex flex-col gap-2.5">
+      <h3 class="text-base font-semibold text-navy-700">How your feed works</h3>
+
+      <label class="flex items-start gap-2">
+        <span class="lp-toggle">
+          <input type="checkbox" data-tune-pref="relevance" />
+          <span class="lp-toggle-track" aria-hidden="true"></span>
+        </span>
+        <span class="flex flex-col gap-0.5">
+          <span class="text-base leading-tight text-wb-900">Order local obituaries by relevance</span>
+          <span class="text-sm text-wb-600">Off: newest first, nothing hidden</span>
+        </span>
+      </label>
+
+      <label class="flex items-start gap-2">
+        <span class="lp-toggle">
+          <input type="checkbox" checked data-tune-pref="strong" />
+          <span class="lp-toggle-track" aria-hidden="true"></span>
+        </span>
+        <span class="flex flex-col gap-0.5">
+          <span class="text-base leading-tight text-wb-900">Only show strong matches</span>
+          <span class="text-sm text-wb-600">Two or more details in common, like school and year</span>
+        </span>
+      </label>
+    </div>
+
+    <div class="flex flex-col gap-2.5">
+      <h3 class="text-base font-semibold text-navy-700">Updates</h3>
+      <label class="flex items-center gap-2">
+        <span class="lp-check"><input type="checkbox" checked data-tune-pref="daily" /><span class="lp-check-box" aria-hidden="true"></span></span>
+        <span class="text-sm text-wb-900">Daily email digest, 7 a.m.</span>
+      </label>
+      <label class="flex items-center gap-2">
+        <span class="lp-check"><input type="checkbox" data-tune-pref="weekly" /><span class="lp-check-box" aria-hidden="true"></span></span>
+        <span class="text-sm text-wb-900">Weekly email digest</span>
+      </label>
+      <label class="flex items-center gap-2">
+        <span class="lp-check"><input type="checkbox" checked data-tune-pref="push" /><span class="lp-check-box" aria-hidden="true"></span></span>
+        <span class="text-sm text-wb-900">Push alerts for strong matches</span>
+      </label>
+    </div>
+
+    <div class="border-t border-wb-300 pt-3 pb-1 flex items-center justify-between gap-4">
+      <div class="flex flex-col gap-0.5">
+        <h3 class="text-base font-semibold text-navy-700">Muted</h3>
+        <p class="text-[13px] text-wb-700"><span data-muted-count>0</span> <span data-muted-noun>people won't</span> appear in your feed</p>
+      </div>
+      <button type="button" data-muted-manage class="lp-tap text-sm font-semibold text-navy-500 underline">Manage</button>
+    </div>
+  </div>
+
+  <footer class="border-t border-wb-300 px-6 py-4 flex items-center gap-3 bg-white">
+    <button type="button" data-tune-reset class="h-10 px-5 rounded-full border border-wb-800 text-sm font-semibold text-wb-900">Reset</button>
+    <button type="button" data-tune-save class="flex-1 h-10 px-5 rounded-full bg-navy-700 text-white text-sm font-semibold">Save changes</button>
+  </footer>
+</section>
+
+<!-- ====================================================================
+     OVERLAY — Save your feed (create account)
+     Figma: Create account sheet (12:2634).
+     ==================================================================== -->
+<div class="lp-scrim" data-scrim="account" data-open="false" hidden></div>
+
+<div class="lp-sheet-wrap" data-sheet-wrap hidden>
+  <section class="lp-sheet" id="lp-account" data-open="false" role="dialog" aria-modal="true" aria-labelledby="lp-account-title">
+    <div class="md:hidden flex justify-center pt-3 pb-1" aria-hidden="true"><span class="w-10 h-1 rounded-full bg-wb-300"></span></div>
+
+    <div class="px-5 pt-5 pb-6 md:pt-6">
+      <div class="flex items-start justify-between gap-4">
+        <h2 id="lp-account-title" class="font-serif text-[28px] leading-8 text-navy-700">Save your feed</h2>
+        <button type="button" data-account-close aria-label="Close" class="lp-tap text-wb-900"><i class="ph ph-x text-2xl" aria-hidden="true"></i></button>
+      </div>
+
+      <p class="mt-4 text-base leading-[22px] text-wb-700">Create a free account to keep what you've added and get an email when there's a new match.</p>
+
+      <div class="mt-5 rounded-lg bg-gold-100 px-3.5 py-3">
+        <p class="text-[13px] font-semibold text-wb-900">We'll save:</p>
+        <ul class="list-none p-0 mt-2 flex flex-col gap-1.5" data-account-carryover></ul>
+      </div>
+
+      <button type="button" data-account-social class="mt-6 w-full h-12 rounded-full border border-wb-400 bg-white text-base font-medium text-wb-900">Continue with Google</button>
+      <button type="button" data-account-social class="mt-4 w-full h-12 rounded-full border border-wb-400 bg-white text-base font-medium text-wb-900">Continue with Apple</button>
+
+      <div class="my-5 flex items-center gap-3">
+        <span class="flex-1 h-px bg-wb-300"></span>
+        <span class="text-sm text-wb-700">or</span>
+        <span class="flex-1 h-px bg-wb-300"></span>
+      </div>
+
+      <label for="lp-account-email" class="block text-sm font-semibold text-wb-900">Email</label>
+      <input id="lp-account-email" type="email" autocomplete="email" placeholder="you@example.com"
+             class="mt-2 w-full h-12 px-4 rounded-lg bg-wb-50 border border-wb-400 text-base text-wb-900 placeholder:text-wb-600 focus:outline-none focus:border-navy-500" />
+      <p class="mt-2 text-[13px] text-coral-600" data-account-error hidden>Enter an email address so we know where to send matches.</p>
+
+      <button type="button" data-account-submit class="mt-4 w-full h-12 rounded-full bg-navy-700 text-white text-base font-semibold">Continue with email</button>
+
+      <p class="mt-4 text-center text-[13px] text-wb-700">Free. Unsubscribe anytime. We never share your details.</p>
+      <button type="button" data-account-close class="mt-4 w-full text-center text-[15px] font-semibold text-navy-500 underline">Not now</button>
+    </div>
+  </section>
+</div>
+
+<!-- ====================================================================
+     Prototype-only: state switch. Not part of the design.
+     ==================================================================== -->
+<div class="lp-demo" role="group" aria-label="Prototype state">
+  <span class="pl-1 opacity-70">View as</span>
+  <button type="button" data-demo="out" aria-pressed="true">Signed out</button>
+  <button type="button" data-demo="in" aria-pressed="false">Signed in</button>
+  <button type="button" data-demo-reset aria-label="Reset the prototype" title="Reset"><i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i></button>
+</div>
+
+<script src="feed.js"></script>
+</body>
+</html>

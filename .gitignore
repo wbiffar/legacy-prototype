@@ -28,6 +28,8 @@
 !my-people/**
 !guestbook-prompt/
 !guestbook-prompt/**
+!listing-personalization/
+!listing-personalization/**
 
 # Sign-up follow prototype
 !signup-follow-prototype.html
