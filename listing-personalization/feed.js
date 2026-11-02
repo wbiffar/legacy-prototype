@@ -339,30 +339,8 @@
   }
 
   /* ================================================================
-     Render: place chips under the feed header, and the Tune panel chips
+     Render: the Tune panel chips
      ================================================================ */
-  function chip(label, icon, opts) {
-    opts = opts || {};
-    if (opts.filled) {
-      return '<button type="button" class="lp-tap inline-flex items-center gap-1.5 h-8 pl-3 pr-3.5 rounded-full bg-navy-700 text-white text-sm font-medium">' +
-        '<i class="ph ' + icon + ' text-base" aria-hidden="true"></i>' + esc(label) + '</button>';
-    }
-    return '<button type="button" class="lp-tap inline-flex items-center gap-1.5 h-8 pl-3 pr-3.5 rounded-full bg-white border border-wb-300 text-sm font-medium text-wb-900">' +
-      '<i class="ph ' + icon + ' text-base" aria-hidden="true"></i>' + esc(label) + '</button>';
-  }
-
-  function renderPlaces() {
-    var host = $('[data-places]');
-    var active = activeSignals().filter(function (k) { return SIGNALS[k].group === 'places'; });
-
-    host.innerHTML =
-      chip('Thousand Oaks', 'ph-map-pin', { filled: true }) +
-      active.filter(function (k) { return k !== 'place:thousand-oaks'; })
-            .map(function (k) { return chip(SIGNALS[k].chip, SIGNALS[k].icon); }).join('') +
-      '<button type="button" data-tune-open class="lp-tap inline-flex items-center gap-1.5 h-8 pl-3 pr-3.5 rounded-full bg-white border border-wb-300 text-sm font-medium text-wb-900">' +
-        '<i class="ph ph-plus text-base" aria-hidden="true"></i>Add a place</button>';
-  }
-
   function renderTune() {
     var active = activeSignals();
     ['places', 'schools', 'work'].forEach(function (group) {
@@ -440,7 +418,6 @@
     renderAuth();
     renderQuickSetup();
     renderToday();
-    renderPlaces();
     renderTune();
     renderFeed();
     save();
@@ -726,11 +703,6 @@
 
   on('[data-tune-save]', 'click', function () { closeOverlay('tune'); render(); });
   on('[data-muted-manage]', 'click', function () { state.dismissed = []; render(); });
-
-  on('[data-digest]', 'change', function (e, el) {
-    state.prefs.daily = el.checked;
-    save();
-  });
 
   // ---- Account ----
   on('[data-account-open]', 'click', function () {

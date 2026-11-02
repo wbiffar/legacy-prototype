@@ -35,7 +35,7 @@
 
     <div class="flex items-center gap-2 md:gap-3 ml-auto">
       <!-- Signed out -->
-      <button type="button" data-auth="out" class="lp-tap inline-flex items-center gap-2 px-2 py-2 text-[15px] font-semibold text-wb-900">
+      <button type="button" data-auth="out" data-signin class="lp-tap inline-flex items-center gap-2 px-2 py-2 text-[15px] font-semibold text-wb-900">
         <i class="ph ph-user-circle text-2xl" aria-hidden="true"></i>
         <span class="hidden sm:inline">Sign In</span>
       </button>
@@ -310,10 +310,12 @@
           </div>
         </div>
 
-        <!-- Desktop: the place chips. Mobile: one Filter results button
-             (Figma ListHeaderCTA, 34:3305 / 32:3191). -->
-        <div class="hidden md:flex lp-chiprow mb-5" data-places aria-label="Places in this feed"></div>
-
+        <!-- The comp has a row of place chips here (Thousand Oaks, plus
+             whatever else is in the reader's profile). Removed 2 Nov: this
+             page IS Thousand Oaks, so a chip saying so filters nothing, and
+             the other chips offered to widen the list to places the page
+             does not cover. Mobile keeps the ListHeaderCTA (Figma 34:3305 /
+             32:3191) as the way into the panel. -->
         <button type="button" data-tune-open
                 class="md:hidden w-full h-14 mb-4 rounded-full border border-wb-900 bg-white flex items-center justify-center gap-2 text-base font-semibold text-wb-900">
           <i class="ph ph-sliders-horizontal text-xl" aria-hidden="true"></i>Filter results
@@ -334,41 +336,26 @@
     <!-- ============================================================
          RIGHT RAIL — stacks under the feed on mobile
          ============================================================ -->
-    <aside class="flex flex-col gap-6 lg:gap-[24px] lg:sticky lg:top-6" aria-label="About this feed">
+    <aside class="flex flex-col gap-6 lg:gap-[24px] lg:sticky lg:top-6" aria-label="More on this page">
 
-      <!-- Signed out: the account value prop (Figma 11:2407) -->
-      <section data-auth="out" class="rounded-xl bg-navy-700 p-5 text-white">
-        <h2 class="font-serif text-xl leading-7">Never miss a familiar name</h2>
-        <ul class="list-none p-0 mt-4 flex flex-col gap-3.5">
-          <li class="flex gap-2 text-sm leading-5"><span class="text-gold-400" aria-hidden="true">✓</span><span>An email when someone from your hometown or school passes</span></li>
-          <li class="flex gap-2 text-sm leading-5"><span class="text-gold-400" aria-hidden="true">✓</span><span>Follow a memorial for service updates and new guest book entries</span></li>
-          <li class="flex gap-2 text-sm leading-5"><span class="text-gold-400" aria-hidden="true">✓</span><span>Your daily view on every device. Always free.</span></li>
-        </ul>
-        <button type="button" data-account-open class="mt-5 w-full h-11 rounded-full bg-gold-500 text-wb-900 text-sm font-semibold">Create free account</button>
-        <p class="mt-3.5 text-center text-[13px] text-navy-200">Already have an account?
-          <button type="button" data-signin class="font-semibold text-white underline">Sign in</button>
-        </p>
-      </section>
+      <!-- Ad slot — 300x250 medium rectangle, the standard right-rail unit.
+           It is now the whole rail: the account value prop (Figma 11:2407),
+           the privacy note (11:1976 / 5:6297) and the daily-digest card
+           (5:6288) have all come out. Wes's call, 2 Nov. The digest itself
+           is not gone — it is the "Daily email digest, 7 a.m." checkbox
+           under Updates in the Tune panel, which was always the setting of
+           record; the rail card was a shortcut to it.
 
-      <!-- Signed in: the daily digest control (Figma 5:6288) -->
-      <section data-auth="in" class="rounded-xl bg-white border border-wb-300 p-5" hidden>
-        <h2 class="text-base font-semibold text-navy-700">Get today's matches by email</h2>
-        <label class="mt-4 flex items-start gap-2">
-          <span class="lp-toggle">
-            <input type="checkbox" checked data-digest />
-            <span class="lp-toggle-track" aria-hidden="true"></span>
-          </span>
-          <span class="flex flex-col gap-0.5">
-            <span class="text-base leading-tight text-wb-900">Daily digest, 7 a.m.</span>
-            <span class="text-sm text-wb-600">Only sent on days with a match</span>
-          </span>
-        </label>
-      </section>
-
-      <!-- Both states (Figma 11:1976 / 5:6297) -->
-      <section class="rounded-xl bg-white border border-wb-300 p-5">
-        <h2 class="text-base font-semibold text-navy-700">Why you're seeing these</h2>
-        <p class="mt-4 text-sm leading-5 text-wb-700">Matches use only the details you add in Tune your feed. We never match on obituaries you've read, and you can mute anyone, anytime.</p>
+           The label above it is not decoration: an ad sitting directly under
+           a block of editorial-looking cards has to say what it is, and this
+           page's readers are the people least well served by guessing. It
+           stays in the markup whatever creative the slot ends up serving. -->
+      <section class="flex flex-col items-center gap-2" aria-label="Advertisement">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.08em] text-wb-600">Advertisement</p>
+        <div class="w-[300px] h-[250px] max-w-full rounded-lg bg-wb-100 border border-wb-300 flex items-center justify-center">
+          <span class="text-sm font-semibold tracking-[0.2em] text-wb-600">AD</span>
+          <span class="sr-only">300 by 250 ad slot</span>
+        </div>
       </section>
     </aside>
   </div>

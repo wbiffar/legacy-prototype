@@ -100,17 +100,6 @@ select:focus-visible, [tabindex]:focus-visible {
 .lp-match { transition: opacity .2s ease, transform .2s ease; }
 .lp-match[data-dismissing="true"] { opacity: 0; transform: scale(.96); }
 
-/* ======================== Chip row (mobile) ========================
-   "My places (scrolls)" — the chips run off the right edge at 390px. */
-.lp-chiprow {
-  display: flex; gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding: 2px; margin: -2px;
-}
-.lp-chiprow::-webkit-scrollbar { display: none; }
-.lp-chiprow > * { flex: 0 0 auto; }
-
 /* ====================== Overlays: panel + sheet ======================
    Two surfaces share one scrim: the Tune-your-feed panel (a 440px right
    drawer on desktop, a bottom sheet on mobile) and the Save-your-feed
