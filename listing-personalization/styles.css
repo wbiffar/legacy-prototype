@@ -1,0 +1,262 @@
+/* Listing Page Personalization — "Today for you"
+   Structural CSS only. Colour lives in Tailwind token classes in the markup,
+   so nothing in this file can drift from the design system. The exceptions
+   are the two scrims, which are alpha washes over whatever is behind them
+   rather than surfaces in their own right — written as rgba() of a token
+   colour and noted at each site.
+
+   Every custom class is `lp-` prefixed. The Tailwind CDN ships utilities
+   called .collapse, .container, .grid and friends, and an unprefixed custom
+   class of the same name loses the cascade to them (memory.md, 2026-07-02). */
+
+/* ============================== Base ============================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Tailwind's display utilities are the same specificity as [hidden] and load
+   after it, so a .flex element toggled with el.hidden stays visible. Most of
+   the state in this prototype is toggled that way, so this rule is
+   load-bearing (memory.md, 2026-09-11). */
+[hidden] { display: none !important; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: #262116;
+  background: #fbf7ef; /* surface/container — gold-50 */
+  margin: 0;
+}
+img { display: block; max-width: 100%; }
+
+/* Our users skew older (CLAUDE.md), so the focus ring is a real one: 2px of
+   gold at a 2px offset, on everything focusable, never removed. */
+button:focus-visible, a:focus-visible, input:focus-visible,
+select:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid #dcb05e;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Tap targets. 44x44 is the CLAUDE.md minimum. Several controls in the comps
+   are 32px tall (the pill buttons in the feed header) or 14–16px (the chip
+   remove X, the match dismiss X); growing them would break the comp, so the
+   shortfall is made up with an invisible overlay instead. */
+.lp-tap { position: relative; }
+.lp-tap::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 44px; min-height: 44px;
+  width: 100%; height: 100%;
+}
+
+/* =========================== Quick setup ===========================
+   Figma: Feed/Quick setup, states Collapsed / 1 of 2 / 2 of 2 (18:3022).
+
+   The three states swap inside one card, and the card's height changes with
+   them (80 → 171 → 200px at desktop). Animating that height rather than
+   snapping it is what makes the progressive disclosure read as one object
+   unfolding instead of three cards replacing each other.
+
+   grid-template-rows 0fr→1fr is used rather than max-height so there is no
+   magic pixel ceiling to get wrong when the copy wraps at 375px. */
+.lp-reveal { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s ease; }
+.lp-reveal > * { overflow: hidden; min-height: 0; }
+.lp-reveal[data-open="true"] { grid-template-rows: 1fr; }
+
+/* The step panes cross-fade. Only the active one is in flow; the others are
+   display:none via [hidden], so no stale pane can be tabbed into. */
+.lp-step { animation: lp-fade-in .28s ease both; }
+@keyframes lp-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* ========================= Match carousel =========================
+   Figma: "Matches (swipe)" on mobile (19:3089), a plain 2–3 up row on
+   desktop (18:2942 / 18:2746).
+
+   Mobile is a real horizontal scroller with snap points — the comp shows the
+   third card cut off at the right edge, which is the affordance. Desktop lets
+   the same markup fall back to an equal-width row. */
+.lp-matches {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* The cards have a focus ring and a 1px border; without the padding the
+     ring is clipped by the scroll container on the first and last card. */
+  padding: 2px;
+  margin: -2px;
+}
+.lp-matches::-webkit-scrollbar { display: none; }
+.lp-matches > * { flex: 0 0 228px; scroll-snap-align: start; }
+
+@media (min-width: 768px) {
+  .lp-matches { overflow: visible; padding: 0; margin: 0; }
+  .lp-matches > * { flex: 1 1 0; min-width: 0; }
+}
+
+/* A dismissed match collapses out rather than vanishing, so the user can see
+   which card went and the row doesn't jump under the cursor. */
+.lp-match { transition: opacity .2s ease, transform .2s ease; }
+.lp-match[data-dismissing="true"] { opacity: 0; transform: scale(.96); }
+
+/* ====================== Overlays: panel + sheet ======================
+   Two surfaces share one scrim: the Tune-your-feed panel (a 440px right
+   drawer on desktop, a bottom sheet on mobile) and the Save-your-feed
+   account sheet (a bottom sheet on mobile, a centred dialog on desktop —
+   same call as DES-2305: bottom-anchored on a wide screen reads as a cookie
+   bar, which is the wrong register for an offer we want taken seriously). */
+
+.lp-scrim {
+  position: fixed; inset: 0; z-index: 60;
+  /* navy/900 at 55% — dim enough to read as a layer, light enough that the
+     feed stays visible behind it, since the panel is about that feed. */
+  background: rgba(21, 27, 36, 0.55);
+  opacity: 0; transition: opacity .28s ease;
+}
+.lp-scrim[data-open="true"] { opacity: 1; }
+
+/* --- Tune panel --- */
+.lp-panel {
+  position: fixed; z-index: 70;
+  background: #fff;
+  display: flex; flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,.10), 0 10px 10px 0 rgba(0,0,0,.04);
+  transition: transform .32s cubic-bezier(.32,.72,0,1);
+}
+/* Mobile: bottom sheet. dvh, not vh, so browser chrome cannot hide the
+   footer buttons (memory.md, 2026-09-11). */
+.lp-panel {
+  left: 0; right: 0; bottom: 0;
+  max-height: 86dvh;
+  border-radius: 16px 16px 0 0;
+  transform: translateY(100%);
+}
+.lp-panel[data-open="true"] { transform: translateY(0); }
+
+@media (min-width: 768px) {
+  .lp-panel {
+    left: auto; top: 0; right: 0; bottom: 0;
+    width: 440px; max-height: none;
+    border-radius: 0;
+    transform: translateX(100%);
+  }
+  .lp-panel[data-open="true"] { transform: translateX(0); }
+}
+
+/* The body scrolls; the header and footer are pinned. The footer holds Save
+   changes, which must never be the thing that scrolls off. */
+.lp-panel-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+
+/* --- Account sheet --- */
+.lp-sheet-wrap {
+  position: fixed; inset: 0; z-index: 70;
+  display: flex; align-items: flex-end; justify-content: center;
+  pointer-events: none;
+}
+.lp-sheet {
+  width: 100%; max-height: 92dvh; overflow-y: auto;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  transform: translateY(100%);
+  transition: transform .32s cubic-bezier(.32,.72,0,1);
+  pointer-events: auto;
+}
+.lp-sheet[data-open="true"] { transform: translateY(0); }
+
+@media (min-width: 768px) {
+  .lp-sheet-wrap { align-items: center; padding: 24px; }
+  .lp-sheet {
+    max-width: 440px;
+    border-radius: 16px;
+    transform: translateY(12px) scale(.98);
+    opacity: 0;
+    transition: transform .28s ease, opacity .28s ease;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,.10), 0 10px 10px 0 rgba(0,0,0,.04);
+  }
+  .lp-sheet[data-open="true"] { transform: none; opacity: 1; }
+}
+
+/* While an overlay is open the page behind it must not scroll — on iOS a
+   scrollable body under a sheet steals the gesture halfway through a drag. */
+body[data-overlay="true"] { overflow: hidden; }
+
+/* ============================= Toggle =============================
+   Figma: Toggle, 44x24 track with a 20px knob. Built on a real checkbox so
+   it carries its own role, state and keyboard handling. */
+.lp-toggle { position: relative; display: inline-flex; flex-shrink: 0; width: 44px; height: 24px; }
+.lp-toggle input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.lp-toggle-track {
+  position: absolute; inset: 0; border-radius: 40px;
+  background: #afadaa; /* warmBlack/400 */
+  transition: background .2s ease;
+  pointer-events: none;
+}
+.lp-toggle-track::after {
+  content: '';
+  position: absolute; top: 2px; left: 3px;
+  width: 20px; height: 20px; border-radius: 40px;
+  background: #fff;
+  transition: transform .2s ease;
+}
+.lp-toggle input:checked + .lp-toggle-track { background: #216e6a; } /* seaFoam/700 */
+.lp-toggle input:checked + .lp-toggle-track::after { transform: translateX(18px); }
+.lp-toggle input:focus-visible + .lp-toggle-track { outline: 2px solid #dcb05e; outline-offset: 2px; }
+
+/* ============================ Checkbox ============================
+   Figma: 18px box, gold/400 fill with a gold/600 border when checked. */
+.lp-check { position: relative; display: inline-flex; flex-shrink: 0; width: 18px; height: 18px; }
+.lp-check input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.lp-check-box {
+  position: absolute; inset: 0; border-radius: 4px;
+  background: #fbfbfb; border: 1px solid #afadaa;
+  pointer-events: none;
+}
+.lp-check-box::after {
+  content: '';
+  position: absolute; left: 5px; top: 1.5px;
+  width: 5px; height: 9px;
+  border: solid #262116; border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform .15s ease;
+}
+.lp-check input:checked + .lp-check-box { background: #e2ba60; border-color: #c49e54; }
+.lp-check input:checked + .lp-check-box::after { transform: rotate(45deg) scale(1); }
+.lp-check input:focus-visible + .lp-check-box { outline: 2px solid #dcb05e; outline-offset: 2px; }
+
+/* ========================= Demo controls =========================
+   Prototype-only furniture: the signed-in / signed-out switch and the reset.
+   Deliberately plain and outside the DS so nobody reviewing the comp mistakes
+   it for part of the design. */
+.lp-demo {
+  position: fixed; right: 12px; bottom: 12px; z-index: 90;
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px;
+  background: #151b24; color: #fff;
+  border-radius: 999px;
+  font-size: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+}
+.lp-demo button {
+  border: 0; border-radius: 999px; cursor: pointer;
+  padding: 6px 12px; font: inherit; font-weight: 600;
+  background: transparent; color: #fff;
+}
+.lp-demo button[aria-pressed="true"] { background: #e2ba60; color: #262116; }
+/* It sits in the bottom-right corner, which is exactly where the Tune
+   panel's Save changes button lands. Nothing to decide while a dialog is
+   open, so it gets out of the way. */
+body[data-overlay="true"] .lp-demo { display: none; }
+/* …and it is fixed, so the foot of the page needs room it can sit over.
+   The padding goes on the footer rather than on <body>, which would leave a
+   strip of page background below the navy block. */
+body > footer { padding-bottom: 76px; }
+
+/* Reduced motion: keep every state change, drop the travel. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
