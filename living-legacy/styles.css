@@ -122,25 +122,22 @@ label:focus-within {
 .ll-btn:disabled { opacity: .45; cursor: not-allowed; }
 .ll-btn:active:not(:disabled) { transform: scale(.98); }
 
+/* Primary CTA — navy/700 per the DS ("Add a Memory (brand blue)",
+   design-system.md § Feature Color Assignments). Hover is navy/600. */
 .ll-btn-primary {
-  background: #262116; color: #fff;
+  background: #293548; color: #fff;
 }
-.ll-btn-primary:hover:not(:disabled) { background: #3c3327; }
+.ll-btn-primary:hover:not(:disabled) { background: #3c4d69; }
 
 .ll-btn-secondary {
-  background: #fff; color: #262116; border-color: #262116;
+  background: #fff; color: #293548; border-color: #293548;
 }
-.ll-btn-secondary:hover:not(:disabled) { background: #fbfbfb; border-color: #262116; }
+.ll-btn-secondary:hover:not(:disabled) { background: #fbfbfb; border-color: #3c4d69; }
 
 .ll-btn-ghost {
   background: transparent; color: #262116; border-color: #dbdad7;
 }
-.ll-btn-ghost:hover:not(:disabled) { border-color: #262116; background: #fbfbfb; }
-
-.ll-btn-navy {
-  background: #293548; color: #fff;
-}
-.ll-btn-navy:hover:not(:disabled) { background: #3c4d69; }
+.ll-btn-ghost:hover:not(:disabled) { border-color: #293548; background: #fbfbfb; color: #293548; }
 
 .ll-btn-sm { padding: 8px 16px; font-size: 14px; min-height: 36px; }
 .ll-btn-lg { padding: 16px 28px; font-size: 16px; min-height: 52px; }
@@ -215,9 +212,9 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
 }
 .ll-who-card:hover { border-color: #85713e; background: #fbfbfb; }
 .ll-who-card[aria-pressed="true"] {
-  border-color: #262116;
+  border-color: #293548;
   background: #fff;
-  box-shadow: 0 4px 10px -4px rgba(38,33,22,0.14);
+  box-shadow: 0 4px 10px -4px rgba(41,53,72,0.18);
 }
 .ll-who-icon {
   width: 32px; height: 32px;
@@ -227,7 +224,7 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
   border-radius: 8px;
 }
 .ll-who-card[aria-pressed="true"] .ll-who-icon {
-  background: #262116; color: #fff;
+  background: #293548; color: #fff;
 }
 
 /* ============================ Pill chips ============================ */
@@ -418,12 +415,12 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
 .ll-voice-btn {
   flex-shrink: 0;
   width: 44px; height: 44px; border-radius: 999px;
-  background: #262116; color: #fff;
+  background: #293548; color: #fff;
   display: inline-flex; align-items: center; justify-content: center;
   cursor: pointer; border: 0;
   transition: transform .15s ease, background .15s ease;
 }
-.ll-voice-btn:hover { background: #3c3327; transform: scale(1.04); }
+.ll-voice-btn:hover { background: #3c4d69; transform: scale(1.04); }
 .ll-voice-wave {
   display: flex; align-items: center; gap: 3px;
   flex: 1 1 auto; min-width: 0; height: 32px;
@@ -436,7 +433,7 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
   opacity: .75;
 }
 .ll-voice[data-playing="true"] .ll-voice-wave span {
-  background: #262116;
+  background: #293548;
 }
 .ll-voice:not([data-playing="true"]) .ll-voice-wave span { animation: none; }
 
@@ -567,7 +564,7 @@ body[data-overlay="true"] { overflow: hidden; }
 .ll-rec-btn {
   display: inline-flex; align-items: center; gap: 10px;
   padding: 14px 24px; min-height: 48px;
-  background: #262116; color: #fff;
+  background: #293548; color: #fff;
   border: 0; border-radius: 999px;
   cursor: pointer;
   font: inherit; font-size: 15px; font-weight: 600;
@@ -575,7 +572,7 @@ body[data-overlay="true"] { overflow: hidden; }
   transition: background .15s ease, transform .15s ease;
   position: relative;
 }
-.ll-rec-btn:hover { background: #3c3327; }
+.ll-rec-btn:hover { background: #3c4d69; }
 .ll-rec-btn[data-active="true"] { background: #c24c62; }
 .ll-rec-btn[data-active="true"]::before {
   content: '';
