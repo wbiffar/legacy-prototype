@@ -11,9 +11,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js"></script>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="app.js"></script>
+  <script src="tokens.js?v=13"></script>
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <script src="app.js?v=13"></script>
 </head>
 <body>
 
@@ -52,11 +52,69 @@
   <div class="max-w-[720px] mx-auto">
 
     <!-- =======================================================
+         VIEW 0 — Landing (hero + sign-in / guest / create)
+         The first-run experience. Shows when there are no saved
+         projects AND the user hasn't yet chosen to continue.
+         ======================================================= -->
+    <section data-view="landing" hidden>
+      <div class="ll-card ll-card-pad max-w-[560px] mx-auto">
+        <div class="ll-chip-eyebrow">Living Legacy</div>
+        <h1 class="text-[30px] md:text-[38px] font-serif tracking-tight leading-[1.1] text-wb-900 mb-4">
+          A life's story, passed down for generations.
+        </h1>
+        <p class="text-[16px] md:text-[17px] text-wb-700 leading-relaxed">
+          Curate the milestones, memories, and family recipes your grandchildren will treasure.
+        </p>
+
+        <div class="border-t border-wb-200 mt-6 pt-6 space-y-5">
+          <div class="flex items-start gap-4">
+            <span class="ll-add-icon shrink-0"><i class="ph-fill ph-sparkle" aria-hidden="true"></i></span>
+            <div>
+              <div class="text-[15px] font-bold text-wb-900 mb-1">Start a new project in seconds</div>
+              <p class="text-[14px] text-wb-700 leading-relaxed">Simply name what your project is about and choose if it is for Someone Else or a group of people (like a family).</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <span class="ll-add-icon shrink-0"><i class="ph ph-microphone" aria-hidden="true"></i></span>
+            <div>
+              <div class="text-[15px] font-bold text-wb-900 mb-1">Stories, voice notes &amp; AI-digitized recipes</div>
+              <p class="text-[14px] text-wb-700 leading-relaxed">Upload handwritten recipe cards, record voice stories, or send a link to family to contribute.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <span class="ll-add-icon shrink-0"><i class="ph ph-book-open" aria-hidden="true"></i></span>
+            <div>
+              <div class="text-[15px] font-bold text-wb-900 mb-1">Turn any project into a Keepsake Book</div>
+              <p class="text-[14px] text-wb-700 leading-relaxed">Print a Baby Book, School Years Book, Family Cookbook, or Complete Life Story Book whenever you are ready.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-wb-200 mt-6 pt-6">
+          <p class="text-[13.5px] text-center text-wb-700 mb-4">
+            Sign in with your Legacy account or continue as a guest to explore.
+          </p>
+          <div class="space-y-3">
+            <button type="button" class="ll-btn ll-btn-primary ll-btn-lg w-full" data-landing-create>
+              Create an Account
+            </button>
+            <button type="button" class="ll-btn ll-btn-secondary ll-btn-lg w-full" data-landing-guest>
+              Continue as a Guest
+            </button>
+          </div>
+          <p class="text-[13.5px] text-center text-wb-700 mt-4">
+            Already have an account? <a href="#" class="text-navy-500 font-semibold underline underline-offset-2" data-landing-signin>Sign in</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================
          VIEW A — Your Projects (returning user with saved work)
          ======================================================= -->
     <section data-view="your-projects" hidden>
       <div class="flex items-center justify-between gap-4 mb-6 md:mb-8">
-        <h1 class="text-2xl md:text-[32px] font-bold tracking-tight text-wb-900">Your Projects</h1>
+        <h1 class="text-2xl md:text-[32px] font-serif tracking-tight text-wb-900">Your Projects</h1>
         <button type="button" class="ll-btn ll-btn-primary" data-action="new-project">
           <i class="ph ph-plus text-base" aria-hidden="true"></i>
           <span>Start a new project</span>
@@ -80,7 +138,7 @@
               <div class="ll-accordion-inner">
                 <ul class="space-y-3 text-[14.5px] text-wb-700">
                   <li class="flex gap-3"><i class="ph ph-forkknife text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Family Recipes.</b> Gather dishes that mean something before they are lost.</span></li>
-                  <li class="flex gap-3"><i class="ph ph-user-focus text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Dad's Retirement.</b> One page where colleagues and family can send a memory.</span></li>
+                  <li class="flex gap-3"><i class="ph ph-user-focus text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Dad's Retirement.</b> One project where colleagues and family can send a memory.</span></li>
                   <li class="flex gap-3"><i class="ph ph-graduation-cap text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">School Years.</b> A year of prompts for a grandparent's childhood, printed into a book.</span></li>
                   <li class="flex gap-3"><i class="ph ph-heart text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Wedding or Anniversary.</b> A QR code at the event so guests can add a story on their phone.</span></li>
                 </ul>
@@ -98,7 +156,7 @@
 
       <div class="ll-card ll-card-pad">
         <!-- Heading -->
-        <h1 class="text-2xl md:text-[32px] font-bold tracking-tight text-wb-900 mb-5">Start a new project</h1>
+        <h1 class="text-2xl md:text-[32px] font-serif tracking-tight text-wb-900 mb-5">Start a new project</h1>
 
         <!-- Need ideas accordion -->
         <div class="ll-accordion mb-7" data-accordion>
@@ -112,7 +170,7 @@
               <div class="ll-accordion-inner">
                 <ul class="space-y-3 text-[14.5px] text-wb-700">
                   <li class="flex gap-3"><i class="ph ph-forkknife text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Family Recipes.</b> Gather dishes that mean something before they are lost.</span></li>
-                  <li class="flex gap-3"><i class="ph ph-user-focus text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Dad's Retirement.</b> One page where colleagues and family can send a memory.</span></li>
+                  <li class="flex gap-3"><i class="ph ph-user-focus text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Dad's Retirement.</b> One project where colleagues and family can send a memory.</span></li>
                   <li class="flex gap-3"><i class="ph ph-graduation-cap text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">School Years.</b> A year of prompts for a grandparent's childhood, printed into a book.</span></li>
                   <li class="flex gap-3"><i class="ph ph-heart text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Wedding or Anniversary.</b> A QR code at the event so guests can add a story on their phone.</span></li>
                 </ul>
@@ -195,7 +253,9 @@
   <button type="button" data-set-auth="out" aria-pressed="false">Signed out</button>
   <button type="button" data-set-auth="in" aria-pressed="true">Signed in</button>
   <span class="opacity-40">·</span>
-  <button type="button" data-reset title="Reset the prototype">Reset</button>
+  <span class="opacity-70">Scenario</span>
+  <button type="button" data-reset title="Rebuild the two seeded projects">Seeded</button>
+  <button type="button" data-clean-slate title="Wipe projects and land on Start a new project">Clean slate</button>
 </div>
 
 <script>
@@ -219,15 +279,31 @@
     $$('[data-user-name]').forEach(e => { e.textContent = u; });
   }
 
+  // Routing between the three views on this page.
+  //  - landing:       no projects AND signed-out AND user hasn't moved past
+  //                   it yet (first-run / Clean-slate entry)
+  //  - your-projects: at least one saved project (unless user clicked
+  //                   "Start a new project" from the list)
+  //  - start:         everything else — signed-in with no projects, or
+  //                   guest who clicked Continue, or user starting a new
+  //                   project from Your Projects
   function renderView() {
     const projects = LL.allProjects();
-    const forced = sessionStorage.getItem('ll-force-new') === '1';
-    const showList = projects.length > 0 && !forced;
+    const forced  = sessionStorage.getItem('ll-force-new') === '1';
+    const pastLanding = sessionStorage.getItem('ll-past-landing') === '1';
+    const signedIn = LL.getAuth() === 'in';
+
+    const showList    = projects.length > 0 && !forced;
+    const showLanding = !showList && !signedIn && !pastLanding;
+    const showStart   = !showList && !showLanding;
+
+    $('[data-view="landing"]').hidden       = !showLanding;
     $('[data-view="your-projects"]').hidden = !showList;
-    $('[data-view="start"]').hidden = showList;
+    $('[data-view="start"]').hidden         = !showStart;
     $('[data-back-to-projects]').hidden = !(forced && projects.length > 0);
+
     if (showList) renderList(projects);
-    else resetForm();
+    else if (showStart) resetForm();
   }
 
   function renderList(projects) {
@@ -331,8 +407,39 @@
     b.addEventListener('click', () => {
       LL.setAuth('in');
       syncAuth();
+      sessionStorage.setItem('ll-past-landing', '1');
+      renderView();
       LL.toast(`Welcome back, ${LL.getUserName()}`, { icon: 'ph-hand-waving' });
     });
+  });
+
+  // ---------- Landing CTAs ----------
+  // All three leave the landing; "Create" and "Sign in" also flip to
+  // signed-in demo state. ll-past-landing keeps a reload on the Start
+  // form from bouncing back here while they're in the middle of filling
+  // it out.
+  const leaveLanding = () => {
+    sessionStorage.setItem('ll-past-landing', '1');
+    renderView();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  $('[data-landing-create]').addEventListener('click', () => {
+    LL.setAuth('in');
+    syncAuth();
+    leaveLanding();
+    LL.toast(`Welcome, ${LL.getUserName()}`, { icon: 'ph-sparkle' });
+  });
+  $('[data-landing-guest]').addEventListener('click', () => {
+    LL.setAuth('out');
+    syncAuth();
+    leaveLanding();
+  });
+  $('[data-landing-signin]').addEventListener('click', (e) => {
+    e.preventDefault();
+    LL.setAuth('in');
+    syncAuth();
+    leaveLanding();
+    LL.toast(`Welcome back, ${LL.getUserName()}`, { icon: 'ph-hand-waving' });
   });
 
   // ---------- Demo switch ----------
@@ -342,9 +449,9 @@
       syncAuth();
     });
   });
-  $('[data-reset]').addEventListener('click', () => {
-    if (confirm('Reset the prototype and clear all saved projects?')) LL.reset();
-  });
+  // Scenario buttons — one-click swap; no confirm, this is a demo pill.
+  $('[data-reset]').addEventListener('click', () => LL.reset());
+  $('[data-clean-slate]').addEventListener('click', () => LL.cleanSlate());
 
   // Init
   syncAuth();

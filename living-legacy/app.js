@@ -222,6 +222,50 @@
     return m;
   }
 
+  function updateMemory(projectId, memoryId, patch) {
+    const p = getProject(projectId);
+    if (!p) return null;
+    const idx = (p.memories || []).findIndex(m => m.id === memoryId);
+    if (idx === -1) return null;
+    // Preserve id, createdAt, and type; everything else is patchable.
+    const current = p.memories[idx];
+    const updated = {
+      ...current,
+      ...patch,
+      id: current.id,
+      type: current.type,
+      createdAt: current.createdAt,
+      updatedAt: now(),
+    };
+    p.memories[idx] = updated;
+    saveProject(p);
+    return updated;
+  }
+
+  function deleteMemory(projectId, memoryId) {
+    const p = getProject(projectId);
+    if (!p) return false;
+    const before = (p.memories || []).length;
+    p.memories = (p.memories || []).filter(m => m.id !== memoryId);
+    if (p.memories.length === before) return false;
+    saveProject(p);
+    return true;
+  }
+
+  // Ownership: the project organizer (the contributor flagged isYou that
+  // matches the signed-in demo user) can edit anything in the project;
+  // a non-organizer can edit only the memories they contributed. For the
+  // prototype's demo state Wesley is always the organizer, so every
+  // memory on their projects is editable.
+  function canEditMemory(memory, project) {
+    const me = (getUserName() || '').toLowerCase();
+    const isOrganizer = (project.contributors || [])
+      .some(c => c.isYou && (c.name || '').toLowerCase() === me);
+    const isAuthor = memory && memory.sharedBy &&
+      memory.sharedBy.toLowerCase() === me;
+    return isOrganizer || isAuthor;
+  }
+
   // ============================== Auth demo ==============================
   function getAuth() { return read(K_AUTH, 'in'); }
   function setAuth(state) { write(K_AUTH, state); document.body.dataset.auth = state; }
@@ -247,6 +291,14 @@
     return s;
   }
 
+  // Pending hide timers so a rapid close → open doesn't let a late timer
+  // re-hide the just-opened modal (and scrim). Keyed by element.
+  const pendingHide = new WeakMap();
+  function cancelPendingHide(el) {
+    const t = pendingHide.get(el);
+    if (t) { clearTimeout(t); pendingHide.delete(el); }
+  }
+
   function openModal(id) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -255,16 +307,26 @@
     const inner = el.classList.contains('ll-modal') ? el : el.querySelector('.ll-modal');
     modalState.lastFocus = document.activeElement;
     const scrim = ensureScrim();
+
+    // Cancel any pending hide from a just-fired closeModal so the modal
+    // (and the scrim) don't re-hide after we open them.
+    cancelPendingHide(el);
+    cancelPendingHide(scrim);
+
+    // Make the element visible synchronously. rAF is throttled when the
+    // tab/pane is backgrounded (and during heavy script turns), and we
+    // want the modal to land even then — not just when the pane is up.
     scrim.hidden = false;
-    // Next frame so the transition runs
-    requestAnimationFrame(() => {
-      scrim.dataset.open = 'true';
-      el.hidden = false;
-      requestAnimationFrame(() => {
-        el.dataset.open = 'true';
-        if (inner && inner !== el) inner.dataset.open = 'true';
-      });
-    });
+    el.hidden = false;
+    // Force layout so the transition fires from the hidden/closed state.
+    // Without the reflow the browser may batch "hidden → open" into one
+    // style change and skip the transition.
+    void scrim.offsetHeight;
+    void el.offsetHeight;
+    scrim.dataset.open = 'true';
+    el.dataset.open = 'true';
+    if (inner && inner !== el) inner.dataset.open = 'true';
+
     modalState.stack.push(el);
     document.body.dataset.overlay = 'true';
 
@@ -281,14 +343,23 @@
     const inner = el.classList.contains('ll-modal') ? el : el.querySelector('.ll-modal');
     el.dataset.open = 'false';
     if (inner && inner !== el) inner.dataset.open = 'false';
-    setTimeout(() => { el.hidden = true; }, 340);
+    // Replace any older pending hide for this element.
+    cancelPendingHide(el);
+    pendingHide.set(el, setTimeout(() => {
+      el.hidden = true;
+      pendingHide.delete(el);
+    }, 340));
 
     modalState.stack = modalState.stack.filter(e => e !== el);
     if (modalState.stack.length === 0) {
       const scrim = modalState.scrim;
       if (scrim) {
         scrim.dataset.open = 'false';
-        setTimeout(() => { scrim.hidden = true; }, 320);
+        cancelPendingHide(scrim);
+        pendingHide.set(scrim, setTimeout(() => {
+          scrim.hidden = true;
+          pendingHide.delete(scrim);
+        }, 320));
       }
       document.body.dataset.overlay = 'false';
     }
@@ -398,7 +469,7 @@
   window.LL = {
     // data
     allProjects, getProject, saveProject, deleteProject,
-    createProject, addMemory,
+    createProject, addMemory, updateMemory, deleteMemory, canEditMemory,
     getAuth, setAuth, getUserName, setUserName,
     // ui
     openModal, closeModal, closeTopModal,
@@ -407,6 +478,18 @@
     escapeHTML, nl2br, splitLines, fmtRelative, uuid,
     // debug
     reseed: () => { localStorage.removeItem(K_SEED); seedIfNeeded(); },
-    reset:  () => { [K_PROJECTS, K_SEED, K_AUTH, K_NAME].forEach(k => localStorage.removeItem(k)); seedIfNeeded(); location.reload(); },
+    reset:  () => { [K_PROJECTS, K_SEED, K_AUTH, K_NAME].forEach(k => localStorage.removeItem(k)); seedIfNeeded(); location.href = './'; },
+    // Wipe projects, sign the demo user out, and park the seed bumper
+    // so seedIfNeeded doesn't rebuild them on the next load. Lands the
+    // user on the Living Legacy hero/sign-in screen — the true first-run
+    // experience — with no history behind them.
+    cleanSlate: () => {
+      localStorage.removeItem(K_PROJECTS);
+      write(K_AUTH, 'out');
+      sessionStorage.removeItem('ll-force-new');
+      sessionStorage.removeItem('ll-past-landing');
+      write(K_SEED, SEED_VERSION);
+      location.href = './';
+    },
   };
 })();

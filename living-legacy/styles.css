@@ -122,25 +122,22 @@ label:focus-within {
 .ll-btn:disabled { opacity: .45; cursor: not-allowed; }
 .ll-btn:active:not(:disabled) { transform: scale(.98); }
 
+/* Primary CTA — navy/700 per the DS ("Add a Memory (brand blue)",
+   design-system.md § Feature Color Assignments). Hover is navy/600. */
 .ll-btn-primary {
-  background: #262116; color: #fff;
+  background: #293548; color: #fff;
 }
-.ll-btn-primary:hover:not(:disabled) { background: #3c3327; }
+.ll-btn-primary:hover:not(:disabled) { background: #3c4d69; }
 
 .ll-btn-secondary {
-  background: #fff; color: #262116; border-color: #262116;
+  background: #fff; color: #293548; border-color: #293548;
 }
-.ll-btn-secondary:hover:not(:disabled) { background: #fbfbfb; border-color: #262116; }
+.ll-btn-secondary:hover:not(:disabled) { background: #fbfbfb; border-color: #3c4d69; }
 
 .ll-btn-ghost {
   background: transparent; color: #262116; border-color: #dbdad7;
 }
-.ll-btn-ghost:hover:not(:disabled) { border-color: #262116; background: #fbfbfb; }
-
-.ll-btn-navy {
-  background: #293548; color: #fff;
-}
-.ll-btn-navy:hover:not(:disabled) { background: #3c4d69; }
+.ll-btn-ghost:hover:not(:disabled) { border-color: #293548; background: #fbfbfb; color: #293548; }
 
 .ll-btn-sm { padding: 8px 16px; font-size: 14px; min-height: 36px; }
 .ll-btn-lg { padding: 16px 28px; font-size: 16px; min-height: 52px; }
@@ -215,9 +212,9 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
 }
 .ll-who-card:hover { border-color: #85713e; background: #fbfbfb; }
 .ll-who-card[aria-pressed="true"] {
-  border-color: #262116;
+  border-color: #293548;
   background: #fff;
-  box-shadow: 0 4px 10px -4px rgba(38,33,22,0.14);
+  box-shadow: 0 4px 10px -4px rgba(41,53,72,0.18);
 }
 .ll-who-icon {
   width: 32px; height: 32px;
@@ -227,7 +224,7 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
   border-radius: 8px;
 }
 .ll-who-card[aria-pressed="true"] .ll-who-icon {
-  background: #262116; color: #fff;
+  background: #293548; color: #fff;
 }
 
 /* ============================ Pill chips ============================ */
@@ -264,11 +261,11 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
 .ll-accordion {
   background: #fff;
   border: 1px solid #dbdad7;
-  border-radius: 999px;
+  border-radius: 8px;
   overflow: hidden;
-  transition: border-radius .28s ease, background .2s ease;
+  transition: background .2s ease;
 }
-.ll-accordion[data-open="true"] { border-radius: 16px; background: #fff; }
+.ll-accordion[data-open="true"] { background: #fff; }
 .ll-accordion-toggle {
   width: 100%;
   display: flex; align-items: center; gap: 12px;
@@ -353,6 +350,51 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
   font-size: 20px;
 }
 
+/* ======================== Feed controls ========================
+   Sits above the memory feed on the project page: left column shows
+   the count, right column has the sort pills and a 2-cell view
+   toggle. On narrow screens the controls wrap under the count. */
+.ll-feed-controls {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+.ll-feed-count {
+  font-size: 13px; font-weight: 600; color: #514d45;
+  margin-right: auto;
+}
+.ll-seg {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px;
+  background: #f6e5b8;              /* gold-100 — carries more contrast
+                                       than wb-100 against the warm page
+                                       and makes the white pressed pill
+                                       pop clearly. */
+  border-radius: 999px;
+}
+.ll-seg > button {
+  padding: 6px 12px;
+  min-height: 32px;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  font: inherit; font-size: 13px; font-weight: 600;
+  color: #63605b;
+  cursor: pointer;
+  transition: background .14s ease, color .14s ease;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.ll-seg > button:hover { color: #262116; }
+.ll-seg > button[aria-pressed="true"] {
+  background: #fff;
+  color: #262116;
+  box-shadow: 0 1px 2px rgba(38,33,22,.08);
+}
+.ll-seg-label {
+  font-size: 12px; font-weight: 600; color: #807e7a;
+  padding: 0 4px;
+}
+
 /* ======================== Memory feed cards ======================== */
 .ll-memory {
   background: #fff;
@@ -361,12 +403,106 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
   padding: 28px;
   animation: ll-memory-in .5s cubic-bezier(.22,.61,.36,1) both;
 }
+
+/* Small pencil / trash button in the top-right of a memory card. Hidden
+   until the user hovers (or focuses) the card so the feed stays calm
+   at rest; on touch, the card itself picks up :hover on tap. */
+.ll-icon-btn {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #63605b;
+  cursor: pointer;
+  transition: background .14s ease, border-color .14s ease, color .14s ease, opacity .14s ease;
+  opacity: 0;
+}
+.ll-memory:hover .ll-icon-btn,
+.ll-memory:focus-within .ll-icon-btn {
+  opacity: 1;
+}
+.ll-icon-btn:hover { background: #fbfbfb; border-color: #dbdad7; color: #293548; }
+.ll-icon-btn:focus-visible { opacity: 1; }
+/* Touch devices can't hover — keep the control visible so it's reachable
+   without a long-press. */
+@media (hover: none) {
+  .ll-icon-btn { opacity: 1; }
+}
 @media (max-width: 640px) { .ll-memory { padding: 20px; } }
 
 @keyframes ll-memory-in {
   from { opacity: 0; transform: translateY(16px) scale(.985); }
   to   { opacity: 1; transform: none; }
 }
+
+/* Grid (masonry) view — CSS columns gives us free masonry packing;
+   cards keep their natural height, pack in column order. Pure CSS,
+   no layout JS needed. */
+.ll-feed[data-view="grid"] {
+  display: block;
+  column-count: 2;
+  column-gap: 12px;
+}
+@media (min-width: 900px) {
+  .ll-feed[data-view="grid"] { column-count: 3; }
+}
+@media (max-width: 480px) {
+  .ll-feed[data-view="grid"] { column-count: 1; }
+}
+.ll-feed[data-view="grid"] > * {
+  break-inside: avoid;
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+/* Compact memory card — grid view only. The whole card is clickable
+   and opens the detail modal; only the essentials are shown. */
+.ll-memory-compact {
+  background: #fff;
+  border: 1px solid #dbdad7;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  display: block;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  animation: ll-memory-in .4s cubic-bezier(.22,.61,.36,1) both;
+}
+.ll-memory-compact:hover {
+  transform: translateY(-2px);
+  border-color: #85713e;
+  box-shadow: 0 8px 20px -8px rgba(38,33,22,0.14);
+}
+.ll-memory-compact:focus-visible {
+  outline: 2px solid #dcb05e;
+  outline-offset: 2px;
+}
+.ll-compact-photo {
+  width: 100%;
+  border-radius: 8px;
+  display: block;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.ll-compact-photo img { width: 100%; height: auto; display: block; }
+.ll-compact-voice {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: #fbfbfb;
+  border-radius: 8px;
+}
+.ll-compact-voice-btn {
+  width: 32px; height: 32px; border-radius: 999px;
+  background: #293548; color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.ll-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ll-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* The small recipe card inside a Recipe memory — looks like an index
    card with a soft shadow and a top accent line. */
@@ -406,7 +542,7 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
 }
 .ll-photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* Voice memory — the waveform + play button. */
+/* Voice memory — play/pause button + a gutter-and-head scrubber. */
 .ll-voice {
   margin-top: 8px;
   display: flex; align-items: center; gap: 14px;
@@ -418,32 +554,52 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
 .ll-voice-btn {
   flex-shrink: 0;
   width: 44px; height: 44px; border-radius: 999px;
-  background: #262116; color: #fff;
+  background: #293548; color: #fff;
   display: inline-flex; align-items: center; justify-content: center;
   cursor: pointer; border: 0;
   transition: transform .15s ease, background .15s ease;
 }
-.ll-voice-btn:hover { background: #3c3327; transform: scale(1.04); }
-.ll-voice-wave {
-  display: flex; align-items: center; gap: 3px;
-  flex: 1 1 auto; min-width: 0; height: 32px;
-}
-.ll-voice-wave span {
-  display: inline-block;
-  width: 3px;
-  background: #a48849; border-radius: 2px;
-  animation: ll-wave 1.2s ease-in-out infinite;
-  opacity: .75;
-}
-.ll-voice[data-playing="true"] .ll-voice-wave span {
-  background: #262116;
-}
-.ll-voice:not([data-playing="true"]) .ll-voice-wave span { animation: none; }
+.ll-voice-btn:hover { background: #3c4d69; transform: scale(1.04); }
 
-@keyframes ll-wave {
-  0%, 100% { height: 30%; }
-  50%      { height: 100%; }
+/* Scrubber — a thin gutter with a filled section up to the playhead
+   and a 12px circular head. Full click-and-drag scrubbing in JS. */
+.ll-voice-scrub {
+  position: relative;
+  flex: 1 1 auto; min-width: 0;
+  height: 32px;
+  display: flex; align-items: center;
+  cursor: pointer;
+  touch-action: none;
 }
+.ll-voice-track {
+  position: absolute; left: 0; right: 0; top: 50%;
+  height: 4px;
+  margin-top: -2px;
+  background: #ebe9e9;              /* warmBlack/200 */
+  border-radius: 999px;
+}
+.ll-voice-progress {
+  position: absolute; left: 0; top: 50%;
+  height: 4px;
+  margin-top: -2px;
+  background: #293548;              /* navy/700 */
+  border-radius: 999px;
+  width: 0%;
+}
+.ll-voice-head {
+  position: absolute; top: 50%;
+  width: 14px; height: 14px;
+  margin-left: -7px; margin-top: -7px;
+  background: #293548;              /* navy/700 */
+  border: 2px solid #fff;
+  border-radius: 999px;
+  left: 0%;
+  box-shadow: 0 1px 3px rgba(38,33,22,0.18);
+  transition: transform .12s ease;
+}
+.ll-voice-scrub:hover .ll-voice-head,
+.ll-voice[data-playing="true"] .ll-voice-head { transform: scale(1.15); }
+.ll-voice-scrub:focus-visible .ll-voice-head { transform: scale(1.15); }
 
 /* ============================ Modal / sheet ============================
    Desktop: centred dialog, 560px. Mobile: bottom sheet. One scrim. */
@@ -567,7 +723,7 @@ body[data-overlay="true"] { overflow: hidden; }
 .ll-rec-btn {
   display: inline-flex; align-items: center; gap: 10px;
   padding: 14px 24px; min-height: 48px;
-  background: #262116; color: #fff;
+  background: #293548; color: #fff;
   border: 0; border-radius: 999px;
   cursor: pointer;
   font: inherit; font-size: 15px; font-weight: 600;
@@ -575,7 +731,7 @@ body[data-overlay="true"] { overflow: hidden; }
   transition: background .15s ease, transform .15s ease;
   position: relative;
 }
-.ll-rec-btn:hover { background: #3c3327; }
+.ll-rec-btn:hover { background: #3c4d69; }
 .ll-rec-btn[data-active="true"] { background: #c24c62; }
 .ll-rec-btn[data-active="true"]::before {
   content: '';

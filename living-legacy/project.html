@@ -10,9 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js"></script>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="app.js"></script>
+  <script src="tokens.js?v=13"></script>
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <script src="app.js?v=13"></script>
 </head>
 <body>
 
@@ -46,7 +46,7 @@
     <section class="ll-card ll-card-pad" data-project-card>
       <div class="flex items-start justify-between gap-4">
         <div class="min-w-0">
-          <h1 class="text-[32px] md:text-[40px] font-bold tracking-tight text-wb-900 leading-tight" data-project-title>Project</h1>
+          <h1 class="text-[32px] md:text-[40px] font-serif tracking-tight text-wb-900 leading-tight" data-project-title>Project</h1>
           <p class="text-[15px] text-wb-600 mt-1" data-project-for></p>
         </div>
         <button type="button" class="ll-tap shrink-0 w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900 bg-white" aria-label="Project settings" data-settings>
@@ -57,15 +57,13 @@
       <!-- Contributors row -->
       <div class="mt-5 flex flex-wrap items-center gap-2" data-contributors></div>
 
-      <!-- Primary actions — only when there is at least one memory -->
+      <!-- Primary actions — only when there is at least one memory.
+           Invite People lives up in the Contributors row (+ Invite People
+           chip) since adding a contributor IS inviting one. -->
       <div class="mt-6 pt-6 border-t border-wb-200 flex flex-wrap gap-3" data-primary-actions hidden>
         <button type="button" class="ll-btn ll-btn-primary" data-open-add>
           <i class="ph ph-plus text-base" aria-hidden="true"></i>
-          <span>Add to Page</span>
-        </button>
-        <button type="button" class="ll-btn ll-btn-ghost" data-open-invite>
-          <i class="ph ph-user-plus text-base" aria-hidden="true"></i>
-          <span>Invite People</span>
+          <span>Add to Project</span>
         </button>
         <button type="button" class="ll-btn ll-btn-ghost" data-open-book>
           <i class="ph ph-book-open text-base" aria-hidden="true"></i>
@@ -76,7 +74,7 @@
 
     <!-- Empty state (shows when there are no memories yet) -->
     <section class="ll-card ll-card-pad" data-empty-state hidden>
-      <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900 mb-2">Start adding to this project</h2>
+      <h2 class="text-[22px] md:text-[26px] font-serif tracking-tight text-wb-900 mb-2">Start adding to this project</h2>
       <p class="text-[15px] text-wb-700 mb-5">Choose what you would like to add right now, or invite family and friends to add their own.</p>
 
       <div class="ll-grid-add">
@@ -112,21 +110,46 @@
 
       <!-- Invite nudge when empty -->
       <div class="mt-5 pt-5 border-t border-wb-200 flex items-center justify-between gap-3">
-        <p class="text-[14px] text-wb-700"><i class="ph ph-users-three text-base text-wb-500 mr-1" aria-hidden="true"></i>Have others help fill this page</p>
+        <p class="text-[14px] text-wb-700"><i class="ph ph-users-three text-base text-wb-500 mr-1" aria-hidden="true"></i>Have others help fill this project</p>
         <button type="button" class="ll-btn ll-btn-ghost ll-btn-sm" data-open-invite>
           <span>Invite People</span>
         </button>
       </div>
     </section>
 
-    <!-- Memories feed -->
-    <section class="space-y-4" data-feed></section>
+    <!-- Feed controls — sort + view toggle. Hidden when there are no
+         memories (the empty state carries its own affordances). -->
+    <div class="ll-feed-controls" data-feed-controls hidden>
+      <div class="ll-feed-count" data-feed-count>0 memories</div>
+      <div class="flex items-center gap-2">
+        <span class="ll-seg-label">Sort</span>
+        <div class="ll-seg" role="group" aria-label="Sort memories">
+          <button type="button" data-sort="date" aria-pressed="true">Date</button>
+          <button type="button" data-sort="type" aria-pressed="false">Type</button>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="ll-seg-label">View</span>
+        <div class="ll-seg" role="group" aria-label="View">
+          <button type="button" data-view-mode="list" aria-pressed="true" aria-label="List view">
+            <i class="ph ph-list-bullets text-base" aria-hidden="true"></i>
+          </button>
+          <button type="button" data-view-mode="grid" aria-pressed="false" aria-label="Grid view">
+            <i class="ph ph-squares-four text-base" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Memories feed. data-view switches between list (spaced stack)
+         and grid (CSS columns masonry). -->
+    <section class="space-y-4 ll-feed" data-feed data-view="list"></section>
 
     <!-- Make a book dark CTA (only when there is at least one memory) -->
     <section class="ll-cta-dark" data-book-cta hidden>
       <div>
         <div class="ll-chip-eyebrow text-gold-300 !text-gold-400 opacity-80 !mb-1">Keepsake Book</div>
-        <div class="text-[22px] md:text-[26px] font-bold text-white leading-tight mb-1">Ready to turn this project into a printed book?</div>
+        <div class="text-[22px] md:text-[26px] font-serif text-white leading-tight mb-1">Ready to turn this project into a printed book?</div>
         <div class="text-[14px] text-wb-300 opacity-80" data-book-cta-sub></div>
       </div>
       <button type="button" class="ll-btn ll-btn-primary shrink-0 bg-white !text-wb-900 hover:!bg-gold-100" data-open-book>
@@ -139,14 +162,14 @@
 </main>
 
 <!-- ====================================================================
-     MODAL — ADD TO PAGE (four tabs)
+     MODAL — ADD TO PROJECT (four tabs)
      ==================================================================== -->
 <div class="ll-modal-wrap" id="modal-add" hidden role="dialog" aria-modal="true" aria-labelledby="modal-add-title">
   <div class="ll-modal">
     <div class="ll-modal-header">
       <div class="min-w-0">
         <div class="ll-chip-eyebrow"><span data-project-chip>ADD TO PROJECT</span></div>
-        <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900" id="modal-add-title">Add a memory to this page</h2>
+        <h2 class="text-[22px] md:text-[26px] font-serif tracking-tight text-wb-900" id="modal-add-title">Add a memory to this project</h2>
       </div>
       <button type="button" class="ll-close" data-close="modal-add" aria-label="Close" data-autofocus>
         <i class="ph ph-x text-lg"></i>
@@ -222,7 +245,7 @@
             <div class="text-[14px] text-wb-700 text-center">Record a voice memory or talk through a family recipe:</div>
             <div class="ll-rec-wave" data-rec-wave aria-hidden="true"></div>
             <button type="button" class="ll-rec-btn" data-rec-btn>
-              <i class="ph ph-microphone-fill text-lg" aria-hidden="true"></i>
+              <i class="ph-fill ph-microphone text-lg" aria-hidden="true"></i>
               <span data-rec-label>Start voice recording</span>
             </button>
             <div class="ll-rec-meta"><span data-rec-time>00:00</span> · <span data-rec-status>Not recording</span></div>
@@ -258,7 +281,7 @@
           </label>
           <!-- AI processing state, hidden by default. Shown after a recipe-card photo is attached -->
           <div class="bg-gold-50 border border-gold-200 rounded-xl p-4 flex items-center gap-3" data-recipe-ai hidden>
-            <span class="ll-add-icon" style="background:#f6e5b8;color:#85713e;"><i class="ph ph-sparkle-fill" aria-hidden="true"></i></span>
+            <span class="ll-add-icon" style="background:#f6e5b8;color:#85713e;"><i class="ph-fill ph-sparkle" aria-hidden="true"></i></span>
             <div class="min-w-0 flex-1">
               <div class="text-[14px] font-bold text-wb-900">Reading the card…</div>
               <div class="text-[13px] text-wb-700" data-recipe-ai-status>Matching handwriting against the recipe card format.</div>
@@ -312,7 +335,7 @@
     <div class="ll-modal-header">
       <div class="min-w-0">
         <div class="ll-chip-eyebrow">Share link or event QR code</div>
-        <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900" id="modal-invite-title">Invite others to <span data-invite-project-title>this project</span></h2>
+        <h2 class="text-[22px] md:text-[26px] font-serif tracking-tight text-wb-900" id="modal-invite-title">Invite others to <span data-invite-project-title>this project</span></h2>
       </div>
       <button type="button" class="ll-close" data-close="modal-invite" aria-label="Close" data-autofocus>
         <i class="ph ph-x text-lg"></i>
@@ -368,7 +391,7 @@
     <div class="ll-modal-header">
       <div class="min-w-0">
         <div class="ll-chip-eyebrow">Make a Keepsake Book</div>
-        <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900" id="modal-book-title">Turn this page into a printed book</h2>
+        <h2 class="text-[22px] md:text-[26px] font-serif tracking-tight text-wb-900" id="modal-book-title">Turn this project into a printed book</h2>
       </div>
       <button type="button" class="ll-close" data-close="modal-book" aria-label="Close" data-autofocus>
         <i class="ph ph-x text-lg"></i>
@@ -398,7 +421,7 @@
             <div class="text-[14px] font-bold text-wb-900">Included in this book (<span data-book-count>0</span> items)</div>
             <div class="text-[13px] text-wb-600">Hardcover Keepsake</div>
           </div>
-          <p class="text-[13px] text-wb-700" data-book-included-note>No memories added to this page yet. You can still preview the cover or add memories to the page first.</p>
+          <p class="text-[13px] text-wb-700" data-book-included-note>No memories added to this project yet. You can still preview the cover or add memories to the project first.</p>
         </div>
       </div>
     </div>
@@ -408,8 +431,8 @@
       <div class="ll-ready relative" data-ready-host>
         <div class="ll-ready-check" aria-hidden="true"><i class="ph ph-check"></i></div>
         <div class="ll-chip-eyebrow">Keepsake Book Ready</div>
-        <div class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900 mb-2" data-ready-title>Family Recipes</div>
-        <p class="text-[14px] text-wb-700 max-w-[420px] mx-auto">Your hardcover keepsake book layout with <span data-ready-count>2</span> memories (<span data-ready-pages>~20</span> pages) is ready. You can print a copy now or keep adding to the page over time.</p>
+        <div class="text-[22px] md:text-[26px] font-serif tracking-tight text-wb-900 mb-2" data-ready-title>Family Recipes</div>
+        <p class="text-[14px] text-wb-700 max-w-[420px] mx-auto">Your hardcover keepsake book layout with <span data-ready-count>2</span> memories (<span data-ready-pages>~20</span> pages) is ready. You can print a copy now or keep adding to the project over time.</p>
         <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
           <button type="button" class="ll-btn ll-btn-ghost" data-close="modal-book">Back to project</button>
           <button type="button" class="ll-btn ll-btn-ghost" data-book-preview>Preview Book</button>
@@ -424,7 +447,7 @@
     <div class="ll-modal-footer" data-book-footer>
       <button type="button" class="ll-btn ll-btn-ghost" data-close="modal-book">Cancel</button>
       <button type="button" class="ll-btn ll-btn-primary" data-book-create>
-        <i class="ph ph-sparkle-fill text-base" aria-hidden="true"></i>
+        <i class="ph-fill ph-sparkle text-base" aria-hidden="true"></i>
         <span>Create Keepsake Book</span>
       </button>
     </div>
@@ -432,34 +455,28 @@
 </div>
 
 <!-- ====================================================================
-     MODAL — INVITE ANOTHER CONTRIBUTOR CHIP TAP (simple add-person form)
+     MODAL — MEMORY DETAIL
+     Grid-view cards open this, showing the full memory the same way
+     the list view would, with an Edit button for the owner.
      ==================================================================== -->
-<div class="ll-modal-wrap" id="modal-addperson" hidden role="dialog" aria-modal="true" aria-labelledby="modal-addperson-title">
+<div class="ll-modal-wrap" id="modal-memory-detail" hidden role="dialog" aria-modal="true" aria-labelledby="modal-memory-detail-title">
   <div class="ll-modal">
     <div class="ll-modal-header">
       <div class="min-w-0">
-        <div class="ll-chip-eyebrow">Add a contributor</div>
-        <h2 class="text-[22px] font-bold tracking-tight text-wb-900" id="modal-addperson-title">Add someone to this project</h2>
+        <div class="ll-chip-eyebrow" data-detail-eyebrow>From this project</div>
+        <h2 class="text-[22px] md:text-[26px] font-serif tracking-tight text-wb-900" id="modal-memory-detail-title" data-detail-heading>Memory</h2>
       </div>
-      <button type="button" class="ll-close" data-close="modal-addperson" aria-label="Close" data-autofocus>
+      <button type="button" class="ll-close" data-close="modal-memory-detail" aria-label="Close" data-autofocus>
         <i class="ph ph-x text-lg"></i>
       </button>
     </div>
-    <div class="ll-modal-body">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="ll-label" for="addperson-name">Name</label>
-          <input type="text" id="addperson-name" class="ll-field" placeholder="e.g., Wanda" />
-        </div>
-        <div>
-          <label class="ll-label" for="addperson-rel">Relationship <span class="ll-label-sub">(optional)</span></label>
-          <input type="text" id="addperson-rel" class="ll-field" placeholder="e.g., Aunt" />
-        </div>
-      </div>
-    </div>
+    <div class="ll-modal-body" data-detail-body></div>
     <div class="ll-modal-footer">
-      <button type="button" class="ll-btn ll-btn-ghost" data-close="modal-addperson">Cancel</button>
-      <button type="button" class="ll-btn ll-btn-primary" data-addperson-save>Add Person</button>
+      <button type="button" class="ll-btn ll-btn-ghost" data-close="modal-memory-detail">Close</button>
+      <button type="button" class="ll-btn ll-btn-primary" data-detail-edit hidden>
+        <i class="ph ph-pencil-simple text-base" aria-hidden="true"></i>
+        <span>Edit</span>
+      </button>
     </div>
   </div>
 </div>
@@ -470,7 +487,9 @@
   <button type="button" data-set-auth="out" aria-pressed="false">Signed out</button>
   <button type="button" data-set-auth="in" aria-pressed="true">Signed in</button>
   <span class="opacity-40">·</span>
-  <button type="button" data-reset title="Reset the prototype">Reset</button>
+  <span class="opacity-70">Scenario</span>
+  <button type="button" data-reset title="Rebuild the two seeded projects">Seeded</button>
+  <button type="button" data-clean-slate title="Wipe projects and land on Start a new project">Clean slate</button>
 </div>
 
 <script>
@@ -521,29 +540,45 @@
         const label = c.isYou ? `${c.name} · You` : `${c.name}${c.relationship ? ' · ' + c.relationship : ''}`;
         return `<span class="ll-chip ll-chip-outline" tabindex="0">${LL.escapeHTML(label)}</span>`;
       }),
-      `<button type="button" class="ll-chip ll-chip-outline" data-open-addperson>+ Add person</button>`,
+      `<button type="button" class="ll-chip ll-chip-outline" data-open-invite><i class="ph ph-user-plus text-sm" aria-hidden="true"></i>Invite People</button>`,
     ].join(' ');
     chipsWrap.innerHTML = chipsHTML;
 
-    // Feed
+    // Feed — apply the current sort + view preferences before rendering.
     const memories = project.memories || [];
     $('[data-empty-state]').hidden = memories.length > 0;
     $('[data-primary-actions]').hidden = memories.length === 0;
     $('[data-book-cta]').hidden = memories.length === 0;
+    $('[data-feed-controls]').hidden = memories.length === 0;
+
+    const sort = getFeedSort();
+    const view = getFeedView();
+    const sorted = sortMemories(memories, sort);
 
     const feed = $('[data-feed]');
-    feed.innerHTML = memories.map(renderMemory).join('');
+    feed.dataset.view = view;
+    // In list view the feed uses the existing space-y stack; in grid view
+    // CSS columns packs the compact cards. Switching the class here is
+    // all it takes — the feed's data-view attribute drives both the
+    // layout and the per-card template choice.
+    if (view === 'grid') feed.classList.remove('space-y-4');
+    else feed.classList.add('space-y-4');
+    feed.innerHTML = sorted.map(view === 'grid' ? renderMemoryCompact : renderMemoryFull).join('');
     LL.stagger(feed);
+
+    const n = memories.length;
+    $('[data-feed-count]').textContent = `${n} ${n === 1 ? 'memory' : 'memories'}`;
+    syncFeedControls(sort, view);
 
     const count = memories.length;
     const pages = Math.max(20, 6 + count * 7);
-    $('[data-book-cta-sub]').textContent = `Preview your hardcover book with all ${count} ${count === 1 ? 'memory' : 'memories'} on this page.`;
+    $('[data-book-cta-sub]').textContent = `Preview your hardcover book with all ${count} ${count === 1 ? 'memory' : 'memories'} in this project.`;
     $('[data-book-count]').textContent = count;
     $('[data-book-meta]').textContent = `${count} ${count === 1 ? 'memory' : 'memories'} · ~${pages} pages`;
     $('[data-ready-count]').textContent = count;
     $('[data-ready-pages]').textContent = `~${pages}`;
     $('[data-book-included-note]').textContent = count === 0
-      ? 'No memories added to this page yet. You can still preview the cover or add memories to the page first.'
+      ? 'No memories added to this project yet. You can still preview the cover or add memories to the project first.'
       : `All ${count} memories above are included, in the order they were added. Reorder on the next step.`;
 
     // Book cover title defaults to the project title
@@ -560,27 +595,69 @@
     $('[data-ready-title]').textContent = bookTitleEl.value || project.title;
   }
 
-  function renderMemory(m) {
-    const pill = {
-      story:  { label: 'Story',  icon: 'ph-pencil-simple' },
-      photo:  { label: 'Photo',  icon: 'ph-image' },
-      voice:  { label: 'Voice',  icon: 'ph-microphone' },
-      recipe: { label: 'Recipe', icon: 'ph-forkknife' },
-    }[m.type] || { label: m.type, icon: 'ph-book' };
+  // One source of truth for the type pill across list, grid, and
+  // detail modal so all three stay in sync.
+  const MEMORY_PILL = {
+    story:  { label: 'Story',  icon: 'ph-pencil-simple' },
+    photo:  { label: 'Photo',  icon: 'ph-image' },
+    voice:  { label: 'Voice',  icon: 'ph-microphone' },
+    recipe: { label: 'Recipe', icon: 'ph-forkknife' },
+  };
+  function memoryPill(type) { return MEMORY_PILL[type] || { label: type, icon: 'ph-book' }; }
+
+  // ---------- Sort + view preferences ----------
+  // Persisted in localStorage so reload keeps the user's choice.
+  function getFeedSort() { try { return localStorage.getItem('ll:feed-sort') || 'date'; } catch { return 'date'; } }
+  function getFeedView() { try { return localStorage.getItem('ll:feed-view') || 'list'; } catch { return 'list'; } }
+  function setFeedSort(v) { try { localStorage.setItem('ll:feed-sort', v); } catch {} }
+  function setFeedView(v) { try { localStorage.setItem('ll:feed-view', v); } catch {} }
+
+  function syncFeedControls(sort, view) {
+    $$('[data-sort]').forEach(b => b.setAttribute('aria-pressed', b.dataset.sort === sort ? 'true' : 'false'));
+    $$('[data-view-mode]').forEach(b => b.setAttribute('aria-pressed', b.dataset.viewMode === view ? 'true' : 'false'));
+  }
+
+  // Date = newest first. Type = grouped by type alphabetically (Photo,
+  // Recipe, Story, Voice), newest first within each group.
+  function sortMemories(memories, sort) {
+    const dateSort = (a, b) => new Date(b.createdAt) - new Date(a.createdAt);
+    if (sort === 'type') {
+      return [...memories].sort((a, b) => {
+        const t = (a.type || '').localeCompare(b.type || '');
+        return t !== 0 ? t : dateSort(a, b);
+      });
+    }
+    return [...memories].sort(dateSort);
+  }
+
+  function renderMemoryFull(m) {
+    const pill = memoryPill(m.type);
 
     const shared = m.sharedBy
       ? `<span class="text-[14px] text-wb-700">Shared by ${LL.escapeHTML(m.sharedBy)}${m.relationship ? ' (' + LL.escapeHTML(m.relationship) + ')' : ''}</span>`
       : '';
 
+    // Edit affordance — only shown to the owner (project organizer or the
+    // contributor who shared this memory). In the prototype's default
+    // signed-in state (Wesley as organizer) that's always true.
+    const canEdit = LL.canEditMemory(m, project);
+    const editedChip = m.updatedAt
+      ? `<span class="text-[12px] text-wb-500" title="${LL.escapeHTML(new Date(m.updatedAt).toLocaleString())}">· edited ${LL.fmtRelative(m.updatedAt)}</span>`
+      : '';
+
     const head = `
-      <div class="flex items-center justify-between gap-3">
+      <div class="flex items-start justify-between gap-3">
         <div class="flex items-center gap-3 flex-wrap">
           <span class="ll-chip"><i class="ph ${pill.icon}" aria-hidden="true"></i>${pill.label}</span>
           ${shared}
         </div>
-        <span class="text-[13px] text-wb-500">${LL.fmtRelative(m.createdAt)}</span>
+        <div class="flex items-center gap-2 shrink-0">
+          <span class="text-[13px] text-wb-500 whitespace-nowrap">${LL.fmtRelative(m.createdAt)}</span>
+          ${editedChip}
+          ${canEdit ? `<button type="button" class="ll-icon-btn ll-tap" data-edit-memory="${m.id}" aria-label="Edit this memory"><i class="ph ph-pencil-simple text-base" aria-hidden="true"></i></button>` : ''}
+        </div>
       </div>
-      ${m.title ? `<h3 class="text-[20px] md:text-[22px] font-bold tracking-tight text-wb-900 mt-3">${LL.escapeHTML(m.title)}</h3>` : ''}
+      ${m.title ? `<h3 class="text-[20px] md:text-[22px] font-serif tracking-tight text-wb-900 mt-3">${LL.escapeHTML(m.title)}</h3>` : ''}
     `;
 
     let body = '';
@@ -610,16 +687,20 @@
       const d = (m.voice && m.voice.duration) || 90;
       const mm = String(Math.floor(d / 60)).padStart(2, '0');
       const ss = String(d % 60).padStart(2, '0');
-      const bars = Array.from({length: 40}, (_, i) =>
-        `<span style="height:${20 + ((i * 7) % 70)}%; animation-delay:${(i * 60) % 1200}ms"></span>`
-      ).join('');
       body = `
-        <div class="ll-voice" data-playing="false">
+        <div class="ll-voice" data-playing="false" data-duration="${d}">
           <button type="button" class="ll-voice-btn" aria-label="Play voice memory" data-voice-play>
-            <i class="ph ph-play-fill text-lg" aria-hidden="true"></i>
+            <i class="ph-fill ph-play text-lg" aria-hidden="true"></i>
           </button>
-          <div class="ll-voice-wave" aria-hidden="true">${bars}</div>
-          <div class="text-[13px] font-semibold text-wb-700 shrink-0" style="font-variant-numeric: tabular-nums;">${mm}:${ss}</div>
+          <div class="ll-voice-scrub" data-voice-scrub tabindex="0" role="slider"
+               aria-label="Playback position" aria-valuemin="0" aria-valuemax="${d}" aria-valuenow="0">
+            <div class="ll-voice-track"></div>
+            <div class="ll-voice-progress" style="width:0%"></div>
+            <div class="ll-voice-head" style="left:0%"></div>
+          </div>
+          <div class="text-[13px] font-semibold text-wb-700 shrink-0" style="font-variant-numeric: tabular-nums;">
+            <span data-voice-current>00:00</span> / ${mm}:${ss}
+          </div>
         </div>
         ${m.body ? `<p class="text-[14.5px] text-wb-700 mt-3 italic leading-relaxed">“${LL.nl2br(m.body)}”</p>` : ''}
       `;
@@ -628,32 +709,183 @@
     return `<article class="ll-memory" id="m-${m.id}">${head}${body}</article>`;
   }
 
-  // Delegate voice play
+  // Grid-view card — only the essentials. The whole card is a button
+  // that opens the memory in the detail modal.
+  function renderMemoryCompact(m) {
+    const pill = memoryPill(m.type);
+    const shared = m.sharedBy ? `${LL.escapeHTML(m.sharedBy)}${m.relationship ? ' · ' + LL.escapeHTML(m.relationship) : ''}` : '';
+
+    let preview = '';
+    if (m.type === 'photo' && m.photoDataUrl) {
+      preview = `<div class="ll-compact-photo"><img src="${m.photoDataUrl}" alt="${LL.escapeHTML(m.title || '')}"></div>`;
+    } else if (m.type === 'voice') {
+      const d = (m.voice && m.voice.duration) || 90;
+      const mm = String(Math.floor(d / 60)).padStart(2, '0');
+      const ss = String(d % 60).padStart(2, '0');
+      preview = `
+        <div class="ll-compact-voice">
+          <span class="ll-compact-voice-btn" aria-hidden="true"><i class="ph-fill ph-play text-sm"></i></span>
+          <span class="text-[13px] font-semibold text-wb-700" style="font-variant-numeric: tabular-nums;">${mm}:${ss}</span>
+          <span class="text-[12px] text-wb-500 ml-auto">Voice memory</span>
+        </div>`;
+    } else if (m.type === 'recipe' && m.recipe) {
+      const ing = (m.recipe.ingredients || [])[0];
+      preview = ing
+        ? `<p class="text-[13.5px] text-wb-700 mt-2 italic ll-clamp-2">${LL.escapeHTML(ing)}</p>`
+        : '';
+    } else if (m.body) {
+      preview = `<p class="text-[13.5px] text-wb-700 mt-2 ll-clamp-3 leading-snug">${LL.escapeHTML(m.body)}</p>`;
+    }
+
+    return `
+      <button type="button" class="ll-memory-compact" data-open-detail="${m.id}" id="m-${m.id}">
+        <div class="flex items-center justify-between gap-2">
+          <span class="ll-chip"><i class="ph ${pill.icon}" aria-hidden="true"></i>${pill.label}</span>
+          <span class="text-[11px] text-wb-500">${LL.fmtRelative(m.createdAt)}</span>
+        </div>
+        ${m.title ? `<h3 class="text-[17px] md:text-[18px] font-serif text-wb-900 mt-2 leading-tight ll-clamp-2">${LL.escapeHTML(m.title)}</h3>` : ''}
+        ${preview}
+        ${shared ? `<div class="text-[12px] text-wb-500 mt-3">Shared by ${shared}</div>` : ''}
+      </button>
+    `;
+  }
+
+  // ---------- Voice player (scrubber) ----------
+  // One shared state map keyed by the host .ll-voice element. Each
+  // memory on the page keeps its own position, so hitting Play on one
+  // doesn't jump another. Only one plays at a time — opening a second
+  // auto-pauses the first.
+  const voiceState = new WeakMap();
+  let voiceActive = null;
+
+  function voiceInit(host) {
+    let s = voiceState.get(host);
+    if (s) return s;
+    s = {
+      total: parseFloat(host.dataset.duration) || 60,
+      position: 0, playing: false, rafId: null, lastTick: 0,
+      els: {
+        btn:      host.querySelector('[data-voice-play]'),
+        scrub:    host.querySelector('[data-voice-scrub]'),
+        progress: host.querySelector('.ll-voice-progress'),
+        head:     host.querySelector('.ll-voice-head'),
+        current:  host.querySelector('[data-voice-current]'),
+      },
+    };
+    voiceState.set(host, s);
+    return s;
+  }
+
+  function voicePaint(host, s) {
+    const pct = s.total > 0 ? (s.position / s.total) * 100 : 0;
+    s.els.progress.style.width = pct + '%';
+    s.els.head.style.left     = pct + '%';
+    const secs = Math.max(0, Math.floor(s.position));
+    s.els.current.textContent =
+      String(Math.floor(secs / 60)).padStart(2, '0') + ':' + String(secs % 60).padStart(2, '0');
+    s.els.scrub.setAttribute('aria-valuenow', secs);
+  }
+
+  function voicePlay(host) {
+    if (voiceActive && voiceActive !== host) voicePause(voiceActive);
+    const s = voiceInit(host);
+    if (s.position >= s.total) s.position = 0;
+    s.playing = true;
+    s.lastTick = performance.now();
+    host.dataset.playing = 'true';
+    s.els.btn.innerHTML = '<i class="ph-fill ph-pause text-lg" aria-hidden="true"></i>';
+    s.els.btn.setAttribute('aria-label', 'Pause voice memory');
+    voiceActive = host;
+    const tick = (now) => {
+      if (!s.playing) return;
+      const dt = (now - s.lastTick) / 1000;
+      s.lastTick = now;
+      s.position = Math.min(s.total, s.position + dt);
+      voicePaint(host, s);
+      if (s.position >= s.total) {
+        voicePause(host);
+        // Let the end state read for a beat, then rewind to 0.
+        setTimeout(() => { s.position = 0; voicePaint(host, s); }, 600);
+        return;
+      }
+      s.rafId = requestAnimationFrame(tick);
+    };
+    s.rafId = requestAnimationFrame(tick);
+  }
+
+  function voicePause(host) {
+    const s = voiceState.get(host);
+    if (!s) return;
+    s.playing = false;
+    if (s.rafId) { cancelAnimationFrame(s.rafId); s.rafId = null; }
+    host.dataset.playing = 'false';
+    s.els.btn.innerHTML = '<i class="ph-fill ph-play text-lg" aria-hidden="true"></i>';
+    s.els.btn.setAttribute('aria-label', 'Play voice memory');
+    if (voiceActive === host) voiceActive = null;
+  }
+
+  // Play / pause button
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-voice-play]');
     if (!btn) return;
     const host = btn.closest('.ll-voice');
-    const playing = host.dataset.playing === 'true';
-    host.dataset.playing = String(!playing);
-    btn.innerHTML = playing
-      ? '<i class="ph ph-play-fill text-lg" aria-hidden="true"></i>'
-      : '<i class="ph ph-pause-fill text-lg" aria-hidden="true"></i>';
+    const s = voiceInit(host);
+    if (s.playing) voicePause(host); else voicePlay(host);
+  });
+
+  // Scrubbing — click to seek, drag to scrub. Works on mouse + touch
+  // via pointer events.
+  function scrubFromEvent(host, e) {
+    const s = voiceInit(host);
+    const rect = s.els.scrub.getBoundingClientRect();
+    const x = (e.clientX ?? (e.touches && e.touches[0] && e.touches[0].clientX)) || 0;
+    const pct = Math.max(0, Math.min(1, (x - rect.left) / rect.width));
+    s.position = pct * s.total;
+    if (s.playing) s.lastTick = performance.now();
+    voicePaint(host, s);
+  }
+  document.addEventListener('pointerdown', (e) => {
+    const scrub = e.target.closest('[data-voice-scrub]');
+    if (!scrub) return;
+    const host = scrub.closest('.ll-voice');
+    e.preventDefault();
+    scrubFromEvent(host, e);
+    const onMove = (ev) => scrubFromEvent(host, ev);
+    const onUp = () => {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+    };
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+  });
+
+  // Keyboard: ← / → seek 5s on a focused scrubber
+  document.addEventListener('keydown', (e) => {
+    const scrub = document.activeElement && document.activeElement.closest &&
+                  document.activeElement.closest('[data-voice-scrub]');
+    if (!scrub) return;
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    const host = scrub.closest('.ll-voice');
+    const s = voiceInit(host);
+    s.position = Math.max(0, Math.min(s.total, s.position + (e.key === 'ArrowRight' ? 5 : -5)));
+    voicePaint(host, s);
+    e.preventDefault();
   });
 
   // ---------- Modals: open ----------
   $$('[data-open-add]').forEach(b => b.addEventListener('click', () => openAddModal('story')));
   $$('[data-add-type]').forEach(b => b.addEventListener('click', () => openAddModal(b.dataset.addType)));
-  $$('[data-open-invite]').forEach(b => b.addEventListener('click', openInviteModal));
+  // Static [data-open-invite] buttons (empty-state nudge) go through the
+  // delegated handler below, same as the dynamic + Invite People chip.
   $$('[data-open-book]').forEach(b => b.addEventListener('click', openBookModal));
-  // Add person via delegation (chip is rendered dynamically)
+  // The + Invite People chip opens the Invite modal; delegated because
+  // the chip is rendered dynamically by render().
   document.addEventListener('click', (e) => {
-    if (e.target.closest('[data-open-addperson]')) {
-      LL.openModal('modal-addperson');
-    }
+    if (e.target.closest('[data-open-invite]')) openInviteModal();
   });
   $$('[data-close]').forEach(b => b.addEventListener('click', () => LL.closeModal(b.dataset.close)));
 
-  // ---------- Add to Page modal: tabs ----------
+  // ---------- Add to Project modal: tabs ----------
   const tabsRoot = $('[data-tabs]');
   const thumb = $('[data-thumb]');
   function sizeThumb() {
@@ -678,9 +910,14 @@
   $$('.ll-tab', tabsRoot).forEach(t => t.addEventListener('click', () => activateTab(t.dataset.tab)));
   window.addEventListener('resize', sizeThumb);
 
-  function openAddModal(initialTab) {
-    activateTab(initialTab || 'story');
-    // Reset forms lightly
+  // The Add modal doubles as the Edit modal: openAddModal with no id
+  // creates a new memory; openEditModal passes a memoryId and pre-fills
+  // the fields, locks the type-tab to the memory's type, and switches
+  // the modal chrome (title, save button) into edit mode. editingId is
+  // the single source of truth for which mode the save handler uses.
+  let editingId = null;
+
+  function resetAddModal() {
     $$('#modal-add input, #modal-add textarea').forEach(i => { i.value = ''; });
     $('[data-recipe-ai]').hidden = true;
     $$('[data-drop]').forEach(d => {
@@ -694,12 +931,127 @@
            <span class="text-[13px] text-wb-500">PNG or JPG, up to 20 MB</span>
            <input type="file" accept="image/*" class="sr-only" data-photo-input />`;
     });
-    // Reset voice recorder
     resetRecorder();
+  }
+
+  function setModalMode(mode /* 'add' | 'edit' */) {
+    const eyebrow = $('[data-project-chip]');
+    const title   = $('#modal-add-title');
+    const saveBtn = $('[data-save-memory]');
+    const tabs    = $$('.ll-tab', tabsRoot);
+    if (mode === 'edit') {
+      eyebrow.textContent = `Edit · ${project.title}`;
+      title.textContent = 'Edit this memory';
+      saveBtn.textContent = 'Save changes';
+      // Lock the type — switching tabs would reinterpret the fields as a
+      // different memory kind and quietly lose the current one.
+      tabs.forEach(t => {
+        t.disabled = t.getAttribute('aria-selected') !== 'true';
+        t.setAttribute('aria-disabled', t.disabled ? 'true' : 'false');
+        t.style.opacity = t.disabled ? '0.4' : '';
+        t.style.cursor = t.disabled ? 'not-allowed' : '';
+      });
+    } else {
+      eyebrow.textContent = `Add to ${project.title}`;
+      title.textContent = 'Add a memory to this project';
+      saveBtn.textContent = 'Save to Project';
+      tabs.forEach(t => {
+        t.disabled = false;
+        t.removeAttribute('aria-disabled');
+        t.style.opacity = '';
+        t.style.cursor = '';
+      });
+    }
+  }
+
+  function openAddModal(initialTab) {
+    editingId = null;
+    resetAddModal();
+    activateTab(initialTab || 'story');
+    setModalMode('add');
     LL.openModal('modal-add');
-    // sizeThumb will walk forward one frame at a time until the modal
-    // is actually rendered, so the pill lands on the right tab.
     requestAnimationFrame(sizeThumb);
+  }
+
+  function openEditModal(memoryId) {
+    const m = (project.memories || []).find(x => x.id === memoryId);
+    if (!m) return;
+    editingId = memoryId;
+    resetAddModal();
+    activateTab(m.type);
+    setModalMode('edit');
+    prefillModalFor(m);
+    LL.openModal('modal-add');
+    requestAnimationFrame(sizeThumb);
+  }
+
+  function prefillModalFor(m) {
+    const shared = m.sharedBy || '';
+    const rel    = m.relationship || '';
+    if (m.type === 'story') {
+      $('#add-story-title').value = m.title || '';
+      $('#add-story-body').value  = m.body  || '';
+      $('#add-story-name').value  = shared;
+      $('#add-story-rel').value   = rel;
+    } else if (m.type === 'photo') {
+      $('#add-photo-caption').value = m.body || m.title || '';
+      $('#add-photo-name').value    = shared;
+      $('#add-photo-rel').value     = rel;
+      if (m.photoDataUrl) {
+        const drop = $('#modal-add [data-panel="photo"] [data-drop]');
+        attachExistingPhoto(drop, m.photoDataUrl);
+      }
+    } else if (m.type === 'voice') {
+      $('#add-voice-title').value = m.title || '';
+      $('#add-voice-body').value  = m.body  || '';
+      $('#add-voice-name').value  = shared;
+      $('#add-voice-rel').value   = rel;
+      // Surface that there's an existing recording. The simulator can't
+      // play it back, so the label changes to Re-record and the length
+      // shows the saved duration.
+      if (m.voice && m.voice.duration) {
+        rec.seconds = m.voice.duration;
+        $('[data-rec-time]').textContent = formatT(rec.seconds);
+        $('[data-rec-status]').textContent = 'Saved recording';
+        $('[data-rec-label]').textContent = 'Re-record';
+        $('[data-rec-wave]').querySelectorAll('span').forEach(s => {
+          s.style.height = `${20 + Math.random() * 80}%`;
+          s.style.background = '#a48849';
+        });
+      }
+    } else if (m.type === 'recipe') {
+      const r = m.recipe || {};
+      $('#add-recipe-name').value   = r.cardName || m.title || '';
+      $('#add-recipe-ing').value    = (r.ingredients || []).join('\n');
+      $('#add-recipe-dir').value    = (r.directions  || []).join('\n');
+      $('#add-recipe-story').value  = m.body || '';
+      $('#add-recipe-shared').value = shared;
+      $('#add-recipe-rel').value    = rel;
+      if (m.photoDataUrl) {
+        const drop = $('#modal-add [data-panel="recipe"] [data-drop]');
+        attachExistingPhoto(drop, m.photoDataUrl, { label: 'Photo attached (Tap to replace)' });
+      }
+    }
+  }
+
+  // Render the existing photo into a drop area the same way handleFile
+  // does, minus the file-reader step.
+  function attachExistingPhoto(drop, src, { label = 'Photo attached' } = {}) {
+    drop.dataset.attached = 'true';
+    drop.innerHTML = `
+      <div class="ll-drop-thumb"><img src="${src}" alt="Attached photo"></div>
+      <div class="min-w-0 flex-1">
+        <div class="text-[14px] font-semibold text-wb-900">${label}</div>
+        <div class="text-[13px] text-wb-500">Tap Replace to pick another.</div>
+      </div>
+      <button type="button" class="ll-btn ll-btn-ghost ll-btn-sm" data-replace>Replace</button>
+    `;
+    const kept = document.createElement('input');
+    kept.type = 'file'; kept.accept = 'image/*'; kept.className = 'sr-only';
+    if (drop.querySelector('input[data-recipe-input], #add-recipe-photo')) kept.dataset.recipeInput = '';
+    else kept.dataset.photoInput = '';
+    drop.appendChild(kept);
+    drop.querySelector('[data-replace]').addEventListener('click', () => kept.click());
   }
 
   // ---------- File uploads (preview) ----------
@@ -847,25 +1199,101 @@
       };
     }
 
-    const saved = LL.addMemory(project.id, memory);
+    // When editingId is set we're editing an existing memory, not
+    // creating one — keep its id / createdAt and update the fields.
+    const saved = editingId
+      ? LL.updateMemory(project.id, editingId, memory)
+      : LL.addMemory(project.id, memory);
+    const wasEdit = !!editingId;
+    editingId = null;
     LL.closeModal('modal-add');
     render();
-    LL.toast('Memory added', { icon: 'ph-check-circle' });
+    LL.toast(wasEdit ? 'Memory updated' : 'Memory added', { icon: 'ph-check-circle' });
 
-    // Scroll the new memory into view with a soft highlight
+    // Highlight the saved memory. For a new one scroll it into view; for
+    // an edit the user already knows where it is, so just pulse it.
     setTimeout(() => {
       const el = document.getElementById(`m-${saved.id}`);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        el.animate(
-          [
-            { boxShadow: '0 0 0 2px rgba(220,176,94,0.6)' },
-            { boxShadow: '0 0 0 2px rgba(220,176,94,0)' },
-          ],
-          { duration: 1800, easing: 'ease-out' }
-        );
-      }
+      if (!el) return;
+      if (!wasEdit) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.animate(
+        [
+          { boxShadow: '0 0 0 2px rgba(220,176,94,0.6)' },
+          { boxShadow: '0 0 0 2px rgba(220,176,94,0)' },
+        ],
+        { duration: 1800, easing: 'ease-out' }
+      );
     }, 280);
+  });
+
+  // Edit button on a memory card — opens the Add modal pre-filled in
+  // edit mode. Delegated because the cards re-render on every change.
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-edit-memory]');
+    if (!btn) return;
+    openEditModal(btn.dataset.editMemory);
+  });
+
+  // Make sure canceling an edit drops back into add-mode for the next open.
+  $$('[data-close="modal-add"]').forEach(b => b.addEventListener('click', () => { editingId = null; }));
+
+  // ---------- Sort + view toggles ----------
+  $$('[data-sort]').forEach(b => b.addEventListener('click', () => {
+    setFeedSort(b.dataset.sort);
+    render();
+  }));
+  $$('[data-view-mode]').forEach(b => b.addEventListener('click', () => {
+    setFeedView(b.dataset.viewMode);
+    render();
+  }));
+
+  // ---------- Memory detail modal ----------
+  // Grid-view cards open the detail. The modal body gets the same full
+  // markup the list view uses — same recipe cards, same voice scrubber,
+  // same edit affordance — so the two views share one source of truth
+  // for how a memory looks in full.
+  let detailMemoryId = null;
+  document.addEventListener('click', (e) => {
+    const card = e.target.closest('[data-open-detail]');
+    if (!card) return;
+    openMemoryDetail(card.dataset.openDetail);
+  });
+
+  function openMemoryDetail(memoryId) {
+    const m = (project.memories || []).find(x => x.id === memoryId);
+    if (!m) return;
+    detailMemoryId = memoryId;
+    const pill = memoryPill(m.type);
+    $('[data-detail-eyebrow]').textContent = `${project.title} · ${pill.label}`;
+    $('[data-detail-heading]').textContent = m.title || pill.label;
+    $('[data-detail-body]').innerHTML = renderMemoryFull(m);
+    // The full template already carries its own type pill and edit
+    // button in-card, which would duplicate what the modal shows in
+    // its header and footer. Hide the in-card chrome so the detail
+    // reads cleanly, and surface the Edit button only to the owner.
+    const bodyCard = $('[data-detail-body] .ll-memory');
+    if (bodyCard) {
+      bodyCard.style.border = '0';
+      bodyCard.style.padding = '0';
+      bodyCard.style.animation = 'none';
+      const inCardEdit = bodyCard.querySelector('[data-edit-memory]');
+      if (inCardEdit) inCardEdit.hidden = true;
+      // Drop the h3 title the full template renders — the modal header
+      // already shows it, bigger.
+      const h3 = bodyCard.querySelector('h3');
+      if (h3) h3.hidden = true;
+    }
+    const canEdit = LL.canEditMemory(m, project);
+    $('[data-detail-edit]').hidden = !canEdit;
+    LL.openModal('modal-memory-detail');
+  }
+
+  $('[data-detail-edit]').addEventListener('click', () => {
+    const id = detailMemoryId;
+    LL.closeModal('modal-memory-detail');
+    // Let the close animation settle before opening the edit modal so
+    // the scrim doesn't double-flash.
+    setTimeout(() => openEditModal(id), 240);
   });
 
   // ---------- Invite modal ----------
@@ -926,7 +1354,7 @@
       $('[data-book-footer]').hidden = true;
       LL.burstSparks($('[data-ready-host]'));
       btn.disabled = false;
-      btn.innerHTML = '<i class="ph ph-sparkle-fill text-base" aria-hidden="true"></i><span>Create Keepsake Book</span>';
+      btn.innerHTML = '<i class="ph-fill ph-sparkle text-base" aria-hidden="true"></i><span>Create Keepsake Book</span>';
     }, 1200);
   });
 
@@ -937,21 +1365,6 @@
     LL.toast('Heading to checkout… (prototype)', { icon: 'ph-shopping-bag' });
   });
 
-  // ---------- Add person modal ----------
-  $('[data-addperson-save]').addEventListener('click', () => {
-    const name = $('#addperson-name').value.trim();
-    const rel  = $('#addperson-rel').value.trim();
-    if (!name) { LL.toast('Add a name', { icon: 'ph-warning' }); return; }
-    const p = LL.getProject(project.id);
-    p.contributors = [...(p.contributors || []), { id: `u-${LL.uuid().slice(0,6)}`, name, relationship: rel }];
-    LL.saveProject(p);
-    $('#addperson-name').value = '';
-    $('#addperson-rel').value = '';
-    LL.closeModal('modal-addperson');
-    render();
-    LL.toast(`Added ${name}`, { icon: 'ph-user-plus' });
-  });
-
   // ---------- Signin ----------
   $$('[data-signin]').forEach(b => {
     b.addEventListener('click', () => { LL.setAuth('in'); syncAuth(); LL.toast(`Welcome back, ${LL.getUserName()}`, { icon: 'ph-hand-waving' }); });
@@ -959,7 +1372,8 @@
 
   // ---------- Demo switch ----------
   $$('[data-set-auth]').forEach(b => b.addEventListener('click', () => { LL.setAuth(b.dataset.setAuth); syncAuth(); }));
-  $('[data-reset]').addEventListener('click', () => { if (confirm('Reset the prototype and clear all saved projects?')) LL.reset(); });
+  $('[data-reset]').addEventListener('click', () => LL.reset());
+  $('[data-clean-slate]').addEventListener('click', () => LL.cleanSlate());
 
   // ---------- Deep link to open modal via query ----------
   // Lets us jump straight to a modal after a guest returns.
