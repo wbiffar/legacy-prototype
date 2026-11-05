@@ -10,9 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js?v=11"></script>
-  <link rel="stylesheet" href="styles.css?v=11" />
-  <script src="app.js?v=11"></script>
+  <script src="tokens.js?v=12"></script>
+  <link rel="stylesheet" href="styles.css?v=12" />
+  <script src="app.js?v=12"></script>
 </head>
 <body>
 
@@ -117,8 +117,33 @@
       </div>
     </section>
 
-    <!-- Memories feed -->
-    <section class="space-y-4" data-feed></section>
+    <!-- Feed controls — sort + view toggle. Hidden when there are no
+         memories (the empty state carries its own affordances). -->
+    <div class="ll-feed-controls" data-feed-controls hidden>
+      <div class="ll-feed-count" data-feed-count>0 memories</div>
+      <div class="flex items-center gap-2">
+        <span class="ll-seg-label">Sort</span>
+        <div class="ll-seg" role="group" aria-label="Sort memories">
+          <button type="button" data-sort="date" aria-pressed="true">Date</button>
+          <button type="button" data-sort="type" aria-pressed="false">Type</button>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="ll-seg-label">View</span>
+        <div class="ll-seg" role="group" aria-label="View">
+          <button type="button" data-view-mode="list" aria-pressed="true" aria-label="List view">
+            <i class="ph ph-list-bullets text-base" aria-hidden="true"></i>
+          </button>
+          <button type="button" data-view-mode="grid" aria-pressed="false" aria-label="Grid view">
+            <i class="ph ph-squares-four text-base" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Memories feed. data-view switches between list (spaced stack)
+         and grid (CSS columns masonry). -->
+    <section class="space-y-4 ll-feed" data-feed data-view="list"></section>
 
     <!-- Make a book dark CTA (only when there is at least one memory) -->
     <section class="ll-cta-dark" data-book-cta hidden>
@@ -429,6 +454,33 @@
   </div>
 </div>
 
+<!-- ====================================================================
+     MODAL — MEMORY DETAIL
+     Grid-view cards open this, showing the full memory the same way
+     the list view would, with an Edit button for the owner.
+     ==================================================================== -->
+<div class="ll-modal-wrap" id="modal-memory-detail" hidden role="dialog" aria-modal="true" aria-labelledby="modal-memory-detail-title">
+  <div class="ll-modal">
+    <div class="ll-modal-header">
+      <div class="min-w-0">
+        <div class="ll-chip-eyebrow" data-detail-eyebrow>From this project</div>
+        <h2 class="text-[22px] md:text-[26px] font-serif tracking-tight text-wb-900" id="modal-memory-detail-title" data-detail-heading>Memory</h2>
+      </div>
+      <button type="button" class="ll-close" data-close="modal-memory-detail" aria-label="Close" data-autofocus>
+        <i class="ph ph-x text-lg"></i>
+      </button>
+    </div>
+    <div class="ll-modal-body" data-detail-body></div>
+    <div class="ll-modal-footer">
+      <button type="button" class="ll-btn ll-btn-ghost" data-close="modal-memory-detail">Close</button>
+      <button type="button" class="ll-btn ll-btn-primary" data-detail-edit hidden>
+        <i class="ph ph-pencil-simple text-base" aria-hidden="true"></i>
+        <span>Edit</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- DEMO -->
 <div class="ll-demo" role="group" aria-label="Demo controls">
   <span class="opacity-70">View</span>
@@ -492,15 +544,31 @@
     ].join(' ');
     chipsWrap.innerHTML = chipsHTML;
 
-    // Feed
+    // Feed — apply the current sort + view preferences before rendering.
     const memories = project.memories || [];
     $('[data-empty-state]').hidden = memories.length > 0;
     $('[data-primary-actions]').hidden = memories.length === 0;
     $('[data-book-cta]').hidden = memories.length === 0;
+    $('[data-feed-controls]').hidden = memories.length === 0;
+
+    const sort = getFeedSort();
+    const view = getFeedView();
+    const sorted = sortMemories(memories, sort);
 
     const feed = $('[data-feed]');
-    feed.innerHTML = memories.map(renderMemory).join('');
+    feed.dataset.view = view;
+    // In list view the feed uses the existing space-y stack; in grid view
+    // CSS columns packs the compact cards. Switching the class here is
+    // all it takes — the feed's data-view attribute drives both the
+    // layout and the per-card template choice.
+    if (view === 'grid') feed.classList.remove('space-y-4');
+    else feed.classList.add('space-y-4');
+    feed.innerHTML = sorted.map(view === 'grid' ? renderMemoryCompact : renderMemoryFull).join('');
     LL.stagger(feed);
+
+    const n = memories.length;
+    $('[data-feed-count]').textContent = `${n} ${n === 1 ? 'memory' : 'memories'}`;
+    syncFeedControls(sort, view);
 
     const count = memories.length;
     const pages = Math.max(20, 6 + count * 7);
@@ -527,13 +595,43 @@
     $('[data-ready-title]').textContent = bookTitleEl.value || project.title;
   }
 
-  function renderMemory(m) {
-    const pill = {
-      story:  { label: 'Story',  icon: 'ph-pencil-simple' },
-      photo:  { label: 'Photo',  icon: 'ph-image' },
-      voice:  { label: 'Voice',  icon: 'ph-microphone' },
-      recipe: { label: 'Recipe', icon: 'ph-forkknife' },
-    }[m.type] || { label: m.type, icon: 'ph-book' };
+  // One source of truth for the type pill across list, grid, and
+  // detail modal so all three stay in sync.
+  const MEMORY_PILL = {
+    story:  { label: 'Story',  icon: 'ph-pencil-simple' },
+    photo:  { label: 'Photo',  icon: 'ph-image' },
+    voice:  { label: 'Voice',  icon: 'ph-microphone' },
+    recipe: { label: 'Recipe', icon: 'ph-forkknife' },
+  };
+  function memoryPill(type) { return MEMORY_PILL[type] || { label: type, icon: 'ph-book' }; }
+
+  // ---------- Sort + view preferences ----------
+  // Persisted in localStorage so reload keeps the user's choice.
+  function getFeedSort() { try { return localStorage.getItem('ll:feed-sort') || 'date'; } catch { return 'date'; } }
+  function getFeedView() { try { return localStorage.getItem('ll:feed-view') || 'list'; } catch { return 'list'; } }
+  function setFeedSort(v) { try { localStorage.setItem('ll:feed-sort', v); } catch {} }
+  function setFeedView(v) { try { localStorage.setItem('ll:feed-view', v); } catch {} }
+
+  function syncFeedControls(sort, view) {
+    $$('[data-sort]').forEach(b => b.setAttribute('aria-pressed', b.dataset.sort === sort ? 'true' : 'false'));
+    $$('[data-view-mode]').forEach(b => b.setAttribute('aria-pressed', b.dataset.viewMode === view ? 'true' : 'false'));
+  }
+
+  // Date = newest first. Type = grouped by type alphabetically (Photo,
+  // Recipe, Story, Voice), newest first within each group.
+  function sortMemories(memories, sort) {
+    const dateSort = (a, b) => new Date(b.createdAt) - new Date(a.createdAt);
+    if (sort === 'type') {
+      return [...memories].sort((a, b) => {
+        const t = (a.type || '').localeCompare(b.type || '');
+        return t !== 0 ? t : dateSort(a, b);
+      });
+    }
+    return [...memories].sort(dateSort);
+  }
+
+  function renderMemoryFull(m) {
+    const pill = memoryPill(m.type);
 
     const shared = m.sharedBy
       ? `<span class="text-[14px] text-wb-700">Shared by ${LL.escapeHTML(m.sharedBy)}${m.relationship ? ' (' + LL.escapeHTML(m.relationship) + ')' : ''}</span>`
@@ -609,6 +707,47 @@
     }
 
     return `<article class="ll-memory" id="m-${m.id}">${head}${body}</article>`;
+  }
+
+  // Grid-view card — only the essentials. The whole card is a button
+  // that opens the memory in the detail modal.
+  function renderMemoryCompact(m) {
+    const pill = memoryPill(m.type);
+    const shared = m.sharedBy ? `${LL.escapeHTML(m.sharedBy)}${m.relationship ? ' · ' + LL.escapeHTML(m.relationship) : ''}` : '';
+
+    let preview = '';
+    if (m.type === 'photo' && m.photoDataUrl) {
+      preview = `<div class="ll-compact-photo"><img src="${m.photoDataUrl}" alt="${LL.escapeHTML(m.title || '')}"></div>`;
+    } else if (m.type === 'voice') {
+      const d = (m.voice && m.voice.duration) || 90;
+      const mm = String(Math.floor(d / 60)).padStart(2, '0');
+      const ss = String(d % 60).padStart(2, '0');
+      preview = `
+        <div class="ll-compact-voice">
+          <span class="ll-compact-voice-btn" aria-hidden="true"><i class="ph-fill ph-play text-sm"></i></span>
+          <span class="text-[13px] font-semibold text-wb-700" style="font-variant-numeric: tabular-nums;">${mm}:${ss}</span>
+          <span class="text-[12px] text-wb-500 ml-auto">Voice memory</span>
+        </div>`;
+    } else if (m.type === 'recipe' && m.recipe) {
+      const ing = (m.recipe.ingredients || [])[0];
+      preview = ing
+        ? `<p class="text-[13.5px] text-wb-700 mt-2 italic ll-clamp-2">${LL.escapeHTML(ing)}</p>`
+        : '';
+    } else if (m.body) {
+      preview = `<p class="text-[13.5px] text-wb-700 mt-2 ll-clamp-3 leading-snug">${LL.escapeHTML(m.body)}</p>`;
+    }
+
+    return `
+      <button type="button" class="ll-memory-compact" data-open-detail="${m.id}" id="m-${m.id}">
+        <div class="flex items-center justify-between gap-2">
+          <span class="ll-chip"><i class="ph ${pill.icon}" aria-hidden="true"></i>${pill.label}</span>
+          <span class="text-[11px] text-wb-500">${LL.fmtRelative(m.createdAt)}</span>
+        </div>
+        ${m.title ? `<h3 class="text-[17px] md:text-[18px] font-serif text-wb-900 mt-2 leading-tight ll-clamp-2">${LL.escapeHTML(m.title)}</h3>` : ''}
+        ${preview}
+        ${shared ? `<div class="text-[12px] text-wb-500 mt-3">Shared by ${shared}</div>` : ''}
+      </button>
+    `;
   }
 
   // ---------- Voice player (scrubber) ----------
@@ -1097,6 +1236,65 @@
 
   // Make sure canceling an edit drops back into add-mode for the next open.
   $$('[data-close="modal-add"]').forEach(b => b.addEventListener('click', () => { editingId = null; }));
+
+  // ---------- Sort + view toggles ----------
+  $$('[data-sort]').forEach(b => b.addEventListener('click', () => {
+    setFeedSort(b.dataset.sort);
+    render();
+  }));
+  $$('[data-view-mode]').forEach(b => b.addEventListener('click', () => {
+    setFeedView(b.dataset.viewMode);
+    render();
+  }));
+
+  // ---------- Memory detail modal ----------
+  // Grid-view cards open the detail. The modal body gets the same full
+  // markup the list view uses — same recipe cards, same voice scrubber,
+  // same edit affordance — so the two views share one source of truth
+  // for how a memory looks in full.
+  let detailMemoryId = null;
+  document.addEventListener('click', (e) => {
+    const card = e.target.closest('[data-open-detail]');
+    if (!card) return;
+    openMemoryDetail(card.dataset.openDetail);
+  });
+
+  function openMemoryDetail(memoryId) {
+    const m = (project.memories || []).find(x => x.id === memoryId);
+    if (!m) return;
+    detailMemoryId = memoryId;
+    const pill = memoryPill(m.type);
+    $('[data-detail-eyebrow]').textContent = `${project.title} · ${pill.label}`;
+    $('[data-detail-heading]').textContent = m.title || pill.label;
+    $('[data-detail-body]').innerHTML = renderMemoryFull(m);
+    // The full template already carries its own type pill and edit
+    // button in-card, which would duplicate what the modal shows in
+    // its header and footer. Hide the in-card chrome so the detail
+    // reads cleanly, and surface the Edit button only to the owner.
+    const bodyCard = $('[data-detail-body] .ll-memory');
+    if (bodyCard) {
+      bodyCard.style.border = '0';
+      bodyCard.style.padding = '0';
+      bodyCard.style.animation = 'none';
+      const inCardEdit = bodyCard.querySelector('[data-edit-memory]');
+      if (inCardEdit) inCardEdit.hidden = true;
+      // Drop the h3 title the full template renders — the modal header
+      // already shows it, bigger.
+      const h3 = bodyCard.querySelector('h3');
+      if (h3) h3.hidden = true;
+    }
+    const canEdit = LL.canEditMemory(m, project);
+    $('[data-detail-edit]').hidden = !canEdit;
+    LL.openModal('modal-memory-detail');
+  }
+
+  $('[data-detail-edit]').addEventListener('click', () => {
+    const id = detailMemoryId;
+    LL.closeModal('modal-memory-detail');
+    // Let the close animation settle before opening the edit modal so
+    // the scrim doesn't double-flash.
+    setTimeout(() => openEditModal(id), 240);
+  });
 
   // ---------- Invite modal ----------
   function openInviteModal() {

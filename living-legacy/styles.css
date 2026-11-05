@@ -350,6 +350,48 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
   font-size: 20px;
 }
 
+/* ======================== Feed controls ========================
+   Sits above the memory feed on the project page: left column shows
+   the count, right column has the sort pills and a 2-cell view
+   toggle. On narrow screens the controls wrap under the count. */
+.ll-feed-controls {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+.ll-feed-count {
+  font-size: 13px; font-weight: 600; color: #514d45;
+  margin-right: auto;
+}
+.ll-seg {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px;
+  background: #f6f6f6;
+  border-radius: 999px;
+}
+.ll-seg > button {
+  padding: 6px 12px;
+  min-height: 32px;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  font: inherit; font-size: 13px; font-weight: 600;
+  color: #63605b;
+  cursor: pointer;
+  transition: background .14s ease, color .14s ease;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.ll-seg > button:hover { color: #262116; }
+.ll-seg > button[aria-pressed="true"] {
+  background: #fff;
+  color: #262116;
+  box-shadow: 0 1px 2px rgba(38,33,22,.08);
+}
+.ll-seg-label {
+  font-size: 12px; font-weight: 600; color: #807e7a;
+  padding: 0 4px;
+}
+
 /* ======================== Memory feed cards ======================== */
 .ll-memory {
   background: #fff;
@@ -390,6 +432,74 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
   from { opacity: 0; transform: translateY(16px) scale(.985); }
   to   { opacity: 1; transform: none; }
 }
+
+/* Grid (masonry) view — CSS columns gives us free masonry packing;
+   cards keep their natural height, pack in column order. Pure CSS,
+   no layout JS needed. */
+.ll-feed[data-view="grid"] {
+  display: block;
+  column-count: 2;
+  column-gap: 12px;
+}
+@media (min-width: 900px) {
+  .ll-feed[data-view="grid"] { column-count: 3; }
+}
+@media (max-width: 480px) {
+  .ll-feed[data-view="grid"] { column-count: 1; }
+}
+.ll-feed[data-view="grid"] > * {
+  break-inside: avoid;
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+/* Compact memory card — grid view only. The whole card is clickable
+   and opens the detail modal; only the essentials are shown. */
+.ll-memory-compact {
+  background: #fff;
+  border: 1px solid #dbdad7;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  display: block;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  animation: ll-memory-in .4s cubic-bezier(.22,.61,.36,1) both;
+}
+.ll-memory-compact:hover {
+  transform: translateY(-2px);
+  border-color: #85713e;
+  box-shadow: 0 8px 20px -8px rgba(38,33,22,0.14);
+}
+.ll-memory-compact:focus-visible {
+  outline: 2px solid #dcb05e;
+  outline-offset: 2px;
+}
+.ll-compact-photo {
+  width: 100%;
+  border-radius: 8px;
+  display: block;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.ll-compact-photo img { width: 100%; height: auto; display: block; }
+.ll-compact-voice {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: #fbfbfb;
+  border-radius: 8px;
+}
+.ll-compact-voice-btn {
+  width: 32px; height: 32px; border-radius: 999px;
+  background: #293548; color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.ll-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ll-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* The small recipe card inside a Recipe memory — looks like an index
    card with a soft shadow and a top accent line. */
