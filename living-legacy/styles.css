@@ -358,6 +358,32 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
   padding: 28px;
   animation: ll-memory-in .5s cubic-bezier(.22,.61,.36,1) both;
 }
+
+/* Small pencil / trash button in the top-right of a memory card. Hidden
+   until the user hovers (or focuses) the card so the feed stays calm
+   at rest; on touch, the card itself picks up :hover on tap. */
+.ll-icon-btn {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #63605b;
+  cursor: pointer;
+  transition: background .14s ease, border-color .14s ease, color .14s ease, opacity .14s ease;
+  opacity: 0;
+}
+.ll-memory:hover .ll-icon-btn,
+.ll-memory:focus-within .ll-icon-btn {
+  opacity: 1;
+}
+.ll-icon-btn:hover { background: #fbfbfb; border-color: #dbdad7; color: #293548; }
+.ll-icon-btn:focus-visible { opacity: 1; }
+/* Touch devices can't hover — keep the control visible so it's reachable
+   without a long-press. */
+@media (hover: none) {
+  .ll-icon-btn { opacity: 1; }
+}
 @media (max-width: 640px) { .ll-memory { padding: 20px; } }
 
 @keyframes ll-memory-in {

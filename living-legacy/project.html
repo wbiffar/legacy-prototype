@@ -10,9 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js?v=3"></script>
-  <link rel="stylesheet" href="styles.css?v=3" />
-  <script src="app.js?v=3"></script>
+  <script src="tokens.js?v=4"></script>
+  <link rel="stylesheet" href="styles.css?v=4" />
+  <script src="app.js?v=4"></script>
 </head>
 <body>
 
@@ -537,13 +537,25 @@
       ? `<span class="text-[14px] text-wb-700">Shared by ${LL.escapeHTML(m.sharedBy)}${m.relationship ? ' (' + LL.escapeHTML(m.relationship) + ')' : ''}</span>`
       : '';
 
+    // Edit affordance — only shown to the owner (project organizer or the
+    // contributor who shared this memory). In the prototype's default
+    // signed-in state (Wesley as organizer) that's always true.
+    const canEdit = LL.canEditMemory(m, project);
+    const editedChip = m.updatedAt
+      ? `<span class="text-[12px] text-wb-500" title="${LL.escapeHTML(new Date(m.updatedAt).toLocaleString())}">· edited ${LL.fmtRelative(m.updatedAt)}</span>`
+      : '';
+
     const head = `
-      <div class="flex items-center justify-between gap-3">
+      <div class="flex items-start justify-between gap-3">
         <div class="flex items-center gap-3 flex-wrap">
           <span class="ll-chip"><i class="ph ${pill.icon}" aria-hidden="true"></i>${pill.label}</span>
           ${shared}
         </div>
-        <span class="text-[13px] text-wb-500">${LL.fmtRelative(m.createdAt)}</span>
+        <div class="flex items-center gap-2 shrink-0">
+          <span class="text-[13px] text-wb-500 whitespace-nowrap">${LL.fmtRelative(m.createdAt)}</span>
+          ${editedChip}
+          ${canEdit ? `<button type="button" class="ll-icon-btn ll-tap" data-edit-memory="${m.id}" aria-label="Edit this memory"><i class="ph ph-pencil-simple text-base" aria-hidden="true"></i></button>` : ''}
+        </div>
       </div>
       ${m.title ? `<h3 class="text-[20px] md:text-[22px] font-bold tracking-tight text-wb-900 mt-3">${LL.escapeHTML(m.title)}</h3>` : ''}
     `;
@@ -643,9 +655,14 @@
   $$('.ll-tab', tabsRoot).forEach(t => t.addEventListener('click', () => activateTab(t.dataset.tab)));
   window.addEventListener('resize', sizeThumb);
 
-  function openAddModal(initialTab) {
-    activateTab(initialTab || 'story');
-    // Reset forms lightly
+  // The Add modal doubles as the Edit modal: openAddModal with no id
+  // creates a new memory; openEditModal passes a memoryId and pre-fills
+  // the fields, locks the type-tab to the memory's type, and switches
+  // the modal chrome (title, save button) into edit mode. editingId is
+  // the single source of truth for which mode the save handler uses.
+  let editingId = null;
+
+  function resetAddModal() {
     $$('#modal-add input, #modal-add textarea').forEach(i => { i.value = ''; });
     $('[data-recipe-ai]').hidden = true;
     $$('[data-drop]').forEach(d => {
@@ -659,12 +676,127 @@
            <span class="text-[13px] text-wb-500">PNG or JPG, up to 20 MB</span>
            <input type="file" accept="image/*" class="sr-only" data-photo-input />`;
     });
-    // Reset voice recorder
     resetRecorder();
+  }
+
+  function setModalMode(mode /* 'add' | 'edit' */) {
+    const eyebrow = $('[data-project-chip]');
+    const title   = $('#modal-add-title');
+    const saveBtn = $('[data-save-memory]');
+    const tabs    = $$('.ll-tab', tabsRoot);
+    if (mode === 'edit') {
+      eyebrow.textContent = `Edit · ${project.title}`;
+      title.textContent = 'Edit this memory';
+      saveBtn.textContent = 'Save changes';
+      // Lock the type — switching tabs would reinterpret the fields as a
+      // different memory kind and quietly lose the current one.
+      tabs.forEach(t => {
+        t.disabled = t.getAttribute('aria-selected') !== 'true';
+        t.setAttribute('aria-disabled', t.disabled ? 'true' : 'false');
+        t.style.opacity = t.disabled ? '0.4' : '';
+        t.style.cursor = t.disabled ? 'not-allowed' : '';
+      });
+    } else {
+      eyebrow.textContent = `Add to ${project.title}`;
+      title.textContent = 'Add a memory to this project';
+      saveBtn.textContent = 'Save to Project';
+      tabs.forEach(t => {
+        t.disabled = false;
+        t.removeAttribute('aria-disabled');
+        t.style.opacity = '';
+        t.style.cursor = '';
+      });
+    }
+  }
+
+  function openAddModal(initialTab) {
+    editingId = null;
+    resetAddModal();
+    activateTab(initialTab || 'story');
+    setModalMode('add');
     LL.openModal('modal-add');
-    // sizeThumb will walk forward one frame at a time until the modal
-    // is actually rendered, so the pill lands on the right tab.
     requestAnimationFrame(sizeThumb);
+  }
+
+  function openEditModal(memoryId) {
+    const m = (project.memories || []).find(x => x.id === memoryId);
+    if (!m) return;
+    editingId = memoryId;
+    resetAddModal();
+    activateTab(m.type);
+    setModalMode('edit');
+    prefillModalFor(m);
+    LL.openModal('modal-add');
+    requestAnimationFrame(sizeThumb);
+  }
+
+  function prefillModalFor(m) {
+    const shared = m.sharedBy || '';
+    const rel    = m.relationship || '';
+    if (m.type === 'story') {
+      $('#add-story-title').value = m.title || '';
+      $('#add-story-body').value  = m.body  || '';
+      $('#add-story-name').value  = shared;
+      $('#add-story-rel').value   = rel;
+    } else if (m.type === 'photo') {
+      $('#add-photo-caption').value = m.body || m.title || '';
+      $('#add-photo-name').value    = shared;
+      $('#add-photo-rel').value     = rel;
+      if (m.photoDataUrl) {
+        const drop = $('#modal-add [data-panel="photo"] [data-drop]');
+        attachExistingPhoto(drop, m.photoDataUrl);
+      }
+    } else if (m.type === 'voice') {
+      $('#add-voice-title').value = m.title || '';
+      $('#add-voice-body').value  = m.body  || '';
+      $('#add-voice-name').value  = shared;
+      $('#add-voice-rel').value   = rel;
+      // Surface that there's an existing recording. The simulator can't
+      // play it back, so the label changes to Re-record and the length
+      // shows the saved duration.
+      if (m.voice && m.voice.duration) {
+        rec.seconds = m.voice.duration;
+        $('[data-rec-time]').textContent = formatT(rec.seconds);
+        $('[data-rec-status]').textContent = 'Saved recording';
+        $('[data-rec-label]').textContent = 'Re-record';
+        $('[data-rec-wave]').querySelectorAll('span').forEach(s => {
+          s.style.height = `${20 + Math.random() * 80}%`;
+          s.style.background = '#a48849';
+        });
+      }
+    } else if (m.type === 'recipe') {
+      const r = m.recipe || {};
+      $('#add-recipe-name').value   = r.cardName || m.title || '';
+      $('#add-recipe-ing').value    = (r.ingredients || []).join('\n');
+      $('#add-recipe-dir').value    = (r.directions  || []).join('\n');
+      $('#add-recipe-story').value  = m.body || '';
+      $('#add-recipe-shared').value = shared;
+      $('#add-recipe-rel').value    = rel;
+      if (m.photoDataUrl) {
+        const drop = $('#modal-add [data-panel="recipe"] [data-drop]');
+        attachExistingPhoto(drop, m.photoDataUrl, { label: 'Photo attached (Tap to replace)' });
+      }
+    }
+  }
+
+  // Render the existing photo into a drop area the same way handleFile
+  // does, minus the file-reader step.
+  function attachExistingPhoto(drop, src, { label = 'Photo attached' } = {}) {
+    drop.dataset.attached = 'true';
+    drop.innerHTML = `
+      <div class="ll-drop-thumb"><img src="${src}" alt="Attached photo"></div>
+      <div class="min-w-0 flex-1">
+        <div class="text-[14px] font-semibold text-wb-900">${label}</div>
+        <div class="text-[13px] text-wb-500">Tap Replace to pick another.</div>
+      </div>
+      <button type="button" class="ll-btn ll-btn-ghost ll-btn-sm" data-replace>Replace</button>
+    `;
+    const kept = document.createElement('input');
+    kept.type = 'file'; kept.accept = 'image/*'; kept.className = 'sr-only';
+    if (drop.querySelector('input[data-recipe-input], #add-recipe-photo')) kept.dataset.recipeInput = '';
+    else kept.dataset.photoInput = '';
+    drop.appendChild(kept);
+    drop.querySelector('[data-replace]').addEventListener('click', () => kept.click());
   }
 
   // ---------- File uploads (preview) ----------
@@ -812,26 +944,43 @@
       };
     }
 
-    const saved = LL.addMemory(project.id, memory);
+    // When editingId is set we're editing an existing memory, not
+    // creating one — keep its id / createdAt and update the fields.
+    const saved = editingId
+      ? LL.updateMemory(project.id, editingId, memory)
+      : LL.addMemory(project.id, memory);
+    const wasEdit = !!editingId;
+    editingId = null;
     LL.closeModal('modal-add');
     render();
-    LL.toast('Memory added', { icon: 'ph-check-circle' });
+    LL.toast(wasEdit ? 'Memory updated' : 'Memory added', { icon: 'ph-check-circle' });
 
-    // Scroll the new memory into view with a soft highlight
+    // Highlight the saved memory. For a new one scroll it into view; for
+    // an edit the user already knows where it is, so just pulse it.
     setTimeout(() => {
       const el = document.getElementById(`m-${saved.id}`);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        el.animate(
-          [
-            { boxShadow: '0 0 0 2px rgba(220,176,94,0.6)' },
-            { boxShadow: '0 0 0 2px rgba(220,176,94,0)' },
-          ],
-          { duration: 1800, easing: 'ease-out' }
-        );
-      }
+      if (!el) return;
+      if (!wasEdit) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.animate(
+        [
+          { boxShadow: '0 0 0 2px rgba(220,176,94,0.6)' },
+          { boxShadow: '0 0 0 2px rgba(220,176,94,0)' },
+        ],
+        { duration: 1800, easing: 'ease-out' }
+      );
     }, 280);
   });
+
+  // Edit button on a memory card — opens the Add modal pre-filled in
+  // edit mode. Delegated because the cards re-render on every change.
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-edit-memory]');
+    if (!btn) return;
+    openEditModal(btn.dataset.editMemory);
+  });
+
+  // Make sure canceling an edit drops back into add-mode for the next open.
+  $$('[data-close="modal-add"]').forEach(b => b.addEventListener('click', () => { editingId = null; }));
 
   // ---------- Invite modal ----------
   function openInviteModal() {

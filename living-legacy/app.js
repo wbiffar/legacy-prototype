@@ -222,6 +222,50 @@
     return m;
   }
 
+  function updateMemory(projectId, memoryId, patch) {
+    const p = getProject(projectId);
+    if (!p) return null;
+    const idx = (p.memories || []).findIndex(m => m.id === memoryId);
+    if (idx === -1) return null;
+    // Preserve id, createdAt, and type; everything else is patchable.
+    const current = p.memories[idx];
+    const updated = {
+      ...current,
+      ...patch,
+      id: current.id,
+      type: current.type,
+      createdAt: current.createdAt,
+      updatedAt: now(),
+    };
+    p.memories[idx] = updated;
+    saveProject(p);
+    return updated;
+  }
+
+  function deleteMemory(projectId, memoryId) {
+    const p = getProject(projectId);
+    if (!p) return false;
+    const before = (p.memories || []).length;
+    p.memories = (p.memories || []).filter(m => m.id !== memoryId);
+    if (p.memories.length === before) return false;
+    saveProject(p);
+    return true;
+  }
+
+  // Ownership: the project organizer (the contributor flagged isYou that
+  // matches the signed-in demo user) can edit anything in the project;
+  // a non-organizer can edit only the memories they contributed. For the
+  // prototype's demo state Wesley is always the organizer, so every
+  // memory on their projects is editable.
+  function canEditMemory(memory, project) {
+    const me = (getUserName() || '').toLowerCase();
+    const isOrganizer = (project.contributors || [])
+      .some(c => c.isYou && (c.name || '').toLowerCase() === me);
+    const isAuthor = memory && memory.sharedBy &&
+      memory.sharedBy.toLowerCase() === me;
+    return isOrganizer || isAuthor;
+  }
+
   // ============================== Auth demo ==============================
   function getAuth() { return read(K_AUTH, 'in'); }
   function setAuth(state) { write(K_AUTH, state); document.body.dataset.auth = state; }
@@ -425,7 +469,7 @@
   window.LL = {
     // data
     allProjects, getProject, saveProject, deleteProject,
-    createProject, addMemory,
+    createProject, addMemory, updateMemory, deleteMemory, canEditMemory,
     getAuth, setAuth, getUserName, setUserName,
     // ui
     openModal, closeModal, closeTopModal,
