@@ -165,3 +165,39 @@ Each entry should include:
 - **What to do instead:** When a prototype already exists, pull only what's needed to spot the deltas — the final frames plus the element sheets for anything that changed — then edit the file in place. Say up front that the existing file is the target.
 
 ---
+
+## 2026-11-05 — Legacy Life Stories (DES-2332)
+
+### Phosphor's fill-weight icons use `ph-fill ph-<name>`, not `ph ph-<name>-fill`
+- **What went wrong:** The voice play/pause button, record mic, AI sparkle and "Create Keepsake Book" sparkle all rendered as empty space on top of their navy/gold backgrounds. Wes pointed at the play button saying "the icon should be white" — it wasn't a colour issue, the icon wasn't there at all. Inspecting `::before` showed `content: "none"` — the class `ph ph-play-fill` matched no rule in the Phosphor stylesheet.
+- **What to do instead:** Phosphor's web package v2 uses the weight as the family class and the icon name as a separate class. Regular = `ph ph-play`, fill = `ph-fill ph-play`, duotone = `ph-duotone ph-play`, etc. Verify a new icon with `getComputedStyle(el, '::before').content` — a `"none"` return means the pattern didn't match. Sweep the three HTML files with `grep -nE "ph ph-[a-z-]+-fill"` before shipping.
+
+### A modal close's hide timer can clobber a rapid-open
+- **What went wrong:** `openModal` set `el.hidden = false` inside `requestAnimationFrame`, and `closeModal` queued a 340ms `setTimeout` to re-hide the element. When a close was immediately followed by an open (e.g. the delegated click handler fired on a chip), the pending close timer ran AFTER the open and set `hidden = true` again. The modal was in the DOM with `data-open = "true"` but invisible. Worse, rAF is throttled when the browser pane is backgrounded (and during heavy script turns), so the open-side `hidden = false` never caught up.
+- **What to do instead:** Sync, don't rAF, the visibility flip. Set `el.hidden = false` immediately, force a reflow (`void el.offsetHeight`), THEN set `data-open = "true"` to trigger the transition. Track pending hide timers per element (a `WeakMap`); `openModal` cancels any pending hide before opening. Symptom to recognise: `{ hidden: true, dataset.open: "true", scrim visible }` after an open — the open ran but a stale close timer landed on top.
+
+### A modal with `id` on the wrapper needs `data-open` on BOTH wrapper and inner
+- **What went wrong:** First render of the Add to Project modal: scrim appeared, everything was correctly set on the wrapper, modal was invisible. `getBoundingClientRect` showed the inner `.ll-modal` at the right position with opacity 1; yet the screenshot showed no modal. The id lives on `.ll-modal-wrap` so `openModal(id)` set `data-open` on the wrapper, but the CSS transition (`.ll-modal[data-open="true"] { transform: ... }`) attaches to the INNER element.
+- **What to do instead:** When the engine opens a modal by id and the id is on a wrapper, resolve the inner element (`el.classList.contains('ll-modal') ? el : el.querySelector('.ll-modal')`) and set `data-open` on both. Same for close.
+
+### Cache-bust the CSS/JS refs on a live-edited prototype
+- **What went wrong:** Edited `styles.css` three times, verified in my own browser tab, then told Wes to look — he still saw the old dark button because his pane had cached `styles.css` without a version. Lost a round trip to "did it push?".
+- **What to do instead:** Add `?v=N` to every `<script src>` and `<link href>` for the prototype's own files from the start. Bump N on any CSS or shared-JS change. Browsers (and especially the preview pane) hold onto the unversioned asset aggressively.
+
+### DM Serif Text only ships at Regular (400) in the Google Fonts load
+- **What went wrong:** First pass on serif titles kept `font-bold` on every h1/h2/h3 I swapped. The browser fell back to faux-bold on a weight the font didn't carry; the strokes looked muddy and uneven.
+- **What to do instead:** Google Fonts' `DM+Serif+Text:ital@0` is the only axis available. When applying `font-serif`, drop `font-bold` — at display sizes (26px+) the serif carries its own weight and faux-bold doesn't help. If a weight contrast is needed, pair serif at 30–40px against DM Sans body at 14–16px.
+
+### `wb-100` nearly matches `gold-50` — low-contrast chrome vanishes on the page
+- **What went wrong:** Built the Sort/View segmented control track with `#f6f6f6` (wb-100). It read fine on my white-backgrounded test card, but on the actual project page (gold-50 background `#fbf7ef`) the track all but disappeared — only the pressed white pill was visible, and the un-pressed option looked like it had no track behind it. Wes called it out immediately.
+- **What to do instead:** For a track that sits on `gold-50`, use `gold-100` (#f6e5b8). Keep the warm hue family but step up enough in saturation that the track has a clear edge. The pressed white pill still pops against it.
+
+### Figma overview: don't skip the leftmost "01" frame
+- **What went wrong:** On the first pass I parsed the Figma frame list starting from "02 – Start a new story" and never pulled "01 – Sign in". That turned out to be the LIVING LEGACY hero / sign-in screen — the actual first-run surface. The prototype dropped a visitor straight into the Start form, skipping the hero entirely. Wes caught it: "one is represented in the wireframes."
+- **What to do instead:** Pull the frame overview AND the first numbered frame explicitly before writing routing logic. Anything named "Sign in" or "Landing" in the frame list is probably the real first-run page, even if the title reads like something else.
+
+### `break-inside: avoid` + CSS columns IS the masonry (no JS)
+- **Pattern worth keeping:** For a grid-view memory feed, `column-count: 2` (mobile) / `3` (desktop) on the container plus `break-inside: avoid` on each card gives you free masonry packing, keeping each card at its natural height and flowing in column order. No layout JS, no explicit heights, degrades to a single column under `max-width: 480px`.
+- **Caveat:** Column fill order is top-to-bottom per column, not left-to-right by index. For a chronological feed that still reads well; for a true order-sensitive grid (e.g. ranked results) use CSS Grid instead.
+
+---
