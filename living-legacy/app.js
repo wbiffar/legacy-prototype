@@ -247,6 +247,14 @@
     return s;
   }
 
+  // Pending hide timers so a rapid close → open doesn't let a late timer
+  // re-hide the just-opened modal (and scrim). Keyed by element.
+  const pendingHide = new WeakMap();
+  function cancelPendingHide(el) {
+    const t = pendingHide.get(el);
+    if (t) { clearTimeout(t); pendingHide.delete(el); }
+  }
+
   function openModal(id) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -255,16 +263,26 @@
     const inner = el.classList.contains('ll-modal') ? el : el.querySelector('.ll-modal');
     modalState.lastFocus = document.activeElement;
     const scrim = ensureScrim();
+
+    // Cancel any pending hide from a just-fired closeModal so the modal
+    // (and the scrim) don't re-hide after we open them.
+    cancelPendingHide(el);
+    cancelPendingHide(scrim);
+
+    // Make the element visible synchronously. rAF is throttled when the
+    // tab/pane is backgrounded (and during heavy script turns), and we
+    // want the modal to land even then — not just when the pane is up.
     scrim.hidden = false;
-    // Next frame so the transition runs
-    requestAnimationFrame(() => {
-      scrim.dataset.open = 'true';
-      el.hidden = false;
-      requestAnimationFrame(() => {
-        el.dataset.open = 'true';
-        if (inner && inner !== el) inner.dataset.open = 'true';
-      });
-    });
+    el.hidden = false;
+    // Force layout so the transition fires from the hidden/closed state.
+    // Without the reflow the browser may batch "hidden → open" into one
+    // style change and skip the transition.
+    void scrim.offsetHeight;
+    void el.offsetHeight;
+    scrim.dataset.open = 'true';
+    el.dataset.open = 'true';
+    if (inner && inner !== el) inner.dataset.open = 'true';
+
     modalState.stack.push(el);
     document.body.dataset.overlay = 'true';
 
@@ -281,14 +299,23 @@
     const inner = el.classList.contains('ll-modal') ? el : el.querySelector('.ll-modal');
     el.dataset.open = 'false';
     if (inner && inner !== el) inner.dataset.open = 'false';
-    setTimeout(() => { el.hidden = true; }, 340);
+    // Replace any older pending hide for this element.
+    cancelPendingHide(el);
+    pendingHide.set(el, setTimeout(() => {
+      el.hidden = true;
+      pendingHide.delete(el);
+    }, 340));
 
     modalState.stack = modalState.stack.filter(e => e !== el);
     if (modalState.stack.length === 0) {
       const scrim = modalState.scrim;
       if (scrim) {
         scrim.dataset.open = 'false';
-        setTimeout(() => { scrim.hidden = true; }, 320);
+        cancelPendingHide(scrim);
+        pendingHide.set(scrim, setTimeout(() => {
+          scrim.hidden = true;
+          pendingHide.delete(scrim);
+        }, 320));
       }
       document.body.dataset.overlay = 'false';
     }

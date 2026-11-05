@@ -57,15 +57,13 @@
       <!-- Contributors row -->
       <div class="mt-5 flex flex-wrap items-center gap-2" data-contributors></div>
 
-      <!-- Primary actions — only when there is at least one memory -->
+      <!-- Primary actions — only when there is at least one memory.
+           Invite People lives up in the Contributors row (+ Invite People
+           chip) since adding a contributor IS inviting one. -->
       <div class="mt-6 pt-6 border-t border-wb-200 flex flex-wrap gap-3" data-primary-actions hidden>
         <button type="button" class="ll-btn ll-btn-primary" data-open-add>
           <i class="ph ph-plus text-base" aria-hidden="true"></i>
           <span>Add to Project</span>
-        </button>
-        <button type="button" class="ll-btn ll-btn-ghost" data-open-invite>
-          <i class="ph ph-user-plus text-base" aria-hidden="true"></i>
-          <span>Invite People</span>
         </button>
         <button type="button" class="ll-btn ll-btn-ghost" data-open-book>
           <i class="ph ph-book-open text-base" aria-hidden="true"></i>
@@ -431,39 +429,6 @@
   </div>
 </div>
 
-<!-- ====================================================================
-     MODAL — INVITE ANOTHER CONTRIBUTOR CHIP TAP (simple add-person form)
-     ==================================================================== -->
-<div class="ll-modal-wrap" id="modal-addperson" hidden role="dialog" aria-modal="true" aria-labelledby="modal-addperson-title">
-  <div class="ll-modal">
-    <div class="ll-modal-header">
-      <div class="min-w-0">
-        <div class="ll-chip-eyebrow">Add a contributor</div>
-        <h2 class="text-[22px] font-bold tracking-tight text-wb-900" id="modal-addperson-title">Add someone to this project</h2>
-      </div>
-      <button type="button" class="ll-close" data-close="modal-addperson" aria-label="Close" data-autofocus>
-        <i class="ph ph-x text-lg"></i>
-      </button>
-    </div>
-    <div class="ll-modal-body">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="ll-label" for="addperson-name">Name</label>
-          <input type="text" id="addperson-name" class="ll-field" placeholder="e.g., Wanda" />
-        </div>
-        <div>
-          <label class="ll-label" for="addperson-rel">Relationship <span class="ll-label-sub">(optional)</span></label>
-          <input type="text" id="addperson-rel" class="ll-field" placeholder="e.g., Aunt" />
-        </div>
-      </div>
-    </div>
-    <div class="ll-modal-footer">
-      <button type="button" class="ll-btn ll-btn-ghost" data-close="modal-addperson">Cancel</button>
-      <button type="button" class="ll-btn ll-btn-primary" data-addperson-save>Add Person</button>
-    </div>
-  </div>
-</div>
-
 <!-- DEMO -->
 <div class="ll-demo" role="group" aria-label="Demo controls">
   <span class="opacity-70">View</span>
@@ -521,7 +486,7 @@
         const label = c.isYou ? `${c.name} · You` : `${c.name}${c.relationship ? ' · ' + c.relationship : ''}`;
         return `<span class="ll-chip ll-chip-outline" tabindex="0">${LL.escapeHTML(label)}</span>`;
       }),
-      `<button type="button" class="ll-chip ll-chip-outline" data-open-addperson>+ Add person</button>`,
+      `<button type="button" class="ll-chip ll-chip-outline" data-open-invite><i class="ph ph-user-plus text-sm" aria-hidden="true"></i>Invite People</button>`,
     ].join(' ');
     chipsWrap.innerHTML = chipsHTML;
 
@@ -643,13 +608,13 @@
   // ---------- Modals: open ----------
   $$('[data-open-add]').forEach(b => b.addEventListener('click', () => openAddModal('story')));
   $$('[data-add-type]').forEach(b => b.addEventListener('click', () => openAddModal(b.dataset.addType)));
-  $$('[data-open-invite]').forEach(b => b.addEventListener('click', openInviteModal));
+  // Static [data-open-invite] buttons (empty-state nudge) go through the
+  // delegated handler below, same as the dynamic + Invite People chip.
   $$('[data-open-book]').forEach(b => b.addEventListener('click', openBookModal));
-  // Add person via delegation (chip is rendered dynamically)
+  // The + Invite People chip opens the Invite modal; delegated because
+  // the chip is rendered dynamically by render().
   document.addEventListener('click', (e) => {
-    if (e.target.closest('[data-open-addperson]')) {
-      LL.openModal('modal-addperson');
-    }
+    if (e.target.closest('[data-open-invite]')) openInviteModal();
   });
   $$('[data-close]').forEach(b => b.addEventListener('click', () => LL.closeModal(b.dataset.close)));
 
@@ -935,21 +900,6 @@
   });
   $('[data-book-buy]').addEventListener('click', () => {
     LL.toast('Heading to checkout… (prototype)', { icon: 'ph-shopping-bag' });
-  });
-
-  // ---------- Add person modal ----------
-  $('[data-addperson-save]').addEventListener('click', () => {
-    const name = $('#addperson-name').value.trim();
-    const rel  = $('#addperson-rel').value.trim();
-    if (!name) { LL.toast('Add a name', { icon: 'ph-warning' }); return; }
-    const p = LL.getProject(project.id);
-    p.contributors = [...(p.contributors || []), { id: `u-${LL.uuid().slice(0,6)}`, name, relationship: rel }];
-    LL.saveProject(p);
-    $('#addperson-name').value = '';
-    $('#addperson-rel').value = '';
-    LL.closeModal('modal-addperson');
-    render();
-    LL.toast(`Added ${name}`, { icon: 'ph-user-plus' });
   });
 
   // ---------- Signin ----------
