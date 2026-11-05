@@ -429,7 +429,7 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
 }
 .ll-photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* Voice memory — the waveform + play button. */
+/* Voice memory — play/pause button + a gutter-and-head scrubber. */
 .ll-voice {
   margin-top: 8px;
   display: flex; align-items: center; gap: 14px;
@@ -447,26 +447,46 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
   transition: transform .15s ease, background .15s ease;
 }
 .ll-voice-btn:hover { background: #3c4d69; transform: scale(1.04); }
-.ll-voice-wave {
-  display: flex; align-items: center; gap: 3px;
-  flex: 1 1 auto; min-width: 0; height: 32px;
-}
-.ll-voice-wave span {
-  display: inline-block;
-  width: 3px;
-  background: #a48849; border-radius: 2px;
-  animation: ll-wave 1.2s ease-in-out infinite;
-  opacity: .75;
-}
-.ll-voice[data-playing="true"] .ll-voice-wave span {
-  background: #293548;
-}
-.ll-voice:not([data-playing="true"]) .ll-voice-wave span { animation: none; }
 
-@keyframes ll-wave {
-  0%, 100% { height: 30%; }
-  50%      { height: 100%; }
+/* Scrubber — a thin gutter with a filled section up to the playhead
+   and a 12px circular head. Full click-and-drag scrubbing in JS. */
+.ll-voice-scrub {
+  position: relative;
+  flex: 1 1 auto; min-width: 0;
+  height: 32px;
+  display: flex; align-items: center;
+  cursor: pointer;
+  touch-action: none;
 }
+.ll-voice-track {
+  position: absolute; left: 0; right: 0; top: 50%;
+  height: 4px;
+  margin-top: -2px;
+  background: #ebe9e9;              /* warmBlack/200 */
+  border-radius: 999px;
+}
+.ll-voice-progress {
+  position: absolute; left: 0; top: 50%;
+  height: 4px;
+  margin-top: -2px;
+  background: #293548;              /* navy/700 */
+  border-radius: 999px;
+  width: 0%;
+}
+.ll-voice-head {
+  position: absolute; top: 50%;
+  width: 14px; height: 14px;
+  margin-left: -7px; margin-top: -7px;
+  background: #293548;              /* navy/700 */
+  border: 2px solid #fff;
+  border-radius: 999px;
+  left: 0%;
+  box-shadow: 0 1px 3px rgba(38,33,22,0.18);
+  transition: transform .12s ease;
+}
+.ll-voice-scrub:hover .ll-voice-head,
+.ll-voice[data-playing="true"] .ll-voice-head { transform: scale(1.15); }
+.ll-voice-scrub:focus-visible .ll-voice-head { transform: scale(1.15); }
 
 /* ============================ Modal / sheet ============================
    Desktop: centred dialog, 560px. Mobile: bottom sheet. One scrim. */

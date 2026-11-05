@@ -10,9 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js?v=9"></script>
-  <link rel="stylesheet" href="styles.css?v=9" />
-  <script src="app.js?v=9"></script>
+  <script src="tokens.js?v=10"></script>
+  <link rel="stylesheet" href="styles.css?v=10" />
+  <script src="app.js?v=10"></script>
 </head>
 <body>
 
@@ -589,19 +589,20 @@
       const d = (m.voice && m.voice.duration) || 90;
       const mm = String(Math.floor(d / 60)).padStart(2, '0');
       const ss = String(d % 60).padStart(2, '0');
-      // Natural-looking waveform, seeded per-memory so the bars are
-      // stable across re-renders. 56 bars read as voice rather than a
-      // music equalizer at the memory card's width.
-      const bars = LL.waveformHeights(m.id, 56).map((h, i) =>
-        `<span style="height:${h}%; animation-delay:${(i * 60) % 1400}ms"></span>`
-      ).join('');
       body = `
-        <div class="ll-voice" data-playing="false">
+        <div class="ll-voice" data-playing="false" data-duration="${d}">
           <button type="button" class="ll-voice-btn" aria-label="Play voice memory" data-voice-play>
             <i class="ph ph-play-fill text-lg" aria-hidden="true"></i>
           </button>
-          <div class="ll-voice-wave" aria-hidden="true">${bars}</div>
-          <div class="text-[13px] font-semibold text-wb-700 shrink-0" style="font-variant-numeric: tabular-nums;">${mm}:${ss}</div>
+          <div class="ll-voice-scrub" data-voice-scrub tabindex="0" role="slider"
+               aria-label="Playback position" aria-valuemin="0" aria-valuemax="${d}" aria-valuenow="0">
+            <div class="ll-voice-track"></div>
+            <div class="ll-voice-progress" style="width:0%"></div>
+            <div class="ll-voice-head" style="left:0%"></div>
+          </div>
+          <div class="text-[13px] font-semibold text-wb-700 shrink-0" style="font-variant-numeric: tabular-nums;">
+            <span data-voice-current>00:00</span> / ${mm}:${ss}
+          </div>
         </div>
         ${m.body ? `<p class="text-[14.5px] text-wb-700 mt-3 italic leading-relaxed">“${LL.nl2br(m.body)}”</p>` : ''}
       `;
@@ -610,16 +611,126 @@
     return `<article class="ll-memory" id="m-${m.id}">${head}${body}</article>`;
   }
 
-  // Delegate voice play
+  // ---------- Voice player (scrubber) ----------
+  // One shared state map keyed by the host .ll-voice element. Each
+  // memory on the page keeps its own position, so hitting Play on one
+  // doesn't jump another. Only one plays at a time — opening a second
+  // auto-pauses the first.
+  const voiceState = new WeakMap();
+  let voiceActive = null;
+
+  function voiceInit(host) {
+    let s = voiceState.get(host);
+    if (s) return s;
+    s = {
+      total: parseFloat(host.dataset.duration) || 60,
+      position: 0, playing: false, rafId: null, lastTick: 0,
+      els: {
+        btn:      host.querySelector('[data-voice-play]'),
+        scrub:    host.querySelector('[data-voice-scrub]'),
+        progress: host.querySelector('.ll-voice-progress'),
+        head:     host.querySelector('.ll-voice-head'),
+        current:  host.querySelector('[data-voice-current]'),
+      },
+    };
+    voiceState.set(host, s);
+    return s;
+  }
+
+  function voicePaint(host, s) {
+    const pct = s.total > 0 ? (s.position / s.total) * 100 : 0;
+    s.els.progress.style.width = pct + '%';
+    s.els.head.style.left     = pct + '%';
+    const secs = Math.max(0, Math.floor(s.position));
+    s.els.current.textContent =
+      String(Math.floor(secs / 60)).padStart(2, '0') + ':' + String(secs % 60).padStart(2, '0');
+    s.els.scrub.setAttribute('aria-valuenow', secs);
+  }
+
+  function voicePlay(host) {
+    if (voiceActive && voiceActive !== host) voicePause(voiceActive);
+    const s = voiceInit(host);
+    if (s.position >= s.total) s.position = 0;
+    s.playing = true;
+    s.lastTick = performance.now();
+    host.dataset.playing = 'true';
+    s.els.btn.innerHTML = '<i class="ph ph-pause-fill text-lg" aria-hidden="true"></i>';
+    s.els.btn.setAttribute('aria-label', 'Pause voice memory');
+    voiceActive = host;
+    const tick = (now) => {
+      if (!s.playing) return;
+      const dt = (now - s.lastTick) / 1000;
+      s.lastTick = now;
+      s.position = Math.min(s.total, s.position + dt);
+      voicePaint(host, s);
+      if (s.position >= s.total) {
+        voicePause(host);
+        // Let the end state read for a beat, then rewind to 0.
+        setTimeout(() => { s.position = 0; voicePaint(host, s); }, 600);
+        return;
+      }
+      s.rafId = requestAnimationFrame(tick);
+    };
+    s.rafId = requestAnimationFrame(tick);
+  }
+
+  function voicePause(host) {
+    const s = voiceState.get(host);
+    if (!s) return;
+    s.playing = false;
+    if (s.rafId) { cancelAnimationFrame(s.rafId); s.rafId = null; }
+    host.dataset.playing = 'false';
+    s.els.btn.innerHTML = '<i class="ph ph-play-fill text-lg" aria-hidden="true"></i>';
+    s.els.btn.setAttribute('aria-label', 'Play voice memory');
+    if (voiceActive === host) voiceActive = null;
+  }
+
+  // Play / pause button
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-voice-play]');
     if (!btn) return;
     const host = btn.closest('.ll-voice');
-    const playing = host.dataset.playing === 'true';
-    host.dataset.playing = String(!playing);
-    btn.innerHTML = playing
-      ? '<i class="ph ph-play-fill text-lg" aria-hidden="true"></i>'
-      : '<i class="ph ph-pause-fill text-lg" aria-hidden="true"></i>';
+    const s = voiceInit(host);
+    if (s.playing) voicePause(host); else voicePlay(host);
+  });
+
+  // Scrubbing — click to seek, drag to scrub. Works on mouse + touch
+  // via pointer events.
+  function scrubFromEvent(host, e) {
+    const s = voiceInit(host);
+    const rect = s.els.scrub.getBoundingClientRect();
+    const x = (e.clientX ?? (e.touches && e.touches[0] && e.touches[0].clientX)) || 0;
+    const pct = Math.max(0, Math.min(1, (x - rect.left) / rect.width));
+    s.position = pct * s.total;
+    if (s.playing) s.lastTick = performance.now();
+    voicePaint(host, s);
+  }
+  document.addEventListener('pointerdown', (e) => {
+    const scrub = e.target.closest('[data-voice-scrub]');
+    if (!scrub) return;
+    const host = scrub.closest('.ll-voice');
+    e.preventDefault();
+    scrubFromEvent(host, e);
+    const onMove = (ev) => scrubFromEvent(host, ev);
+    const onUp = () => {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+    };
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+  });
+
+  // Keyboard: ← / → seek 5s on a focused scrubber
+  document.addEventListener('keydown', (e) => {
+    const scrub = document.activeElement && document.activeElement.closest &&
+                  document.activeElement.closest('[data-voice-scrub]');
+    if (!scrub) return;
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    const host = scrub.closest('.ll-voice');
+    const s = voiceInit(host);
+    s.position = Math.max(0, Math.min(s.total, s.position + (e.key === 'ArrowRight' ? 5 : -5)));
+    voicePaint(host, s);
+    e.preventDefault();
   });
 
   // ---------- Modals: open ----------
