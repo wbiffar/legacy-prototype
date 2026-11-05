@@ -478,6 +478,15 @@
     escapeHTML, nl2br, splitLines, fmtRelative, uuid,
     // debug
     reseed: () => { localStorage.removeItem(K_SEED); seedIfNeeded(); },
-    reset:  () => { [K_PROJECTS, K_SEED, K_AUTH, K_NAME].forEach(k => localStorage.removeItem(k)); seedIfNeeded(); location.reload(); },
+    reset:  () => { [K_PROJECTS, K_SEED, K_AUTH, K_NAME].forEach(k => localStorage.removeItem(k)); seedIfNeeded(); location.href = './'; },
+    // Wipe projects and park the seed bumper so seedIfNeeded doesn't
+    // rebuild them on the next load. Lands the user on the landing page
+    // (the "start a new project" form) with no history behind them.
+    cleanSlate: () => {
+      localStorage.removeItem(K_PROJECTS);
+      sessionStorage.removeItem('ll-force-new');
+      write(K_SEED, SEED_VERSION);
+      location.href = './';
+    },
   };
 })();

@@ -10,9 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js?v=4"></script>
-  <link rel="stylesheet" href="styles.css?v=4" />
-  <script src="app.js?v=4"></script>
+  <script src="tokens.js?v=5"></script>
+  <link rel="stylesheet" href="styles.css?v=5" />
+  <script src="app.js?v=5"></script>
 </head>
 <body>
 
@@ -435,7 +435,9 @@
   <button type="button" data-set-auth="out" aria-pressed="false">Signed out</button>
   <button type="button" data-set-auth="in" aria-pressed="true">Signed in</button>
   <span class="opacity-40">·</span>
-  <button type="button" data-reset title="Reset the prototype">Reset</button>
+  <span class="opacity-70">Scenario</span>
+  <button type="button" data-reset title="Rebuild the two seeded projects">Seeded</button>
+  <button type="button" data-clean-slate title="Wipe projects and land on Start a new project">Clean slate</button>
 </div>
 
 <script>
@@ -1058,7 +1060,8 @@
 
   // ---------- Demo switch ----------
   $$('[data-set-auth]').forEach(b => b.addEventListener('click', () => { LL.setAuth(b.dataset.setAuth); syncAuth(); }));
-  $('[data-reset]').addEventListener('click', () => { if (confirm('Reset the prototype and clear all saved projects?')) LL.reset(); });
+  $('[data-reset]').addEventListener('click', () => LL.reset());
+  $('[data-clean-slate]').addEventListener('click', () => LL.cleanSlate());
 
   // ---------- Deep link to open modal via query ----------
   // Lets us jump straight to a modal after a guest returns.
