@@ -10,9 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js?v=10"></script>
-  <link rel="stylesheet" href="styles.css?v=10" />
-  <script src="app.js?v=10"></script>
+  <script src="tokens.js?v=11"></script>
+  <link rel="stylesheet" href="styles.css?v=11" />
+  <script src="app.js?v=11"></script>
 </head>
 <body>
 
@@ -220,7 +220,7 @@
             <div class="text-[14px] text-wb-700 text-center">Record a voice memory or talk through a family recipe:</div>
             <div class="ll-rec-wave" data-rec-wave aria-hidden="true"></div>
             <button type="button" class="ll-rec-btn" data-rec-btn>
-              <i class="ph ph-microphone-fill text-lg" aria-hidden="true"></i>
+              <i class="ph-fill ph-microphone text-lg" aria-hidden="true"></i>
               <span data-rec-label>Start voice recording</span>
             </button>
             <div class="ll-rec-meta"><span data-rec-time>00:00</span> · <span data-rec-status>Not recording</span></div>
@@ -256,7 +256,7 @@
           </label>
           <!-- AI processing state, hidden by default. Shown after a recipe-card photo is attached -->
           <div class="bg-gold-50 border border-gold-200 rounded-xl p-4 flex items-center gap-3" data-recipe-ai hidden>
-            <span class="ll-add-icon" style="background:#f6e5b8;color:#85713e;"><i class="ph ph-sparkle-fill" aria-hidden="true"></i></span>
+            <span class="ll-add-icon" style="background:#f6e5b8;color:#85713e;"><i class="ph-fill ph-sparkle" aria-hidden="true"></i></span>
             <div class="min-w-0 flex-1">
               <div class="text-[14px] font-bold text-wb-900">Reading the card…</div>
               <div class="text-[13px] text-wb-700" data-recipe-ai-status>Matching handwriting against the recipe card format.</div>
@@ -422,7 +422,7 @@
     <div class="ll-modal-footer" data-book-footer>
       <button type="button" class="ll-btn ll-btn-ghost" data-close="modal-book">Cancel</button>
       <button type="button" class="ll-btn ll-btn-primary" data-book-create>
-        <i class="ph ph-sparkle-fill text-base" aria-hidden="true"></i>
+        <i class="ph-fill ph-sparkle text-base" aria-hidden="true"></i>
         <span>Create Keepsake Book</span>
       </button>
     </div>
@@ -592,7 +592,7 @@
       body = `
         <div class="ll-voice" data-playing="false" data-duration="${d}">
           <button type="button" class="ll-voice-btn" aria-label="Play voice memory" data-voice-play>
-            <i class="ph ph-play-fill text-lg" aria-hidden="true"></i>
+            <i class="ph-fill ph-play text-lg" aria-hidden="true"></i>
           </button>
           <div class="ll-voice-scrub" data-voice-scrub tabindex="0" role="slider"
                aria-label="Playback position" aria-valuemin="0" aria-valuemax="${d}" aria-valuenow="0">
@@ -654,7 +654,7 @@
     s.playing = true;
     s.lastTick = performance.now();
     host.dataset.playing = 'true';
-    s.els.btn.innerHTML = '<i class="ph ph-pause-fill text-lg" aria-hidden="true"></i>';
+    s.els.btn.innerHTML = '<i class="ph-fill ph-pause text-lg" aria-hidden="true"></i>';
     s.els.btn.setAttribute('aria-label', 'Pause voice memory');
     voiceActive = host;
     const tick = (now) => {
@@ -680,7 +680,7 @@
     s.playing = false;
     if (s.rafId) { cancelAnimationFrame(s.rafId); s.rafId = null; }
     host.dataset.playing = 'false';
-    s.els.btn.innerHTML = '<i class="ph ph-play-fill text-lg" aria-hidden="true"></i>';
+    s.els.btn.innerHTML = '<i class="ph-fill ph-play text-lg" aria-hidden="true"></i>';
     s.els.btn.setAttribute('aria-label', 'Play voice memory');
     if (voiceActive === host) voiceActive = null;
   }
@@ -1156,7 +1156,7 @@
       $('[data-book-footer]').hidden = true;
       LL.burstSparks($('[data-ready-host]'));
       btn.disabled = false;
-      btn.innerHTML = '<i class="ph ph-sparkle-fill text-base" aria-hidden="true"></i><span>Create Keepsake Book</span>';
+      btn.innerHTML = '<i class="ph-fill ph-sparkle text-base" aria-hidden="true"></i><span>Create Keepsake Book</span>';
     }, 1200);
   });
 
