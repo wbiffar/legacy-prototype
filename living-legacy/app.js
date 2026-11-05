@@ -429,6 +429,48 @@
       </svg>`;
   }
 
+  // ============================== Waveform ==============================
+  // A seeded "natural" audio waveform: three octaves of smoothed noise
+  // summed with falling amplitude, so each memory gets a stable,
+  // organic-looking bar pattern instead of the old sawtooth modulo. The
+  // seed keeps the same bars across re-renders of the same memory.
+  function waveformHeights(seedStr, count = 48) {
+    // FNV-like seeded RNG, then Mulberry32-ish mixer.
+    let h = 2166136261;
+    for (let i = 0; i < seedStr.length; i++) {
+      h ^= seedStr.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    const rand = () => {
+      h = Math.imul(h ^ (h >>> 13), 1274126177);
+      return ((h >>> 0) % 10000) / 10000;
+    };
+
+    // Smoothstep-interpolated octave of noise at a given sample spacing.
+    const octave = (step) => {
+      const samples = Math.ceil(count / step) + 2;
+      const seeds = Array.from({ length: samples }, rand);
+      return Array.from({ length: count }, (_, i) => {
+        const pos = i / step;
+        const base = Math.floor(pos);
+        const frac = pos - base;
+        const t = frac * frac * (3 - 2 * frac);
+        return seeds[base] * (1 - t) + seeds[base + 1] * t;
+      });
+    };
+
+    const slow = octave(12);  // overall shape
+    const mid  = octave(5);   // syllable-scale variation
+    const fast = octave(2);   // fine texture
+
+    return Array.from({ length: count }, (_, i) => {
+      const v = slow[i] * 0.55 + mid[i] * 0.3 + fast[i] * 0.15;
+      // Clamp into a nice visible range so no bar goes flat.
+      const clamped = Math.max(0.18, Math.min(1, v));
+      return Math.round(clamped * 100);
+    });
+  }
+
   // ============================== Sparks ==============================
   function burstSparks(host) {
     const sparks = document.createElement('div');
@@ -473,7 +515,7 @@
     getAuth, setAuth, getUserName, setUserName,
     // ui
     openModal, closeModal, closeTopModal,
-    toast, renderFakeQR, burstSparks, stagger,
+    toast, renderFakeQR, burstSparks, stagger, waveformHeights,
     // helpers
     escapeHTML, nl2br, splitLines, fmtRelative, uuid,
     // debug

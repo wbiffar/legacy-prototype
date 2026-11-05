@@ -10,9 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js?v=8"></script>
-  <link rel="stylesheet" href="styles.css?v=8" />
-  <script src="app.js?v=8"></script>
+  <script src="tokens.js?v=9"></script>
+  <link rel="stylesheet" href="styles.css?v=9" />
+  <script src="app.js?v=9"></script>
 </head>
 <body>
 
@@ -589,8 +589,11 @@
       const d = (m.voice && m.voice.duration) || 90;
       const mm = String(Math.floor(d / 60)).padStart(2, '0');
       const ss = String(d % 60).padStart(2, '0');
-      const bars = Array.from({length: 40}, (_, i) =>
-        `<span style="height:${20 + ((i * 7) % 70)}%; animation-delay:${(i * 60) % 1200}ms"></span>`
+      // Natural-looking waveform, seeded per-memory so the bars are
+      // stable across re-renders. 56 bars read as voice rather than a
+      // music equalizer at the memory card's width.
+      const bars = LL.waveformHeights(m.id, 56).map((h, i) =>
+        `<span style="height:${h}%; animation-delay:${(i * 60) % 1400}ms"></span>`
       ).join('');
       body = `
         <div class="ll-voice" data-playing="false">
