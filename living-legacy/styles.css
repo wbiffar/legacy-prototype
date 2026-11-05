@@ -261,11 +261,11 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
 .ll-accordion {
   background: #fff;
   border: 1px solid #dbdad7;
-  border-radius: 999px;
+  border-radius: 8px;
   overflow: hidden;
-  transition: border-radius .28s ease, background .2s ease;
+  transition: background .2s ease;
 }
-.ll-accordion[data-open="true"] { border-radius: 16px; background: #fff; }
+.ll-accordion[data-open="true"] { background: #fff; }
 .ll-accordion-toggle {
   width: 100%;
   display: flex; align-items: center; gap: 12px;
