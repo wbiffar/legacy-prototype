@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy Life Stories — Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0&family=PT+Serif:ital,wght@0,400;0,700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <script src="tokens.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js"></script>
+</head>
+<body>
+
+<a href="#ll-main" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:m-3 focus:rounded-full focus:bg-wb-900 focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-white">Skip to main content</a>
+
+<!-- HEADER -->
+<header class="ll-header">
+  <div class="max-w-[840px] mx-auto px-4 md:px-8 py-4 flex items-center gap-4">
+    <a href="./" class="shrink-0 inline-flex items-center gap-2 text-[15px] font-semibold text-wb-900 ll-tap">
+      <i class="ph ph-caret-left text-lg" aria-hidden="true"></i>
+      <span>Back to Start</span>
+    </a>
+    <div class="ml-auto flex items-center gap-2">
+      <button type="button" data-signin class="ll-btn ll-btn-ghost ll-btn-sm" data-auth-only="out">
+        <i class="ph ph-user-circle text-lg" aria-hidden="true"></i>
+        <span>Sign in or Create an Account</span>
+      </button>
+      <span class="ll-btn ll-btn-ghost ll-btn-sm" data-auth-only="in">
+        <i class="ph ph-user-circle text-lg" aria-hidden="true"></i>
+        <span>Hello, <span data-user-name>Wesley</span></span>
+      </span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main id="ll-main" class="ll-stage px-4 md:px-8 py-8 md:py-12">
+  <div class="max-w-[840px] mx-auto space-y-6">
+
+    <!-- Project header card -->
+    <section class="ll-card ll-card-pad" data-project-card>
+      <div class="flex items-start justify-between gap-4">
+        <div class="min-w-0">
+          <h1 class="text-[32px] md:text-[40px] font-bold tracking-tight text-wb-900 leading-tight" data-project-title>Project</h1>
+          <p class="text-[15px] text-wb-600 mt-1" data-project-for></p>
+        </div>
+        <button type="button" class="ll-tap shrink-0 w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900 bg-white" aria-label="Project settings" data-settings>
+          <i class="ph ph-sliders-horizontal text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Contributors row -->
+      <div class="mt-5 flex flex-wrap items-center gap-2" data-contributors></div>
+
+      <!-- Primary actions — only when there is at least one memory -->
+      <div class="mt-6 pt-6 border-t border-wb-200 flex flex-wrap gap-3" data-primary-actions hidden>
+        <button type="button" class="ll-btn ll-btn-primary" data-open-add>
+          <i class="ph ph-plus text-base" aria-hidden="true"></i>
+          <span>Add to Page</span>
+        </button>
+        <button type="button" class="ll-btn ll-btn-ghost" data-open-invite>
+          <i class="ph ph-user-plus text-base" aria-hidden="true"></i>
+          <span>Invite People</span>
+        </button>
+        <button type="button" class="ll-btn ll-btn-ghost" data-open-book>
+          <i class="ph ph-book-open text-base" aria-hidden="true"></i>
+          <span>Make a Book</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Empty state (shows when there are no memories yet) -->
+    <section class="ll-card ll-card-pad" data-empty-state hidden>
+      <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900 mb-2">Start adding to this project</h2>
+      <p class="text-[15px] text-wb-700 mb-5">Choose what you would like to add right now, or invite family and friends to add their own.</p>
+
+      <div class="ll-grid-add">
+        <button type="button" class="ll-add-card" data-add-type="story">
+          <span class="ll-add-icon"><i class="ph ph-pencil-simple" aria-hidden="true"></i></span>
+          <span class="block">
+            <span class="block text-[15px] font-bold text-wb-900">Write a story</span>
+            <span class="block text-[13px] text-wb-600 mt-0.5">A favorite memory, note, or milestone</span>
+          </span>
+        </button>
+        <button type="button" class="ll-add-card" data-add-type="recipe">
+          <span class="ll-add-icon"><i class="ph ph-forkknife" aria-hidden="true"></i></span>
+          <span class="block">
+            <span class="block text-[15px] font-bold text-wb-900">Add a recipe</span>
+            <span class="block text-[13px] text-wb-600 mt-0.5">Scan a card, type it, or talk about it</span>
+          </span>
+        </button>
+        <button type="button" class="ll-add-card" data-add-type="photo">
+          <span class="ll-add-icon"><i class="ph ph-image" aria-hidden="true"></i></span>
+          <span class="block">
+            <span class="block text-[15px] font-bold text-wb-900">Add a photo</span>
+            <span class="block text-[13px] text-wb-600 mt-0.5">Class pictures, snapshots, or keepsakes</span>
+          </span>
+        </button>
+        <button type="button" class="ll-add-card" data-add-type="voice">
+          <span class="ll-add-icon"><i class="ph ph-microphone" aria-hidden="true"></i></span>
+          <span class="block">
+            <span class="block text-[15px] font-bold text-wb-900">Record voice note</span>
+            <span class="block text-[13px] text-wb-600 mt-0.5">Tell a story out loud in your own voice</span>
+          </span>
+        </button>
+      </div>
+
+      <!-- Invite nudge when empty -->
+      <div class="mt-5 pt-5 border-t border-wb-200 flex items-center justify-between gap-3">
+        <p class="text-[14px] text-wb-700"><i class="ph ph-users-three text-base text-wb-500 mr-1" aria-hidden="true"></i>Have others help fill this page</p>
+        <button type="button" class="ll-btn ll-btn-ghost ll-btn-sm" data-open-invite>
+          <span>Invite People</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Memories feed -->
+    <section class="space-y-4" data-feed></section>
+
+    <!-- Make a book dark CTA (only when there is at least one memory) -->
+    <section class="ll-cta-dark" data-book-cta hidden>
+      <div>
+        <div class="ll-chip-eyebrow text-gold-300 !text-gold-400 opacity-80 !mb-1">Keepsake Book</div>
+        <div class="text-[22px] md:text-[26px] font-bold text-white leading-tight mb-1">Ready to turn this project into a printed book?</div>
+        <div class="text-[14px] text-wb-300 opacity-80" data-book-cta-sub></div>
+      </div>
+      <button type="button" class="ll-btn ll-btn-primary shrink-0 bg-white !text-wb-900 hover:!bg-gold-100" data-open-book>
+        <i class="ph ph-book-open text-base" aria-hidden="true"></i>
+        <span>Make a Book</span>
+      </button>
+    </section>
+
+  </div>
+</main>
+
+<!-- ====================================================================
+     MODAL — ADD TO PAGE (four tabs)
+     ==================================================================== -->
+<div class="ll-modal-wrap" id="modal-add" hidden role="dialog" aria-modal="true" aria-labelledby="modal-add-title">
+  <div class="ll-modal">
+    <div class="ll-modal-header">
+      <div class="min-w-0">
+        <div class="ll-chip-eyebrow"><span data-project-chip>ADD TO PROJECT</span></div>
+        <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900" id="modal-add-title">Add a memory to this page</h2>
+      </div>
+      <button type="button" class="ll-close" data-close="modal-add" aria-label="Close" data-autofocus>
+        <i class="ph ph-x text-lg"></i>
+      </button>
+    </div>
+
+    <div class="ll-modal-body">
+      <div class="mb-3">
+        <div class="text-[14px] font-bold text-wb-900 mb-2">What are you adding?</div>
+        <div class="ll-tabs" role="tablist" aria-label="Memory type" data-tabs>
+          <div class="ll-tabs-thumb" data-thumb></div>
+          <button type="button" role="tab" class="ll-tab" aria-selected="true"  data-tab="story"><i class="ph ph-pencil-simple" aria-hidden="true"></i>Story</button>
+          <button type="button" role="tab" class="ll-tab" aria-selected="false" data-tab="photo"><i class="ph ph-image" aria-hidden="true"></i>Photo</button>
+          <button type="button" role="tab" class="ll-tab" aria-selected="false" data-tab="voice"><i class="ph ph-microphone" aria-hidden="true"></i>Voice</button>
+          <button type="button" role="tab" class="ll-tab" aria-selected="false" data-tab="recipe"><i class="ph ph-forkknife" aria-hidden="true"></i>Recipe</button>
+        </div>
+      </div>
+
+      <!-- ============== Panel: Story ============== -->
+      <div class="ll-tabpanel" role="tabpanel" data-panel="story">
+        <div class="space-y-4">
+          <div>
+            <label class="ll-label" for="add-story-title">Headline or title</label>
+            <input type="text" id="add-story-title" class="ll-field" placeholder="e.g., Summer at the lake" />
+          </div>
+          <div>
+            <label class="ll-label" for="add-story-body">Story or memory</label>
+            <textarea id="add-story-body" class="ll-field" placeholder="Write the memory, funny moment, or paste a recipe here…"></textarea>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="ll-label" for="add-story-name">Shared by (Name)</label>
+              <input type="text" id="add-story-name" class="ll-field" placeholder="Your name" />
+            </div>
+            <div>
+              <label class="ll-label" for="add-story-rel">Relationship <span class="ll-label-sub">(optional)</span></label>
+              <input type="text" id="add-story-rel" class="ll-field" placeholder="e.g., Mom, Dad, Aunt Rosa" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== Panel: Photo ============== -->
+      <div class="ll-tabpanel" role="tabpanel" data-panel="photo" hidden>
+        <div class="space-y-4">
+          <label class="ll-drop" data-drop for="add-photo-file">
+            <span class="ll-add-icon"><i class="ph ph-upload-simple" aria-hidden="true"></i></span>
+            <span class="text-[14px] font-semibold text-wb-900">Upload a photo</span>
+            <span class="text-[13px] text-wb-500">PNG or JPG, up to 20 MB</span>
+            <input type="file" id="add-photo-file" accept="image/*" class="sr-only" data-photo-input />
+          </label>
+          <div>
+            <label class="ll-label" for="add-photo-caption">Caption</label>
+            <input type="text" id="add-photo-caption" class="ll-field" placeholder="e.g., Mom's 60th birthday at the beach" />
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="ll-label" for="add-photo-name">Shared by (Name)</label>
+              <input type="text" id="add-photo-name" class="ll-field" placeholder="Your name" />
+            </div>
+            <div>
+              <label class="ll-label" for="add-photo-rel">Relationship <span class="ll-label-sub">(optional)</span></label>
+              <input type="text" id="add-photo-rel" class="ll-field" placeholder="e.g., Dad, Aunt" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== Panel: Voice ============== -->
+      <div class="ll-tabpanel" role="tabpanel" data-panel="voice" hidden>
+        <div class="space-y-4">
+          <div class="ll-rec" data-recorder>
+            <div class="text-[14px] text-wb-700 text-center">Record a voice memory or talk through a family recipe:</div>
+            <div class="ll-rec-wave" data-rec-wave aria-hidden="true"></div>
+            <button type="button" class="ll-rec-btn" data-rec-btn>
+              <i class="ph ph-microphone-fill text-lg" aria-hidden="true"></i>
+              <span data-rec-label>Start voice recording</span>
+            </button>
+            <div class="ll-rec-meta"><span data-rec-time>00:00</span> · <span data-rec-status>Not recording</span></div>
+          </div>
+          <div>
+            <label class="ll-label" for="add-voice-title">Headline or title</label>
+            <input type="text" id="add-voice-title" class="ll-field" placeholder="e.g., Summer at the lake" />
+          </div>
+          <div>
+            <label class="ll-label" for="add-voice-body">Story or memory <span class="ll-label-sub">(optional transcript)</span></label>
+            <textarea id="add-voice-body" class="ll-field" placeholder="Write the memory, funny moment, or paste a recipe here…"></textarea>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="ll-label" for="add-voice-name">Shared by (Name)</label>
+              <input type="text" id="add-voice-name" class="ll-field" placeholder="Your name" />
+            </div>
+            <div>
+              <label class="ll-label" for="add-voice-rel">Relationship <span class="ll-label-sub">(optional)</span></label>
+              <input type="text" id="add-voice-rel" class="ll-field" placeholder="e.g., Mom, Dad, Aunt Rosa" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== Panel: Recipe ============== -->
+      <div class="ll-tabpanel" role="tabpanel" data-panel="recipe" hidden>
+        <div class="space-y-4">
+          <label class="ll-drop" data-drop data-recipe-drop for="add-recipe-photo">
+            <span class="ll-add-icon"><i class="ph ph-upload-simple" aria-hidden="true"></i></span>
+            <span class="text-[14px] font-semibold text-wb-900 text-center">Upload a photo of a recipe card or dish</span>
+            <input type="file" id="add-recipe-photo" accept="image/*" class="sr-only" data-recipe-input />
+          </label>
+          <!-- AI processing state, hidden by default. Shown after a recipe-card photo is attached -->
+          <div class="bg-gold-50 border border-gold-200 rounded-xl p-4 flex items-center gap-3" data-recipe-ai hidden>
+            <span class="ll-add-icon" style="background:#f6e5b8;color:#85713e;"><i class="ph ph-sparkle-fill" aria-hidden="true"></i></span>
+            <div class="min-w-0 flex-1">
+              <div class="text-[14px] font-bold text-wb-900">Reading the card…</div>
+              <div class="text-[13px] text-wb-700" data-recipe-ai-status>Matching handwriting against the recipe card format.</div>
+            </div>
+          </div>
+
+          <div>
+            <label class="ll-label" for="add-recipe-name">Recipe name</label>
+            <input type="text" id="add-recipe-name" class="ll-field" placeholder="e.g., Mom's Sunday Sauce" />
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="ll-label" for="add-recipe-ing">Ingredients <span class="ll-label-sub">(one per line)</span></label>
+              <textarea id="add-recipe-ing" class="ll-field" placeholder="2 cups flour…"></textarea>
+            </div>
+            <div>
+              <label class="ll-label" for="add-recipe-dir">Directions <span class="ll-label-sub">(one step per line)</span></label>
+              <textarea id="add-recipe-dir" class="ll-field" placeholder="Preheat oven…"></textarea>
+            </div>
+          </div>
+          <div>
+            <label class="ll-label" for="add-recipe-story">Family story or note about this dish</label>
+            <textarea id="add-recipe-story" class="ll-field" placeholder="Write the memory, funny moment, or paste a recipe here…"></textarea>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="ll-label" for="add-recipe-shared">Shared by (Name)</label>
+              <input type="text" id="add-recipe-shared" class="ll-field" placeholder="e.g., Grandma Rose" />
+            </div>
+            <div>
+              <label class="ll-label" for="add-recipe-rel">Relationship <span class="ll-label-sub">(optional)</span></label>
+              <input type="text" id="add-recipe-rel" class="ll-field" placeholder="e.g., Grandmother" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ll-modal-footer">
+      <button type="button" class="ll-btn ll-btn-ghost" data-close="modal-add">Cancel</button>
+      <button type="button" class="ll-btn ll-btn-primary" data-save-memory>Save to Project</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     MODAL — INVITE PEOPLE
+     ==================================================================== -->
+<div class="ll-modal-wrap" id="modal-invite" hidden role="dialog" aria-modal="true" aria-labelledby="modal-invite-title">
+  <div class="ll-modal">
+    <div class="ll-modal-header">
+      <div class="min-w-0">
+        <div class="ll-chip-eyebrow">Share link or event QR code</div>
+        <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900" id="modal-invite-title">Invite others to <span data-invite-project-title>this project</span></h2>
+      </div>
+      <button type="button" class="ll-close" data-close="modal-invite" aria-label="Close" data-autofocus>
+        <i class="ph ph-x text-lg"></i>
+      </button>
+    </div>
+
+    <div class="ll-modal-body space-y-6">
+      <div>
+        <label class="ll-label" for="invite-message">What are you asking them to share?</label>
+        <textarea id="invite-message" class="ll-field" rows="4"></textarea>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <button type="button" class="ll-btn ll-btn-primary" data-copy="link">
+          <i class="ph ph-link text-base" aria-hidden="true"></i>
+          <span>Copy Link</span>
+        </button>
+        <button type="button" class="ll-btn ll-btn-primary" data-copy="text">
+          <i class="ph ph-chat-dots text-base" aria-hidden="true"></i>
+          <span>Copy for Text</span>
+        </button>
+      </div>
+
+      <div class="pt-2">
+        <div class="text-[14px] font-bold text-wb-900 mb-1">Inviting a group?</div>
+        <p class="text-[14px] text-wb-700 mb-4">You can print a QR code for anyone at an event to scan for an invitation.</p>
+
+        <button type="button" class="ll-btn ll-btn-ghost w-full" data-qr-generate>
+          <i class="ph ph-qr-code text-base" aria-hidden="true"></i>
+          <span>Generate QR Code</span>
+        </button>
+
+        <div class="mt-4 space-y-3" data-qr-wrap hidden>
+          <div class="bg-wb-50 border border-wb-300 rounded-xl p-5">
+            <div class="ll-qr" data-qr></div>
+            <p class="text-center text-[13px] text-wb-700 mt-3 mx-auto max-w-[360px]">Place this QR code at a party, memorial, wedding, or family dinner so guests can scan and add memories on their phone.</p>
+          </div>
+          <button type="button" class="ll-btn ll-btn-primary w-full">
+            <i class="ph ph-printer text-base" aria-hidden="true"></i>
+            <span>Print QR Code</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     MODAL — MAKE A BOOK
+     ==================================================================== -->
+<div class="ll-modal-wrap" id="modal-book" hidden role="dialog" aria-modal="true" aria-labelledby="modal-book-title">
+  <div class="ll-modal">
+    <div class="ll-modal-header">
+      <div class="min-w-0">
+        <div class="ll-chip-eyebrow">Make a Keepsake Book</div>
+        <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900" id="modal-book-title">Turn this page into a printed book</h2>
+      </div>
+      <button type="button" class="ll-close" data-close="modal-book" aria-label="Close" data-autofocus>
+        <i class="ph ph-x text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Step: preview + title -->
+    <div class="ll-modal-body space-y-5" data-book-step="preview">
+      <div class="ll-book-stage">
+        <div class="ll-book">
+          <div class="ll-book-eyebrow">Keepsake Book</div>
+          <div class="ll-book-title" data-book-title>Family Recipes</div>
+          <div class="ll-book-sub" data-book-sub>For Maria (Grandmother)</div>
+          <div class="ll-book-divider"></div>
+          <div class="ll-book-blurb">Stories, photos &amp; recipes<br>curated with love</div>
+          <div class="ll-book-meta" data-book-meta>0 memories · ~20 pages</div>
+        </div>
+      </div>
+      <div>
+        <label class="ll-label" for="book-title">Book cover title</label>
+        <input type="text" id="book-title" class="ll-field" />
+      </div>
+      <div class="bg-wb-50 border border-wb-300 rounded-xl p-4 flex items-start gap-3">
+        <i class="ph ph-books text-lg text-gold-700 mt-0.5" aria-hidden="true"></i>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center justify-between gap-3 mb-1">
+            <div class="text-[14px] font-bold text-wb-900">Included in this book (<span data-book-count>0</span> items)</div>
+            <div class="text-[13px] text-wb-600">Hardcover Keepsake</div>
+          </div>
+          <p class="text-[13px] text-wb-700" data-book-included-note>No memories added to this page yet. You can still preview the cover or add memories to the page first.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step: ready -->
+    <div class="ll-modal-body" data-book-step="ready" hidden>
+      <div class="ll-ready relative" data-ready-host>
+        <div class="ll-ready-check" aria-hidden="true"><i class="ph ph-check"></i></div>
+        <div class="ll-chip-eyebrow">Keepsake Book Ready</div>
+        <div class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900 mb-2" data-ready-title>Family Recipes</div>
+        <p class="text-[14px] text-wb-700 max-w-[420px] mx-auto">Your hardcover keepsake book layout with <span data-ready-count>2</span> memories (<span data-ready-pages>~20</span> pages) is ready. You can print a copy now or keep adding to the page over time.</p>
+        <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
+          <button type="button" class="ll-btn ll-btn-ghost" data-close="modal-book">Back to project</button>
+          <button type="button" class="ll-btn ll-btn-ghost" data-book-preview>Preview Book</button>
+          <button type="button" class="ll-btn ll-btn-primary" data-book-buy>
+            <i class="ph ph-shopping-bag text-base" aria-hidden="true"></i>
+            <span>Buy Book</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ll-modal-footer" data-book-footer>
+      <button type="button" class="ll-btn ll-btn-ghost" data-close="modal-book">Cancel</button>
+      <button type="button" class="ll-btn ll-btn-primary" data-book-create>
+        <i class="ph ph-sparkle-fill text-base" aria-hidden="true"></i>
+        <span>Create Keepsake Book</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     MODAL — INVITE ANOTHER CONTRIBUTOR CHIP TAP (simple add-person form)
+     ==================================================================== -->
+<div class="ll-modal-wrap" id="modal-addperson" hidden role="dialog" aria-modal="true" aria-labelledby="modal-addperson-title">
+  <div class="ll-modal">
+    <div class="ll-modal-header">
+      <div class="min-w-0">
+        <div class="ll-chip-eyebrow">Add a contributor</div>
+        <h2 class="text-[22px] font-bold tracking-tight text-wb-900" id="modal-addperson-title">Add someone to this project</h2>
+      </div>
+      <button type="button" class="ll-close" data-close="modal-addperson" aria-label="Close" data-autofocus>
+        <i class="ph ph-x text-lg"></i>
+      </button>
+    </div>
+    <div class="ll-modal-body">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="ll-label" for="addperson-name">Name</label>
+          <input type="text" id="addperson-name" class="ll-field" placeholder="e.g., Wanda" />
+        </div>
+        <div>
+          <label class="ll-label" for="addperson-rel">Relationship <span class="ll-label-sub">(optional)</span></label>
+          <input type="text" id="addperson-rel" class="ll-field" placeholder="e.g., Aunt" />
+        </div>
+      </div>
+    </div>
+    <div class="ll-modal-footer">
+      <button type="button" class="ll-btn ll-btn-ghost" data-close="modal-addperson">Cancel</button>
+      <button type="button" class="ll-btn ll-btn-primary" data-addperson-save>Add Person</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO -->
+<div class="ll-demo" role="group" aria-label="Demo controls">
+  <span class="opacity-70">View</span>
+  <button type="button" data-set-auth="out" aria-pressed="false">Signed out</button>
+  <button type="button" data-set-auth="in" aria-pressed="true">Signed in</button>
+  <span class="opacity-40">·</span>
+  <button type="button" data-reset title="Reset the prototype">Reset</button>
+</div>
+
+<script>
+/* ============================================================
+   Project page bindings.
+   ============================================================ */
+(function () {
+  const $  = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  // ---------- URL id ----------
+  const params = new URLSearchParams(location.search);
+  const projectId = params.get('id');
+  let project = projectId ? LL.getProject(projectId) : null;
+  if (!project) {
+    // Fall back to first project or redirect
+    const list = LL.allProjects();
+    if (list[0]) { location.replace(`project.html?id=${encodeURIComponent(list[0].id)}`); return; }
+    location.replace('./'); return;
+  }
+
+  // ---------- Auth sync ----------
+  function syncAuth() {
+    const state = LL.getAuth();
+    document.body.dataset.auth = state;
+    $$('[data-auth-only]').forEach(el => { el.hidden = el.dataset.authOnly !== state; });
+    $$('[data-set-auth]').forEach(b => b.setAttribute('aria-pressed', b.dataset.setAuth === state ? 'true' : 'false'));
+    $$('[data-user-name]').forEach(e => { e.textContent = LL.getUserName(); });
+  }
+
+  // ---------- Render project ----------
+  function render() {
+    project = LL.getProject(projectId);
+    // Header card
+    $('[data-project-title]').textContent = project.title;
+    const forLine = project.who === 'myself'
+      ? ''
+      : `For ${project.personName}${project.relationship ? ' · ' + project.relationship : ''}`;
+    $('[data-project-for]').textContent = forLine;
+    $('[data-project-for]').hidden = !forLine;
+
+    // Contributors
+    const chipsWrap = $('[data-contributors]');
+    const contributors = project.contributors || [];
+    const chipsHTML = [
+      `<span class="text-[14px] text-wb-700 pr-1">${project.who === 'group' ? 'For:' : 'Contributors:'}</span>`,
+      ...contributors.map(c => {
+        const label = c.isYou ? `${c.name} · You` : `${c.name}${c.relationship ? ' · ' + c.relationship : ''}`;
+        return `<span class="ll-chip ll-chip-outline" tabindex="0">${LL.escapeHTML(label)}</span>`;
+      }),
+      `<button type="button" class="ll-chip ll-chip-outline" data-open-addperson>+ Add person</button>`,
+    ].join(' ');
+    chipsWrap.innerHTML = chipsHTML;
+
+    // Feed
+    const memories = project.memories || [];
+    $('[data-empty-state]').hidden = memories.length > 0;
+    $('[data-primary-actions]').hidden = memories.length === 0;
+    $('[data-book-cta]').hidden = memories.length === 0;
+
+    const feed = $('[data-feed]');
+    feed.innerHTML = memories.map(renderMemory).join('');
+    LL.stagger(feed);
+
+    const count = memories.length;
+    const pages = Math.max(20, 6 + count * 7);
+    $('[data-book-cta-sub]').textContent = `Preview your hardcover book with all ${count} ${count === 1 ? 'memory' : 'memories'} on this page.`;
+    $('[data-book-count]').textContent = count;
+    $('[data-book-meta]').textContent = `${count} ${count === 1 ? 'memory' : 'memories'} · ~${pages} pages`;
+    $('[data-ready-count]').textContent = count;
+    $('[data-ready-pages]').textContent = `~${pages}`;
+    $('[data-book-included-note]').textContent = count === 0
+      ? 'No memories added to this page yet. You can still preview the cover or add memories to the page first.'
+      : `All ${count} memories above are included, in the order they were added. Reorder on the next step.`;
+
+    // Book cover title defaults to the project title
+    const bookTitleEl = $('#book-title');
+    if (!bookTitleEl.value) bookTitleEl.value = project.title;
+    $('[data-book-title]').textContent = bookTitleEl.value || project.title;
+    $('[data-book-sub]').textContent = project.who === 'myself'
+      ? `A story collected by ${project.contributors[0]?.name || 'Legacy'}`
+      : `For ${project.personName}${project.relationship ? ' (' + project.relationship + ')' : ''}`;
+
+    // Project chips used in modals
+    $('[data-project-chip]').textContent = `Add to ${project.title}`;
+    $('[data-invite-project-title]').textContent = project.title;
+    $('[data-ready-title]').textContent = bookTitleEl.value || project.title;
+  }
+
+  function renderMemory(m) {
+    const pill = {
+      story:  { label: 'Story',  icon: 'ph-pencil-simple' },
+      photo:  { label: 'Photo',  icon: 'ph-image' },
+      voice:  { label: 'Voice',  icon: 'ph-microphone' },
+      recipe: { label: 'Recipe', icon: 'ph-forkknife' },
+    }[m.type] || { label: m.type, icon: 'ph-book' };
+
+    const shared = m.sharedBy
+      ? `<span class="text-[14px] text-wb-700">Shared by ${LL.escapeHTML(m.sharedBy)}${m.relationship ? ' (' + LL.escapeHTML(m.relationship) + ')' : ''}</span>`
+      : '';
+
+    const head = `
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 flex-wrap">
+          <span class="ll-chip"><i class="ph ${pill.icon}" aria-hidden="true"></i>${pill.label}</span>
+          ${shared}
+        </div>
+        <span class="text-[13px] text-wb-500">${LL.fmtRelative(m.createdAt)}</span>
+      </div>
+      ${m.title ? `<h3 class="text-[20px] md:text-[22px] font-bold tracking-tight text-wb-900 mt-3">${LL.escapeHTML(m.title)}</h3>` : ''}
+    `;
+
+    let body = '';
+    if (m.type === 'story') {
+      body = `<p class="text-[15px] md:text-[16px] text-wb-700 mt-3 leading-relaxed">${LL.nl2br(m.body || '')}</p>`;
+    } else if (m.type === 'recipe' && m.recipe) {
+      const ing = (m.recipe.ingredients || []).map(i => `<div class="ll-recipe-row">${LL.escapeHTML(i)}</div>`).join('');
+      const dir = (m.recipe.directions || []).map((d, i) => `<div class="ll-recipe-row">${i + 1}. ${LL.escapeHTML(d)}</div>`).join('');
+      body = `
+        ${m.body ? `<p class="text-[15px] text-wb-700 mt-3 leading-relaxed">${LL.nl2br(m.body)}</p>` : ''}
+        <div class="ll-recipe-card mt-4">
+          <div class="flex items-center justify-between mb-1">
+            <div class="text-[15px] font-bold italic text-wb-900">${LL.escapeHTML(m.recipe.cardName || m.title || 'Recipe Card')}</div>
+            <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-wb-500">3×5 Recipe Card</div>
+          </div>
+          ${ing}
+          ${dir}
+        </div>
+        ${m.recipe.note ? `<p class="text-[13px] text-wb-500 mt-3">${LL.escapeHTML(m.recipe.note)}</p>` : ''}
+      `;
+    } else if (m.type === 'photo') {
+      body = `
+        <div class="ll-photo-frame mt-3">${m.photoDataUrl ? `<img src="${m.photoDataUrl}" alt="${LL.escapeHTML(m.title || '')}">` : '<i class="ph ph-image text-4xl"></i>'}</div>
+        ${m.body ? `<p class="text-[15px] text-wb-700 mt-3 leading-relaxed">${LL.nl2br(m.body)}</p>` : ''}
+      `;
+    } else if (m.type === 'voice') {
+      const d = (m.voice && m.voice.duration) || 90;
+      const mm = String(Math.floor(d / 60)).padStart(2, '0');
+      const ss = String(d % 60).padStart(2, '0');
+      const bars = Array.from({length: 40}, (_, i) =>
+        `<span style="height:${20 + ((i * 7) % 70)}%; animation-delay:${(i * 60) % 1200}ms"></span>`
+      ).join('');
+      body = `
+        <div class="ll-voice" data-playing="false">
+          <button type="button" class="ll-voice-btn" aria-label="Play voice memory" data-voice-play>
+            <i class="ph ph-play-fill text-lg" aria-hidden="true"></i>
+          </button>
+          <div class="ll-voice-wave" aria-hidden="true">${bars}</div>
+          <div class="text-[13px] font-semibold text-wb-700 shrink-0" style="font-variant-numeric: tabular-nums;">${mm}:${ss}</div>
+        </div>
+        ${m.body ? `<p class="text-[14.5px] text-wb-700 mt-3 italic leading-relaxed">“${LL.nl2br(m.body)}”</p>` : ''}
+      `;
+    }
+
+    return `<article class="ll-memory" id="m-${m.id}">${head}${body}</article>`;
+  }
+
+  // Delegate voice play
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-voice-play]');
+    if (!btn) return;
+    const host = btn.closest('.ll-voice');
+    const playing = host.dataset.playing === 'true';
+    host.dataset.playing = String(!playing);
+    btn.innerHTML = playing
+      ? '<i class="ph ph-play-fill text-lg" aria-hidden="true"></i>'
+      : '<i class="ph ph-pause-fill text-lg" aria-hidden="true"></i>';
+  });
+
+  // ---------- Modals: open ----------
+  $$('[data-open-add]').forEach(b => b.addEventListener('click', () => openAddModal('story')));
+  $$('[data-add-type]').forEach(b => b.addEventListener('click', () => openAddModal(b.dataset.addType)));
+  $$('[data-open-invite]').forEach(b => b.addEventListener('click', openInviteModal));
+  $$('[data-open-book]').forEach(b => b.addEventListener('click', openBookModal));
+  // Add person via delegation (chip is rendered dynamically)
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-open-addperson]')) {
+      LL.openModal('modal-addperson');
+    }
+  });
+  $$('[data-close]').forEach(b => b.addEventListener('click', () => LL.closeModal(b.dataset.close)));
+
+  // ---------- Add to Page modal: tabs ----------
+  const tabsRoot = $('[data-tabs]');
+  const thumb = $('[data-thumb]');
+  function sizeThumb() {
+    const active = $('.ll-tab[aria-selected="true"]', tabsRoot);
+    if (!active) return;
+    // offsetWidth of 0 means the modal is still hidden. Retry next frame
+    // so the thumb lands as soon as the tabs have layout. See
+    // memory.md 2026-09-11 — chasing an animation with a timer is the
+    // thing to avoid; measuring a real paint is the fix.
+    if (active.offsetWidth > 0) {
+      thumb.style.width  = `${active.offsetWidth}px`;
+      thumb.style.transform = `translateX(${active.offsetLeft - 4}px)`;
+    } else {
+      requestAnimationFrame(sizeThumb);
+    }
+  }
+  function activateTab(name) {
+    $$('.ll-tab', tabsRoot).forEach(t => t.setAttribute('aria-selected', t.dataset.tab === name ? 'true' : 'false'));
+    $$('[data-panel]').forEach(p => { p.hidden = p.dataset.panel !== name; });
+    sizeThumb();
+  }
+  $$('.ll-tab', tabsRoot).forEach(t => t.addEventListener('click', () => activateTab(t.dataset.tab)));
+  window.addEventListener('resize', sizeThumb);
+
+  function openAddModal(initialTab) {
+    activateTab(initialTab || 'story');
+    // Reset forms lightly
+    $$('#modal-add input, #modal-add textarea').forEach(i => { i.value = ''; });
+    $('[data-recipe-ai]').hidden = true;
+    $$('[data-drop]').forEach(d => {
+      d.dataset.attached = 'false';
+      d.innerHTML = d.dataset.recipeDrop !== undefined
+        ? `<span class="ll-add-icon"><i class="ph ph-upload-simple" aria-hidden="true"></i></span>
+           <span class="text-[14px] font-semibold text-wb-900 text-center">Upload a photo of a recipe card or dish</span>
+           <input type="file" id="add-recipe-photo" accept="image/*" class="sr-only" data-recipe-input />`
+        : `<span class="ll-add-icon"><i class="ph ph-upload-simple" aria-hidden="true"></i></span>
+           <span class="text-[14px] font-semibold text-wb-900">Upload a photo</span>
+           <span class="text-[13px] text-wb-500">PNG or JPG, up to 20 MB</span>
+           <input type="file" accept="image/*" class="sr-only" data-photo-input />`;
+    });
+    // Reset voice recorder
+    resetRecorder();
+    LL.openModal('modal-add');
+    // sizeThumb will walk forward one frame at a time until the modal
+    // is actually rendered, so the pill lands on the right tab.
+    requestAnimationFrame(sizeThumb);
+  }
+
+  // ---------- File uploads (preview) ----------
+  function handleFile(input, { label, aiFlow } = {}) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const drop = input.closest('[data-drop]');
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const src = ev.target.result;
+      drop.dataset.attached = 'true';
+      drop.innerHTML = `
+        <div class="ll-drop-thumb"><img src="${src}" alt="Attached photo"></div>
+        <div class="min-w-0 flex-1">
+          <div class="text-[14px] font-semibold text-wb-900">${label || 'Photo attached'}</div>
+          <div class="text-[13px] text-wb-500">Tap the Replace button to change it.</div>
+        </div>
+        <button type="button" class="ll-btn ll-btn-ghost ll-btn-sm" data-replace>Replace</button>
+      `;
+      // keep the input somewhere so we don't lose it
+      const kept = input.cloneNode(false);
+      drop.appendChild(kept);
+      kept.classList.add('sr-only');
+      kept.addEventListener('change', (e) => handleFile(e.target, { label, aiFlow }));
+      drop.querySelector('[data-replace]').addEventListener('click', () => kept.click());
+
+      if (aiFlow) {
+        const ai = $('[data-recipe-ai]');
+        const status = $('[data-recipe-ai-status]');
+        ai.hidden = false;
+        status.textContent = 'Matching handwriting against the recipe card format.';
+        // Simulated step-wise AI "processing" that fills in the fields
+        const steps = [
+          { delay:  900, status: 'Pulling out ingredients…', fields: {
+              name: 'Grandma\'s Lasagna',
+              ing:  '1 lb sweet Italian sausage\n1 lb ground beef\n1 can (28 oz) San Marzano tomatoes\n6 cloves garlic, sliced\n1 yellow onion, diced',
+          }},
+          { delay: 1800, status: 'Reading directions…', fields: {
+              dir: 'Brown meats in olive oil, then soften onion and garlic.\nAdd hand-crushed tomatoes and basil.\nSimmer sauce 40 minutes, then layer with pasta and cheese.\nBake at 375°F for 30 minutes.',
+          }},
+          { delay: 2600, status: 'Ready to review and save.', fields: {} },
+        ];
+        steps.forEach(({ delay, status: s, fields }) => {
+          setTimeout(() => {
+            status.textContent = s;
+            if (fields.name) $('#add-recipe-name').value = fields.name;
+            if (fields.ing)  $('#add-recipe-ing').value  = fields.ing;
+            if (fields.dir)  $('#add-recipe-dir').value  = fields.dir;
+          }, delay);
+        });
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  document.addEventListener('change', (e) => {
+    if (e.target.matches('[data-photo-input]'))  handleFile(e.target, { label: 'Photo attached' });
+    if (e.target.matches('[data-recipe-input]')) handleFile(e.target, { label: 'Photo attached (Tap to replace)', aiFlow: true });
+  });
+
+  // ---------- Voice recorder (simulated) ----------
+  const rec = {
+    timer: null,
+    seconds: 0,
+    active: false,
+  };
+  function formatT(s) { return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; }
+  function resetRecorder() {
+    rec.active = false;
+    rec.seconds = 0;
+    if (rec.timer) { clearInterval(rec.timer); rec.timer = null; }
+    const recBtn = $('[data-rec-btn]');
+    if (!recBtn) return;
+    recBtn.dataset.active = 'false';
+    $('[data-rec-label]').textContent = 'Start voice recording';
+    $('[data-rec-time]').textContent = '00:00';
+    $('[data-rec-status]').textContent = 'Not recording';
+    const wave = $('[data-rec-wave]');
+    wave.innerHTML = Array.from({length: 48}, () => '<span style="height:30%"></span>').join('');
+  }
+  function toggleRecord() {
+    rec.active = !rec.active;
+    const btn = $('[data-rec-btn]');
+    const label = $('[data-rec-label]');
+    const status = $('[data-rec-status]');
+    const wave = $('[data-rec-wave]');
+    btn.dataset.active = String(rec.active);
+    if (rec.active) {
+      label.textContent = 'Stop recording';
+      status.textContent = 'Recording…';
+      // Animate bars by randomising their heights on each tick
+      rec.timer = setInterval(() => {
+        rec.seconds++;
+        $('[data-rec-time]').textContent = formatT(rec.seconds);
+        wave.querySelectorAll('span').forEach(s => {
+          s.style.height = `${20 + Math.random() * 80}%`;
+          s.style.background = '#262116';
+          s.style.opacity = '0.85';
+        });
+      }, 120);
+    } else {
+      label.textContent = 'Re-record';
+      status.textContent = 'Saved';
+      if (rec.timer) { clearInterval(rec.timer); rec.timer = null; }
+      wave.querySelectorAll('span').forEach(s => s.style.background = '#a48849');
+    }
+  }
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-rec-btn]')) toggleRecord();
+  });
+
+  // ---------- Save memory ----------
+  $('[data-save-memory]').addEventListener('click', () => {
+    const activeTab = $('.ll-tab[aria-selected="true"]', tabsRoot).dataset.tab;
+    let memory = null;
+    const grab = (sel) => ($(sel) && $(sel).value.trim()) || '';
+
+    if (activeTab === 'story') {
+      const title = grab('#add-story-title');
+      const body  = grab('#add-story-body');
+      if (!title && !body) { LL.toast('Add a title or story first', { icon: 'ph-warning' }); return; }
+      memory = { type: 'story', title: title || 'Untitled story', body, sharedBy: grab('#add-story-name') || LL.getUserName(), relationship: grab('#add-story-rel') };
+    } else if (activeTab === 'photo') {
+      const drop = $('#modal-add [data-panel="photo"] [data-drop]');
+      const img = drop && drop.querySelector('img');
+      memory = { type: 'photo', title: grab('#add-photo-caption') || 'Photo', body: grab('#add-photo-caption'), photoDataUrl: img ? img.src : null, sharedBy: grab('#add-photo-name') || LL.getUserName(), relationship: grab('#add-photo-rel') };
+      if (!img && !memory.body) { LL.toast('Upload a photo or add a caption', { icon: 'ph-warning' }); return; }
+    } else if (activeTab === 'voice') {
+      const title = grab('#add-voice-title');
+      const body = grab('#add-voice-body');
+      const dur = Math.max(10, rec.seconds || 45);
+      memory = { type: 'voice', title: title || 'Voice note', body, voice: { duration: dur }, sharedBy: grab('#add-voice-name') || LL.getUserName(), relationship: grab('#add-voice-rel') };
+    } else if (activeTab === 'recipe') {
+      const name = grab('#add-recipe-name');
+      const ing  = LL.splitLines(grab('#add-recipe-ing'));
+      const dir  = LL.splitLines(grab('#add-recipe-dir'));
+      if (!name && ing.length === 0) { LL.toast('Name the recipe to save it', { icon: 'ph-warning' }); return; }
+      memory = {
+        type: 'recipe',
+        title: name || 'Recipe',
+        body: grab('#add-recipe-story'),
+        sharedBy: grab('#add-recipe-shared') || LL.getUserName(),
+        relationship: grab('#add-recipe-rel'),
+        recipe: { cardName: name, ingredients: ing, directions: dir, note: 'Memory saved to ' + project.title + '.' },
+      };
+    }
+
+    const saved = LL.addMemory(project.id, memory);
+    LL.closeModal('modal-add');
+    render();
+    LL.toast('Memory added', { icon: 'ph-check-circle' });
+
+    // Scroll the new memory into view with a soft highlight
+    setTimeout(() => {
+      const el = document.getElementById(`m-${saved.id}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.animate(
+          [
+            { boxShadow: '0 0 0 2px rgba(220,176,94,0.6)' },
+            { boxShadow: '0 0 0 2px rgba(220,176,94,0)' },
+          ],
+          { duration: 1800, easing: 'ease-out' }
+        );
+      }
+    }, 280);
+  });
+
+  // ---------- Invite modal ----------
+  function openInviteModal() {
+    const p = project;
+    const defaultCopy = p.inviteMessage ||
+      `Help me put together "${p.title}". ${p.who === 'myself'
+        ? 'I\'m gathering stories and photos for my life story.'
+        : `I'm gathering stories and photos for ${p.personName}. Could you add a memory or two?`}`;
+    $('#invite-message').value = defaultCopy;
+    $('[data-qr-wrap]').hidden = true;
+    $('[data-qr-generate]').hidden = false;
+    LL.openModal('modal-invite');
+  }
+
+  $('[data-qr-generate]').addEventListener('click', () => {
+    const qrHost = $('[data-qr]');
+    qrHost.innerHTML = LL.renderFakeQR(`https://legacy.com/stories/${project.id}`);
+    $('[data-qr-wrap]').hidden = false;
+    $('[data-qr-generate]').hidden = true;
+  });
+
+  $$('[data-copy]').forEach(b => {
+    b.addEventListener('click', async () => {
+      const kind = b.dataset.copy;
+      const msg = $('#invite-message').value;
+      const url = `${location.origin}${location.pathname.replace(/project\.html$/, '')}guest.html?project=${encodeURIComponent(project.id)}`;
+      const payload = kind === 'link' ? url : `${msg}\n\n${url}`;
+      try {
+        await navigator.clipboard.writeText(payload);
+        LL.toast(kind === 'link' ? 'Link copied' : 'Message copied', { icon: 'ph-check' });
+      } catch {
+        LL.toast('Copied (prototype)', { icon: 'ph-check' });
+      }
+    });
+  });
+
+  // ---------- Book modal ----------
+  function openBookModal() {
+    $('[data-book-step="preview"]').hidden = false;
+    $('[data-book-step="ready"]').hidden = true;
+    $('[data-book-footer]').hidden = false;
+    LL.openModal('modal-book');
+  }
+
+  $('#book-title').addEventListener('input', (e) => {
+    $('[data-book-title]').textContent = e.target.value || project.title;
+    $('[data-ready-title]').textContent = e.target.value || project.title;
+  });
+
+  $('[data-book-create]').addEventListener('click', () => {
+    const btn = $('[data-book-create]');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ph ph-circle-notch animate-spin text-base" aria-hidden="true"></i><span>Laying out your book…</span>';
+    setTimeout(() => {
+      $('[data-book-step="preview"]').hidden = true;
+      $('[data-book-step="ready"]').hidden = false;
+      $('[data-book-footer]').hidden = true;
+      LL.burstSparks($('[data-ready-host]'));
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ph ph-sparkle-fill text-base" aria-hidden="true"></i><span>Create Keepsake Book</span>';
+    }, 1200);
+  });
+
+  $('[data-book-preview]').addEventListener('click', () => {
+    LL.toast('Preview coming soon in the live product', { icon: 'ph-eye' });
+  });
+  $('[data-book-buy]').addEventListener('click', () => {
+    LL.toast('Heading to checkout… (prototype)', { icon: 'ph-shopping-bag' });
+  });
+
+  // ---------- Add person modal ----------
+  $('[data-addperson-save]').addEventListener('click', () => {
+    const name = $('#addperson-name').value.trim();
+    const rel  = $('#addperson-rel').value.trim();
+    if (!name) { LL.toast('Add a name', { icon: 'ph-warning' }); return; }
+    const p = LL.getProject(project.id);
+    p.contributors = [...(p.contributors || []), { id: `u-${LL.uuid().slice(0,6)}`, name, relationship: rel }];
+    LL.saveProject(p);
+    $('#addperson-name').value = '';
+    $('#addperson-rel').value = '';
+    LL.closeModal('modal-addperson');
+    render();
+    LL.toast(`Added ${name}`, { icon: 'ph-user-plus' });
+  });
+
+  // ---------- Signin ----------
+  $$('[data-signin]').forEach(b => {
+    b.addEventListener('click', () => { LL.setAuth('in'); syncAuth(); LL.toast(`Welcome back, ${LL.getUserName()}`, { icon: 'ph-hand-waving' }); });
+  });
+
+  // ---------- Demo switch ----------
+  $$('[data-set-auth]').forEach(b => b.addEventListener('click', () => { LL.setAuth(b.dataset.setAuth); syncAuth(); }));
+  $('[data-reset]').addEventListener('click', () => { if (confirm('Reset the prototype and clear all saved projects?')) LL.reset(); });
+
+  // ---------- Deep link to open modal via query ----------
+  // Lets us jump straight to a modal after a guest returns.
+  const openQuery = params.get('open');
+  if (openQuery === 'book') setTimeout(openBookModal, 300);
+  if (openQuery === 'invite') setTimeout(openInviteModal, 300);
+  if (openQuery === 'add') setTimeout(() => openAddModal('story'), 300);
+
+  // ---------- Init ----------
+  syncAuth();
+  render();
+})();
+</script>
+</body>
+</html>
