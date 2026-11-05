@@ -479,12 +479,15 @@
     // debug
     reseed: () => { localStorage.removeItem(K_SEED); seedIfNeeded(); },
     reset:  () => { [K_PROJECTS, K_SEED, K_AUTH, K_NAME].forEach(k => localStorage.removeItem(k)); seedIfNeeded(); location.href = './'; },
-    // Wipe projects and park the seed bumper so seedIfNeeded doesn't
-    // rebuild them on the next load. Lands the user on the landing page
-    // (the "start a new project" form) with no history behind them.
+    // Wipe projects, sign the demo user out, and park the seed bumper
+    // so seedIfNeeded doesn't rebuild them on the next load. Lands the
+    // user on the Living Legacy hero/sign-in screen — the true first-run
+    // experience — with no history behind them.
     cleanSlate: () => {
       localStorage.removeItem(K_PROJECTS);
+      write(K_AUTH, 'out');
       sessionStorage.removeItem('ll-force-new');
+      sessionStorage.removeItem('ll-past-landing');
       write(K_SEED, SEED_VERSION);
       location.href = './';
     },
