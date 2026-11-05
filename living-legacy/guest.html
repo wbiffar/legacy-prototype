@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add a memory — Legacy Life Stories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0&family=PT+Serif:ital,wght@0,400;0,700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <script src="tokens.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js"></script>
+</head>
+<body>
+
+<!-- HEADER — simpler, white. Guest page has no account by design.  -->
+<header class="ll-header">
+  <div class="max-w-[720px] mx-auto px-4 md:px-8 py-4 flex items-center justify-center">
+    <a href="#" data-back-to class="inline-flex items-center gap-2 text-[15px] font-semibold text-wb-900 ll-tap">
+      <i class="ph ph-caret-left text-lg" aria-hidden="true"></i>
+      <span>Back to <span data-project-name>this project</span></span>
+    </a>
+  </div>
+</header>
+
+<main class="ll-stage px-4 md:px-8 py-10 md:py-16">
+  <div class="max-w-[720px] mx-auto">
+
+    <!-- Active guest form -->
+    <section class="ll-card ll-card-pad" data-view="form">
+      <div class="ll-chip-eyebrow">Living Legacy Guest Page</div>
+      <h1 class="text-2xl md:text-[32px] font-bold tracking-tight text-wb-900 mb-2">Add to <span data-project-title>this page</span></h1>
+      <p class="text-[16px] text-wb-700 italic mb-6" data-invite-quote>"Could you share a memory or recipe for this project?"</p>
+
+      <div class="space-y-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="ll-label" for="g-name"><span class="text-wb-500 font-semibold">1.</span> Your Name</label>
+            <input type="text" id="g-name" class="ll-field" placeholder="e.g., Maria, Aunt Rosa" />
+          </div>
+          <div>
+            <label class="ll-label" for="g-rel">Your Relationship</label>
+            <input type="text" id="g-rel" class="ll-field" placeholder="e.g., Mom, Aunt, Leo's Grandma" />
+          </div>
+        </div>
+
+        <div>
+          <label class="ll-label" for="g-title"><span class="text-wb-500 font-semibold">2.</span> Title</label>
+          <input type="text" id="g-title" class="ll-field" placeholder="Sunday Sauce" />
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <label class="ll-label !mb-0" for="g-body"><span class="text-wb-500 font-semibold">3.</span> Write it out, add a photo, or talk by voice</label>
+            <div class="flex gap-2">
+              <button type="button" class="ll-chip ll-chip-outline" data-g-mode="photo" aria-pressed="false">
+                <i class="ph ph-image text-sm" aria-hidden="true"></i>Photo
+              </button>
+              <button type="button" class="ll-chip ll-chip-outline" data-g-mode="voice" aria-pressed="false">
+                <i class="ph ph-microphone text-sm" aria-hidden="true"></i>Voice
+              </button>
+            </div>
+          </div>
+
+          <!-- Text (default) -->
+          <div data-g-pane="text">
+            <textarea id="g-body" class="ll-field" rows="6" placeholder="Write out or talk through how you make Sunday Sauce…"></textarea>
+          </div>
+
+          <!-- Photo pane -->
+          <div data-g-pane="photo" hidden>
+            <label class="ll-drop" data-drop for="g-photo">
+              <span class="ll-add-icon"><i class="ph ph-upload-simple" aria-hidden="true"></i></span>
+              <span class="text-[14px] font-semibold text-wb-900">Upload a photo of the card or the dish</span>
+              <span class="text-[13px] text-wb-500">PNG or JPG, up to 20 MB</span>
+              <input type="file" id="g-photo" class="sr-only" accept="image/*" data-g-photo />
+            </label>
+            <textarea class="ll-field mt-3" id="g-photo-caption" rows="3" placeholder="Anything to say about this photo?"></textarea>
+          </div>
+
+          <!-- Voice pane (reuses the recorder look) -->
+          <div data-g-pane="voice" hidden>
+            <div class="ll-rec">
+              <div class="text-[14px] text-wb-700 text-center">Tap record and tell the story out loud:</div>
+              <div class="ll-rec-wave" data-g-wave aria-hidden="true"></div>
+              <button type="button" class="ll-rec-btn" data-g-rec-btn>
+                <i class="ph ph-microphone-fill text-lg" aria-hidden="true"></i>
+                <span data-g-rec-label>Start voice recording</span>
+              </button>
+              <div class="ll-rec-meta"><span data-g-rec-time>00:00</span> · <span data-g-rec-status>Not recording</span></div>
+            </div>
+            <textarea class="ll-field mt-3" id="g-voice-note" rows="3" placeholder="Add a short note (optional)"></textarea>
+          </div>
+        </div>
+
+        <div class="flex items-center flex-wrap gap-2 pt-1">
+          <button type="button" class="ll-chip ll-chip-outline" data-ai-format>
+            <i class="ph ph-sparkle-fill text-sm text-gold-700" aria-hidden="true"></i>
+            <span>Format into Recipe Card with AI</span>
+          </button>
+          <button type="button" class="ll-chip ll-chip-outline" data-sample>Try sample "Sunday Sauce"</button>
+        </div>
+
+        <!-- AI-formatted recipe card (shown after AI format click) -->
+        <div data-ai-card hidden>
+          <div class="ll-recipe-card">
+            <div class="flex items-center justify-between mb-1">
+              <div class="text-[15px] font-bold italic text-wb-900" data-ai-name>Sunday Sauce</div>
+              <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-wb-500">AI preview · you can edit</div>
+            </div>
+            <div data-ai-ing></div>
+            <div data-ai-dir></div>
+          </div>
+          <p class="text-[13px] text-wb-500 mt-2">AI-polished text is a draft. The organizer reviews it before anything is printed.</p>
+        </div>
+
+        <button type="button" class="ll-btn ll-btn-primary ll-btn-lg w-full" data-g-save>
+          Save to <span data-project-title-btn>this project</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Thank you state -->
+    <section class="ll-card ll-card-pad text-center" data-view="done" hidden>
+      <div class="ll-ready-check mx-auto" aria-hidden="true"><i class="ph ph-check text-2xl"></i></div>
+      <div class="ll-chip-eyebrow">Memory saved</div>
+      <h2 class="text-[26px] font-bold tracking-tight text-wb-900 mb-2">Thank you</h2>
+      <p class="text-[16px] text-wb-700 max-w-[480px] mx-auto">Your memory has been added to <b data-project-title></b>. The organizer will see it in their project. You can add another any time by scanning the QR code or using this link.</p>
+      <div class="flex items-center justify-center flex-wrap gap-3 mt-5">
+        <button type="button" class="ll-btn ll-btn-ghost" data-add-another>Add another</button>
+        <a href="#" class="ll-btn ll-btn-primary" data-view-project>View the project</a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+(function () {
+  const $  = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  const params = new URLSearchParams(location.search);
+  const projectId = params.get('project');
+  const project = projectId ? LL.getProject(projectId) : LL.allProjects()[0];
+  if (!project) { location.replace('./'); return; }
+
+  $$('[data-project-title], [data-project-title-btn], [data-project-name]').forEach(e => { e.textContent = project.title; });
+  if (project.inviteMessage) $('[data-invite-quote]').textContent = `"${project.inviteMessage}"`;
+  else $('[data-invite-quote]').textContent = project.who === 'myself'
+    ? '"Could you add a memory for my life story?"'
+    : `"Could you share a story, photo, or recipe for ${project.personName}?"`;
+
+  $('[data-back-to]').href = `project.html?id=${encodeURIComponent(project.id)}`;
+  $('[data-view-project]').href = `project.html?id=${encodeURIComponent(project.id)}`;
+
+  // Panes (text / photo / voice)
+  function setMode(mode) {
+    $$('[data-g-pane]').forEach(p => { p.hidden = p.dataset.gPane !== mode; });
+    $$('[data-g-mode]').forEach(b => b.setAttribute('aria-pressed', b.dataset.gMode === mode ? 'true' : 'false'));
+  }
+  setMode('text');
+  $$('[data-g-mode]').forEach(b => {
+    b.addEventListener('click', () => {
+      const cur = b.getAttribute('aria-pressed') === 'true';
+      setMode(cur ? 'text' : b.dataset.gMode);
+    });
+  });
+
+  // Photo upload
+  $('[data-g-photo]').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const drop = e.target.closest('[data-drop]');
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      drop.dataset.attached = 'true';
+      drop.innerHTML = `
+        <div class="ll-drop-thumb"><img src="${ev.target.result}" alt="Attached photo"></div>
+        <div class="min-w-0 flex-1">
+          <div class="text-[14px] font-semibold text-wb-900">Photo attached</div>
+          <div class="text-[13px] text-wb-500">Tap Replace to pick another.</div>
+        </div>
+        <button type="button" class="ll-btn ll-btn-ghost ll-btn-sm" data-replace>Replace</button>
+      `;
+      const kept = document.createElement('input');
+      kept.type = 'file'; kept.accept = 'image/*'; kept.className = 'sr-only';
+      kept.dataset.gPhoto = '';
+      drop.appendChild(kept);
+      kept.addEventListener('change', (ev2) => $('[data-g-photo]').dispatchEvent(new Event('change')));
+      drop.querySelector('[data-replace]').addEventListener('click', () => kept.click());
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Voice recorder (same as the main modal's)
+  const rec = { timer: null, seconds: 0, active: false };
+  function fmt(s) { return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; }
+  $('[data-g-wave]').innerHTML = Array.from({length: 48}, () => '<span style="height:30%"></span>').join('');
+  $('[data-g-rec-btn]').addEventListener('click', () => {
+    rec.active = !rec.active;
+    const btn = $('[data-g-rec-btn]');
+    btn.dataset.active = String(rec.active);
+    $('[data-g-rec-label]').textContent = rec.active ? 'Stop recording' : (rec.seconds ? 'Re-record' : 'Start voice recording');
+    $('[data-g-rec-status]').textContent = rec.active ? 'Recording…' : (rec.seconds ? 'Saved' : 'Not recording');
+    const wave = $('[data-g-wave]');
+    if (rec.active) {
+      rec.timer = setInterval(() => {
+        rec.seconds++;
+        $('[data-g-rec-time]').textContent = fmt(rec.seconds);
+        wave.querySelectorAll('span').forEach(s => {
+          s.style.height = `${20 + Math.random() * 80}%`;
+          s.style.background = '#262116';
+        });
+      }, 120);
+    } else {
+      clearInterval(rec.timer); rec.timer = null;
+      wave.querySelectorAll('span').forEach(s => s.style.background = '#a48849');
+    }
+  });
+
+  // Sample
+  $('[data-sample]').addEventListener('click', () => {
+    setMode('text');
+    $('#g-title').value = 'Sunday Sauce';
+    $('#g-body').value = "Brown Italian sausage and pork ribs in olive oil. Add garlic and onion, then tomato paste and three cans of hand-crushed San Marzano tomatoes. Season with salt, pepper, basil. Simmer three hours on low. Dip warm bread before dinner (you have to!).";
+    $('#g-name').value = $('#g-name').value || 'Maria';
+    $('#g-rel').value  = $('#g-rel').value  || 'Grandmother';
+    LL.toast('Sample loaded', { icon: 'ph-sparkle' });
+  });
+
+  // AI format — turns the free text / voice transcript into a structured recipe card
+  function pseudoAIFormat() {
+    const raw = ($('#g-body').value || $('#g-photo-caption').value || $('#g-voice-note').value || '').trim();
+    const lines = raw.split(/\.\s+|\n+/).map(s => s.trim()).filter(Boolean);
+    const ing = lines.slice(0, Math.max(2, Math.ceil(lines.length / 2)));
+    const dir = lines.slice(Math.ceil(lines.length / 2));
+    $('[data-ai-name]').textContent = $('#g-title').value || 'Recipe';
+    $('[data-ai-ing]').innerHTML = ing.map(i => `<div class="ll-recipe-row">${LL.escapeHTML(i)}</div>`).join('');
+    $('[data-ai-dir]').innerHTML = dir.map((d, i) => `<div class="ll-recipe-row">${i + 1}. ${LL.escapeHTML(d)}</div>`).join('');
+    $('[data-ai-card]').hidden = false;
+    $('[data-ai-card]').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  $('[data-ai-format]').addEventListener('click', () => {
+    if (!$('#g-body').value && !$('#g-photo-caption').value && !$('#g-voice-note').value) {
+      LL.toast('Write a few lines first, then I can format them', { icon: 'ph-info' });
+      return;
+    }
+    const btn = $('[data-ai-format]');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="ph ph-circle-notch animate-spin text-sm text-gold-700" aria-hidden="true"></i><span>Formatting…</span>';
+    setTimeout(() => { pseudoAIFormat(); btn.innerHTML = orig; }, 900);
+  });
+
+  // Save
+  $('[data-g-save]').addEventListener('click', () => {
+    const name = $('#g-name').value.trim() || 'Guest';
+    const rel  = $('#g-rel').value.trim();
+    const title = $('#g-title').value.trim() || 'Untitled memory';
+    const activePane = $$('[data-g-pane]').find(p => !p.hidden).dataset.gPane;
+
+    let memory;
+    if (activePane === 'photo') {
+      const img = $('[data-g-pane="photo"] [data-drop] img');
+      memory = { type: 'photo', title, body: $('#g-photo-caption').value.trim(), photoDataUrl: img ? img.src : null, sharedBy: name, relationship: rel };
+    } else if (activePane === 'voice') {
+      memory = { type: 'voice', title, body: $('#g-voice-note').value.trim(), voice: { duration: Math.max(30, rec.seconds || 48) }, sharedBy: name, relationship: rel };
+    } else {
+      memory = { type: 'story', title, body: $('#g-body').value.trim(), sharedBy: name, relationship: rel };
+    }
+    if (!memory.title && !memory.body && !memory.photoDataUrl && memory.type !== 'voice') {
+      LL.toast('Add a title or content first', { icon: 'ph-warning' });
+      return;
+    }
+    LL.addMemory(project.id, memory);
+    $('[data-view="form"]').hidden = true;
+    $('[data-view="done"]').hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Add another
+  $('[data-add-another]').addEventListener('click', () => {
+    $$('input, textarea').forEach(i => { i.value = ''; });
+    rec.seconds = 0; rec.active = false; if (rec.timer) clearInterval(rec.timer);
+    $('[data-g-rec-time]').textContent = '00:00';
+    $('[data-g-rec-status]').textContent = 'Not recording';
+    $('[data-g-rec-label]').textContent = 'Start voice recording';
+    setMode('text');
+    $('[data-view="done"]').hidden = true;
+    $('[data-view="form"]').hidden = false;
+    $('[data-ai-card]').hidden = true;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+})();
+</script>
+</body>
+</html>

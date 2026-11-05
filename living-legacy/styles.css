@@ -1,0 +1,785 @@
+/* Legacy Life Stories — Living Legacy prototype.
+
+   Structural CSS and motion only. Colour and type live in Tailwind token
+   classes in the markup. All custom classes are `ll-` prefixed so they
+   can't collide with Tailwind CDN utilities (memory.md, 2026-07-02 and
+   2026-09-11).
+
+   The prototype has to feel premium: this is a paid product where the
+   book is the deliverable, so every state change carries a small but
+   deliberate motion. Everything respects prefers-reduced-motion.        */
+
+/* ============================== Base ============================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* [hidden] has to override Tailwind's display utilities for all the
+   state toggling (memory.md, 2026-09-11). */
+[hidden] { display: none !important; }
+
+html, body { margin: 0; }
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: #262116;
+  background: #fbf7ef;         /* surface/page — gold-50 */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+img { display: block; max-width: 100%; }
+
+/* Focus ring: gold, generous. Older storytellers (PRD) and WCAG 2.2 AA. */
+button:focus-visible, a:focus-visible, input:focus-visible,
+textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible,
+label:focus-within {
+  outline: 2px solid #dcb05e;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 44x44 tap targets, like the rest of the prototypes. */
+.ll-tap { position: relative; }
+.ll-tap::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 44px; min-height: 44px;
+  width: 100%; height: 100%;
+}
+
+/* Keep selection colour on-brand. */
+::selection { background: #f6e5b8; color: #262116; }
+
+/* ========================== Page shell ==========================
+   Every page fades and lifts on first paint. The lift is tiny (6px)
+   — enough to notice without suggesting the page itself is moving. */
+.ll-stage { animation: ll-stage-in .42s cubic-bezier(.22,.61,.36,1) both; }
+@keyframes ll-stage-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Stagger child cards on first paint so a list reveals one card at a time.
+   The delays are set with --i inline. */
+.ll-stagger > * {
+  animation: ll-stage-in .36s cubic-bezier(.22,.61,.36,1) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+/* ============================= Header =============================
+   A thin white bar with a 1px warm-black/300 border. Sticks to the top
+   so the brand and the "back" control stay reachable while a long
+   project page is scrolled. */
+.ll-header {
+  position: sticky; top: 0; z-index: 40;
+  background: #fff;
+  border-bottom: 1px solid #dbdad7;
+}
+
+/* ============================= Cards =============================
+   White on gold. 1px warm-black/300 border and shadow-sm, same spec as
+   the newspaper template. Hover lifts a hair on the cards that are
+   actually clickable (the project rows, the memory type grid). */
+.ll-card {
+  background: #fff;
+  border: 1px solid #dbdad7;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px 0 rgba(38,33,22,0.08);
+}
+.ll-card-pad { padding: 28px; }
+@media (max-width: 640px) { .ll-card-pad { padding: 20px; } }
+
+.ll-clickcard {
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.ll-clickcard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -8px rgba(38,33,22,0.14), 0 2px 4px 0 rgba(38,33,22,0.06);
+  border-color: #c49e54;
+}
+.ll-clickcard:active { transform: translateY(0); }
+
+/* ============================= Buttons =============================
+   One pattern, variants by class. Big pill, fits the quiet, serious
+   tone the PRD asks for. */
+.ll-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px;
+  padding: 13px 22px;
+  min-height: 44px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform .14s ease, background .14s ease, box-shadow .14s ease, color .14s ease, border-color .14s ease;
+  white-space: nowrap;
+}
+.ll-btn:disabled { opacity: .45; cursor: not-allowed; }
+.ll-btn:active:not(:disabled) { transform: scale(.98); }
+
+.ll-btn-primary {
+  background: #262116; color: #fff;
+}
+.ll-btn-primary:hover:not(:disabled) { background: #3c3327; }
+
+.ll-btn-secondary {
+  background: #fff; color: #262116; border-color: #262116;
+}
+.ll-btn-secondary:hover:not(:disabled) { background: #fbfbfb; border-color: #262116; }
+
+.ll-btn-ghost {
+  background: transparent; color: #262116; border-color: #dbdad7;
+}
+.ll-btn-ghost:hover:not(:disabled) { border-color: #262116; background: #fbfbfb; }
+
+.ll-btn-navy {
+  background: #293548; color: #fff;
+}
+.ll-btn-navy:hover:not(:disabled) { background: #3c4d69; }
+
+.ll-btn-sm { padding: 8px 16px; font-size: 14px; min-height: 36px; }
+.ll-btn-lg { padding: 16px 28px; font-size: 16px; min-height: 52px; }
+
+/* The dark banner CTA that closes the project page. */
+.ll-cta-dark {
+  background: #262116; color: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px;
+}
+@media (max-width: 640px) {
+  .ll-cta-dark { flex-direction: column; align-items: stretch; }
+}
+
+/* ============================= Inputs =============================
+   Match the DS: 1px warm-black/300 border, navy/500 on focus. 16px
+   font to avoid iOS zoom. */
+.ll-field {
+  display: block; width: 100%;
+  padding: 12px 16px;
+  min-height: 48px;
+  background: #fff;
+  color: #262116;
+  border: 1px solid #dbdad7;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.4;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.ll-field::placeholder { color: #afadaa; }
+.ll-field:focus {
+  outline: none;
+  border-color: #42608f;
+  box-shadow: 0 0 0 3px rgba(66, 96, 143, 0.14);
+}
+textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
+
+.ll-label {
+  display: block;
+  font-size: 14px; font-weight: 600; color: #262116;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+.ll-label-sub { font-weight: 400; color: #807e7a; }
+
+.ll-help {
+  font-size: 13px; color: #63605b; margin-top: 6px;
+}
+
+/* =========================== Who-selector ===========================
+   Three cards in a row. Keyboard and click both work. The picked card
+   lifts, the icon tile gains a gold frame. */
+.ll-who {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 640px) { .ll-who { grid-template-columns: 1fr; } }
+
+.ll-who-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
+  padding: 18px;
+  min-height: 118px;
+  background: #fff;
+  border: 1px solid #dbdad7;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.ll-who-card:hover { border-color: #85713e; background: #fbfbfb; }
+.ll-who-card[aria-pressed="true"] {
+  border-color: #262116;
+  background: #fff;
+  box-shadow: 0 4px 10px -4px rgba(38,33,22,0.14);
+}
+.ll-who-icon {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #f6e5b8;
+  color: #85713e;
+  border-radius: 8px;
+}
+.ll-who-card[aria-pressed="true"] .ll-who-icon {
+  background: #262116; color: #fff;
+}
+
+/* ============================ Pill chips ============================ */
+.ll-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px;
+  min-height: 32px;
+  background: #f6e5b8;
+  color: #655b34;
+  border-radius: 999px;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.ll-chip-outline {
+  background: #fff; color: #262116;
+  border: 1px solid #dbdad7;
+  cursor: pointer;
+  transition: border-color .14s ease, background .14s ease;
+}
+.ll-chip-outline:hover { background: #fbfbfb; border-color: #262116; }
+
+.ll-chip-eyebrow {
+  display: inline-block;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+  color: #807e7a;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* ============================ Accordion ============================
+   grid-template-rows trick so the height animates to content without
+   magic numbers. The whole accordion is a button wrapping its label
+   plus a <div> wrapping its content. */
+.ll-accordion {
+  background: #fff;
+  border: 1px solid #dbdad7;
+  border-radius: 999px;
+  overflow: hidden;
+  transition: border-radius .28s ease, background .2s ease;
+}
+.ll-accordion[data-open="true"] { border-radius: 16px; background: #fff; }
+.ll-accordion-toggle {
+  width: 100%;
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 20px;
+  background: transparent; border: 0; cursor: pointer; font: inherit;
+  color: #262116; text-align: left;
+}
+.ll-accordion-toggle .ll-chev { transition: transform .3s ease; margin-left: auto; }
+.ll-accordion[data-open="true"] .ll-chev { transform: rotate(180deg); }
+.ll-accordion-content {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows .32s cubic-bezier(.22,.61,.36,1);
+}
+.ll-accordion-content > * { overflow: hidden; min-height: 0; }
+.ll-accordion[data-open="true"] .ll-accordion-content { grid-template-rows: 1fr; }
+.ll-accordion-inner { padding: 4px 20px 20px; border-top: 1px solid #ebe9e9; margin-top: -1px; }
+
+/* ============================= Tabs =============================
+   Segmented control inside the Add to Page modal. The thumb is a white
+   pill that slides from one tab to the next. */
+.ll-tabs {
+  position: relative;
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+  background: #f6f6f6;
+  border-radius: 999px;
+  padding: 4px;
+  overflow: hidden;
+}
+.ll-tabs-thumb {
+  position: absolute; top: 4px; bottom: 4px;
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: 0 1px 2px 0 rgba(38,33,22,0.08);
+  transition: transform .3s cubic-bezier(.22,.61,.36,1), width .3s cubic-bezier(.22,.61,.36,1);
+  pointer-events: none;
+}
+.ll-tab {
+  position: relative; z-index: 1;
+  padding: 10px 14px;
+  min-height: 40px;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px;
+  font: inherit; font-size: 14px; font-weight: 600;
+  color: #63605b;
+  background: transparent; border: 0; cursor: pointer;
+  transition: color .22s ease;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.ll-tab[aria-selected="true"] { color: #262116; }
+
+/* ============================ Memory grid ============================
+   The 2x2 "Start adding" grid. Big tap targets, same treatment as the
+   DS card buttons. */
+.ll-grid-add {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 480px) { .ll-grid-add { grid-template-columns: 1fr; } }
+
+.ll-add-card {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 18px;
+  background: #fff;
+  border: 1px solid #dbdad7;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.ll-add-card:hover {
+  transform: translateY(-2px);
+  border-color: #85713e;
+  box-shadow: 0 8px 16px -8px rgba(38,33,22,0.14);
+}
+.ll-add-icon {
+  flex-shrink: 0;
+  width: 44px; height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #f6e5b8; color: #85713e;
+  border-radius: 10px;
+  font-size: 20px;
+}
+
+/* ======================== Memory feed cards ======================== */
+.ll-memory {
+  background: #fff;
+  border: 1px solid #dbdad7;
+  border-radius: 16px;
+  padding: 28px;
+  animation: ll-memory-in .5s cubic-bezier(.22,.61,.36,1) both;
+}
+@media (max-width: 640px) { .ll-memory { padding: 20px; } }
+
+@keyframes ll-memory-in {
+  from { opacity: 0; transform: translateY(16px) scale(.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* The small recipe card inside a Recipe memory — looks like an index
+   card with a soft shadow and a top accent line. */
+.ll-recipe-card {
+  background: #fff;
+  border: 1px solid #dbdad7;
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-top: 4px;
+  position: relative;
+  box-shadow: 0 1px 2px 0 rgba(38,33,22,0.06);
+}
+.ll-recipe-card::before {
+  content: '';
+  position: absolute; left: 20px; right: 20px; top: 10px; height: 1px;
+  background: #e2ba60;
+  opacity: .6;
+}
+.ll-recipe-row {
+  display: grid; grid-template-columns: 1fr;
+  padding: 10px 0;
+  border-bottom: 1px dashed #ebe9e9;
+  font-size: 14.5px; color: #514d45;
+}
+.ll-recipe-row:last-child { border-bottom: 0; }
+
+/* Photo memory — the image carries a warm border frame. */
+.ll-photo-frame {
+  margin-top: 8px;
+  background: #fbfbfb;
+  border: 1px solid #dbdad7;
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  display: flex; align-items: center; justify-content: center;
+  color: #807e7a;
+}
+.ll-photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Voice memory — the waveform + play button. */
+.ll-voice {
+  margin-top: 8px;
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px;
+  background: #fbfbfb;
+  border: 1px solid #dbdad7;
+  border-radius: 12px;
+}
+.ll-voice-btn {
+  flex-shrink: 0;
+  width: 44px; height: 44px; border-radius: 999px;
+  background: #262116; color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; border: 0;
+  transition: transform .15s ease, background .15s ease;
+}
+.ll-voice-btn:hover { background: #3c3327; transform: scale(1.04); }
+.ll-voice-wave {
+  display: flex; align-items: center; gap: 3px;
+  flex: 1 1 auto; min-width: 0; height: 32px;
+}
+.ll-voice-wave span {
+  display: inline-block;
+  width: 3px;
+  background: #a48849; border-radius: 2px;
+  animation: ll-wave 1.2s ease-in-out infinite;
+  opacity: .75;
+}
+.ll-voice[data-playing="true"] .ll-voice-wave span {
+  background: #262116;
+}
+.ll-voice:not([data-playing="true"]) .ll-voice-wave span { animation: none; }
+
+@keyframes ll-wave {
+  0%, 100% { height: 30%; }
+  50%      { height: 100%; }
+}
+
+/* ============================ Modal / sheet ============================
+   Desktop: centred dialog, 560px. Mobile: bottom sheet. One scrim. */
+.ll-scrim {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(21, 27, 36, 0.55);
+  opacity: 0;
+  transition: opacity .32s ease;
+}
+.ll-scrim[data-open="true"] { opacity: 1; }
+
+.ll-modal-wrap {
+  position: fixed; inset: 0; z-index: 70;
+  display: flex; align-items: flex-end; justify-content: center;
+  pointer-events: none;
+}
+.ll-modal {
+  width: 100%;
+  max-height: 92dvh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  transform: translateY(100%);
+  transition: transform .34s cubic-bezier(.32,.72,0,1);
+  pointer-events: auto;
+  box-shadow: 0 -20px 40px -16px rgba(38,33,22,0.20);
+}
+.ll-modal[data-open="true"] { transform: translateY(0); }
+
+@media (min-width: 768px) {
+  .ll-modal-wrap { align-items: center; padding: 32px; }
+  .ll-modal {
+    max-width: 640px;
+    max-height: calc(100dvh - 64px);
+    border-radius: 20px;
+    transform: translateY(16px) scale(.97);
+    opacity: 0;
+    transition: transform .32s cubic-bezier(.22,.61,.36,1), opacity .22s ease;
+    box-shadow: 0 32px 64px -24px rgba(38,33,22,0.28);
+  }
+  .ll-modal[data-open="true"] { transform: none; opacity: 1; }
+}
+
+.ll-modal-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px;
+  padding: 24px 28px 16px;
+  border-bottom: 1px solid #ebe9e9;
+}
+.ll-modal-body { padding: 20px 28px; }
+.ll-modal-footer {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 28px 24px;
+  border-top: 1px solid #ebe9e9;
+  background: #fff;
+  position: sticky; bottom: 0;
+}
+@media (max-width: 640px) {
+  .ll-modal-header { padding: 20px 20px 14px; }
+  .ll-modal-body { padding: 16px 20px; }
+  .ll-modal-footer { padding: 14px 20px 18px; }
+}
+
+.ll-close {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  border-radius: 999px; border: 1px solid #dbdad7;
+  background: #fff; color: #262116;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background .14s ease, border-color .14s ease;
+}
+.ll-close:hover { background: #fbfbfb; border-color: #262116; }
+
+body[data-overlay="true"] { overflow: hidden; }
+
+/* ============================ Tab panel fade ============================ */
+.ll-tabpanel { animation: ll-fade-swap .28s ease both; }
+@keyframes ll-fade-swap {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ========================= Upload / drop area ========================= */
+.ll-drop {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px;
+  padding: 36px 20px;
+  border: 1.5px dashed #dbdad7;
+  border-radius: 14px;
+  background: #fbfbfb;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+.ll-drop:hover { border-color: #a48849; background: #fbf7ef; }
+.ll-drop[data-attached="true"] {
+  padding: 16px;
+  flex-direction: row; justify-content: flex-start;
+  background: #fff; border-style: solid; border-color: #dbdad7;
+}
+
+.ll-drop-thumb {
+  width: 56px; height: 56px;
+  background: #ebe9e9;
+  border-radius: 8px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.ll-drop-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ============================ Voice recorder ============================ */
+.ll-rec {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #dbdad7;
+  border-radius: 14px;
+}
+.ll-rec-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 24px; min-height: 48px;
+  background: #262116; color: #fff;
+  border: 0; border-radius: 999px;
+  cursor: pointer;
+  font: inherit; font-size: 15px; font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: background .15s ease, transform .15s ease;
+  position: relative;
+}
+.ll-rec-btn:hover { background: #3c3327; }
+.ll-rec-btn[data-active="true"] { background: #c24c62; }
+.ll-rec-btn[data-active="true"]::before {
+  content: '';
+  position: absolute; inset: -6px;
+  border-radius: 999px;
+  border: 2px solid rgba(194, 76, 98, .35);
+  animation: ll-pulse 1.4s ease-out infinite;
+}
+@keyframes ll-pulse {
+  0%   { transform: scale(.95); opacity: .8; }
+  70%  { transform: scale(1.12); opacity: 0; }
+  100% { transform: scale(1.15); opacity: 0; }
+}
+
+.ll-rec-wave {
+  display: flex; align-items: center; gap: 3px;
+  height: 48px;
+}
+.ll-rec-wave span {
+  display: inline-block;
+  width: 3px;
+  background: #a48849; border-radius: 2px;
+  opacity: .6;
+}
+
+.ll-rec-meta {
+  font-size: 13px; color: #807e7a;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================ Toast ============================ */
+.ll-toast-wrap {
+  position: fixed; left: 50%; bottom: 24px; z-index: 90;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none;
+}
+.ll-toast {
+  background: #262116; color: #fff;
+  padding: 12px 20px;
+  border-radius: 999px;
+  font-size: 14px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 10px;
+  box-shadow: 0 10px 24px -8px rgba(38,33,22,.3);
+  animation: ll-toast-in .32s cubic-bezier(.22,.61,.36,1), ll-toast-out .4s ease 3.6s both;
+}
+@keyframes ll-toast-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes ll-toast-out {
+  to { opacity: 0; transform: translateY(14px); }
+}
+
+/* ============================ Keepsake book preview ============================ */
+.ll-book-stage {
+  background: #262116;
+  border-radius: 14px;
+  padding: 40px 32px;
+  display: flex; align-items: center; justify-content: center;
+}
+.ll-book {
+  width: 240px; max-width: 100%;
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(180deg, #fff 0%, #fdfaf4 100%);
+  border-radius: 2px 10px 10px 2px;
+  box-shadow:
+    0 20px 40px -12px rgba(0,0,0,.4),
+    inset -8px 0 12px -8px rgba(0,0,0,.08);
+  padding: 32px 24px;
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  color: #262116;
+  font-family: 'PT Serif', Georgia, serif;
+  transform: perspective(900px) rotateY(-4deg);
+  transition: transform .5s ease;
+  animation: ll-book-in .6s cubic-bezier(.22,.61,.36,1) both;
+}
+.ll-book::before {
+  /* spine edge */
+  content: '';
+  position: absolute; top: 0; bottom: 0; left: 0;
+  width: 8px;
+  background: linear-gradient(90deg, rgba(38,33,22,.18) 0%, rgba(38,33,22,0) 100%);
+  border-radius: 2px 0 0 2px;
+}
+.ll-book:hover { transform: perspective(900px) rotateY(-1deg); }
+
+@keyframes ll-book-in {
+  from { opacity: 0; transform: perspective(900px) rotateY(-14deg) translateX(-8px); }
+  to   { opacity: 1; }
+}
+
+.ll-book-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+  color: #807e7a; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.ll-book-title {
+  font-size: 22px; font-weight: 700;
+  line-height: 1.2; letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.ll-book-sub {
+  font-size: 13px; color: #514d45;
+  font-style: italic;
+}
+.ll-book-divider {
+  width: 36px; height: 1px; background: #a48849;
+  margin: 14px 0;
+}
+.ll-book-blurb {
+  margin-top: auto;
+  font-size: 12px; color: #514d45;
+  font-style: italic;
+  line-height: 1.4;
+}
+.ll-book-meta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; color: #807e7a;
+  margin-top: 6px; font-style: normal;
+}
+
+/* ============================ Ready-to-print card ============================ */
+.ll-ready {
+  background: #fbfbfb;
+  border: 1px solid #dbdad7;
+  border-radius: 14px;
+  padding: 28px;
+  text-align: center;
+}
+.ll-ready-check {
+  width: 56px; height: 56px;
+  margin: 0 auto 10px;
+  border-radius: 999px;
+  background: #ebf2f1;
+  color: #216e6a;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  animation: ll-pop .36s cubic-bezier(.22,1.2,.36,1) both;
+}
+@keyframes ll-pop {
+  from { transform: scale(.6); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* ============================ Confetti ============================
+   A one-off spark burst for the "keepsake book ready" moment. */
+.ll-sparks {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.ll-spark {
+  position: absolute; left: 50%; top: 50%;
+  width: 6px; height: 6px; border-radius: 1px;
+  background: #e2ba60;
+  animation: ll-spark 1.2s cubic-bezier(.22,.61,.36,1) both;
+}
+@keyframes ll-spark {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(.4) rotate(var(--r, 0deg)); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--x, 0px)), calc(-50% + var(--y, 0px))) scale(1) rotate(var(--r, 0deg)); }
+}
+
+/* ============================ QR card ============================ */
+.ll-qr {
+  display: grid; place-items: center;
+  width: 200px; height: 200px; margin: 0 auto;
+  background: #fff;
+  border: 1px solid #dbdad7;
+  border-radius: 10px;
+  padding: 12px;
+}
+.ll-qr svg { width: 100%; height: 100%; }
+
+/* ============================ Demo switcher ============================
+   Prototype-only control for toggling signed-in / signed-out and
+   reseeding state. Same pattern as listing-personalization. */
+.ll-demo {
+  position: fixed; right: 12px; bottom: 12px; z-index: 50;
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px;
+  background: #151b24; color: #fff;
+  border-radius: 999px;
+  font-size: 12px; font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,.28);
+}
+.ll-demo button {
+  border: 0; border-radius: 999px; cursor: pointer;
+  padding: 6px 12px; font: inherit; font-weight: 600;
+  background: transparent; color: #fff;
+  transition: background .14s ease, color .14s ease;
+}
+.ll-demo button[aria-pressed="true"] { background: #e2ba60; color: #262116; }
+body[data-overlay="true"] .ll-demo { display: none; }
+
+/* ============================ Reduced motion ============================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

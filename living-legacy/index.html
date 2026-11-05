@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy Life Stories — Start a project</title>
+  <meta name="description" content="A guided life-story product that captures stories, photos and voice into a hardcover keepsake book." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Text:ital@0&family=PT+Serif:ital,wght@0,400;0,700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <script src="tokens.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js"></script>
+</head>
+<body>
+
+<a href="#ll-main" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:m-3 focus:rounded-full focus:bg-wb-900 focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-white">Skip to main content</a>
+
+<!-- ====================================================================
+     HEADER — minimal, product-focused.
+     "Legacy" wordmark left, Sign-in / Hello-name right. Sticky.
+     ==================================================================== -->
+<header class="ll-header">
+  <div class="max-w-[1100px] mx-auto px-4 md:px-8 py-4 flex items-center gap-4">
+    <a href="./" class="shrink-0 flex items-center gap-2" aria-label="Legacy Life Stories home">
+      <!-- The wordmark only. Minimal standalone product; no Legacy.com icon lockup. -->
+      <span class="text-[22px] md:text-[24px] font-bold tracking-tight text-wb-900">Legacy</span>
+      <span class="hidden md:inline text-[13px] font-semibold uppercase tracking-[0.14em] text-wb-500 border-l border-wb-300 pl-3 ml-1">Life Stories</span>
+    </a>
+    <div class="ml-auto flex items-center gap-2">
+      <!-- Signed out: Sign in / Create account pill -->
+      <button type="button" data-signin class="ll-btn ll-btn-ghost ll-btn-sm" data-auth-only="out">
+        <i class="ph ph-user-circle text-lg" aria-hidden="true"></i>
+        <span>Sign in or Create an Account</span>
+      </button>
+      <!-- Signed in: Hello name -->
+      <span class="ll-btn ll-btn-ghost ll-btn-sm" data-auth-only="in">
+        <i class="ph ph-user-circle text-lg" aria-hidden="true"></i>
+        <span>Hello, <span data-user-name>Wesley</span></span>
+      </span>
+    </div>
+  </div>
+</header>
+
+<!-- ====================================================================
+     MAIN — one of two views renders based on state
+     ==================================================================== -->
+<main id="ll-main" class="ll-stage px-4 md:px-8 py-10 md:py-16">
+  <div class="max-w-[720px] mx-auto">
+
+    <!-- =======================================================
+         VIEW A — Your Projects (returning user with saved work)
+         ======================================================= -->
+    <section data-view="your-projects" hidden>
+      <div class="flex items-center justify-between gap-4 mb-6 md:mb-8">
+        <h1 class="text-2xl md:text-[32px] font-bold tracking-tight text-wb-900">Your Projects</h1>
+        <button type="button" class="ll-btn ll-btn-primary" data-action="new-project">
+          <i class="ph ph-plus text-base" aria-hidden="true"></i>
+          <span>Start a new project</span>
+        </button>
+      </div>
+
+      <div class="ll-stagger space-y-3" data-projects-list>
+        <!-- project rows injected -->
+      </div>
+
+      <!-- Need ideas accordion (bottom) -->
+      <div class="mt-8">
+        <div class="ll-accordion" data-accordion>
+          <button type="button" class="ll-accordion-toggle" data-accordion-toggle>
+            <i class="ph ph-question text-lg text-wb-500" aria-hidden="true"></i>
+            <span class="text-[15px] font-semibold text-wb-900">Need ideas? See examples of projects you can start</span>
+            <i class="ph ph-caret-down ll-chev text-base text-wb-500" aria-hidden="true"></i>
+          </button>
+          <div class="ll-accordion-content">
+            <div>
+              <div class="ll-accordion-inner">
+                <ul class="space-y-3 text-[14.5px] text-wb-700">
+                  <li class="flex gap-3"><i class="ph ph-forkknife text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Family Recipes.</b> Gather dishes that mean something before they are lost.</span></li>
+                  <li class="flex gap-3"><i class="ph ph-user-focus text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Dad's Retirement.</b> One page where colleagues and family can send a memory.</span></li>
+                  <li class="flex gap-3"><i class="ph ph-graduation-cap text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">School Years.</b> A year of prompts for a grandparent's childhood, printed into a book.</span></li>
+                  <li class="flex gap-3"><i class="ph ph-heart text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Wedding or Anniversary.</b> A QR code at the event so guests can add a story on their phone.</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================
+         VIEW B — Start a new project (first-time or create-flow)
+         ======================================================= -->
+    <section data-view="start" hidden>
+
+      <div class="ll-card ll-card-pad">
+        <!-- Heading -->
+        <h1 class="text-2xl md:text-[32px] font-bold tracking-tight text-wb-900 mb-5">Start a new project</h1>
+
+        <!-- Need ideas accordion -->
+        <div class="ll-accordion mb-7" data-accordion>
+          <button type="button" class="ll-accordion-toggle" data-accordion-toggle>
+            <i class="ph ph-question text-lg text-wb-500" aria-hidden="true"></i>
+            <span class="text-[15px] font-semibold text-wb-900">Need ideas? See examples of projects you can start</span>
+            <i class="ph ph-caret-down ll-chev text-base text-wb-500" aria-hidden="true"></i>
+          </button>
+          <div class="ll-accordion-content">
+            <div>
+              <div class="ll-accordion-inner">
+                <ul class="space-y-3 text-[14.5px] text-wb-700">
+                  <li class="flex gap-3"><i class="ph ph-forkknife text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Family Recipes.</b> Gather dishes that mean something before they are lost.</span></li>
+                  <li class="flex gap-3"><i class="ph ph-user-focus text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Dad's Retirement.</b> One page where colleagues and family can send a memory.</span></li>
+                  <li class="flex gap-3"><i class="ph ph-graduation-cap text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">School Years.</b> A year of prompts for a grandparent's childhood, printed into a book.</span></li>
+                  <li class="flex gap-3"><i class="ph ph-heart text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Wedding or Anniversary.</b> A QR code at the event so guests can add a story on their phone.</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 1: who is this for? -->
+        <form id="ll-new-project" novalidate>
+          <fieldset class="mb-6">
+            <legend class="text-[15px] font-bold text-wb-900 mb-3"><span class="text-wb-500 font-semibold">1.</span> Who is this for?</legend>
+            <div class="ll-who" role="radiogroup" aria-labelledby="who-label">
+              <button type="button" class="ll-who-card" role="radio" aria-pressed="false" data-who="myself">
+                <span class="ll-who-icon"><i class="ph ph-user" aria-hidden="true"></i></span>
+                <span class="block">
+                  <span class="block text-[15px] font-bold text-wb-900">Myself</span>
+                  <span class="block text-[13px] text-wb-600 mt-0.5">My own stories</span>
+                </span>
+              </button>
+              <button type="button" class="ll-who-card" role="radio" aria-pressed="false" data-who="someone">
+                <span class="ll-who-icon"><i class="ph ph-user-rectangle" aria-hidden="true"></i></span>
+                <span class="block">
+                  <span class="block text-[15px] font-bold text-wb-900">Someone Else</span>
+                  <span class="block text-[13px] text-wb-600 mt-0.5">Mom, Dad, Child…</span>
+                </span>
+              </button>
+              <button type="button" class="ll-who-card" role="radio" aria-pressed="false" data-who="group">
+                <span class="ll-who-icon"><i class="ph ph-users-three" aria-hidden="true"></i></span>
+                <span class="block">
+                  <span class="block text-[15px] font-bold text-wb-900">Group of People</span>
+                  <span class="block text-[13px] text-wb-600 mt-0.5">A family or couple</span>
+                </span>
+              </button>
+            </div>
+          </fieldset>
+
+          <!-- Conditional: name + relationship. Height animated in. -->
+          <div class="ll-accordion-content mb-6" id="ll-person-fields" data-open="false" style="grid-template-rows: 0fr;">
+            <div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-1 pt-1">
+                <div>
+                  <label class="ll-label" for="ll-person-name">Person's name</label>
+                  <input type="text" id="ll-person-name" name="personName" class="ll-field" placeholder="e.g., Maria, Dad, or Leo" autocomplete="off" />
+                </div>
+                <div>
+                  <label class="ll-label" for="ll-relationship">Relationship <span class="ll-label-sub">(optional)</span></label>
+                  <input type="text" id="ll-relationship" name="relationship" class="ll-field" placeholder="e.g., Mom, Dad, Son" autocomplete="off" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: title -->
+          <div class="mb-6">
+            <label class="ll-label" for="ll-title"><span class="text-wb-500 font-semibold">2.</span> What is this project about?</label>
+            <input type="text" id="ll-title" name="title" class="ll-field" placeholder="For example: Family Recipes, Dad's Retirement, School Years…" />
+          </div>
+
+          <button type="submit" class="ll-btn ll-btn-primary ll-btn-lg w-full" data-submit disabled>
+            <span>Start Project</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Back to Your Projects link (shown when returning user clicks "Start new") -->
+      <p class="text-center mt-5" data-back-to-projects hidden>
+        <a href="#" class="text-[14px] font-semibold text-navy-500 underline underline-offset-2">‹ Back to Your Projects</a>
+      </p>
+    </section>
+
+  </div>
+</main>
+
+<!-- ====================================================================
+     DEMO SWITCHER (prototype-only)
+     ==================================================================== -->
+<div class="ll-demo" role="group" aria-label="Demo controls">
+  <span class="opacity-70">View</span>
+  <button type="button" data-set-auth="out" aria-pressed="false">Signed out</button>
+  <button type="button" data-set-auth="in" aria-pressed="true">Signed in</button>
+  <span class="opacity-40">·</span>
+  <button type="button" data-reset title="Reset the prototype">Reset</button>
+</div>
+
+<script>
+/* ============================================================
+   Landing page bindings.
+   ============================================================ */
+(function () {
+  const $  = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  function syncAuth() {
+    const state = LL.getAuth();
+    document.body.dataset.auth = state;
+    $$('[data-auth-only]').forEach(el => {
+      el.hidden = el.dataset.authOnly !== state;
+    });
+    $$('[data-set-auth]').forEach(b => {
+      b.setAttribute('aria-pressed', b.dataset.setAuth === state ? 'true' : 'false');
+    });
+    const u = LL.getUserName();
+    $$('[data-user-name]').forEach(e => { e.textContent = u; });
+  }
+
+  function renderView() {
+    const projects = LL.allProjects();
+    const forced = sessionStorage.getItem('ll-force-new') === '1';
+    const showList = projects.length > 0 && !forced;
+    $('[data-view="your-projects"]').hidden = !showList;
+    $('[data-view="start"]').hidden = showList;
+    $('[data-back-to-projects]').hidden = !(forced && projects.length > 0);
+    if (showList) renderList(projects);
+    else resetForm();
+  }
+
+  function renderList(projects) {
+    const wrap = $('[data-projects-list]');
+    wrap.innerHTML = projects.map((p, i) => {
+      const forLine = p.who === 'myself'
+        ? 'FOR MYSELF'
+        : `FOR ${(p.personName || 'SOMEONE').toUpperCase()}${p.relationship ? ' (' + p.relationship.toUpperCase() + ')' : ''}`;
+      const count = (p.memories || []).length;
+      return `
+        <a class="ll-card ll-clickcard flex items-center justify-between gap-4 px-6 py-5" href="project.html?id=${encodeURIComponent(p.id)}" style="--i:${i}">
+          <div class="min-w-0">
+            <div class="text-[11px] font-bold tracking-[0.14em] uppercase text-wb-500 mb-1">${LL.escapeHTML(forLine)}</div>
+            <div class="text-[20px] font-bold text-wb-900 truncate">${LL.escapeHTML(p.title)}</div>
+            <div class="text-[13px] text-wb-600 mt-0.5">${count} ${count === 1 ? 'memory' : 'memories'} saved${count ? ' · updated ' + LL.fmtRelative(p.memories[0].createdAt) : ''}</div>
+          </div>
+          <span class="ll-tap shrink-0 w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900 bg-white" aria-hidden="true">
+            <i class="ph ph-caret-right text-lg"></i>
+          </span>
+        </a>`;
+    }).join('');
+    LL.stagger(wrap);
+  }
+
+  // ---------- Accordions ----------
+  $$('[data-accordion]').forEach(acc => {
+    const t = acc.querySelector('[data-accordion-toggle]');
+    t.setAttribute('aria-expanded', 'false');
+    t.addEventListener('click', () => {
+      const open = acc.dataset.open !== 'true';
+      acc.dataset.open = open ? 'true' : 'false';
+      t.setAttribute('aria-expanded', String(open));
+    });
+  });
+
+  // ---------- Form ----------
+  const form = $('#ll-new-project');
+  const personFields = $('#ll-person-fields');
+  const submit = $('[data-submit]', form);
+  let whoValue = null;
+
+  function updateSubmit() {
+    const titleOk = $('#ll-title').value.trim().length > 0;
+    const whoOk = !!whoValue;
+    const personNameOk = whoValue === 'myself' ? true : $('#ll-person-name').value.trim().length > 0;
+    submit.disabled = !(titleOk && whoOk && personNameOk);
+  }
+
+  $$('[data-who]', form).forEach(btn => {
+    btn.addEventListener('click', () => {
+      whoValue = btn.dataset.who;
+      $$('[data-who]', form).forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+      const needsPerson = whoValue !== 'myself';
+      personFields.dataset.open = String(needsPerson);
+      personFields.style.gridTemplateRows = needsPerson ? '1fr' : '0fr';
+      updateSubmit();
+    });
+  });
+
+  ['input','change'].forEach(evt => form.addEventListener(evt, updateSubmit));
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (submit.disabled) return;
+    const title = $('#ll-title').value.trim();
+    const personName = $('#ll-person-name').value.trim();
+    const relationship = $('#ll-relationship').value.trim();
+    const p = LL.createProject({ who: whoValue, title, personName, relationship, yourName: LL.getUserName() });
+    sessionStorage.removeItem('ll-force-new');
+    LL.toast(`Started ${p.title}`, { icon: 'ph-sparkle' });
+    // Brief delay to let the toast land, then navigate.
+    setTimeout(() => { location.href = `project.html?id=${encodeURIComponent(p.id)}`; }, 240);
+  });
+
+  function resetForm() {
+    try { form.reset(); } catch {}
+    $$('[data-who]', form).forEach(b => b.setAttribute('aria-pressed', 'false'));
+    whoValue = null;
+    personFields.dataset.open = 'false';
+    personFields.style.gridTemplateRows = '0fr';
+    submit.disabled = true;
+  }
+
+  // ---------- Button: start new (from Your Projects) ----------
+  $$('[data-action="new-project"]').forEach(b => {
+    b.addEventListener('click', () => {
+      sessionStorage.setItem('ll-force-new', '1');
+      renderView();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  $('[data-back-to-projects] a').addEventListener('click', (e) => {
+    e.preventDefault();
+    sessionStorage.removeItem('ll-force-new');
+    renderView();
+  });
+
+  // ---------- Signin pill (prototype: toggles auth) ----------
+  $$('[data-signin]').forEach(b => {
+    b.addEventListener('click', () => {
+      LL.setAuth('in');
+      syncAuth();
+      LL.toast(`Welcome back, ${LL.getUserName()}`, { icon: 'ph-hand-waving' });
+    });
+  });
+
+  // ---------- Demo switch ----------
+  $$('[data-set-auth]').forEach(b => {
+    b.addEventListener('click', () => {
+      LL.setAuth(b.dataset.setAuth);
+      syncAuth();
+    });
+  });
+  $('[data-reset]').addEventListener('click', () => {
+    if (confirm('Reset the prototype and clear all saved projects?')) LL.reset();
+  });
+
+  // Init
+  syncAuth();
+  renderView();
+})();
+</script>
+</body>
+</html>
