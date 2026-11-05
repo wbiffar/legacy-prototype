@@ -366,7 +366,10 @@ textarea.ll-field { min-height: 108px; padding: 14px 16px; resize: vertical; }
 .ll-seg {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 4px;
-  background: #f6f6f6;
+  background: #f6e5b8;              /* gold-100 — carries more contrast
+                                       than wb-100 against the warm page
+                                       and makes the white pressed pill
+                                       pop clearly. */
   border-radius: 999px;
 }
 .ll-seg > button {
