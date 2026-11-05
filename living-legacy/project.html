@@ -61,7 +61,7 @@
       <div class="mt-6 pt-6 border-t border-wb-200 flex flex-wrap gap-3" data-primary-actions hidden>
         <button type="button" class="ll-btn ll-btn-primary" data-open-add>
           <i class="ph ph-plus text-base" aria-hidden="true"></i>
-          <span>Add to Page</span>
+          <span>Add to Project</span>
         </button>
         <button type="button" class="ll-btn ll-btn-ghost" data-open-invite>
           <i class="ph ph-user-plus text-base" aria-hidden="true"></i>
@@ -112,7 +112,7 @@
 
       <!-- Invite nudge when empty -->
       <div class="mt-5 pt-5 border-t border-wb-200 flex items-center justify-between gap-3">
-        <p class="text-[14px] text-wb-700"><i class="ph ph-users-three text-base text-wb-500 mr-1" aria-hidden="true"></i>Have others help fill this page</p>
+        <p class="text-[14px] text-wb-700"><i class="ph ph-users-three text-base text-wb-500 mr-1" aria-hidden="true"></i>Have others help fill this project</p>
         <button type="button" class="ll-btn ll-btn-ghost ll-btn-sm" data-open-invite>
           <span>Invite People</span>
         </button>
@@ -139,14 +139,14 @@
 </main>
 
 <!-- ====================================================================
-     MODAL — ADD TO PAGE (four tabs)
+     MODAL — ADD TO PROJECT (four tabs)
      ==================================================================== -->
 <div class="ll-modal-wrap" id="modal-add" hidden role="dialog" aria-modal="true" aria-labelledby="modal-add-title">
   <div class="ll-modal">
     <div class="ll-modal-header">
       <div class="min-w-0">
         <div class="ll-chip-eyebrow"><span data-project-chip>ADD TO PROJECT</span></div>
-        <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900" id="modal-add-title">Add a memory to this page</h2>
+        <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900" id="modal-add-title">Add a memory to this project</h2>
       </div>
       <button type="button" class="ll-close" data-close="modal-add" aria-label="Close" data-autofocus>
         <i class="ph ph-x text-lg"></i>
@@ -368,7 +368,7 @@
     <div class="ll-modal-header">
       <div class="min-w-0">
         <div class="ll-chip-eyebrow">Make a Keepsake Book</div>
-        <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900" id="modal-book-title">Turn this page into a printed book</h2>
+        <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900" id="modal-book-title">Turn this project into a printed book</h2>
       </div>
       <button type="button" class="ll-close" data-close="modal-book" aria-label="Close" data-autofocus>
         <i class="ph ph-x text-lg"></i>
@@ -398,7 +398,7 @@
             <div class="text-[14px] font-bold text-wb-900">Included in this book (<span data-book-count>0</span> items)</div>
             <div class="text-[13px] text-wb-600">Hardcover Keepsake</div>
           </div>
-          <p class="text-[13px] text-wb-700" data-book-included-note>No memories added to this page yet. You can still preview the cover or add memories to the page first.</p>
+          <p class="text-[13px] text-wb-700" data-book-included-note>No memories added to this project yet. You can still preview the cover or add memories to the project first.</p>
         </div>
       </div>
     </div>
@@ -409,7 +409,7 @@
         <div class="ll-ready-check" aria-hidden="true"><i class="ph ph-check"></i></div>
         <div class="ll-chip-eyebrow">Keepsake Book Ready</div>
         <div class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900 mb-2" data-ready-title>Family Recipes</div>
-        <p class="text-[14px] text-wb-700 max-w-[420px] mx-auto">Your hardcover keepsake book layout with <span data-ready-count>2</span> memories (<span data-ready-pages>~20</span> pages) is ready. You can print a copy now or keep adding to the page over time.</p>
+        <p class="text-[14px] text-wb-700 max-w-[420px] mx-auto">Your hardcover keepsake book layout with <span data-ready-count>2</span> memories (<span data-ready-pages>~20</span> pages) is ready. You can print a copy now or keep adding to the project over time.</p>
         <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
           <button type="button" class="ll-btn ll-btn-ghost" data-close="modal-book">Back to project</button>
           <button type="button" class="ll-btn ll-btn-ghost" data-book-preview>Preview Book</button>
@@ -537,13 +537,13 @@
 
     const count = memories.length;
     const pages = Math.max(20, 6 + count * 7);
-    $('[data-book-cta-sub]').textContent = `Preview your hardcover book with all ${count} ${count === 1 ? 'memory' : 'memories'} on this page.`;
+    $('[data-book-cta-sub]').textContent = `Preview your hardcover book with all ${count} ${count === 1 ? 'memory' : 'memories'} in this project.`;
     $('[data-book-count]').textContent = count;
     $('[data-book-meta]').textContent = `${count} ${count === 1 ? 'memory' : 'memories'} · ~${pages} pages`;
     $('[data-ready-count]').textContent = count;
     $('[data-ready-pages]').textContent = `~${pages}`;
     $('[data-book-included-note]').textContent = count === 0
-      ? 'No memories added to this page yet. You can still preview the cover or add memories to the page first.'
+      ? 'No memories added to this project yet. You can still preview the cover or add memories to the project first.'
       : `All ${count} memories above are included, in the order they were added. Reorder on the next step.`;
 
     // Book cover title defaults to the project title
@@ -653,7 +653,7 @@
   });
   $$('[data-close]').forEach(b => b.addEventListener('click', () => LL.closeModal(b.dataset.close)));
 
-  // ---------- Add to Page modal: tabs ----------
+  // ---------- Add to Project modal: tabs ----------
   const tabsRoot = $('[data-tabs]');
   const thumb = $('[data-thumb]');
   function sizeThumb() {
