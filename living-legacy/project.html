@@ -10,9 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js?v=7"></script>
-  <link rel="stylesheet" href="styles.css?v=7" />
-  <script src="app.js?v=7"></script>
+  <script src="tokens.js?v=8"></script>
+  <link rel="stylesheet" href="styles.css?v=8" />
+  <script src="app.js?v=8"></script>
 </head>
 <body>
 
@@ -46,7 +46,7 @@
     <section class="ll-card ll-card-pad" data-project-card>
       <div class="flex items-start justify-between gap-4">
         <div class="min-w-0">
-          <h1 class="text-[32px] md:text-[40px] font-bold tracking-tight text-wb-900 leading-tight" data-project-title>Project</h1>
+          <h1 class="text-[32px] md:text-[40px] font-serif tracking-tight text-wb-900 leading-tight" data-project-title>Project</h1>
           <p class="text-[15px] text-wb-600 mt-1" data-project-for></p>
         </div>
         <button type="button" class="ll-tap shrink-0 w-10 h-10 rounded-full border border-wb-300 flex items-center justify-center text-wb-900 bg-white" aria-label="Project settings" data-settings>
@@ -74,7 +74,7 @@
 
     <!-- Empty state (shows when there are no memories yet) -->
     <section class="ll-card ll-card-pad" data-empty-state hidden>
-      <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900 mb-2">Start adding to this project</h2>
+      <h2 class="text-[22px] md:text-[26px] font-serif tracking-tight text-wb-900 mb-2">Start adding to this project</h2>
       <p class="text-[15px] text-wb-700 mb-5">Choose what you would like to add right now, or invite family and friends to add their own.</p>
 
       <div class="ll-grid-add">
@@ -124,7 +124,7 @@
     <section class="ll-cta-dark" data-book-cta hidden>
       <div>
         <div class="ll-chip-eyebrow text-gold-300 !text-gold-400 opacity-80 !mb-1">Keepsake Book</div>
-        <div class="text-[22px] md:text-[26px] font-bold text-white leading-tight mb-1">Ready to turn this project into a printed book?</div>
+        <div class="text-[22px] md:text-[26px] font-serif text-white leading-tight mb-1">Ready to turn this project into a printed book?</div>
         <div class="text-[14px] text-wb-300 opacity-80" data-book-cta-sub></div>
       </div>
       <button type="button" class="ll-btn ll-btn-primary shrink-0 bg-white !text-wb-900 hover:!bg-gold-100" data-open-book>
@@ -144,7 +144,7 @@
     <div class="ll-modal-header">
       <div class="min-w-0">
         <div class="ll-chip-eyebrow"><span data-project-chip>ADD TO PROJECT</span></div>
-        <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900" id="modal-add-title">Add a memory to this project</h2>
+        <h2 class="text-[22px] md:text-[26px] font-serif tracking-tight text-wb-900" id="modal-add-title">Add a memory to this project</h2>
       </div>
       <button type="button" class="ll-close" data-close="modal-add" aria-label="Close" data-autofocus>
         <i class="ph ph-x text-lg"></i>
@@ -310,7 +310,7 @@
     <div class="ll-modal-header">
       <div class="min-w-0">
         <div class="ll-chip-eyebrow">Share link or event QR code</div>
-        <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900" id="modal-invite-title">Invite others to <span data-invite-project-title>this project</span></h2>
+        <h2 class="text-[22px] md:text-[26px] font-serif tracking-tight text-wb-900" id="modal-invite-title">Invite others to <span data-invite-project-title>this project</span></h2>
       </div>
       <button type="button" class="ll-close" data-close="modal-invite" aria-label="Close" data-autofocus>
         <i class="ph ph-x text-lg"></i>
@@ -366,7 +366,7 @@
     <div class="ll-modal-header">
       <div class="min-w-0">
         <div class="ll-chip-eyebrow">Make a Keepsake Book</div>
-        <h2 class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900" id="modal-book-title">Turn this project into a printed book</h2>
+        <h2 class="text-[22px] md:text-[26px] font-serif tracking-tight text-wb-900" id="modal-book-title">Turn this project into a printed book</h2>
       </div>
       <button type="button" class="ll-close" data-close="modal-book" aria-label="Close" data-autofocus>
         <i class="ph ph-x text-lg"></i>
@@ -406,7 +406,7 @@
       <div class="ll-ready relative" data-ready-host>
         <div class="ll-ready-check" aria-hidden="true"><i class="ph ph-check"></i></div>
         <div class="ll-chip-eyebrow">Keepsake Book Ready</div>
-        <div class="text-[22px] md:text-[26px] font-bold tracking-tight text-wb-900 mb-2" data-ready-title>Family Recipes</div>
+        <div class="text-[22px] md:text-[26px] font-serif tracking-tight text-wb-900 mb-2" data-ready-title>Family Recipes</div>
         <p class="text-[14px] text-wb-700 max-w-[420px] mx-auto">Your hardcover keepsake book layout with <span data-ready-count>2</span> memories (<span data-ready-pages>~20</span> pages) is ready. You can print a copy now or keep adding to the project over time.</p>
         <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
           <button type="button" class="ll-btn ll-btn-ghost" data-close="modal-book">Back to project</button>
@@ -559,7 +559,7 @@
           ${canEdit ? `<button type="button" class="ll-icon-btn ll-tap" data-edit-memory="${m.id}" aria-label="Edit this memory"><i class="ph ph-pencil-simple text-base" aria-hidden="true"></i></button>` : ''}
         </div>
       </div>
-      ${m.title ? `<h3 class="text-[20px] md:text-[22px] font-bold tracking-tight text-wb-900 mt-3">${LL.escapeHTML(m.title)}</h3>` : ''}
+      ${m.title ? `<h3 class="text-[20px] md:text-[22px] font-serif tracking-tight text-wb-900 mt-3">${LL.escapeHTML(m.title)}</h3>` : ''}
     `;
 
     let body = '';
