@@ -156,7 +156,8 @@ label:focus-within {
        hero grows to fit it and the film crops a little off the RIGHT edge
        (film is anchored left, so the faces stay in view);
      - a very tall/wide screen — capped at the viewport height so the hero
-       never runs past one screen (the 960px floor is card + padding).
+       never runs past one screen (the 880px floor is card + padding, about
+       830px, with a little room to spare).
    The faces sit at roughly 33%-85% of the frame, so this layout only
    works from 1440px up; narrower screens use the stacked layout above. */
 @media (min-width: 1440px) {
@@ -164,8 +165,8 @@ label:focus-within {
     display: flex; align-items: center;
     width: 100%;                                  /* explicit, or max-height below would shrink the width to keep 16:9 */
     aspect-ratio: 16 / 9;
-    max-height: max(calc(100vh - 79px), 960px);   /* 79px = sticky header (16+46+16 + 1px border) */
-    max-height: max(calc(100svh - 79px), 960px);
+    max-height: max(calc(100vh - 79px), 880px);   /* 79px = sticky header (16+46+16 + 1px border) */
+    max-height: max(calc(100svh - 79px), 880px);
   }
   .ll-hero-media { position: absolute; inset: 0; aspect-ratio: auto; max-height: none; }
   .ll-hero-video { object-position: 0% 30%; }
@@ -1019,13 +1020,16 @@ body[data-overlay="true"] { overflow: hidden; }
    reseeding state. Same pattern as listing-personalization. */
 .ll-demo {
   position: fixed; right: 12px; bottom: 12px; z-index: 50;
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 10px;
+  display: flex; align-items: center;
+  max-width: calc(100vw - 24px);
+  padding: 0 0 0 14px;
   background: #151b24; color: #fff;
-  border-radius: 999px;
+  border-radius: 22px;
   font-size: 12px; font-weight: 600;
   box-shadow: 0 4px 12px rgba(0,0,0,.28);
 }
+.ll-demo[data-ready] { transition: padding .32s cubic-bezier(.22,.61,.36,1); }
+.ll-demo[data-open="false"] { padding-left: 0; }
 .ll-demo button {
   border: 0; border-radius: 999px; cursor: pointer;
   padding: 6px 12px; font: inherit; font-weight: 600;
@@ -1034,6 +1038,53 @@ body[data-overlay="true"] { overflow: hidden; }
 }
 .ll-demo button[aria-pressed="true"] { background: #e2ba60; color: #262116; }
 body[data-overlay="true"] .ll-demo { display: none; }
+
+/* Collapsible. The body slides shut toward the round toggle that stays at
+   the bottom-right corner. The toggle comes first in the DOM (so it reads
+   first to assistive tech) but is ordered last on screen. Collapsed, the
+   whole control is one 44px circle. On phones the rows wrap: View on the
+   first line, Scenario on the second. */
+.ll-demo-toggle { order: 2; }
+.ll-demo .ll-demo-toggle {
+  flex: none;
+  width: 44px; height: 44px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.ll-demo .ll-demo-toggle:hover { background: rgba(255,255,255,.12); }
+/* Desktop: one row that never wraps, so the pill stays 44px tall the whole
+   way through the width animation (a wrapping row would balloon into a tall
+   column while the width is still small). */
+.ll-demo-body {
+  order: 1;
+  display: flex; align-items: center; flex-wrap: nowrap;
+  gap: 8px;
+  padding: 8px 0;
+  overflow: hidden;
+  max-width: 640px;
+  opacity: 1;
+}
+.ll-demo-body > * { flex: none; white-space: nowrap; }   /* never squeeze or wrap a label */
+.ll-demo[data-ready] .ll-demo-body {
+  transition: max-width .32s cubic-bezier(.22,.61,.36,1), opacity .2s ease;
+}
+.ll-demo[data-open="false"] .ll-demo-body { max-width: 0; opacity: 0; padding: 0; }
+
+/* Phones: two rows (View, then Scenario), so a width animation would wrap
+   mid-flight. The body is removed when shut and fades in when opened. */
+@keyframes ll-demo-in {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (max-width: 639px) {
+  .ll-demo-body { flex-wrap: wrap; gap: 4px 8px; max-width: calc(100vw - 24px - 44px - 14px); }
+  .ll-demo[data-ready] .ll-demo-body { transition: none; }
+  .ll-demo[data-ready][data-open="true"] .ll-demo-body { animation: ll-demo-in .24s cubic-bezier(.22,.61,.36,1) both; }
+  .ll-demo[data-open="false"] .ll-demo-body { display: none; }
+  .ll-demo .ll-demo-body button { padding: 8px 12px; }
+  /* The "·" separator becomes a line break between View and Scenario. */
+  .ll-demo-sep { flex-basis: 100%; height: 0; font-size: 0; overflow: hidden; }
+}
 
 /* ============================ Reduced motion ============================ */
 @media (prefers-reduced-motion: reduce) {

@@ -11,9 +11,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js?v=20"></script>
-  <link rel="stylesheet" href="styles.css?v=20" />
-  <script src="app.js?v=20"></script>
+  <script src="tokens.js?v=25"></script>
+  <link rel="stylesheet" href="styles.css?v=25" />
+  <script src="app.js?v=25"></script>
 </head>
 <body>
 
@@ -88,21 +88,21 @@
                 <span class="ll-add-icon shrink-0"><i class="ph-fill ph-sparkle" aria-hidden="true"></i></span>
                 <div>
                   <div class="text-[15px] font-bold text-wb-900 mb-1">Start a new project in seconds</div>
-                  <p class="text-[14px] text-wb-700 leading-relaxed">Simply name what your project is about and choose if it is for Someone Else or a group of people (like a family).</p>
+                  <p class="text-[14px] text-wb-700 leading-relaxed">Name it and choose who it's for.</p>
                 </div>
               </div>
               <div class="flex items-start gap-4">
                 <span class="ll-add-icon shrink-0"><i class="ph ph-microphone" aria-hidden="true"></i></span>
                 <div>
                   <div class="text-[15px] font-bold text-wb-900 mb-1">Stories, voice notes &amp; AI-digitized recipes</div>
-                  <p class="text-[14px] text-wb-700 leading-relaxed">Upload handwritten recipe cards, record voice stories, or send a link to family to contribute.</p>
+                  <p class="text-[14px] text-wb-700 leading-relaxed">Record, write, or upload recipes.</p>
                 </div>
               </div>
               <div class="flex items-start gap-4">
                 <span class="ll-add-icon shrink-0"><i class="ph ph-book-open" aria-hidden="true"></i></span>
                 <div>
                   <div class="text-[15px] font-bold text-wb-900 mb-1">Turn any project into a Keepsake Book</div>
-                  <p class="text-[14px] text-wb-700 leading-relaxed">Print a Baby Book, School Years Book, Family Cookbook, or Complete Life Story Book whenever you are ready.</p>
+                  <p class="text-[14px] text-wb-700 leading-relaxed">Print a hardcover when you're ready.</p>
                 </div>
               </div>
             </div>
@@ -112,10 +112,10 @@
                 Sign in with your Legacy account or continue as a guest to explore.
               </p>
               <div class="space-y-3">
-                <button type="button" class="ll-btn ll-btn-primary ll-btn-lg w-full" data-landing-create>
+                <button type="button" class="ll-btn ll-btn-primary w-full" data-landing-create>
                   Create an Account
                 </button>
-                <button type="button" class="ll-btn ll-btn-secondary ll-btn-lg w-full" data-landing-guest>
+                <button type="button" class="ll-btn ll-btn-secondary w-full" data-landing-guest>
                   Continue as a Guest
                 </button>
               </div>
@@ -275,14 +275,21 @@
 <!-- ====================================================================
      DEMO SWITCHER (prototype-only)
      ==================================================================== -->
-<div class="ll-demo" role="group" aria-label="Demo controls">
-  <span class="opacity-70">View</span>
-  <button type="button" data-set-auth="out" aria-pressed="false">Signed out</button>
-  <button type="button" data-set-auth="in" aria-pressed="true">Signed in</button>
-  <span class="opacity-40">·</span>
-  <span class="opacity-70">Scenario</span>
-  <button type="button" data-reset title="Rebuild the two seeded projects">Seeded</button>
-  <button type="button" data-clean-slate title="Wipe projects and land on Start a new project">Clean slate</button>
+<!-- Collapsible (app.js wires [data-demo]): open by default on desktop, tucked
+     into a single round button on phones. The choice is remembered. -->
+<div class="ll-demo" role="group" aria-label="Prototype controls" data-demo data-open="true">
+  <button type="button" class="ll-demo-toggle" data-demo-toggle aria-expanded="true" aria-controls="ll-demo-body" aria-label="Hide prototype controls">
+    <i class="ph ph-x" aria-hidden="true"></i>
+  </button>
+  <div class="ll-demo-body" id="ll-demo-body" data-demo-body>
+    <span class="opacity-70">View</span>
+    <button type="button" data-set-auth="out" aria-pressed="false">Signed out</button>
+    <button type="button" data-set-auth="in" aria-pressed="true">Signed in</button>
+    <span class="ll-demo-sep opacity-40" aria-hidden="true">·</span>
+    <span class="opacity-70">Scenario</span>
+    <button type="button" data-reset title="Rebuild the two seeded projects">Seeded</button>
+    <button type="button" data-clean-slate title="Wipe projects and land on Start a new project">Clean slate</button>
+  </div>
 </div>
 
 <script>

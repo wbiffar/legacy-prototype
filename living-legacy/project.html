@@ -10,9 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js?v=20"></script>
-  <link rel="stylesheet" href="styles.css?v=20" />
-  <script src="app.js?v=20"></script>
+  <script src="tokens.js?v=25"></script>
+  <link rel="stylesheet" href="styles.css?v=25" />
+  <script src="app.js?v=25"></script>
 </head>
 <body>
 
@@ -482,14 +482,19 @@
 </div>
 
 <!-- DEMO -->
-<div class="ll-demo" role="group" aria-label="Demo controls">
-  <span class="opacity-70">View</span>
-  <button type="button" data-set-auth="out" aria-pressed="false">Signed out</button>
-  <button type="button" data-set-auth="in" aria-pressed="true">Signed in</button>
-  <span class="opacity-40">·</span>
-  <span class="opacity-70">Scenario</span>
-  <button type="button" data-reset title="Rebuild the two seeded projects">Seeded</button>
-  <button type="button" data-clean-slate title="Wipe projects and land on Start a new project">Clean slate</button>
+<div class="ll-demo" role="group" aria-label="Prototype controls" data-demo data-open="true">
+  <button type="button" class="ll-demo-toggle" data-demo-toggle aria-expanded="true" aria-controls="ll-demo-body" aria-label="Hide prototype controls">
+    <i class="ph ph-x" aria-hidden="true"></i>
+  </button>
+  <div class="ll-demo-body" id="ll-demo-body" data-demo-body>
+    <span class="opacity-70">View</span>
+    <button type="button" data-set-auth="out" aria-pressed="false">Signed out</button>
+    <button type="button" data-set-auth="in" aria-pressed="true">Signed in</button>
+    <span class="ll-demo-sep opacity-40" aria-hidden="true">·</span>
+    <span class="opacity-70">Scenario</span>
+    <button type="button" data-reset title="Rebuild the two seeded projects">Seeded</button>
+    <button type="button" data-clean-slate title="Wipe projects and land on Start a new project">Clean slate</button>
+  </div>
 </div>
 
 <script>
