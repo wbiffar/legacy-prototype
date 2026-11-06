@@ -11,9 +11,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js?v=13"></script>
-  <link rel="stylesheet" href="styles.css?v=13" />
-  <script src="app.js?v=13"></script>
+  <script src="tokens.js?v=15"></script>
+  <link rel="stylesheet" href="styles.css?v=15" />
+  <script src="app.js?v=15"></script>
 </head>
 <body>
 
@@ -48,8 +48,7 @@
 <!-- ====================================================================
      MAIN — one of two views renders based on state
      ==================================================================== -->
-<main id="ll-main" class="ll-stage px-4 md:px-8 py-10 md:py-16">
-  <div class="max-w-[720px] mx-auto">
+<main id="ll-main" class="ll-stage">
 
     <!-- =======================================================
          VIEW 0 — Landing (hero + sign-in / guest / create)
@@ -57,192 +56,220 @@
          projects AND the user hasn't yet chosen to continue.
          ======================================================= -->
     <section data-view="landing" hidden>
-      <div class="ll-card ll-card-pad max-w-[560px] mx-auto">
-        <div class="ll-chip-eyebrow">Living Legacy</div>
-        <h1 class="text-[30px] md:text-[38px] font-serif tracking-tight leading-[1.1] text-wb-900 mb-4">
-          A life's story, passed down for generations.
-        </h1>
-        <p class="text-[16px] md:text-[17px] text-wb-700 leading-relaxed">
-          Curate the milestones, memories, and family recipes your grandchildren will treasure.
-        </p>
+      <div class="ll-hero" data-hero data-video="loading">
 
-        <div class="border-t border-wb-200 mt-6 pt-6 space-y-5">
-          <div class="flex items-start gap-4">
-            <span class="ll-add-icon shrink-0"><i class="ph-fill ph-sparkle" aria-hidden="true"></i></span>
-            <div>
-              <div class="text-[15px] font-bold text-wb-900 mb-1">Start a new project in seconds</div>
-              <p class="text-[14px] text-wb-700 leading-relaxed">Simply name what your project is about and choose if it is for Someone Else or a group of people (like a family).</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-4">
-            <span class="ll-add-icon shrink-0"><i class="ph ph-microphone" aria-hidden="true"></i></span>
-            <div>
-              <div class="text-[15px] font-bold text-wb-900 mb-1">Stories, voice notes &amp; AI-digitized recipes</div>
-              <p class="text-[14px] text-wb-700 leading-relaxed">Upload handwritten recipe cards, record voice stories, or send a link to family to contribute.</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-4">
-            <span class="ll-add-icon shrink-0"><i class="ph ph-book-open" aria-hidden="true"></i></span>
-            <div>
-              <div class="text-[15px] font-bold text-wb-900 mb-1">Turn any project into a Keepsake Book</div>
-              <p class="text-[14px] text-wb-700 leading-relaxed">Print a Baby Book, School Years Book, Family Cookbook, or Complete Life Story Book whenever you are ready.</p>
-            </div>
-          </div>
+        <!-- Background film: a grandmother and her granddaughter paging through
+             a keepsake book. Decorative, so it is hidden from assistive tech, and
+             it only starts loading when this view is actually on screen (see
+             syncFilm below). Until it is ready, the gold-100 surface shows. -->
+        <div class="ll-hero-media" aria-hidden="true">
+          <video class="ll-hero-video" data-hero-video data-src="assets/landing-hero.mp4"
+                 muted loop playsinline preload="auto" tabindex="-1"></video>
         </div>
 
-        <div class="border-t border-wb-200 mt-6 pt-6">
-          <p class="text-[13.5px] text-center text-wb-700 mb-4">
-            Sign in with your Legacy account or continue as a guest to explore.
-          </p>
-          <div class="space-y-3">
-            <button type="button" class="ll-btn ll-btn-primary ll-btn-lg w-full" data-landing-create>
-              Create an Account
-            </button>
-            <button type="button" class="ll-btn ll-btn-secondary ll-btn-lg w-full" data-landing-guest>
-              Continue as a Guest
-            </button>
-          </div>
-          <p class="text-[13.5px] text-center text-wb-700 mt-4">
-            Already have an account? <a href="#" class="text-navy-500 font-semibold underline underline-offset-2" data-landing-signin>Sign in</a>
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- =======================================================
-         VIEW A — Your Projects (returning user with saved work)
-         ======================================================= -->
-    <section data-view="your-projects" hidden>
-      <div class="flex items-center justify-between gap-4 mb-6 md:mb-8">
-        <h1 class="text-2xl md:text-[32px] font-serif tracking-tight text-wb-900">Your Projects</h1>
-        <button type="button" class="ll-btn ll-btn-primary" data-action="new-project">
-          <i class="ph ph-plus text-base" aria-hidden="true"></i>
-          <span>Start a new project</span>
+        <!-- WCAG 2.2.2: anything that moves on its own for more than 5s needs a
+             pause control. Shown only once there is a film to pause. -->
+        <button type="button" class="ll-hero-toggle" data-hero-toggle aria-label="Pause background video" hidden>
+          <i class="ph-fill ph-pause" aria-hidden="true"></i>
         </button>
-      </div>
 
-      <div class="ll-stagger space-y-3" data-projects-list>
-        <!-- project rows injected -->
-      </div>
+        <div class="ll-hero-inner">
+          <div class="ll-card ll-card-pad ll-hero-card">
+            <div class="ll-chip-eyebrow">Living Legacy</div>
+            <h1 class="text-[30px] md:text-[38px] font-serif tracking-tight leading-[1.1] text-wb-900 mb-4">
+              A life's story, passed down for generations.
+            </h1>
+            <p class="text-[16px] md:text-[17px] text-wb-700 leading-relaxed">
+              Curate the milestones, memories, and family recipes your grandchildren will treasure.
+            </p>
 
-      <!-- Need ideas accordion (bottom) -->
-      <div class="mt-8">
-        <div class="ll-accordion" data-accordion>
-          <button type="button" class="ll-accordion-toggle" data-accordion-toggle>
-            <i class="ph ph-question text-lg text-wb-500" aria-hidden="true"></i>
-            <span class="text-[15px] font-semibold text-wb-900">Need ideas? See examples of projects you can start</span>
-            <i class="ph ph-caret-down ll-chev text-base text-wb-500" aria-hidden="true"></i>
-          </button>
-          <div class="ll-accordion-content">
-            <div>
-              <div class="ll-accordion-inner">
-                <ul class="space-y-3 text-[14.5px] text-wb-700">
-                  <li class="flex gap-3"><i class="ph ph-forkknife text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Family Recipes.</b> Gather dishes that mean something before they are lost.</span></li>
-                  <li class="flex gap-3"><i class="ph ph-user-focus text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Dad's Retirement.</b> One project where colleagues and family can send a memory.</span></li>
-                  <li class="flex gap-3"><i class="ph ph-graduation-cap text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">School Years.</b> A year of prompts for a grandparent's childhood, printed into a book.</span></li>
-                  <li class="flex gap-3"><i class="ph ph-heart text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Wedding or Anniversary.</b> A QR code at the event so guests can add a story on their phone.</span></li>
-                </ul>
+            <div class="border-t border-wb-200 mt-6 pt-6 space-y-5">
+              <div class="flex items-start gap-4">
+                <span class="ll-add-icon shrink-0"><i class="ph-fill ph-sparkle" aria-hidden="true"></i></span>
+                <div>
+                  <div class="text-[15px] font-bold text-wb-900 mb-1">Start a new project in seconds</div>
+                  <p class="text-[14px] text-wb-700 leading-relaxed">Simply name what your project is about and choose if it is for Someone Else or a group of people (like a family).</p>
+                </div>
               </div>
+              <div class="flex items-start gap-4">
+                <span class="ll-add-icon shrink-0"><i class="ph ph-microphone" aria-hidden="true"></i></span>
+                <div>
+                  <div class="text-[15px] font-bold text-wb-900 mb-1">Stories, voice notes &amp; AI-digitized recipes</div>
+                  <p class="text-[14px] text-wb-700 leading-relaxed">Upload handwritten recipe cards, record voice stories, or send a link to family to contribute.</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <span class="ll-add-icon shrink-0"><i class="ph ph-book-open" aria-hidden="true"></i></span>
+                <div>
+                  <div class="text-[15px] font-bold text-wb-900 mb-1">Turn any project into a Keepsake Book</div>
+                  <p class="text-[14px] text-wb-700 leading-relaxed">Print a Baby Book, School Years Book, Family Cookbook, or Complete Life Story Book whenever you are ready.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="border-t border-wb-200 mt-6 pt-6">
+              <p class="text-[13.5px] text-center text-wb-700 mb-4">
+                Sign in with your Legacy account or continue as a guest to explore.
+              </p>
+              <div class="space-y-3">
+                <button type="button" class="ll-btn ll-btn-primary ll-btn-lg w-full" data-landing-create>
+                  Create an Account
+                </button>
+                <button type="button" class="ll-btn ll-btn-secondary ll-btn-lg w-full" data-landing-guest>
+                  Continue as a Guest
+                </button>
+              </div>
+              <p class="text-[13.5px] text-center text-wb-700 mt-4">
+                Already have an account? <a href="#" class="text-navy-500 font-semibold underline underline-offset-2" data-landing-signin>Sign in</a>
+              </p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- =======================================================
-         VIEW B — Start a new project (first-time or create-flow)
-         ======================================================= -->
-    <section data-view="start" hidden>
+    <!-- App views share a padded, centered column. Hidden while the landing
+         hero is showing so its padding does not add a gap under the film. -->
+    <div class="px-4 md:px-8 py-10 md:py-16" data-app-pad>
+      <div class="max-w-[720px] mx-auto">
 
-      <div class="ll-card ll-card-pad">
-        <!-- Heading -->
-        <h1 class="text-2xl md:text-[32px] font-serif tracking-tight text-wb-900 mb-5">Start a new project</h1>
 
-        <!-- Need ideas accordion -->
-        <div class="ll-accordion mb-7" data-accordion>
-          <button type="button" class="ll-accordion-toggle" data-accordion-toggle>
-            <i class="ph ph-question text-lg text-wb-500" aria-hidden="true"></i>
-            <span class="text-[15px] font-semibold text-wb-900">Need ideas? See examples of projects you can start</span>
-            <i class="ph ph-caret-down ll-chev text-base text-wb-500" aria-hidden="true"></i>
-          </button>
-          <div class="ll-accordion-content">
-            <div>
-              <div class="ll-accordion-inner">
-                <ul class="space-y-3 text-[14.5px] text-wb-700">
-                  <li class="flex gap-3"><i class="ph ph-forkknife text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Family Recipes.</b> Gather dishes that mean something before they are lost.</span></li>
-                  <li class="flex gap-3"><i class="ph ph-user-focus text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Dad's Retirement.</b> One project where colleagues and family can send a memory.</span></li>
-                  <li class="flex gap-3"><i class="ph ph-graduation-cap text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">School Years.</b> A year of prompts for a grandparent's childhood, printed into a book.</span></li>
-                  <li class="flex gap-3"><i class="ph ph-heart text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Wedding or Anniversary.</b> A QR code at the event so guests can add a story on their phone.</span></li>
-                </ul>
-              </div>
-            </div>
+        <!-- =======================================================
+             VIEW A — Your Projects (returning user with saved work)
+             ======================================================= -->
+        <section data-view="your-projects" hidden>
+          <div class="flex items-center justify-between gap-4 mb-6 md:mb-8">
+            <h1 class="text-2xl md:text-[32px] font-serif tracking-tight text-wb-900">Your Projects</h1>
+            <button type="button" class="ll-btn ll-btn-primary" data-action="new-project">
+              <i class="ph ph-plus text-base" aria-hidden="true"></i>
+              <span>Start a new project</span>
+            </button>
           </div>
-        </div>
 
-        <!-- Step 1: who is this for? -->
-        <form id="ll-new-project" novalidate>
-          <fieldset class="mb-6">
-            <legend class="text-[15px] font-bold text-wb-900 mb-3"><span class="text-wb-500 font-semibold">1.</span> Who is this for?</legend>
-            <div class="ll-who" role="radiogroup" aria-labelledby="who-label">
-              <button type="button" class="ll-who-card" role="radio" aria-pressed="false" data-who="myself">
-                <span class="ll-who-icon"><i class="ph ph-user" aria-hidden="true"></i></span>
-                <span class="block">
-                  <span class="block text-[15px] font-bold text-wb-900">Myself</span>
-                  <span class="block text-[13px] text-wb-600 mt-0.5">My own stories</span>
-                </span>
-              </button>
-              <button type="button" class="ll-who-card" role="radio" aria-pressed="false" data-who="someone">
-                <span class="ll-who-icon"><i class="ph ph-user-rectangle" aria-hidden="true"></i></span>
-                <span class="block">
-                  <span class="block text-[15px] font-bold text-wb-900">Someone Else</span>
-                  <span class="block text-[13px] text-wb-600 mt-0.5">Mom, Dad, Child…</span>
-                </span>
-              </button>
-              <button type="button" class="ll-who-card" role="radio" aria-pressed="false" data-who="group">
-                <span class="ll-who-icon"><i class="ph ph-users-three" aria-hidden="true"></i></span>
-                <span class="block">
-                  <span class="block text-[15px] font-bold text-wb-900">Group of People</span>
-                  <span class="block text-[13px] text-wb-600 mt-0.5">A family or couple</span>
-                </span>
-              </button>
-            </div>
-          </fieldset>
+          <div class="ll-stagger space-y-3" data-projects-list>
+            <!-- project rows injected -->
+          </div>
 
-          <!-- Conditional: name + relationship. Height animated in. -->
-          <div class="ll-accordion-content mb-6" id="ll-person-fields" data-open="false" style="grid-template-rows: 0fr;">
-            <div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-1 pt-1">
+          <!-- Need ideas accordion (bottom) -->
+          <div class="mt-8">
+            <div class="ll-accordion" data-accordion>
+              <button type="button" class="ll-accordion-toggle" data-accordion-toggle>
+                <i class="ph ph-question text-lg text-wb-500" aria-hidden="true"></i>
+                <span class="text-[15px] font-semibold text-wb-900">Need ideas? See examples of projects you can start</span>
+                <i class="ph ph-caret-down ll-chev text-base text-wb-500" aria-hidden="true"></i>
+              </button>
+              <div class="ll-accordion-content">
                 <div>
-                  <label class="ll-label" for="ll-person-name">Person's name</label>
-                  <input type="text" id="ll-person-name" name="personName" class="ll-field" placeholder="e.g., Maria, Dad, or Leo" autocomplete="off" />
-                </div>
-                <div>
-                  <label class="ll-label" for="ll-relationship">Relationship <span class="ll-label-sub">(optional)</span></label>
-                  <input type="text" id="ll-relationship" name="relationship" class="ll-field" placeholder="e.g., Mom, Dad, Son" autocomplete="off" />
+                  <div class="ll-accordion-inner">
+                    <ul class="space-y-3 text-[14.5px] text-wb-700">
+                      <li class="flex gap-3"><i class="ph ph-forkknife text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Family Recipes.</b> Gather dishes that mean something before they are lost.</span></li>
+                      <li class="flex gap-3"><i class="ph ph-user-focus text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Dad's Retirement.</b> One project where colleagues and family can send a memory.</span></li>
+                      <li class="flex gap-3"><i class="ph ph-graduation-cap text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">School Years.</b> A year of prompts for a grandparent's childhood, printed into a book.</span></li>
+                      <li class="flex gap-3"><i class="ph ph-heart text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Wedding or Anniversary.</b> A QR code at the event so guests can add a story on their phone.</span></li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </section>
 
-          <!-- Step 2: title -->
-          <div class="mb-6">
-            <label class="ll-label" for="ll-title"><span class="text-wb-500 font-semibold">2.</span> What is this project about?</label>
-            <input type="text" id="ll-title" name="title" class="ll-field" placeholder="For example: Family Recipes, Dad's Retirement, School Years…" />
+        <!-- =======================================================
+             VIEW B — Start a new project (first-time or create-flow)
+             ======================================================= -->
+        <section data-view="start" hidden>
+
+          <div class="ll-card ll-card-pad">
+            <!-- Heading -->
+            <h1 class="text-2xl md:text-[32px] font-serif tracking-tight text-wb-900 mb-5">Start a new project</h1>
+
+            <!-- Need ideas accordion -->
+            <div class="ll-accordion mb-7" data-accordion>
+              <button type="button" class="ll-accordion-toggle" data-accordion-toggle>
+                <i class="ph ph-question text-lg text-wb-500" aria-hidden="true"></i>
+                <span class="text-[15px] font-semibold text-wb-900">Need ideas? See examples of projects you can start</span>
+                <i class="ph ph-caret-down ll-chev text-base text-wb-500" aria-hidden="true"></i>
+              </button>
+              <div class="ll-accordion-content">
+                <div>
+                  <div class="ll-accordion-inner">
+                    <ul class="space-y-3 text-[14.5px] text-wb-700">
+                      <li class="flex gap-3"><i class="ph ph-forkknife text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Family Recipes.</b> Gather dishes that mean something before they are lost.</span></li>
+                      <li class="flex gap-3"><i class="ph ph-user-focus text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Dad's Retirement.</b> One project where colleagues and family can send a memory.</span></li>
+                      <li class="flex gap-3"><i class="ph ph-graduation-cap text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">School Years.</b> A year of prompts for a grandparent's childhood, printed into a book.</span></li>
+                      <li class="flex gap-3"><i class="ph ph-heart text-base text-gold-700 mt-0.5" aria-hidden="true"></i><span><b class="text-wb-900">Wedding or Anniversary.</b> A QR code at the event so guests can add a story on their phone.</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 1: who is this for? -->
+            <form id="ll-new-project" novalidate>
+              <fieldset class="mb-6">
+                <legend class="text-[15px] font-bold text-wb-900 mb-3"><span class="text-wb-500 font-semibold">1.</span> Who is this for?</legend>
+                <div class="ll-who" role="radiogroup" aria-labelledby="who-label">
+                  <button type="button" class="ll-who-card" role="radio" aria-pressed="false" data-who="myself">
+                    <span class="ll-who-icon"><i class="ph ph-user" aria-hidden="true"></i></span>
+                    <span class="block">
+                      <span class="block text-[15px] font-bold text-wb-900">Myself</span>
+                      <span class="block text-[13px] text-wb-600 mt-0.5">My own stories</span>
+                    </span>
+                  </button>
+                  <button type="button" class="ll-who-card" role="radio" aria-pressed="false" data-who="someone">
+                    <span class="ll-who-icon"><i class="ph ph-user-rectangle" aria-hidden="true"></i></span>
+                    <span class="block">
+                      <span class="block text-[15px] font-bold text-wb-900">Someone Else</span>
+                      <span class="block text-[13px] text-wb-600 mt-0.5">Mom, Dad, Child…</span>
+                    </span>
+                  </button>
+                  <button type="button" class="ll-who-card" role="radio" aria-pressed="false" data-who="group">
+                    <span class="ll-who-icon"><i class="ph ph-users-three" aria-hidden="true"></i></span>
+                    <span class="block">
+                      <span class="block text-[15px] font-bold text-wb-900">Group of People</span>
+                      <span class="block text-[13px] text-wb-600 mt-0.5">A family or couple</span>
+                    </span>
+                  </button>
+                </div>
+              </fieldset>
+
+              <!-- Conditional: name + relationship. Height animated in. -->
+              <div class="ll-accordion-content mb-6" id="ll-person-fields" data-open="false" style="grid-template-rows: 0fr;">
+                <div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-1 pt-1">
+                    <div>
+                      <label class="ll-label" for="ll-person-name">Person's name</label>
+                      <input type="text" id="ll-person-name" name="personName" class="ll-field" placeholder="e.g., Maria, Dad, or Leo" autocomplete="off" />
+                    </div>
+                    <div>
+                      <label class="ll-label" for="ll-relationship">Relationship <span class="ll-label-sub">(optional)</span></label>
+                      <input type="text" id="ll-relationship" name="relationship" class="ll-field" placeholder="e.g., Mom, Dad, Son" autocomplete="off" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 2: title -->
+              <div class="mb-6">
+                <label class="ll-label" for="ll-title"><span class="text-wb-500 font-semibold">2.</span> What is this project about?</label>
+                <input type="text" id="ll-title" name="title" class="ll-field" placeholder="For example: Family Recipes, Dad's Retirement, School Years…" />
+              </div>
+
+              <button type="submit" class="ll-btn ll-btn-primary ll-btn-lg w-full" data-submit disabled>
+                <span>Start Project</span>
+              </button>
+            </form>
           </div>
 
-          <button type="submit" class="ll-btn ll-btn-primary ll-btn-lg w-full" data-submit disabled>
-            <span>Start Project</span>
-          </button>
-        </form>
+          <!-- Back to Your Projects link (shown when returning user clicks "Start new") -->
+          <p class="text-center mt-5" data-back-to-projects hidden>
+            <a href="#" class="text-[14px] font-semibold text-navy-500 underline underline-offset-2">‹ Back to Your Projects</a>
+          </p>
+        </section>
+
       </div>
+    </div>
 
-      <!-- Back to Your Projects link (shown when returning user clicks "Start new") -->
-      <p class="text-center mt-5" data-back-to-projects hidden>
-        <a href="#" class="text-[14px] font-semibold text-navy-500 underline underline-offset-2">‹ Back to Your Projects</a>
-      </p>
-    </section>
-
-  </div>
 </main>
 
 <!-- ====================================================================
@@ -298,13 +325,58 @@
     const showStart   = !showList && !showLanding;
 
     $('[data-view="landing"]').hidden       = !showLanding;
+    $('[data-app-pad]').hidden              = showLanding;
     $('[data-view="your-projects"]').hidden = !showList;
     $('[data-view="start"]').hidden         = !showStart;
     $('[data-back-to-projects]').hidden = !(forced && projects.length > 0);
 
+    syncFilm(showLanding);
     if (showList) renderList(projects);
     else if (showStart) resetForm();
   }
+
+  // ---------- Landing hero film ----------
+  // The film is decorative, so it never gets in the way:
+  //  - it only downloads once the landing is actually showing
+  //  - prefers-reduced-motion users get a still first frame, not playback
+  //  - a visible pause control (WCAG 2.2.2) sits on top of it
+  //  - if the file is missing or fails, the gold-100 surface just stays
+  const hero       = $('[data-hero]');
+  const film       = $('[data-hero-video]', hero);
+  const filmToggle = $('[data-hero-toggle]', hero);
+  const filmIcon   = $('i', filmToggle);
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let filmRequested = false;
+  let filmUserPaused = false;
+
+  function setFilmUI(playing) {
+    filmToggle.setAttribute('aria-label', playing ? 'Pause background video' : 'Play background video');
+    filmIcon.className = playing ? 'ph-fill ph-pause' : 'ph-fill ph-play';
+  }
+
+  function syncFilm(show) {
+    if (!show) { film.pause(); return; }
+    if (!filmRequested) {
+      filmRequested = true;
+      film.src = film.dataset.src;
+      film.load();
+    }
+    if (!reduceMotion.matches && !filmUserPaused) film.play().catch(() => {});
+  }
+
+  film.addEventListener('loadeddata', () => {
+    hero.dataset.video = 'ready';
+    filmToggle.hidden = false;
+  });
+  film.addEventListener('error', () => { hero.dataset.video = 'missing'; });
+  film.addEventListener('play',  () => setFilmUI(true));
+  film.addEventListener('pause', () => setFilmUI(false));
+  filmToggle.addEventListener('click', () => {
+    if (film.paused) { filmUserPaused = false; film.play().catch(() => {}); }
+    else             { filmUserPaused = true;  film.pause(); }
+  });
+  // If the system setting flips while the page is open, stop moving.
+  reduceMotion.addEventListener('change', (e) => { if (e.matches) film.pause(); });
 
   function renderList(projects) {
     const wrap = $('[data-projects-list]');
