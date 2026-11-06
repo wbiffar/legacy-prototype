@@ -201,3 +201,13 @@ Each entry should include:
 - **Caveat:** Column fill order is top-to-bottom per column, not left-to-right by index. For a chronological feed that still reads well; for a true order-sensitive grid (e.g. ranked results) use CSS Grid instead.
 
 ---
+
+## 2026-11-06 — Living Legacy landing hero (DES-2332)
+
+### `aspect-ratio` + `max-height` shrinks the WIDTH unless you pin it
+- **What went wrong:** Gave the hero (and the stacked film block) `aspect-ratio: 16/9` and a `max-height` cap. When the cap bit, Chrome kept the ratio by narrowing the box instead of cropping it: a 1920px hero became 1779px wide with a cream strip down the right side; at 1280px the film block shrank to 882px.
+- **What to do instead:** Any box that combines `aspect-ratio` with `max-height` (or `max-width`) needs an explicit `width: 100%`. Check `getBoundingClientRect().width === innerWidth` at a wide viewport, not just the height.
+
+### A `cover` video hero zooms with the card's height — judge it on the clip's LAST frame
+- **What went wrong:** First pass put the card in the header's centered 1100px column over a `cover` film. At 1440px the card sat at x=202 and hid the child; at 1280px the hero was card-tall (910px), so `cover` scaled the 16:9 film to ~1630px wide and cropped the grandmother's face off the right edge. I'd only checked the still and the first frame — the generated clip has a slow push-in, so by 5s the faces sit at roughly 33%–85% of the frame width.
+- **What to do instead:** Seek the clip to its end (`video.currentTime = duration - 0.1`) before judging crop. Size the hero from the film's own ratio (`aspect-ratio: 16/9`, grows to fit the card, capped to the viewport), anchor the film left so any crop comes off the empty right side, and put the card 80px from the VIEWPORT edge. Below the width where the card is taller than 16:9 allows (1440px here), stack the film above the card and cap it at 62svh with a top-anchored crop so the headline stays on the first screen.

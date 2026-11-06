@@ -81,14 +81,15 @@ label:focus-within {
    First-run landing: a full-bleed film with the sign-in card on the left.
    Mobile-first — the film is its own block ABOVE the card, and the card
    rides up over its bottom edge by 32px so the two read as one surface.
-   From 1024px up the film fills the whole hero behind the card, and the
-   grandmother and granddaughter are framed on the right so the card never
-   covers them (see --ll-hero-focus for the stacked-layout crop). Portrait
-   tablets stay stacked: a 520px card over a 768px-wide crop would hide them.
+   From 1440px up the film fills the whole hero behind the card. Below that
+   (phones, tablets, small laptops) it stays stacked: the card is taller
+   than the film's 16:9 shape there, so the film would zoom in and crop the
+   faces (see --ll-hero-focus for the stacked crop).
    gold-100 shows until the film is ready — or for good if it never loads. */
 .ll-hero { position: relative; background: #fbf7ef; }
 .ll-hero-media {
   position: relative;
+  width: 100%;                               /* explicit, or a max-height would shrink the width to keep the aspect ratio */
   aspect-ratio: 4 / 3;
   overflow: hidden;
   background: #f6e5b8;                       /* gold-100 */
@@ -97,7 +98,7 @@ label:focus-within {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
-  object-position: var(--ll-hero-focus, 72% 50%);
+  object-position: var(--ll-hero-focus, 72% 15%);
   opacity: 0;
   transition: opacity .9s cubic-bezier(.22,.61,.36,1);
 }
@@ -132,27 +133,52 @@ label:focus-within {
 .ll-hero-toggle:hover { background: #f6f6f6; }
 .ll-hero-toggle:active { transform: scale(.96); }
 
-/* Wider phones and portrait tablets keep the stacked layout, just with a
-   shorter, more cinematic film block. */
+/* Wider phones, tablets and small laptops keep the stacked layout, with a
+   shorter, more cinematic film block. It's capped at 62% of the screen
+   height so the card's headline is always on the first screen; when the
+   cap bites, the crop is vertical and anchored near the top (see
+   --ll-hero-focus), which keeps both faces and loses only the lap. */
 @media (min-width: 640px) {
-  .ll-hero-media { aspect-ratio: 16 / 9; }
+  .ll-hero-media {
+    aspect-ratio: 16 / 9;
+    max-height: 62vh;
+    max-height: 62svh;
+  }
 }
 
-@media (min-width: 1024px) {
+/* Side-by-side. The card hugs the left edge of the VIEWPORT (80px in), not
+   the header's centered column, so on wide screens it never drifts across
+   the film.
+
+   The hero takes the film's own 16:9 shape, so the film scales with the
+   viewport width and the whole frame shows. Two things can override that:
+     - the card is taller than 16:9 allows (about 1440-1618px wide) — the
+       hero grows to fit it and the film crops a little off the RIGHT edge
+       (film is anchored left, so the faces stay in view);
+     - a very tall/wide screen — capped at the viewport height so the hero
+       never runs past one screen (the 960px floor is card + padding).
+   The faces sit at roughly 33%-85% of the frame, so this layout only
+   works from 1440px up; narrower screens use the stacked layout above. */
+@media (min-width: 1440px) {
   .ll-hero {
     display: flex; align-items: center;
-    min-height: calc(100vh - 79px);          /* viewport minus the sticky header (16+46+16 + 1px border) */
-    min-height: calc(100svh - 79px);
+    width: 100%;                                  /* explicit, or max-height below would shrink the width to keep 16:9 */
+    aspect-ratio: 16 / 9;
+    max-height: max(calc(100vh - 79px), 960px);   /* 79px = sticky header (16+46+16 + 1px border) */
+    max-height: max(calc(100svh - 79px), 960px);
   }
-  .ll-hero-media { position: absolute; inset: 0; aspect-ratio: auto; }
+  .ll-hero-media { position: absolute; inset: 0; aspect-ratio: auto; max-height: none; }
+  .ll-hero-video { object-position: 0% 30%; }
   .ll-hero-inner {
     width: 100%;
-    max-width: 1100px;                       /* same column as the header, so the card lines up with the wordmark */
-    margin: 0 auto;
-    padding: 56px 32px;
+    margin: 0;
+    padding: 56px 80px;
   }
-  .ll-hero-card { max-width: 520px; margin: 0; }
+  .ll-hero-card { max-width: 480px; margin: 0; }
   .ll-hero-toggle { top: 16px; right: 16px; }
+}
+@media (min-width: 1600px) {
+  .ll-hero-card { max-width: 520px; }
 }
 
 /* ============================= Cards =============================
