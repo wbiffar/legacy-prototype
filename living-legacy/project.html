@@ -10,9 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js?v=25"></script>
-  <link rel="stylesheet" href="styles.css?v=25" />
-  <script src="app.js?v=25"></script>
+  <script src="tokens.js?v=27"></script>
+  <link rel="stylesheet" href="styles.css?v=27" />
+  <script src="app.js?v=27"></script>
 </head>
 <body>
 
@@ -20,19 +20,27 @@
 
 <!-- HEADER -->
 <header class="ll-header">
-  <div class="max-w-[840px] mx-auto px-4 md:px-8 py-4 flex items-center gap-4">
-    <a href="./" class="shrink-0 inline-flex items-center gap-2 text-[15px] font-semibold text-wb-900 ll-tap">
-      <i class="ph ph-caret-left text-lg" aria-hidden="true"></i>
-      <span>Back to Start</span>
+  <div class="ll-header-inner">
+    <!-- Design-system logo on every page; same lockup as the landing header. -->
+    <a href="./" class="shrink-0 flex items-center gap-2 ll-tap" aria-label="Legacy Life Stories home">
+      <img src="assets/logo-horizontal.svg" alt="Legacy" class="h-8 md:h-9 w-auto" />
+      <span class="hidden md:inline text-[13px] font-semibold uppercase tracking-[0.14em] text-wb-500 border-l border-wb-300 pl-3 ml-1">Life Stories</span>
     </a>
+    <!-- Right cluster: My Projects (was "Back to Start") sits beside the
+         account control. On phones the account control drops to an icon so
+         both fit next to the wordmark; its text stays for screen readers. -->
     <div class="ml-auto flex items-center gap-2">
+      <a href="./" class="ll-btn ll-btn-ghost ll-btn-sm" data-my-projects>
+        <i class="ph ph-folder-simple text-lg" aria-hidden="true"></i>
+        <span>My Projects</span>
+      </a>
       <button type="button" data-signin class="ll-btn ll-btn-ghost ll-btn-sm" data-auth-only="out">
         <i class="ph ph-user-circle text-lg" aria-hidden="true"></i>
-        <span>Sign in or Create an Account</span>
+        <span class="sr-only sm:not-sr-only">Sign in or Create an Account</span>
       </button>
       <span class="ll-btn ll-btn-ghost ll-btn-sm" data-auth-only="in">
         <i class="ph ph-user-circle text-lg" aria-hidden="true"></i>
-        <span>Hello, <span data-user-name>Wesley</span></span>
+        <span class="sr-only sm:not-sr-only">Hello, <span data-user-name>Wesley</span></span>
       </span>
     </div>
   </div>
@@ -934,7 +942,7 @@
         : `<span class="ll-add-icon"><i class="ph ph-upload-simple" aria-hidden="true"></i></span>
            <span class="text-[14px] font-semibold text-wb-900">Upload a photo</span>
            <span class="text-[13px] text-wb-500">PNG or JPG, up to 20 MB</span>
-           <input type="file" accept="image/*" class="sr-only" data-photo-input />`;
+           <input type="file" id="add-photo-file" accept="image/*" class="sr-only" data-photo-input />`;   // id must match the <label for>, or the drop area goes dead after a reset
     });
     resetRecorder();
   }
@@ -1056,7 +1064,7 @@
     if (drop.querySelector('input[data-recipe-input], #add-recipe-photo')) kept.dataset.recipeInput = '';
     else kept.dataset.photoInput = '';
     drop.appendChild(kept);
-    drop.querySelector('[data-replace]').addEventListener('click', () => kept.click());
+    drop.querySelector('[data-replace]').addEventListener('click', (ev) => { ev.preventDefault(); kept.click(); });
   }
 
   // ---------- File uploads (preview) ----------
@@ -1081,7 +1089,7 @@
       drop.appendChild(kept);
       kept.classList.add('sr-only');
       kept.addEventListener('change', (e) => handleFile(e.target, { label, aiFlow }));
-      drop.querySelector('[data-replace]').addEventListener('click', () => kept.click());
+      drop.querySelector('[data-replace]').addEventListener('click', (ev) => { ev.preventDefault(); kept.click(); });
 
       if (aiFlow) {
         const ai = $('[data-recipe-ai]');

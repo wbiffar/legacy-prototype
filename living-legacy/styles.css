@@ -76,6 +76,25 @@ label:focus-within {
   background: #fff;
   border-bottom: 1px solid #dbdad7;
 }
+/* One header layout for every page, so the logo and the right-hand controls
+   never shift as you move around. Full width with fixed side gutters (the
+   page content below keeps its own narrower column), and a fixed height so a
+   page with only text links in it isn't shorter than one with buttons.
+   The 80px gutter at 1440px lines the logo up with the landing hero card.
+   Height: 16 + 46 (tallest control) + 16 = 78px, plus the 1px border = 79px,
+   which the landing hero's height maths relies on. */
+.ll-header-inner {
+  display: flex; align-items: center; gap: 16px;
+  min-height: 78px;
+  padding: 16px;
+}
+@media (min-width: 768px)  { .ll-header-inner { padding-left: 32px; padding-right: 32px; } }
+@media (min-width: 1440px) { .ll-header-inner { padding-left: 80px; padding-right: 80px; } }
+
+/* Reserve the scrollbar's space on every page. Without it, pages long enough
+   to scroll are narrower than short ones (and a modal that locks scrolling
+   widens the page), which nudges right-aligned header controls sideways. */
+html { scrollbar-gutter: stable; }
 
 /* ============================ Landing hero ============================
    First-run landing: a full-bleed film with the sign-in card on the left.

@@ -11,9 +11,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js?v=25"></script>
-  <link rel="stylesheet" href="styles.css?v=25" />
-  <script src="app.js?v=25"></script>
+  <script src="tokens.js?v=27"></script>
+  <link rel="stylesheet" href="styles.css?v=27" />
+  <script src="app.js?v=27"></script>
 </head>
 <body>
 
@@ -24,17 +24,22 @@
      "Legacy" wordmark left, Sign-in / Hello-name right. Sticky.
      ==================================================================== -->
 <header class="ll-header">
-  <div class="max-w-[1100px] mx-auto px-4 md:px-8 py-4 flex items-center gap-4">
-    <a href="./" class="shrink-0 flex items-center gap-2" aria-label="Legacy Life Stories home">
-      <!-- The wordmark only. Minimal standalone product; no Legacy.com icon lockup. -->
-      <span class="text-[22px] md:text-[24px] font-bold tracking-tight text-wb-900">Legacy</span>
+  <div class="ll-header-inner">
+    <a href="./" class="shrink-0 flex items-center gap-2 ll-tap" aria-label="Legacy Life Stories home">
+      <!-- Design-system horizontal logo (gold mark + navy wordmark, light
+           backgrounds). Same asset as the other prototypes. -->
+      <img src="assets/logo-horizontal.svg" alt="Legacy" class="h-8 md:h-9 w-auto" />
       <span class="hidden md:inline text-[13px] font-semibold uppercase tracking-[0.14em] text-wb-500 border-l border-wb-300 pl-3 ml-1">Life Stories</span>
     </a>
     <div class="ml-auto flex items-center gap-2">
       <!-- Signed out: Sign in / Create account pill -->
-      <button type="button" data-signin class="ll-btn ll-btn-ghost ll-btn-sm" data-auth-only="out">
+      <!-- The logo is wider than the old text wordmark, so on phones the long
+           label shortens to "Sign in" (the hero card below carries the full
+           create-an-account choice). -->
+      <button type="button" data-signin class="ll-btn ll-btn-ghost ll-btn-sm" data-auth-only="out" aria-label="Sign in or Create an Account">
         <i class="ph ph-user-circle text-lg" aria-hidden="true"></i>
-        <span>Sign in or Create an Account</span>
+        <span class="sm:hidden">Sign in</span>
+        <span class="hidden sm:inline">Sign in or Create an Account</span>
       </button>
       <!-- Signed in: Hello name -->
       <span class="ll-btn ll-btn-ghost ll-btn-sm" data-auth-only="in">
