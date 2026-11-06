@@ -464,7 +464,37 @@
   // Reflect auth on <body> for scoped styling
   document.addEventListener('DOMContentLoaded', () => {
     document.body.dataset.auth = getAuth();
+    initDemoToggle();
   });
+
+  // Prototype-only control pill: collapses to one round button. Open by
+  // default on desktop, closed on phones (where it covers content); the
+  // reviewer's choice is remembered across pages and reloads.
+  function initDemoToggle() {
+    const demo = document.querySelector('[data-demo]');
+    if (!demo) return;
+    const toggle = demo.querySelector('[data-demo-toggle]');
+    const body   = demo.querySelector('[data-demo-body]');
+    const icon   = toggle.querySelector('i');
+    const KEY = 'll:demo-open';
+    let stored = null;
+    try { stored = localStorage.getItem(KEY); } catch {}
+    let open = stored === null ? window.matchMedia('(min-width: 768px)').matches : stored === '1';
+
+    function apply(persist) {
+      demo.dataset.open = String(open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Hide prototype controls' : 'Show prototype controls');
+      icon.className = open ? 'ph ph-x' : 'ph ph-sliders-horizontal';
+      body.inert = !open;                      // keep collapsed buttons out of the tab order
+      if (persist) { try { localStorage.setItem(KEY, open ? '1' : '0'); } catch {} }
+    }
+    toggle.addEventListener('click', () => { open = !open; apply(true); });
+
+    apply(false);
+    void demo.offsetWidth;                     // commit the first state before enabling transitions
+    demo.setAttribute('data-ready', '');
+  }
 
   window.LL = {
     // data

@@ -10,18 +10,23 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-  <script src="tokens.js?v=13"></script>
-  <link rel="stylesheet" href="styles.css?v=13" />
-  <script src="app.js?v=13"></script>
+  <script src="tokens.js?v=27"></script>
+  <link rel="stylesheet" href="styles.css?v=27" />
+  <script src="app.js?v=27"></script>
 </head>
 <body>
 
 <!-- HEADER — simpler, white. Guest page has no account by design.  -->
 <header class="ll-header">
-  <div class="max-w-[720px] mx-auto px-4 md:px-8 py-4 flex items-center justify-center">
-    <a href="#" data-back-to class="inline-flex items-center gap-2 text-[15px] font-semibold text-wb-900 ll-tap">
-      <i class="ph ph-caret-left text-lg" aria-hidden="true"></i>
-      <span>Back to <span data-project-name>this project</span></span>
+  <div class="ll-header-inner">
+    <!-- Design-system logo on every page; same lockup as the landing header. -->
+    <a href="./" class="shrink-0 flex items-center gap-2 ll-tap" aria-label="Legacy Life Stories home">
+      <img src="assets/logo-horizontal.svg" alt="Legacy" class="h-8 md:h-9 w-auto" />
+      <span class="hidden md:inline text-[13px] font-semibold uppercase tracking-[0.14em] text-wb-500 border-l border-wb-300 pl-3 ml-1">Life Stories</span>
+    </a>
+    <a href="#" data-back-to class="ml-auto min-w-0 inline-flex items-center gap-2 text-[15px] font-semibold text-wb-900 ll-tap">
+      <i class="ph ph-caret-left text-lg shrink-0" aria-hidden="true"></i>
+      <span class="truncate">Back to <span data-project-name>this project</span></span>
     </a>
   </div>
 </header>
@@ -171,10 +176,10 @@
   });
 
   // Photo upload
-  $('[data-g-photo]').addEventListener('change', (e) => {
-    const file = e.target.files && e.target.files[0];
+  function handleGuestPhoto(input) {
+    const file = input.files && input.files[0];
     if (!file) return;
-    const drop = e.target.closest('[data-drop]');
+    const drop = input.closest('[data-drop]');
     const reader = new FileReader();
     reader.onload = (ev) => {
       drop.dataset.attached = 'true';
@@ -190,11 +195,12 @@
       kept.type = 'file'; kept.accept = 'image/*'; kept.className = 'sr-only';
       kept.dataset.gPhoto = '';
       drop.appendChild(kept);
-      kept.addEventListener('change', (ev2) => $('[data-g-photo]').dispatchEvent(new Event('change')));
-      drop.querySelector('[data-replace]').addEventListener('click', () => kept.click());
+      kept.addEventListener('change', () => handleGuestPhoto(kept));
+      drop.querySelector('[data-replace]').addEventListener('click', (ev) => { ev.preventDefault(); kept.click(); });
     };
     reader.readAsDataURL(file);
-  });
+  }
+  $('[data-g-photo]').addEventListener('change', (e) => handleGuestPhoto(e.target));
 
   // Voice recorder (same as the main modal's)
   const rec = { timer: null, seconds: 0, active: false };
